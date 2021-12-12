@@ -36,6 +36,10 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { AddCategoryComponent } from './components/add-category/add-category.component';
 import { IconSelectComponent } from './components/custom/icon-select/icon-select.component';
+import { BudgetInfoComponent } from './components/budget-info/budget-info.component';
+import { SpendingsComponent } from './components/spendings/spendings.component';
+import { AddSpendingComponent } from './components/add-spending/add-spending.component';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -54,7 +58,10 @@ import { IconSelectComponent } from './components/custom/icon-select/icon-select
     DashboardComponent,
     CategoriesComponent,
     AddCategoryComponent,
-    IconSelectComponent
+    IconSelectComponent,
+    BudgetInfoComponent,
+    SpendingsComponent,
+    AddSpendingComponent,
     
   ],
   imports: [
@@ -78,6 +85,7 @@ import { IconSelectComponent } from './components/custom/icon-select/icon-select
     MatNativeDateModule,
     MatAutocompleteModule,
     MatProgressBarModule,
+    MatSelectModule,
     ToastrModule.forRoot()
   ],
   providers: [],

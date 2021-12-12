@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AssociateTableComponent } from './components/associate-table/associate-table.component';
 import { BookTableComponent } from './components/book-table/book-table.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { CilesimetComponent } from './components/cilesimet/cilesimet.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { StatisticsComponent } from './components/statistics/statistics.component';
+import { SpendingsComponent } from './components/spendings/spendings.component';
 
 
 const routes: Routes = [
@@ -13,7 +12,7 @@ const routes: Routes = [
   {path: 'librat', component: BookTableComponent},
   {path: 'categories', component: CategoriesComponent},
   {path: 'cilesimet', component: CilesimetComponent},
-  {path: 'statistics', component: StatisticsComponent},
+  {path: 'spendings', component: SpendingsComponent},
   {path: 'dashboard', component: DashboardComponent}
 
 ];

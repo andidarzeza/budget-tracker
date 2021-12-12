@@ -21,9 +21,9 @@ export class SideBarComponent implements OnInit {
       link: '/categories'
     },
     {
-      icon: 'bar_chart',
-      text: 'Statistics',
-      link: '/statistics'
+      icon: 'attach_money',
+      text: 'Spendings',
+      link: '/spendings'
     },
     {
       icon: 'settings',

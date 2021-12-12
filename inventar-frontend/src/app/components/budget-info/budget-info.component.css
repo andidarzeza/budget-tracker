@@ -1,0 +1,13 @@
+.container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 28px;
+    justify-content: space-between;
+    color: white;
+}
+
+.current-balance {
+    padding-right: 40px;
+    padding-top: 30px;
+}

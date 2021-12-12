@@ -3,18 +3,18 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { IAssociate } from 'src/app/models/IAssociate';
-import { SpendingCategory } from 'src/app/models/SpendingCategory';
-import { CategoriesService } from 'src/app/services/categories.service';
+import { Spending } from 'src/app/models/Spending';
 import { SharedService } from 'src/app/services/shared.service';
+import { SpendingService } from 'src/app/services/spending.service';
 import { AddCategoryComponent } from '../add-category/add-category.component';
+import { AddSpendingComponent } from '../add-spending/add-spending.component';
 import { AssociateInfoComponent } from '../associate-info/associate-info.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
 
 @Component({
-  selector: 'app-categories',
-  templateUrl: './categories.component.html',
-  styleUrls: ['./categories.component.css'],
+  selector: 'app-spendings',
+  templateUrl: './spendings.component.html',
+  styleUrls: ['./spendings.component.css'],
   animations: [
     trigger(
       'inOutAnimation', 
@@ -39,16 +39,15 @@ import { ConfirmComponent } from '../confirm/confirm.component';
     )
   ]
 })
-export class CategoriesComponent implements OnInit {
-
+export class SpendingsComponent implements OnInit {
   page = 0;
   size = 10;
   totalItems;
   totalRequests = 0;
   theme = 'light';
-  displayedColumns: string[] = ['icon', 'name', 'description', 'actions'];
-  dataSource: SpendingCategory[] = [];
-  constructor(public sharedService: SharedService, private categoriesService: CategoriesService, public dialog: MatDialog, private toaster: ToastrService) { }
+  displayedColumns: string[] = ['name', 'description', 'category', 'moneySpent', 'actions'];
+  spendings: Spending[] = [];
+  constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService) { }
 
   ngOnInit(): void {
     this.query();
@@ -63,17 +62,17 @@ export class CategoriesComponent implements OnInit {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.categoriesService.findAll(this.page, this.size).subscribe((res: HttpResponse<any>) => {
-      this.dataSource = res?.body.categories;
+    this.spendingService.findAll(this.page, this.size).subscribe((res: HttpResponse<any>) => {
+      this.spendings = res?.body.spendings;
       this.totalItems = res?.body.count;
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);     
     });
   }
 
-  openDialog(spendingCategory?: SpendingCategory): void {
-    const dialogRef = this.dialog.open(AddCategoryComponent, {
-      data: spendingCategory,
+  openDialog(spending?: Spending): void {
+    const dialogRef = this.dialog.open(AddSpendingComponent, {
+      data: spending,
       width: '700px',
       disableClose: true,
       panelClass: this.sharedService.theme + '-class'
@@ -90,7 +89,7 @@ export class CategoriesComponent implements OnInit {
   deleteAssociate(id: string): void {
     this.openConfirmDialog().afterClosed().subscribe((result: any) => {
       if(result) {
-        this.categoriesService.delete(id).subscribe((res: any) => {
+        this.spendingService.delete(id).subscribe((res: any) => {
           this.query();
           this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000});
         });
@@ -106,8 +105,8 @@ export class CategoriesComponent implements OnInit {
     return dialogRef;
   }
 
-  editAssociate(spendingCategory: SpendingCategory): void {
-    this.openDialog(spendingCategory);
+  editAssociate(spending: Spending): void {
+    this.openDialog(spending);
   }
 
   openAssociateInfo(id: string): void {    
@@ -142,7 +141,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   delete(id: string): void {
-    this.categoriesService.delete(id).subscribe((res: any) => {
+    this.spendingService.delete(id).subscribe((res: any) => {
       this.query();
       this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000});
     });
@@ -151,4 +150,5 @@ export class CategoriesComponent implements OnInit {
   getHeight(difference: number): number {
     return window.innerHeight - 275 - difference;
   }
+
 }
