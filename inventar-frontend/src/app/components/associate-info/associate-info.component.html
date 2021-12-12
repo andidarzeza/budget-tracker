@@ -1,0 +1,124 @@
+<div class="container">
+    <span></span>
+    <div class="actions">
+        <mat-icon class="pointer" (click)="closeDialog()">close</mat-icon>
+    </div>
+</div>
+<div class="associate-info">
+    Informacionet e Anetarit
+    <hr>
+</div>
+<div class="info">
+    <div class="field">Emri: {{associate?.firstName}}</div>
+    <div class="field">Mbiemri: {{associate?.lastName}}</div>
+    <div class="field">Nr.Cel: {{associate?.phoneNumber}}</div>
+</div>
+
+<div class="books">
+    <div class="actions-2">
+        <button mat-icon-button color="primary" style="float: right;" (click)="switchNewBookForm()">
+            <mat-icon *ngIf="!newBookFormIsOpened">add</mat-icon>
+            <mat-icon *ngIf="newBookFormIsOpened">remove</mat-icon>
+        </button>
+    </div>
+    <div class="new-book" id="new-book-id">
+        <form [formGroup]="assignBookGroup" style="display: flex;justify-content: space-between;">
+
+            <mat-form-field class="example-full-width" appearance="fill" style="width: 33%;">
+                <mat-label>Data (nga)</mat-label>
+                <input matInput [matDatepicker]="from" formControlName="fromDate">
+                <mat-datepicker-toggle matSuffix [for]="from">
+                    <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #from></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill" style="width: 32%;">
+                <mat-label>Data (deri ne)</mat-label>
+                <input matInput [matDatepicker]="to" formControlName="toDate" [min]="assignBookGroup.get('fromDate').value" [disabled]="assignBookGroup.get('fromDate').value === null || assignBookGroup.get('fromDate').value === undefined">
+                <mat-datepicker-toggle matSuffix [for]="to">
+                    <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #to></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field style="width: 32%;" id="autocomplete-holder">
+                <input type="text" placeholder="Zgjidh Nje Liber" aria-label="Number" matInput formControlName="book" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" style="color: red;">
+                    <mat-option *ngFor="let avaibleBook of booksAvaible" [value]="avaibleBook">
+                        {{avaibleBook.title}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </form>
+        <button mat-raised-button color="primary" style="float: right;" [disabled]="!assignBookGroup.valid" (click)="addBookToAssociate()">Shto</button>
+    </div>
+    <hr>
+    <div class="field" style="text-align: center;" *ngIf="true">Librat</div>
+    <br>
+    <table mat-table [dataSource]="associateBooks" class="mat-elevation-z8 {{sharedService.theme}}-table" style="width: 100%;" *ngIf="true">
+
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef class="{{sharedService.theme}}-text"> Titulli </th>
+            <td mat-cell *matCellDef="let element" class="{{sharedService.theme}}-text"> {{element.book.title}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="author">
+            <th mat-header-cell *matHeaderCellDef class="{{sharedService.theme}}-text"> Autori </th>
+            <td mat-cell *matCellDef="let element" class="{{sharedService.theme}}-text"> {{element.book.author}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dateFrom">
+            <th mat-header-cell *matHeaderCellDef class="{{sharedService.theme}}-text"> Marre Ne </th>
+            <td mat-cell *matCellDef="let element" class="{{sharedService.theme}}-text"> {{element.fromDate | date: 'dd/MM/yyyy' | data}} </td>
+        </ng-container>
+        <ng-container matColumnDef="dateTo">
+            <th mat-header-cell *matHeaderCellDef class="{{sharedService.theme}}-text"> Per Tu Dorezuar </th>
+            <td mat-cell *matCellDef="let element" class="{{sharedService.theme}}-text"> {{element.toDate | date: 'dd/MM/yyyy' | data}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Veprimet </th>
+            <td mat-cell *matCellDef="let element" class="centered-text action-td-class" style="padding-right: 0;">
+                <button mat-icon-button color="primary" style="display: flex;justify-content: center;" [id]="'button' + element.id" (click)="openConfimationPanel(element.id)">
+                    <mat-icon>how_to_reg</mat-icon>
+                </button>
+                <div [id]="element.id" class="confirm-action-class {{sharedService.theme}}-text">
+                    <mat-form-field class="example-full-width delivered-when-class" appearance="outline">
+                        <mat-label class="{{sharedService.theme}}-text">Dorezuar Ne</mat-label>
+                        <input [id]="element.id + 'deliveredDate'" placeholder="Dorezuar ne" matInput [matDatepicker]="confirmDate" [min]="element.fromDate">
+                        <mat-datepicker-toggle matSuffix [for]="confirmDate">
+                            <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+                        </mat-datepicker-toggle>
+                        <mat-datepicker #confirmDate></mat-datepicker>
+                    </mat-form-field>
+                    <div class="actions">
+                        <button mat-icon-button (click)="markAsDelivered(element.id)" class="custom-margin">
+                            <mat-icon>check</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="closeConfirmationPanel(element.id)" class="custom-margin">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </td>
+
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <div class="no-item-message" *ngIf="false">
+        <div class="message-container">
+            <mat-icon style="    color: #3f51b5;
+            width: 70px;
+            height: 70px;
+            font-size: 70px;" class="no-select">info</mat-icon>
+            <span class="message no-select">Tabela eshte bosh!</span>
+        </div>
+    </div>
+</div>

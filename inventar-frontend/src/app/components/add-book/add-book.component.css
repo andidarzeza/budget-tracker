@@ -1,0 +1,37 @@
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: -15px;
+    padding: 10px 0px;
+}
+
+.container > span {
+    font-size: 18px;
+    color: #9F9F9F;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.input-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.stock-class {
+    margin-top: 3.5px;
+}
+.actions {
+    display: flex;
+    justify-content: space-between;
+}

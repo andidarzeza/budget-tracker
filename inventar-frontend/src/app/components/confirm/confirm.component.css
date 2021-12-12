@@ -1,0 +1,22 @@
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: -15px;
+    margin-left: 15px;
+}
+
+.message {
+    width: 100%;
+    text-align: center;
+}
+
+.commands {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.yes-button {
+    margin-right: 5px;
+}

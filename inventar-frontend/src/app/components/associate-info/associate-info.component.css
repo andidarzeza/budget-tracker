@@ -1,0 +1,93 @@
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: -15px;
+    margin-left: 15px;
+}
+
+.associate-info {
+    text-align: center;
+    font-size: 18px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.field {
+    font-size: 18px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.info {
+    display: flex;
+    justify-content: space-around;
+}
+
+.actions-2 {
+    width: 100%;
+    font-size: 20px;
+}
+
+.new-book {
+    width: 100%;
+    height: 0px;
+    margin-top: 10px;
+    transition: height 500ms;
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+}
+
+.no-item-message {
+    width: 80%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.message {
+    font-size: 24px;
+    font-weight: 300;
+    color: #3f51b5;
+    margin-top: 10px;
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirm-action-class {
+    display: none;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.centered-text {
+    text-align: center;
+}
+
+.action-td-class {
+    display: flex;
+    padding: 4px 0;
+    justify-content: center;
+}
+
+.custom-margin {
+    margin-top: -19px;
+}
+
+.delivered-when-class {
+    width: 80%;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.actions {
+    margin-top: 5px;
+}

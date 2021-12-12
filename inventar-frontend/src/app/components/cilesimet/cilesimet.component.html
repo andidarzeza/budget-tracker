@@ -1,0 +1,16 @@
+<div class="button-container">
+    <div class="titulli">
+        <mat-icon class="{{sharedService.theme}}-icon">settings</mat-icon>
+        <span class="title">Cilesimet</span>
+    </div>
+    <span></span>
+</div>
+<mat-card class="{{sharedService.theme}}-card configuration">
+    <span>Pamja e Erret</span>
+    <mat-slide-toggle [checked]="sharedService.theme === 'dark'" (change)="changeTheme()"></mat-slide-toggle>
+</mat-card>
+
+<mat-card class="{{sharedService.theme}}-card configuration">
+    <span>Aktivizo Animacionin e Ngarkimit</span>
+    <mat-slide-toggle [checked]="sharedService.isSpinnerEnabled" (change)="setAnimationLoading()"></mat-slide-toggle>
+</mat-card>

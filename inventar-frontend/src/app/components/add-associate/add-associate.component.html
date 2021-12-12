@@ -1,0 +1,34 @@
+<div class="container">
+    <span></span>
+    <div class="actions">
+        <mat-icon class="pointer" class="{{sharedService.theme}}-icon" (click)="closeDialog(false)">close</mat-icon>
+    </div>
+</div>
+<form [formGroup]="associateGroup">
+    <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label class="{{sharedService.theme}}-text">Emri</mat-label>
+        <input type="text" autocomplete="off" matInput formControlName="firstName">
+        <mat-error *ngIf="associateGroup.controls['firstName'].errors?.required">Kjo fushe nuk mund te jete bosh.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label class="{{sharedService.theme}}-text">Mbiemri</mat-label>
+        <input type="text" autocomplete="off" matInput formControlName="lastName">
+        <mat-error *ngIf="associateGroup.controls['lastName'].errors?.required">Kjo fushe nuk mund te jete bosh.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label class="{{sharedService.theme}}-text">Nr.Tel</mat-label>
+        <input type="number" min="0" autocomplete="off" matInput formControlName="phoneNumber" (keydown.enter)="addAssociate()">
+    </mat-form-field>
+</form>
+
+<div class="actions">
+    <span></span>
+    <span>
+        <button mat-raised-button color="primary" class="{{sharedService.theme}}-add-entity" style="padding: 2px;" [disabled]="associateGroup?.invalid" (click)="addAssociate()">
+            <mat-icon>done</mat-icon>
+        </button>
+    </span>
+
+</div>

@@ -1,0 +1,21 @@
+<div style="position: relative;height: 100%;">
+    <div class="logo-container">
+        <!-- <img style="width: 66.9px;height: 66.9px;"> -->
+        <span></span>
+    </div>
+
+    <div class="menu-items">
+        <div id="active-item">
+
+        </div>
+        <div class="opened-menu-item pointer" *ngFor="let item of items;let i = index" [routerLink]="[item.link]" routerLinkActive="router-link-active" (click)="animateSelectedOption(i)">
+            <mat-icon class="{{sharedService.theme}}-icon">{{item.icon}}</mat-icon>
+            <span  class="title {{sharedService.theme}}-text">{{item.text}}</span>
+        </div>
+    </div>
+
+    <button mat-raised-button (click)="toggleSideBar()" id="toggle-id" >
+        <mat-icon class="custom-icon-size {{sharedService.theme}}-icon" *ngIf="isOpened">arrow_back_ios</mat-icon>
+        <mat-icon class="custom-icon-size {{sharedService.theme}}-icon" *ngIf="!isOpened">arrow_forward_ios</mat-icon>
+    </button>
+</div>
