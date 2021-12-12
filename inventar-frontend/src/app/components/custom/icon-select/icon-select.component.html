@@ -1,0 +1,42 @@
+<style>
+    /* width */
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #1d252a;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ff6347;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #ff4524;
+}
+</style>
+
+<div class="container">
+    <div class="selected-icon flex-centered no-select pointer" (click)="toggleDropdown()">
+        <mat-icon style="width: 30px;height: 30px;font-size: 30px;color: #f6af06;">
+            {{selectedIcon ? selectedIcon: 'add'}}
+        </mat-icon>
+    </div>
+
+    <div class="icon-dropdown" [@inOutAnimation] *ngIf="showDropdown">
+        <div *ngFor="let icon of icons">
+            <div class="test flex-centered no-select pointer" (click)="selectIcon(icon)">
+                <mat-icon style="width: 30px;height: 30px;font-size: 30px;color:#f6af06;">{{icon}}</mat-icon>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="select-icon-button flex-centered no-select pointer" (click)="toggleDropdown()">
+       Select Icon
+    </div>    
+</div>

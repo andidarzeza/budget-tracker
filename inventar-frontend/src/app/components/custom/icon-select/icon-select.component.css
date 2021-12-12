@@ -1,0 +1,41 @@
+.container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.selected-icon {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #ff6347;
+    border-radius: 2px;
+}
+
+.select-icon-button {
+    width: calc(100% - 70px);
+    height: 50px;
+    border: 2px solid #ff6347;
+    border-radius: 2px;
+}
+
+.icon-dropdown {
+    height: 200px;
+    background: #1d252a;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-40%);
+    bottom: 35px;
+    display: inline-grid;
+    grid-template-columns: auto auto auto auto auto;
+    overflow-y: scroll;
+    box-shadow: 0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%);
+}
+
+.test{
+    border: 2px solid #ff6347;
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+}

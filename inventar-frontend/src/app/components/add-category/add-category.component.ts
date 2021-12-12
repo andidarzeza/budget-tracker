@@ -21,7 +21,7 @@ export class AddCategoryComponent implements OnInit {
   categoryGroup: FormGroup = this.formBuilder.group({
     category: ['', Validators.required],
     description: ['', Validators.required],
-    icon: ['home', Validators.required]
+    icon: [null, Validators.required]
   });
 
   get category(){
@@ -72,5 +72,9 @@ export class AddCategoryComponent implements OnInit {
 
   closeDialog(update: any): void {
     this.dialogRef.close(update);
+  }
+
+  onIconSelect(icon: string): void {
+    this.icon.setValue(icon);
   }
 }

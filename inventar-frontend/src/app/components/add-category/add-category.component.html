@@ -16,7 +16,7 @@
         <input type="text" autocomplete="off" matInput formControlName="description">
         <mat-error *ngIf="description.errors?.required">Kjo fushe nuk mund te jete bosh.</mat-error>
     </mat-form-field>
-
+    <app-icon-select style="display:block; margin-bottom: 1.34375em;" [selectedIcon]="icon.value" (onIconSelect)="onIconSelect($event)"></app-icon-select>
 </form>
 
 <div class="actions">

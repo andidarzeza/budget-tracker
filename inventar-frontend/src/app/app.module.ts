@@ -35,6 +35,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { AddCategoryComponent } from './components/add-category/add-category.component';
+import { IconSelectComponent } from './components/custom/icon-select/icon-select.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { AddCategoryComponent } from './components/add-category/add-category.com
     StatisticsComponent,
     DashboardComponent,
     CategoriesComponent,
-    AddCategoryComponent
+    AddCategoryComponent,
+    IconSelectComponent
     
   ],
   imports: [
