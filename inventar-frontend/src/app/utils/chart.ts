@@ -8,26 +8,19 @@ import { ChartOptions } from './ChartOptions';
 export class ChartUtils {
     public createChart(context: string, options: ChartOptions): Chart {
         return new Chart(context, {
-            type: 'line',
+            type: options.type,
             data: {
                 labels: options.labels,
-                datasets: [{
-                    label: 'Money Spent',
-                    data: options.data,
-                    tension: 0.2,
-                    backgroundColor: 
-                        '#ff6347'
-                    ,
-                    borderColor: 
-                        '#ff6347',
-                    
-                    borderWidth: 1
-                }]
+                datasets: options.datasets
             },
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        display: options.showGridLines
+                    },
+                    x: {
+                        display: options.showGridLines
                     }
                 }
             }

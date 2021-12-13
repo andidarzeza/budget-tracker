@@ -5,6 +5,7 @@ import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
 import { DateUtil, MonthValue } from 'src/app/utils/DateUtil';
 import { pipe, Observable } from 'rxjs';
+import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,7 +15,7 @@ import { pipe, Observable } from 'rxjs';
 export class DashboardComponent implements OnInit {
   selectedDate = new Date();
   currentMonth = this.selectedDate.getMonth();
-  constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils) { }
+  constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils, public sharedService: SharedService) { }
 
   ngOnInit(): void {
     Chart.register(...registerables);
@@ -33,10 +34,37 @@ export class DashboardComponent implements OnInit {
       console.log(response.body);
       const data: number[] = this.fillMissingData(response.body, chartLabels);
       this.chartUtil.createChart("daily-chart", {
+        type: 'line',
+        colors: ['#ff6347'],
         labels: labels,
-        data: data
+        showGridLines: true,
+        datasets: [{
+          label: 'Money Spent',
+          data: data,
+          tension: 0.2,
+          backgroundColor: ['#ff6347'],
+          borderColor: ['#ff6347'],
+          borderWidth: 1
+        }]
       });
     });
+
+    this.dashboardService.getCategoriesata().subscribe((response: any) => {
+      console.log(response.body);
+      this.chartUtil.createChart("category-chart", {
+        type: 'doughnut',
+        labels: response.body.map(item => item._id),
+        showGridLines: false,
+        datasets: [{
+          label: 'Categories',
+          data: response.body.map(item => item.total),
+          tension: 0.2,
+          backgroundColor: ['#ff6347', 'blue'],
+          borderColor: ['#ff6347', 'blue'],
+          borderWidth: 1
+        }]
+      });
+    })
   }
 
   private fillMissingData(data: any, chartLabels: string[]): number[] {

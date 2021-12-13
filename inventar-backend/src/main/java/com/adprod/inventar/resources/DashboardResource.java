@@ -20,4 +20,9 @@ public class DashboardResource {
         return dashboardService.getDailySpendings();
     }
 
+    @GetMapping("/categories")
+    public ResponseEntity getCategoriesData(){
+        return dashboardService.getCategoriesData();
+    }
+
 }

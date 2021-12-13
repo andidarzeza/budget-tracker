@@ -1,6 +1,7 @@
 package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.models.*;
+import com.adprod.inventar.repositories.CategoryRepository;
 import org.springframework.data.mongodb.MongoExpression;
 import com.adprod.inventar.services.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class DashboardServiceImpl implements DashboardService {
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     private static class DailySpendingsDTO{
         String _id;
@@ -55,5 +60,22 @@ public class DashboardServiceImpl implements DashboardService {
         TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
         List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", DailySpendingsDTO.class).getMappedResults();
         return ResponseEntity.ok(resultSR);
+    }
+
+    @Override
+    public ResponseEntity getCategoriesData() {
+        List<AggregationOperation> aggregationResult = new ArrayList<>();
+        aggregationResult.add(Aggregation.group("$spendingCategoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("total"));
+        TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
+        List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", DailySpendingsDTO.class).getMappedResults();
+        List<DailySpendingsDTO> response = new ArrayList<>();
+        resultSR.forEach(result -> {
+            String id = result.get_id();
+            Optional<SpendingCategory> category = categoryRepository.findById(id);
+            if(category.isPresent()) {
+                response.add(new DailySpendingsDTO(category.get().getCategory(), result.getTotal()));
+            }
+        });
+        return ResponseEntity.ok(response);
     }
 }
