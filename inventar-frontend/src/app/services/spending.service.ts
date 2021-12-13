@@ -2,7 +2,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { IBook } from '../models/IBook';
 import { Spending } from '../models/Spending';
 
 @Injectable({
@@ -11,8 +10,8 @@ import { Spending } from '../models/Spending';
 export class SpendingService {
   constructor(private http: HttpClient) { }
 
-  findAll(page: any, size: any): Observable<any> {
-    const options: HttpParams = new HttpParams().append("page", page).append("size", size);
+  findAll(page: any, size: any, sort: any): Observable<any> {
+    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort);
     return this.http.get(`${serverAPIURL}/api/spending`, {
       params: options,
       observe: 'response'

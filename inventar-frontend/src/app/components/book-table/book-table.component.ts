@@ -7,6 +7,7 @@ import { IBook } from 'src/app/models/IBook';
 import { BookService } from 'src/app/services/book.service';
 import { ConfirmService } from 'src/app/services/confirm.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { TOASTER_POSITION } from 'src/environments/environment';
 import { AddBookComponent } from '../add-book/add-book.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
 
@@ -96,7 +97,7 @@ export class BookTableComponent implements OnInit {
           console.log(res);
           
           this.query();
-          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000});
+          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
         })
       }
     });;

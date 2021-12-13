@@ -8,6 +8,7 @@ import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
+import { TOASTER_POSITION } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add-spending',
@@ -71,14 +72,14 @@ export class AddSpendingComponent implements OnInit {
         this.spendingService.update(this.spending).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Anetari u perditesua me sukses", "Sukses!", {
-            timeOut: 7000
+            timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
       } else {
         this.spendingService.save(this.formGroup.value).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Anetari u shtua me sukses", "Sukses!", {
-            timeOut: 7000
+            timeOut: 7000, positionClass: TOASTER_POSITION
           });    
         });
       }

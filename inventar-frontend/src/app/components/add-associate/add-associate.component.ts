@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { IAssociate } from 'src/app/models/IAssociate';
 import { AssociateService } from 'src/app/services/associate.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { TOASTER_POSITION } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add-associate',
@@ -41,14 +42,14 @@ export class AddAssociateComponent implements OnInit {
         this.associateService.updateAssociate(this.associate).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Anetari u perditesua me sukses", "Sukses!", {
-            timeOut: 7000
+            timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
       } else {
         this.associateService.addAssociate(this.associateGroup.value).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Anetari u shtua me sukses", "Sukses!", {
-            timeOut: 7000
+            timeOut: 7000, positionClass: TOASTER_POSITION
           });    
         });
       }

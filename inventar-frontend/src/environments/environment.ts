@@ -6,6 +6,7 @@ export const environment = {
   production: false
 };
 export const serverAPIURL = 'http://localhost:8081';
+export const TOASTER_POSITION = "toast-bottom-right";
 
 /*
  * For easier debugging in development mode, you can import the following file

@@ -7,6 +7,7 @@ import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { AssociateService } from 'src/app/services/associate.service';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { TOASTER_POSITION } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add-category',
@@ -56,14 +57,14 @@ export class AddCategoryComponent implements OnInit {
         this.categoriesService.update(this.spendingCategory).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Anetari u perditesua me sukses", "Sukses!", {
-            timeOut: 7000
+            timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
       } else {
         this.categoriesService.save(this.categoryGroup.value).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Anetari u shtua me sukses", "Sukses!", {
-            timeOut: 7000
+            timeOut: 7000, positionClass: TOASTER_POSITION
           });    
         });
       }

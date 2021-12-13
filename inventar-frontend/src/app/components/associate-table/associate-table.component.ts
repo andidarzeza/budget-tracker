@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { IAssociate } from 'src/app/models/IAssociate';
 import { AssociateService } from 'src/app/services/associate.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { TOASTER_POSITION } from 'src/environments/environment';
 import { AddAssociateComponent } from '../add-associate/add-associate.component';
 import { AssociateInfoComponent } from '../associate-info/associate-info.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
@@ -91,7 +92,7 @@ export class AssociateTableComponent implements OnInit {
       if(result) {
         this.associateService.removeAssociate(id).subscribe((res: any) => {
           this.query();
-          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000});
+          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
         });
       }
     });;
@@ -143,7 +144,7 @@ export class AssociateTableComponent implements OnInit {
   delete(id: string): void {
     this.associateService.removeAssociate(id).subscribe((res: any) => {
       this.query();
-      this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000});
+      this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
     });
   }
 

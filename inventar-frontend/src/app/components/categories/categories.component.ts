@@ -7,6 +7,7 @@ import { IAssociate } from 'src/app/models/IAssociate';
 import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { TOASTER_POSITION } from 'src/environments/environment';
 import { AddCategoryComponent } from '../add-category/add-category.component';
 import { AssociateInfoComponent } from '../associate-info/associate-info.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
@@ -92,7 +93,7 @@ export class CategoriesComponent implements OnInit {
       if(result) {
         this.categoriesService.delete(id).subscribe((res: any) => {
           this.query();
-          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000});
+          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
         });
       }
     });;
@@ -144,7 +145,7 @@ export class CategoriesComponent implements OnInit {
   delete(id: string): void {
     this.categoriesService.delete(id).subscribe((res: any) => {
       this.query();
-      this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000});
+      this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
     });
   }
 

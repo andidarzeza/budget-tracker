@@ -1,10 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
 import { Account } from '../models/Account';
-import { IAssociate } from '../models/IAssociate';
-import { IBook } from '../models/IBook';
 
 @Injectable({
   providedIn: 'root'

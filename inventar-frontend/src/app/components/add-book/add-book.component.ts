@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { IBook } from 'src/app/models/IBook';
 import { BookService } from 'src/app/services/book.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { TOASTER_POSITION } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add-book',
@@ -46,14 +47,14 @@ export class AddBookComponent implements OnInit {
         this.bookService.updateBook(book).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Libri u perditesua me sukses", "Sukses!", {
-            timeOut: 7000
+            timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
       } else {
         this.bookService.addBook(this.bookGroup.value).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Libri u shtua me sukses", "Sukses!", {
-            timeOut: 7000
+            timeOut: 7000, positionClass: TOASTER_POSITION
           });    
         });
       }

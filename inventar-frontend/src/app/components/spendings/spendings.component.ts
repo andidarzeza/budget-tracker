@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Spending } from 'src/app/models/Spending';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
+import { TOASTER_POSITION } from 'src/environments/environment';
 import { AddCategoryComponent } from '../add-category/add-category.component';
 import { AddSpendingComponent } from '../add-spending/add-spending.component';
 import { AssociateInfoComponent } from '../associate-info/associate-info.component';
@@ -45,7 +46,8 @@ export class SpendingsComponent implements OnInit {
   totalItems;
   totalRequests = 0;
   theme = 'light';
-  displayedColumns: string[] = ['name', 'description', 'category', 'moneySpent', 'actions'];
+  sort = "createdTime,desc";
+  displayedColumns: string[] = ['date', 'name', 'description', 'category', 'moneySpent', 'actions'];
   spendings: Spending[] = [];
   constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService) { }
 
@@ -62,7 +64,8 @@ export class SpendingsComponent implements OnInit {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.spendingService.findAll(this.page, this.size).subscribe((res: HttpResponse<any>) => {
+    console.log(this.sort);
+    this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
       this.spendings = res?.body.spendings;
       this.totalItems = res?.body.count;
       this.totalRequests--;
@@ -91,7 +94,7 @@ export class SpendingsComponent implements OnInit {
       if(result) {
         this.spendingService.delete(id).subscribe((res: any) => {
           this.query();
-          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000});
+          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
         });
       }
     });;
@@ -143,7 +146,7 @@ export class SpendingsComponent implements OnInit {
   delete(id: string): void {
     this.spendingService.delete(id).subscribe((res: any) => {
       this.query();
-      this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000});
+      this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
     });
   }
 

@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
 import { StatisticsService } from 'src/app/services/statistics.service';
+import { TOASTER_POSITION } from 'src/environments/environment';
 
 @Component({
   selector: 'app-statistics',
@@ -42,7 +43,7 @@ export class StatisticsComponent implements OnInit {
       this.sharedService.checkLoadingSpinner(this.totalRequests);     
     },
     (error: any) => {
-      this.toaster.error(error.message, "ERROR");
+      this.toaster.error(error.message, "ERROR", {positionClass: TOASTER_POSITION});
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);
     });
