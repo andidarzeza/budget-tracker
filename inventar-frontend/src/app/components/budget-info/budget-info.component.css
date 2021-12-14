@@ -4,11 +4,14 @@
     align-items: center;
     font-size: 28px;
     justify-content: space-between;
-    color: white;
+    color: #9F9F9F;
 }
 
 .current-balance {
     padding-right: 40px;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 12px;
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 }

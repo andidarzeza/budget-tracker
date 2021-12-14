@@ -4,6 +4,14 @@
     </span>
 
     <div class="current-balance">
-        {{ account?.balance | number:'1.0':'en-US' }} ALL
+        <span [@inOutAnimation] *ngIf="!hideBalance">
+             {{ account?.balance | number:'1.0':'en-US' }} ALL
+        </span> 
+        <span [@inOutAnimation] *ngIf="hideBalance" style="margin-top: 6px;">
+            {{hiddenBalance}}
+        </span>
+        <button mat-icon-button style="margin-bottom: 5px;" (click)="toggleHideBalance()">
+            <mat-icon>remove_red_eye</mat-icon>
+        </button>
     </div>
 </div>

@@ -20,23 +20,23 @@
 }
 </style>
 
-<div class="container">
-    <div class="selected-icon flex-centered no-select pointer" (click)="toggleDropdown()">
-        <mat-icon style="width: 30px;height: 30px;font-size: 30px;color: #f6af06;">
+<div class="container" #container>
+    <div class="{{sharedService.theme}}-border selected-icon flex-centered no-select pointer" (click)="toggleDropdown()">
+        <mat-icon class="{{sharedService.theme}}-icon-2" style="width: 30px;height: 30px;font-size: 30px;">
             {{selectedIcon ? selectedIcon: 'add'}}
         </mat-icon>
     </div>
 
-    <div class="icon-dropdown" [@inOutAnimation] *ngIf="showDropdown">
+    <div class="icon-dropdown {{sharedService.theme}}-table" [@inOutAnimation] *ngIf="showDropdown">
         <div *ngFor="let icon of icons">
-            <div class="test flex-centered no-select pointer" (click)="selectIcon(icon)">
-                <mat-icon style="width: 30px;height: 30px;font-size: 30px;color:#f6af06;">{{icon}}</mat-icon>
+            <div class="size flex-centered no-select pointer {{sharedService.theme}}-border" (click)="selectIcon(icon)">
+                <mat-icon style="width: 30px;height: 30px;font-size: 30px;" class="{{sharedService.theme}}-icon-2">{{icon}}</mat-icon>
             </div>
         </div>
     </div>
 
 
-    <div class="select-icon-button flex-centered no-select pointer" (click)="toggleDropdown()">
+    <div class="{{sharedService.theme}}-border select-icon-button flex-centered no-select pointer" (click)="toggleDropdown()">
        Select Icon
     </div>    
 </div>

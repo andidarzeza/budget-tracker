@@ -1,5 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'app-icon-select',
@@ -30,8 +31,17 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
   ]
 })
 export class IconSelectComponent implements OnInit, OnChanges {
+  @ViewChild('container') container;
+  constructor(public sharedService: SharedService) { 
+    document.addEventListener('click', this.offClickHandler.bind(this)); // bind on doc
+  }
 
-  constructor() { }
+
+  offClickHandler(event:any) {
+    if (!this.container.nativeElement.contains(event.target)) { // check click origin
+      this.showDropdown = false;
+    }
+  }
   ngOnChanges(changes: SimpleChanges): void {
     if(changes?.selectedIcon) {
       this.selectedIcon = changes?.selectedIcon.currentValue;

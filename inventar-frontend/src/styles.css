@@ -31,6 +31,23 @@ app-dashboard {
     height: calc(100% - 64px);
 }
 
+.dark-border {
+    border: 2px solid #ff6347;    
+}
+
+.light-border{
+    border: 2px solid #305680;
+}
+
+.dark-icon-2 {
+    color: #f6af06;    
+}
+
+.light-icon-2{
+    color: #305680;
+}
+
+
 .flex-centered {
     display: flex;
     justify-content: center;

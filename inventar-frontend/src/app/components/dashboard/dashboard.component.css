@@ -1,7 +1,7 @@
 .category-container {
     width: calc(100% - 35px);
     margin: auto;
-    margin-top: 30px;
+    margin-top: 20px;
     margin-bottom: 30px;
     height: 370px;
     display: flex;
