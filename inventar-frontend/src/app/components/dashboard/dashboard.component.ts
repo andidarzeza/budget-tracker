@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
-import { AccountService } from 'src/app/services/account.service';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
-import { DateUtil, MonthValue } from 'src/app/utils/DateUtil';
-import { pipe, Observable } from 'rxjs';
+import { DateUtil } from 'src/app/utils/DateUtil';
 import { SharedService } from 'src/app/services/shared.service';
+import { strToColor } from 'src/app/utils/ColorUtil';
 
 @Component({
   selector: 'app-dashboard',
@@ -51,16 +50,19 @@ export class DashboardComponent implements OnInit {
 
     this.dashboardService.getCategoriesata().subscribe((response: any) => {
       console.log(response.body);
+      const total = response.body.reduce((previousValue, currentValue) => previousValue?.total + currentValue?.total)
+      console.log(total);
+      
       this.chartUtil.createChart("category-chart", {
         type: 'doughnut',
         labels: response.body.map(item => item._id),
         showGridLines: false,
         datasets: [{
           label: 'Categories',
-          data: response.body.map(item => item.total),
+          data: response.body.map(item => item.total * 100 / (total.total??total)),
           tension: 0.2,
-          backgroundColor: ['#ff6347', 'blue'],
-          borderColor: ['#ff6347', 'blue'],
+          backgroundColor: response.body.map(item => '#' + strToColor(item._id)),
+          borderColor: response.body.map(item => '#' + strToColor(item._id)),
           borderWidth: 1
         }]
       });

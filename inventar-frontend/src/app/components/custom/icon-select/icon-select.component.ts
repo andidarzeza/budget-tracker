@@ -33,11 +33,9 @@ export class IconSelectComponent implements OnInit, OnChanges {
 
   constructor() { }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if(changes?.selectedIcon) {
       this.selectedIcon = changes?.selectedIcon.currentValue;
     }
-    
   }
 
   @Output() onIconSelect: EventEmitter<string> = new EventEmitter();
@@ -45,6 +43,8 @@ export class IconSelectComponent implements OnInit, OnChanges {
 
   icons: string[] = [
     'fastfood',
+    'local_cafe',
+    'restaurant',
     'directions_car',
     'local_hospital',
     'favorite',

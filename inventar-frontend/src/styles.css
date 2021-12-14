@@ -26,6 +26,11 @@ body {
     /* Standard */
 }
 
+app-dashboard {
+    display: block;
+    height: calc(100% - 64px);
+}
+
 .flex-centered {
     display: flex;
     justify-content: center;

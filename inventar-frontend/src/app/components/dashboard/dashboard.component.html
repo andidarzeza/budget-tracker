@@ -1,10 +1,9 @@
 <app-budget-info></app-budget-info>
 
-<mat-card class="{{sharedService.theme}}-table" style="width: calc(100% - 60px);margin: auto;">
-    <canvas id="daily-chart" style="width: 100%;height: 500px;"></canvas>
-</mat-card>
+<div class="category-container half-height">
+    <mat-card class="category-data {{sharedService.theme}}-table">
 
-<div class="category-container">
+    </mat-card>
     <mat-card class="category-data {{sharedService.theme}}-table">
 
     </mat-card>
@@ -12,3 +11,8 @@
         <canvas id="category-chart" style="max-height: 100%;"></canvas>
     </mat-card>
 </div>
+
+<mat-card class="{{sharedService.theme}}-table half-height" style="width: calc(100% - 60px);margin: auto;">
+    <canvas id="daily-chart" style="width: 100%;height: 100%;"></canvas>
+</mat-card>
+
