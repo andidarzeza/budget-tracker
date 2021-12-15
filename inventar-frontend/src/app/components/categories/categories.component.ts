@@ -46,6 +46,7 @@ export class CategoriesComponent implements OnInit {
   size = 10;
   totalItems;
   totalRequests = 0;
+  categoriesType: string = 'spendings';
   theme = 'light';
   displayedColumns: string[] = ['icon', 'name', 'description', 'actions'];
   dataSource: SpendingCategory[] = [];
@@ -64,7 +65,7 @@ export class CategoriesComponent implements OnInit {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.categoriesService.findAll(this.page, this.size).subscribe((res: HttpResponse<any>) => {
+    this.categoriesService.findAll(this.page, this.size, this.categoriesType).subscribe((res: HttpResponse<any>) => {
       this.dataSource = res?.body.categories;
       this.totalItems = res?.body.count;
       this.totalRequests--;
@@ -74,7 +75,7 @@ export class CategoriesComponent implements OnInit {
 
   openDialog(spendingCategory?: SpendingCategory): void {
     const dialogRef = this.dialog.open(AddCategoryComponent, {
-      data: spendingCategory,
+      data: {spendingCategory, categoriesType: this.categoriesType},
       width: '700px',
       disableClose: true,
       panelClass: this.sharedService.theme + '-class'
@@ -151,5 +152,11 @@ export class CategoriesComponent implements OnInit {
 
   getHeight(difference: number): number {
     return window.innerHeight - 275 - difference;
+  }
+
+  changeCategoriesType(value: string): void {
+    this.categoriesType = value;
+    this.page = 0;
+    this.query();
   }
 }

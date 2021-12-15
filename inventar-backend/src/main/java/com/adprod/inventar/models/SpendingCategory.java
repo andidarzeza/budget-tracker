@@ -10,12 +10,22 @@ public class SpendingCategory {
     private String icon;
     private String category;
     private String description;
+    private String categoryType;
 
-    public SpendingCategory(String id, String icon, String category, String description) {
+    public SpendingCategory(String id, String icon, String category, String description, String categoryType) {
         this.id = id;
         this.icon = icon;
         this.category = category;
         this.description = description;
+        this.categoryType = categoryType;
+    }
+
+    public String getCategoryType() {
+        return categoryType;
+    }
+
+    public void setCategoryType(String categoryType) {
+        this.categoryType = categoryType;
     }
 
     public SpendingCategory() {

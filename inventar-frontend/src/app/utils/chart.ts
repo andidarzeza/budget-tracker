@@ -22,6 +22,12 @@ export class ChartUtils {
                     x: {
                         display: options.showGridLines
                     }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
                 }
             }
         });;

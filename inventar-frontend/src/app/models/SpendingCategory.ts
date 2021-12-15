@@ -4,4 +4,5 @@ export interface SpendingCategory {
     icon: string;
     category: string;
     description: string;
+    categoryType: string;
 }

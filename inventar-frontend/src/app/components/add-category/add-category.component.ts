@@ -18,7 +18,7 @@ export class AddCategoryComponent implements OnInit {
   buttonText = "Shto Anetar";
   private mode = '';
   private id = '';
-  constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public spendingCategory: SpendingCategory, public dialogRef: MatDialogRef<AddCategoryComponent>, private formBuilder: FormBuilder, private categoriesService: CategoriesService) {}
+  constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<AddCategoryComponent>, private formBuilder: FormBuilder, private categoriesService: CategoriesService) {}
   categoryGroup: FormGroup = this.formBuilder.group({
     category: ['', Validators.required],
     description: ['', Validators.required],
@@ -38,11 +38,13 @@ export class AddCategoryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.spendingCategory) {
+    console.log(this.data.spendingCategory);
+    
+    if(this.data.spendingCategory) {
       this.mode = 'edit';
-      this.id = this.spendingCategory.id;
+      this.id = this.data.spendingCategory.id;
       this.buttonText = 'Perditeso Anetar';
-      this.categoryGroup.patchValue(this.spendingCategory);
+      this.categoryGroup.patchValue(this.data.spendingCategory);
     }else{
       this.mode = 'add';
     }
@@ -51,17 +53,21 @@ export class AddCategoryComponent implements OnInit {
   add(): void {
     if(this.categoryGroup.valid){
       if(this.mode === 'edit') {
-        this.spendingCategory.category = this.category.value;
-        this.spendingCategory.description = this.description.value;
-        this.spendingCategory.icon = this.icon.value;
-        this.categoriesService.update(this.spendingCategory).subscribe((res:any) => {
+        this.data.spendingCategory.category = this.category.value;
+        this.data.spendingCategory.description = this.description.value;
+        this.data.spendingCategory.icon = this.icon.value;
+        const payload = this.data.spendingCategory;
+        payload['categoryType'] = this.data.categoriesType;
+        this.categoriesService.update(payload).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Anetari u perditesua me sukses", "Sukses!", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
       } else {
-        this.categoriesService.save(this.categoryGroup.value).subscribe((res:any) => {
+        const payload = this.categoryGroup.value;
+        payload['categoryType'] = this.data.categoriesType;
+        this.categoriesService.save(payload).subscribe((res:any) => {
           this.closeDialog(true);  
           this.toaster.success("Anetari u shtua me sukses", "Sukses!", {
             timeOut: 7000, positionClass: TOASTER_POSITION

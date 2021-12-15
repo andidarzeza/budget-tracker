@@ -5,15 +5,42 @@ import { ChartUtils } from 'src/app/utils/chart';
 import { DateUtil } from 'src/app/utils/DateUtil';
 import { SharedService } from 'src/app/services/shared.service';
 import { strToColor } from 'src/app/utils/ColorUtil';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
+  animations: [
+    trigger(
+      'inOutAnimation', 
+      [
+        transition(
+          ':enter', 
+          [
+            style({ opacity: 0 }),
+            animate('400ms ease-out', 
+                    style({opacity: 1 }))
+          ]
+        ),
+        transition(
+          ':leave', 
+          [
+            style({ opacity: 1 }),
+            animate('400ms ease-in', 
+                    style({ opacity: 0 }))
+          ]
+        )
+      ]
+    )
+  ]
 })
 export class DashboardComponent implements OnInit {
   selectedDate = new Date();
   currentMonth = this.selectedDate.getMonth();
+  chart1Loaded = false;
+  chart2Loaded = false;
+  totalSpendings: any;
   constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils, public sharedService: SharedService) { }
 
   ngOnInit(): void {
@@ -30,7 +57,6 @@ export class DashboardComponent implements OnInit {
       labels = chartLabels;
     }    
     this.dashboardService.getDailySpendings().subscribe((response: any) => {
-      console.log(response.body);
       const data: number[] = this.fillMissingData(response.body, chartLabels);
       this.chartUtil.createChart("daily-chart", {
         type: 'line',
@@ -46,26 +72,30 @@ export class DashboardComponent implements OnInit {
           borderWidth: 1
         }]
       });
+      this.chart1Loaded = true;
     });
 
     this.dashboardService.getCategoriesata().subscribe((response: any) => {
-      console.log(response.body);
-      const total = response.body.reduce((previousValue, currentValue) => previousValue?.total + currentValue?.total)
-      console.log(total);
-      
+      const spendingResponse = response.body;
+      this.totalSpendings = spendingResponse.reduce((previousValue, currentValue) => previousValue?.total + currentValue?.total)
       this.chartUtil.createChart("category-chart", {
         type: 'doughnut',
-        labels: response.body.map(item => item._id),
+        labels: spendingResponse.map(item => item._id),
         showGridLines: false,
         datasets: [{
           label: 'Categories',
-          data: response.body.map(item => item.total * 100 / (total.total??total)),
+          data: spendingResponse.map(item => item.total * 100 / (this.totalSpendings?.total??this.totalSpendings)),
           tension: 0.2,
-          backgroundColor: response.body.map(item => '#' + strToColor(item._id)),
-          borderColor: response.body.map(item => '#' + strToColor(item._id)),
+          backgroundColor: ['rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
+          // response.body.map(item => '#' + strToColor(item._id))
+          ,
+          borderColor: ['rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
+          // response.body.map(item => '#' + strToColor(item._id))
+          ,
           borderWidth: 1
         }]
       });
+      this.chart2Loaded = true;
     })
   }
 

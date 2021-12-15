@@ -20,8 +20,8 @@ public class CategoryResource {
     }
 
     @GetMapping(value = "", produces = "application/json")
-    public ResponseEntity findAll(Pageable pageable){
-        return categoryService.findAll(pageable);
+    public ResponseEntity findAll(Pageable pageable, @RequestParam String categoryType){
+        return categoryService.findAll(pageable, categoryType);
     }
 
     @GetMapping("/{id}")

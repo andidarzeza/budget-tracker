@@ -58,7 +58,7 @@ export class AddSpendingComponent implements OnInit {
   }
 
   private getCategories(): void {
-    this.categoryService.findAll(0, 100).subscribe((response: any) => {
+    this.categoryService.findAll(0, 100, "spendings").subscribe((response: any) => {
       this.categories = response.body.categories;
     })
   }

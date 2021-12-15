@@ -60,6 +60,19 @@ table {
     justify-content: center;
 }
 
+.tab-option {
+    padding: 10px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.selected-tab {
+    border-bottom: 2px solid rgb(237,94,70);
+}
+
 .centered-text {
     text-align: center;
 }
