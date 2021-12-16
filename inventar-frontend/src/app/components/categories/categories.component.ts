@@ -139,6 +139,12 @@ export class CategoriesComponent implements OnInit {
   }
 
   changeCategoriesType(value: string): void {
+    const underline = document.getElementById("tab-underline");
+    if(value === 'spendings') {
+      underline.style.transform = "translateX(0)";
+    } else {
+      underline.style.transform = "translateX(297px)";
+    }
     this.categoriesType = value;
     this.page = 0;
     this.query();
