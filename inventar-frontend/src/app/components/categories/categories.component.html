@@ -2,12 +2,12 @@
 <div class="table-container {{sharedService.theme}}-table">
     <div class="titulli">
         <div class="tab-option" [ngClass]="{'selected-tab': categoriesType==='spendings'}" (click)="changeCategoriesType('spendings')">
-            <mat-icon class="{{sharedService.theme}}-icon">transit_enterexit</mat-icon>
-            <span class="title">Incomings Categories</span>
-        </div>
-        <div class="tab-option" [ngClass]="{'selected-tab': categoriesType==='incomings'}" (click)="changeCategoriesType('incomings')">
             <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>
             <span class="title">Spending Categories</span>
+        </div>
+        <div class="tab-option" [ngClass]="{'selected-tab': categoriesType==='incomings'}" (click)="changeCategoriesType('incomings')">
+            <mat-icon class="{{sharedService.theme}}-icon">transit_enterexit</mat-icon>
+            <span class="title">Incomings Categories</span>
         </div>
     </div>
     <div class="table-actions {{sharedService.theme}}-text">

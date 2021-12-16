@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
-import { DateUtil } from 'src/app/utils/DateUtil';
+import { DateUtil, Day, Month, MonthValue, Year } from 'src/app/utils/DateUtil';
 import { SharedService } from 'src/app/services/shared.service';
 import { strToColor } from 'src/app/utils/ColorUtil';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -37,6 +37,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 })
 export class DashboardComponent implements OnInit {
   selectedDate = new Date();
+  dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
   chart1Loaded = false;
   chart2Loaded = false;
@@ -45,17 +46,20 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     Chart.register(...registerables);
-    const dateUtil = new DateUtil();
-    const currentYear = dateUtil.fromYear(this.selectedDate.getFullYear());
-    const currentMonth = currentYear.getMonthByValue(this.selectedDate.getMonth());
+  }
+
+  // fires only from onDateSelected function below
+  private getDailySpendings(dateFrom: Date, dateTo: Date): void {
+    const currentYear = this.dateUtil.fromYear(dateFrom.getFullYear());
+    const currentMonth = currentYear.getMonthByValue(dateFrom.getMonth());
     const days = currentMonth.getDaysOfMonth();    
     let labels = [];
-    const chartLabels = days.map(day => day?.getDayNumber().toString() + "-" + (currentMonth.getMonth() + 1).toString() + "-" + currentYear.getYear().toString());
+    const chartLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
     if(currentMonth.getMonth() === this.currentMonth) {
       labels = chartLabels.filter(label => +(label.split("-")[0]) <= this.selectedDate.getDate());
     } else {
       labels = chartLabels;
-    }    
+    }   
     this.dashboardService.getDailySpendings().subscribe((response: any) => {
       const data: number[] = this.fillMissingData(response.body, chartLabels);
       this.chartUtil.createChart("daily-chart", {
@@ -74,10 +78,13 @@ export class DashboardComponent implements OnInit {
       });
       this.chart1Loaded = true;
     });
+  }
 
-    this.dashboardService.getCategoriesata().subscribe((response: any) => {
+  // fires only from onDateSelected function below
+  private getCategoriesData(): void {    
+    this.dashboardService.getCategoriesData().subscribe((response: any) => {
       const spendingResponse = response.body;
-      this.totalSpendings = spendingResponse.reduce((previousValue, currentValue) => previousValue?.total + currentValue?.total)
+      this.totalSpendings = this.sum(spendingResponse)
       this.chartUtil.createChart("category-chart", {
         type: 'doughnut',
         labels: spendingResponse.map(item => item._id),
@@ -86,17 +93,13 @@ export class DashboardComponent implements OnInit {
           label: 'Categories',
           data: spendingResponse.map(item => item.total * 100 / (this.totalSpendings?.total??this.totalSpendings)),
           tension: 0.2,
-          backgroundColor: ['rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
-          // response.body.map(item => '#' + strToColor(item._id))
-          ,
-          borderColor: ['rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
-          // response.body.map(item => '#' + strToColor(item._id))
-          ,
+          backgroundColor: ['rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
+          borderColor: ['rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
           borderWidth: 1
         }]
       });
       this.chart2Loaded = true;
-    })
+    });
   }
 
   private fillMissingData(data: any, chartLabels: string[]): number[] {
@@ -121,6 +124,23 @@ export class DashboardComponent implements OnInit {
       }
     }
     return index;
+  }
+
+  private sum(array: any[]): number {
+    let sum = 0;
+    array.forEach(num => {
+      sum+=num?.total;
+    });
+    return sum;
+  }
+
+  onDateSelected(event: any): void {
+    this.getDailySpendings(event.dateFrom, event.dateTo);
+    this.getCategoriesData();
+  }
+
+  private getMonthlyLabels(days: Day[], currentYear: Year, currentMonth: Month): string[] {
+    return days.map(day => day?.getDayNumber().toString() + "-" + (currentMonth.getMonth() + 1).toString() + "-" + currentYear.getYear().toString());
   }
 
 }

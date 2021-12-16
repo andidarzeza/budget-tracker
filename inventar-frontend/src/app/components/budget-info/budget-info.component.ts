@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Account } from 'src/app/models/Account';
 import { AccountService } from 'src/app/services/account.service';
 
@@ -28,9 +28,26 @@ export class BudgetInfoComponent implements OnInit {
   public account: Account;
   public hideBalance: boolean = false;
   public hiddenBalance: string = '';
+  dateFrom = new Date(2021, 11, 1);
+  dateTo = new Date();
+  @Output() dateSelected: EventEmitter<any> = new EventEmitter();
   ngOnInit(): void {
+    console.log(localStorage.getItem("hideBalance"));
+    
+    this.hideBalance = (localStorage.getItem("hideBalance") === 'true');
+    this.emitSelectedDate();
     this.accountService.getAccount("61b614acf563e554ee4ebb9c").subscribe((response: any) => {
       this.account = response.body;
+      if(this.hideBalance) {
+        this.generateHiddenBalanceValue();
+      }
+    });
+  }
+
+  emitSelectedDate(): void {
+    this.dateSelected.emit({
+      dateFrom: this.dateFrom,
+      dateTo: this.dateTo
     })
   }
 
@@ -41,6 +58,7 @@ export class BudgetInfoComponent implements OnInit {
       this.hiddenBalance = "";
     }
     this.hideBalance = !this.hideBalance;
+    localStorage.setItem("hideBalance", this.hideBalance.toString());
   }
 
   private generateHiddenBalanceValue(): void {

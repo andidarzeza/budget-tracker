@@ -14,7 +14,7 @@ export class DashboardService {
     return this.http.get(`${serverAPIURL}/api/dashboard`, {observe: 'response'});
   }
 
-  getCategoriesata(): Observable<any> {
+  getCategoriesData(): Observable<any> {
     return this.http.get(`${serverAPIURL}/api/dashboard/categories`, {observe: 'response'});
   }
   
