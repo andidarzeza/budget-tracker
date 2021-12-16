@@ -41,7 +41,9 @@ export class DashboardComponent implements OnInit {
   currentMonth = this.selectedDate.getMonth();
   chart1Loaded = false;
   chart2Loaded = false;
-  totalSpendings: any;
+  chart3Loaded = false;
+  totalSpendings: number = 0;
+  totalIncome: number = 0;
   constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils, public sharedService: SharedService) { }
 
   ngOnInit(): void {
@@ -91,14 +93,35 @@ export class DashboardComponent implements OnInit {
         showGridLines: false,
         datasets: [{
           label: 'Categories',
-          data: spendingResponse.map(item => item.total * 100 / (this.totalSpendings?.total??this.totalSpendings)),
+          data: spendingResponse.map(item => item.total * 100 / (this.totalSpendings)),
           tension: 0.2,
-          backgroundColor: ['rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
-          borderColor: ['rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
+          backgroundColor: ['#ff6347', 'rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
+          borderColor: ['#ff6347', 'rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
           borderWidth: 1
         }]
       });
       this.chart2Loaded = true;
+    });
+  }
+
+  getIncomesCategoryData(): void {
+    this.dashboardService.getIncomeCategoriesData().subscribe((response: any) => {
+      const incomeResponse = response.body;
+      this.totalIncome = this.sum(incomeResponse)
+      this.chartUtil.createChart("incomes-chart", {
+        type: 'doughnut',
+        labels: incomeResponse.map(item => item._id),
+        showGridLines: false,
+        datasets: [{
+          label: 'Incomes',
+          data: incomeResponse.map(item => item.total),
+          tension: 0.2,
+          backgroundColor: ['#305680', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
+          borderColor: ['#305680', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
+          borderWidth: 1
+        }]
+      });
+      this.chart3Loaded = true;
     });
   }
 
@@ -137,6 +160,7 @@ export class DashboardComponent implements OnInit {
   onDateSelected(event: any): void {
     this.getDailySpendings(event.dateFrom, event.dateTo);
     this.getCategoriesData();
+    this.getIncomesCategoryData();
   }
 
   private getMonthlyLabels(days: Day[], currentYear: Year, currentMonth: Month): string[] {

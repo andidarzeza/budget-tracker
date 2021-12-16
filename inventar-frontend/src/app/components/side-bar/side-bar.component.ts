@@ -14,16 +14,19 @@ export class SideBarComponent implements OnInit {
       icon: 'dashboard',
       text: 'Dashboard',
       link: '/dashboard'
+    },{
+      icon: 'attach_money',
+      text: 'Spendings',
+      link: '/spendings'
+    },{
+      icon: 'transit_enterexit',
+      text: 'Incomings',
+      link: '/incomings'
     },
     {
       icon: 'library_books',
       text: 'Categories',
       link: '/categories'
-    },
-    {
-      icon: 'attach_money',
-      text: 'Spendings',
-      link: '/spendings'
     },
     {
       icon: 'settings',

@@ -1,26 +1,23 @@
 package com.adprod.inventar.models.wrappers;
 
-import com.adprod.inventar.models.Spending;
-import org.springframework.data.annotation.Id;
 import java.util.Date;
-import java.util.List;
 
-public class SpendingDTO {
+public class IncomingDTO {
     private String id;
     private String category;
     private String categoryID;
     private Date createdTime;
     private String name;
-    private Double moneySpent;
+    private Double incoming;
     private String description;
 
-    public SpendingDTO(String id, String category, String categoryID, Date createdTime, String name, Double moneySpent, String description) {
+    public IncomingDTO(String id, String category, String categoryID, Date createdTime, String name, Double incoming, String description) {
         this.id = id;
         this.category = category;
         this.categoryID = categoryID;
         this.createdTime = createdTime;
         this.name = name;
-        this.moneySpent = moneySpent;
+        this.incoming = incoming;
         this.description = description;
     }
 
@@ -64,12 +61,12 @@ public class SpendingDTO {
         this.name = name;
     }
 
-    public Double getMoneySpent() {
-        return moneySpent;
+    public Double getIncoming() {
+        return incoming;
     }
 
-    public void setMoneySpent(Double moneySpent) {
-        this.moneySpent = moneySpent;
+    public void setIncoming(Double moneySpent) {
+        this.incoming = incoming;
     }
 
     public String getDescription() {

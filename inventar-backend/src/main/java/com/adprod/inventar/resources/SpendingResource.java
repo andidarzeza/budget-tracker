@@ -1,9 +1,6 @@
 package com.adprod.inventar.resources;
 
-import com.adprod.inventar.models.Account;
-import com.adprod.inventar.models.Book;
 import com.adprod.inventar.models.Spending;
-import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.SpendingService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:4200")
 public class SpendingResource {
     private final SpendingService spendingService;
+
     public SpendingResource(SpendingService spendingService) {
         this.spendingService = spendingService;
     }

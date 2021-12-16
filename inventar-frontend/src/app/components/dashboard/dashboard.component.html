@@ -3,17 +3,24 @@
     <mat-card class="category-data {{sharedService.theme}}-table">
         <mat-progress-bar mode="indeterminate" [@inOutAnimation] style="position: absolute;bottom: 0px;left: 0;width: 100%;"></mat-progress-bar>
     </mat-card>
+
     <mat-card class="category-data {{sharedService.theme}}-table">
         <mat-progress-bar mode="indeterminate" [@inOutAnimation] style="position: absolute;bottom: 0px;left: 0;width: 100%;"></mat-progress-bar>
     </mat-card>
-    <mat-card class="category-data {{sharedService.theme}}-table">
-        <mat-progress-bar mode="indeterminate" [@inOutAnimation] style="position: absolute;bottom: 0px;left: 0;width: 100%;"></mat-progress-bar>
+
+    <mat-card class="category-data {{sharedService.theme}}-table" style="position: relative;">
+        <div class="chart-title">
+            Incomes - {{totalIncome | number:'1.0':'en-US'}} ALL
+        </div>
+        <canvas id="incomes-chart" style="position: absolute;top:50%;left:50%;transform:translate(-50%, -50%);max-height: calc(100% - 70px);max-width:80%;margin-top: 20px;"></canvas>
+        <mat-progress-bar *ngIf="!chart3Loaded" mode="indeterminate" [@inOutAnimation] style="position: absolute;bottom: 0px;left: 0;width: 100%;"></mat-progress-bar>
     </mat-card>
-    <mat-card class="category-data {{sharedService.theme}}-table">
+
+    <mat-card class="category-data {{sharedService.theme}}-table" style="position: relative">
         <div class="chart-title">
             Amount spent - {{totalSpendings | number:'1.0':'en-US'}} ALL
         </div>
-        <canvas id="category-chart" style="max-height: calc(100% - 20px);margin-top: 40px;"></canvas>
+        <canvas id="category-chart" style="position: absolute;top:50%;left:50%;transform:translate(-50%, -50%);max-height: calc(100% - 70px);max-width:80%;margin-top: 20px;"></canvas>
         <mat-progress-bar *ngIf="!chart2Loaded" mode="indeterminate" [@inOutAnimation] style="position: absolute;bottom: 0px;left: 0;width: 100%;"></mat-progress-bar>
     </mat-card>
 </div>

@@ -78,4 +78,21 @@ public class DashboardServiceImpl implements DashboardService {
         });
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    public ResponseEntity getIncomeCategoriesData() {
+        List<AggregationOperation> aggregationResult = new ArrayList<>();
+        aggregationResult.add(Aggregation.group("$spendingCategoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("total"));
+        TypedAggregation<Incoming> tempAgg = Aggregation.newAggregation(Incoming.class, aggregationResult);
+        List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incoming", DailySpendingsDTO.class).getMappedResults();
+        List<DailySpendingsDTO> response = new ArrayList<>();
+        resultSR.forEach(result -> {
+            String id = result.get_id();
+            Optional<SpendingCategory> category = categoryRepository.findById(id);
+            if(category.isPresent()) {
+                response.add(new DailySpendingsDTO(category.get().getCategory(), result.getTotal()));
+            }
+        });
+        return ResponseEntity.ok(response);
+    }
 }

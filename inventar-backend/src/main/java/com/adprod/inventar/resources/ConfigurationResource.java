@@ -24,5 +24,4 @@ public class ConfigurationResource {
     public ResponseEntity updateConfiguration(@RequestBody Configuration configuration) {
         return this.configurationService.updateConfiguration(configuration);
     }
-
 }

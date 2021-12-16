@@ -2,16 +2,16 @@ package com.adprod.inventar.models.wrappers;
 
 import java.util.List;
 
-public class SpendingWrapper {
-    List<SpendingDTO> spendings;
+public class IncomingWrapper {
+    List<IncomingDTO> incomings;
     long count;
 
-    public List<SpendingDTO> getSpendings() {
-        return spendings;
+    public List<IncomingDTO> getIncomings() {
+        return incomings;
     }
 
-    public void setSpendings(List<SpendingDTO> spendings) {
-        this.spendings = spendings;
+    public void setIncomings(List<IncomingDTO> incomings) {
+        this.incomings = incomings;
     }
 
     public long getCount() {

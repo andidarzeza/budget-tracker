@@ -1,10 +1,6 @@
 package com.adprod.inventar.resources;
 
-import com.adprod.inventar.models.Book;
 import com.adprod.inventar.models.SpendingCategory;
-import com.adprod.inventar.models.utils.Comparator;
-import com.adprod.inventar.models.utils.Subtractive;
-import com.adprod.inventar.services.BookService;
 import com.adprod.inventar.services.CategoryService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:4200")
 public class CategoryResource {
     private final CategoryService categoryService;
+
     public CategoryResource(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
@@ -43,5 +40,4 @@ public class CategoryResource {
     public ResponseEntity update(@RequestBody SpendingCategory spendingCategory) {
         return categoryService.update(spendingCategory);
     }
-
 }

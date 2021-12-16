@@ -7,4 +7,5 @@ public interface AccountService {
     ResponseEntity getAccount(String id);
     ResponseEntity createAccount(Account account);
     boolean removeFromBalance(Double amount);
+    boolean addToBalance(Double amount);
 }

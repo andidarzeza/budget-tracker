@@ -3,13 +3,11 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { IAssociate } from 'src/app/models/IAssociate';
 import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_POSITION } from 'src/environments/environment';
 import { AddCategoryComponent } from '../add-category/add-category.component';
-import { AssociateInfoComponent } from '../associate-info/associate-info.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
 
 @Component({
@@ -110,20 +108,6 @@ export class CategoriesComponent implements OnInit {
 
   editAssociate(spendingCategory: SpendingCategory): void {
     this.openDialog(spendingCategory);
-  }
-
-  openAssociateInfo(id: string): void {    
-    const dialogRef = this.dialog.open(AssociateInfoComponent, {
-      data: id,
-      width: '1000px',
-      maxHeight: '714px',
-      disableClose: true,
-      panelClass: this.sharedService.theme + '-class'
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.query();
-    });
   }
   
   refreshData(): void {

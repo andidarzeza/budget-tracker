@@ -5,10 +5,7 @@ import com.adprod.inventar.repositories.ConfigurationRepository;
 import com.adprod.inventar.services.ConfigurationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.rmi.ConnectIOException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ConfigurationServiceImpl implements ConfigurationService {
@@ -40,5 +37,4 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             return ResponseEntity.ok(configurations.get(0));
         }
     }
-
 }

@@ -1,6 +1,5 @@
 package com.adprod.inventar.services;
 
-import com.adprod.inventar.models.Account;
 import com.adprod.inventar.models.Spending;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
