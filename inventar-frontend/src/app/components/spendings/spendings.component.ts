@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Spending } from 'src/app/models/Spending';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
-import { TOASTER_POSITION } from 'src/environments/environment';
+import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
 import { AddSpendingComponent } from '../add-spending/add-spending.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
 
@@ -39,8 +39,9 @@ import { ConfirmComponent } from '../confirm/confirm.component';
   ]
 })
 export class SpendingsComponent implements OnInit {
+  pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   page = 0;
-  size = 10;
+  size = PAGE_SIZE;
   totalItems;
   totalRequests = 0;
   theme = 'light';
@@ -62,7 +63,6 @@ export class SpendingsComponent implements OnInit {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    console.log(this.sort);
     this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
       this.spendings = res?.body.spendings;
       this.totalItems = res?.body.count;

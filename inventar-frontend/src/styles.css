@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Raleway&family=Source+Sans+Pro&family=Ubuntu&display=swap');
 html,
 body {
     height: 100%;
@@ -54,6 +54,31 @@ app-dashboard {
     align-items: center;
 }
 
+.mat-table tbody {
+    display: block !important;
+    max-height: 649px !important;
+    overflow: auto !important;
+}
+
+/* width */
+.mat-table tbody::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+.mat-table tbody::-webkit-scrollbar-track {
+  background: #1d252a;
+}
+
+/* Handle */
+.mat-table tbody::-webkit-scrollbar-thumb {
+  background: #1d252a;
+}
+
+/* Handle on hover */
+.mat-table tbody::-webkit-scrollbar-thumb:hover {
+  background: #1d252a;
+}
 
 /* position */
 

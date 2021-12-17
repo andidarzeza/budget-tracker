@@ -2,10 +2,10 @@
 <div class="table-container {{sharedService.theme}}-table">
     <div class="titulli">
         <div id="tab-underline" style="width: 290px;
-        height: 1.6px;
+        height: 2px;
         position: absolute;
         background: rgb(237,94,70);
-        bottom: 25px;
+        bottom: 15px;
         left: 25px;">
 
         </div>
@@ -51,18 +51,6 @@
                 <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.description}} </td>
             </ng-container>
     
-            <!-- Symbol Column -->
-            <!-- <ng-container matColumnDef="bookInfo">
-                <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Librat </th>
-                <td mat-cell *matCellDef="let element">
-                    <div class="cell-container">
-                        <span *ngFor="let book of element?.bookInfo" class="book-class pointer no-select">
-                    {{ book.bookName }}</span>
-                    </div>
-    
-                </td>
-            </ng-container> -->
-    
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">Actions</th>
                 <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text" style="padding: 0;">
@@ -75,14 +63,6 @@
                     <button mat-icon-button color="warn" (click)="deleteAssociate(element.id)">
                         <mat-icon style="color: #ff6347;">delete</mat-icon>
                     </button>
-                    <!-- <div class="ctn" style="float: right;">
-                        <div class="icon-container" (click)="deleteAssociate(element.id)" id='{{element.id}}-icon-cnt'>
-                            <mat-icon color="warn" class="pointer" id='{{element.id}}-icon'>delete</mat-icon>
-                        </div>
-                        <div class="delete-option pointer" id='{{element.id}}-delete' (click)="delete(element.id)">
-                            <span class="delete-text">Delete</span>
-                        </div>
-                    </div> -->
                 </td>
     
             </ng-container>
@@ -99,7 +79,7 @@
 
 
 <div class="book-table">
-    <mat-paginator [length]="totalItems" class="{{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text" [pageSize]="size " [pageSizeOptions]="[5, 10, 25, 100] " (page)="paginatorEvent($event) " style="box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px
+    <mat-paginator [length]="totalItems" class="{{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text" [pageSize]="size" [pageSizeOptions]="pageSizeOptions" (page)="paginatorEvent($event) " style="box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px
         3px 14px 2px rgba(0, 0, 0, 0.12); position: sticky;bottom: 0;width:95% ">
     </mat-paginator>
 

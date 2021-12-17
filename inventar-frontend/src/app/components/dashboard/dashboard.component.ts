@@ -44,6 +44,9 @@ export class DashboardComponent implements OnInit {
   chart3Loaded = false;
   totalSpendings: number = 0;
   totalIncome: number = 0;
+  amountSpentAverage: number = 0;
+
+  testValue = 0;
   constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils, public sharedService: SharedService) { }
 
   ngOnInit(): void {
@@ -54,15 +57,16 @@ export class DashboardComponent implements OnInit {
   private getDailySpendings(dateFrom: Date, dateTo: Date): void {
     const currentYear = this.dateUtil.fromYear(dateFrom.getFullYear());
     const currentMonth = currentYear.getMonthByValue(dateFrom.getMonth());
-    const days = currentMonth.getDaysOfMonth();    
+    const days = currentMonth.getDaysOfMonth();
     let labels = [];
     const chartLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
     if(currentMonth.getMonth() === this.currentMonth) {
       labels = chartLabels.filter(label => +(label.split("-")[0]) <= this.selectedDate.getDate());
     } else {
       labels = chartLabels;
-    }   
+    }
     this.dashboardService.getDailySpendings().subscribe((response: any) => {
+      this.amountSpentAverage = this.sum(response.body) / response.body.length;
       const data: number[] = this.fillMissingData(response.body, chartLabels);
       this.chartUtil.createChart("daily-chart", {
         type: 'line',

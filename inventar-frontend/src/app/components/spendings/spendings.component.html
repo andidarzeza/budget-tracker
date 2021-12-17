@@ -1,3 +1,5 @@
+
+
 <mat-progress-bar mode="indeterminate" [@inOutAnimation] *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled" style="position: absolute;top: 64px;left:0"></mat-progress-bar>
 <div class="table-container {{sharedService.theme}}-table">
     <div class="titulli">
@@ -76,7 +78,7 @@
 
 
 <div class="book-table">
-    <mat-paginator [length]="totalItems" class="{{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text" [pageSize]="size " [pageSizeOptions]="[5, 10, 25, 100] " (page)="paginatorEvent($event) " style="box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px
+    <mat-paginator [length]="totalItems" class="{{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text" [pageSize]="size " [pageSizeOptions]="pageSizeOptions" (page)="paginatorEvent($event) " style="box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px
         3px 14px 2px rgba(0, 0, 0, 0.12); position: sticky;bottom: 0;width:95% ">
     </mat-paginator>
 

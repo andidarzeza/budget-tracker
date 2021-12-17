@@ -84,7 +84,7 @@ table {
 
 .titulli {
     display: flex;
-    padding: 25px 25px;
+    padding: 15px 25px;
     font-size: 25px;
     position: relative;
     color: #9F9F9F;
@@ -126,4 +126,22 @@ table {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+tr {
+    width: 100%; 
+    display: table; 
+    table-layout: fixed;
+}
+
+thead {
+    width: 100% !important;
+    table-layout: fixed !important;
+    display: table !important;
+} 
+
+table {
+    width: 100%;
+    table-layout: fixed;
+    display: table;  
 }

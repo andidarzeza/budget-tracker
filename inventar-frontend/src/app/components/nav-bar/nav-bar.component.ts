@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
-import { getSunrise, getSunset } from 'sunrise-sunset-js';
+
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',

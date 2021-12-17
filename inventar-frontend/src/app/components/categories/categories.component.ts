@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { TOASTER_POSITION } from 'src/environments/environment';
+import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
 import { AddCategoryComponent } from '../add-category/add-category.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
 
@@ -40,8 +40,9 @@ import { ConfirmComponent } from '../confirm/confirm.component';
 })
 export class CategoriesComponent implements OnInit {
 
+  pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   page = 0;
-  size = 10;
+  size = PAGE_SIZE;
   totalItems;
   totalRequests = 0;
   categoriesType: string = 'spendings';

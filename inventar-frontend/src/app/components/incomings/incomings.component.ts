@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Incoming } from 'src/app/models/Incoming';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { TOASTER_POSITION } from 'src/environments/environment';
+import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
 import { AddIncomingComponent } from '../add-incoming/add-incoming.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
 
@@ -39,8 +39,9 @@ import { ConfirmComponent } from '../confirm/confirm.component';
   ]
 })
 export class IncomingsComponent implements OnInit {
+  pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   page = 0;
-  size = 10;
+  size = PAGE_SIZE;
   totalItems;
   totalRequests = 0;
   theme = 'light';
