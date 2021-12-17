@@ -2,7 +2,7 @@
 <div class="category-container half-height">
     <mat-card class="category-data {{sharedService.theme}}-table">
         <div class="chart-title" style="left: 10px;transform: none;">
-            Average daily incomes
+            Average daily income
         </div>  
         <div class="cnt">
             <div class="average-income">
@@ -42,7 +42,7 @@
 
     <mat-card class="category-data {{sharedService.theme}}-table" style="position: relative;">
         <div class="chart-title" style="left: 10px;transform: none;">
-            Incomes - {{totalIncome | number:'1.0':'en-US'}} ALL
+            Income - {{totalIncome | number:'1.0':'en-US'}} ALL
         </div>
         <canvas id="incomes-chart" style="position: absolute;top:50%;left:50%;transform:translate(-50%, -50%);max-height: calc(100% - 70px);max-width:80%;margin-top: 20px;"></canvas>
         <mat-progress-bar *ngIf="!chart3Loaded" mode="indeterminate" [@inOutAnimation] style="position: absolute;bottom: 0px;left: 0;width: 100%;"></mat-progress-bar>

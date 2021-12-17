@@ -36,6 +36,7 @@ import { AddSpendingComponent } from './components/add-spending/add-spending.com
 import {MatSelectModule} from '@angular/material/select';
 import { IncomingsComponent } from './components/incomings/incomings.component';
 import { AddIncomingComponent } from './components/add-incoming/add-incoming.component';
+import { DatePickerComponent } from './components/custom/date-picker/date-picker.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { AddIncomingComponent } from './components/add-incoming/add-incoming.com
     AddSpendingComponent,
     IncomingsComponent,
     AddIncomingComponent,
+    DatePickerComponent,
     
   ],
   imports: [

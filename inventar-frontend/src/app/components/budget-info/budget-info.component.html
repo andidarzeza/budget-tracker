@@ -1,6 +1,11 @@
 <div class="container">
     <span style="margin-left: 20px;font-size: 20px;font-family: 'Lato', sans-serif;">
         From: {{dateFrom | date:'dd/MM/yyyy'}} - To: {{dateTo | date:'dd/MM/yyyy'}}
+
+        <span class="no-select" style="margin-left: 40px;position: relative;cursor: pointer;">
+            <span (click)="switchDatePicker()">December  2021</span>
+            <app-date-picker [@datePickerAnimation] class="sb9 mat-elevation-z8" *ngIf="showDatePicker"></app-date-picker>
+        </span>
     </span>
 
     <div class="current-balance">

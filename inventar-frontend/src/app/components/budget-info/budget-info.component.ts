@@ -19,6 +19,27 @@ import { AccountService } from 'src/app/services/account.service';
           ]
         )
       ]
+    ),
+    trigger(
+      'datePickerAnimation', 
+      [
+        transition(
+          ':enter', 
+          [
+            style({ opacity: 0 }),
+            animate('200ms ease-out', 
+                    style({opacity: 1 }))
+          ]
+        ),
+        transition(
+          ':leave', 
+          [
+            style({ opacity: 1 }),
+            animate('200ms ease-in', 
+                    style({ opacity: 0 }))
+          ]
+        )
+      ]
     )
   ]
 })
@@ -28,6 +49,7 @@ export class BudgetInfoComponent implements OnInit {
   public account: Account;
   public hideBalance: boolean = false;
   public hiddenBalance: string = '';
+  showDatePicker: boolean = false;
   dateFrom = new Date(2021, 11, 1);
   dateTo = new Date();
   @Output() dateSelected: EventEmitter<any> = new EventEmitter();
@@ -42,6 +64,10 @@ export class BudgetInfoComponent implements OnInit {
         this.generateHiddenBalanceValue();
       }
     });
+  }
+
+  switchDatePicker(): void {
+    this.showDatePicker = !this.showDatePicker;
   }
 
   emitSelectedDate(): void {

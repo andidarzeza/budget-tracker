@@ -16,11 +16,11 @@ export class SideBarComponent implements OnInit {
       link: '/dashboard'
     },{
       icon: 'attach_money',
-      text: 'Spendings',
+      text: 'Expenses',
       link: '/spendings'
     },{
       icon: 'transit_enterexit',
-      text: 'Incomings',
+      text: 'Incomes',
       link: '/incomings'
     },
     {

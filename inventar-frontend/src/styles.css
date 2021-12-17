@@ -31,6 +31,32 @@ app-dashboard {
     height: calc(100% - 64px);
 }
 
+app-date-picker {
+    width: 400px;
+    height: 250px;
+    position: absolute;
+    top: 225%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #111619;
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.sb9:before {
+    content: "";
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    border-bottom: 19px solid #111619;
+    border-top: 10px solid transparent;
+    left: 50%;
+    top: -28px;
+    transform: translateX(-50%);
+}
+
 .dark-border {
     border: 2px solid #ff6347;    
 }
