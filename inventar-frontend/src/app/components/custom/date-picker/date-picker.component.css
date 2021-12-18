@@ -1,5 +1,6 @@
 .active {
-    background: #1d252a;
+    background: #ff6347;
+    color: white;
 }
 
 .month-class {
@@ -7,12 +8,17 @@
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    width: 65px;
+    /* width: 65px; */
     margin-left:15px;
+    font-size: 14px;
 }
 
 .month-container {
-    display: grid;
+    /* display: grid;
     grid-template-columns: auto auto auto auto;
+    height: calc(100% - 70px); */
+    display: grid;
+    grid-template-columns: 53px 53px 53px 53px;
     height: calc(100% - 70px);
+    grid-template-rows: 36px 36px 36px;
 }
