@@ -2,6 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Account } from 'src/app/models/Account';
 import { AccountService } from 'src/app/services/account.service';
+import { MONTHS } from 'src/environments/environment';
 
 @Component({
   selector: 'app-budget-info',
@@ -49,6 +50,7 @@ export class BudgetInfoComponent implements OnInit {
   public account: Account;
   public hideBalance: boolean = false;
   public hiddenBalance: string = '';
+  public months = MONTHS;
   showDatePicker: boolean = false;
   dateFrom = new Date(2021, 11, 1);
   dateTo = new Date();
@@ -94,7 +96,6 @@ export class BudgetInfoComponent implements OnInit {
   }
 
   public onDateSelected(date: Date): void {
-    console.log(date);
     this.dateFrom = date;
     this.dateTo = new Date(this.dateFrom.getFullYear(), this.dateFrom.getMonth() + 1)
     this.showDatePicker = false;

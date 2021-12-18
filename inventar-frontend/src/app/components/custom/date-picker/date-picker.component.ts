@@ -1,4 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { MONTHS_ABR } from 'src/environments/environment';
 
 @Component({
   selector: 'app-date-picker',
@@ -6,7 +7,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./date-picker.component.css']
 })
 export class DatePickerComponent implements OnInit {
-
   @Output() dateSelected: EventEmitter<any> = new EventEmitter();
 
   today = new Date();
@@ -14,8 +14,11 @@ export class DatePickerComponent implements OnInit {
   avalaibleYears: number[] = [];
   selectedMonth = this.today.getMonth();
   increased = 0;
-  months: string[] = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-  constructor() { }
+  months: string[] = MONTHS_ABR;
+  constructor() { 
+
+    document.addEventListener('click', this.offClickHandler.bind(this)); // bind on doc
+  }
 
   ngOnInit(): void {
     this.populateYearsArray();
@@ -53,10 +56,22 @@ export class DatePickerComponent implements OnInit {
 
   public selectMonth(month: string): void {
     this.selectedMonth = this.months.indexOf(month);
-    this.close();
   }
 
   public close(): void {
     this.dateSelected.emit(new Date(this.selectedYear, this.selectedMonth));
   }
+
+  public offClickHandler(event:any) {
+    const elem = document.getElementsByTagName("app-date-picker") as any;
+    const selectedDateElem = document.getElementById("selectedDateId");
+    console.log(elem);
+    
+    if(elem && selectedDateElem) {
+      if(!elem[0].contains(event.target) && !selectedDateElem.contains(event.target)) {
+        this.close();
+      }
+    }
+  }
+
 }

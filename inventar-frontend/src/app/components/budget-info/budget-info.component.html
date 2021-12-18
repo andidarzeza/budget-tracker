@@ -1,11 +1,19 @@
 <div class="container">
-    <span style="margin-left: 20px;font-size: 20px;font-family: 'Lato', sans-serif;">
-        From: {{dateFrom | date:'dd/MM/yyyy'}} - To: {{dateTo | date:'dd/MM/yyyy'}}
-
-        <span class="no-select" style="margin-left: 40px;position: relative;cursor: pointer;">
-            <span (click)="switchDatePicker()">December  2021</span>
-            <app-date-picker [@datePickerAnimation] (dateSelected)="onDateSelected($event)" class="sb9 mat-elevation-z8" *ngIf="showDatePicker"></app-date-picker>
+    <span style="margin-left: 60px;font-size: 20px;font-family: 'Lato', sans-serif;position: relative;cursor: pointer;">
+        <span (click)="switchDatePicker()" id="selectedDateId" style="display: flex;
+        justify-content: center;
+        align-items: center;">
+            <mat-icon >calendar_today</mat-icon> 
+            <span style="margin-left: 5px;">
+                From: {{dateFrom | date:'dd/MM/yyyy'}} - To: {{dateTo | date:'dd/MM/yyyy'}}
+            </span>
         </span>
+        
+        <app-date-picker [@datePickerAnimation] (dateSelected)="onDateSelected($event)" class="sb9 mat-elevation-z8" *ngIf="showDatePicker"></app-date-picker>
+        <!-- <span class="no-select" style="margin-left: 40px;position: relative;cursor: pointer;">
+            <span (click)="switchDatePicker()" id="selectedDateId">{{months[dateFrom?.getMonth()]}} {{dateFrom?.getFullYear()}}</span>
+            
+        </span> -->
     </span>
 
     <div class="current-balance">

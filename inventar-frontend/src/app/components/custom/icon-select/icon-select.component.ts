@@ -36,12 +36,12 @@ export class IconSelectComponent implements OnInit, OnChanges {
     document.addEventListener('click', this.offClickHandler.bind(this)); // bind on doc
   }
 
-
   offClickHandler(event:any) {
     if (!this.container.nativeElement.contains(event.target)) { // check click origin
       this.showDropdown = false;
     }
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if(changes?.selectedIcon) {
       this.selectedIcon = changes?.selectedIcon.currentValue;
