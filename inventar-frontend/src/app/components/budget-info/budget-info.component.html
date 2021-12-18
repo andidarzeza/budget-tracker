@@ -4,7 +4,7 @@
 
         <span class="no-select" style="margin-left: 40px;position: relative;cursor: pointer;">
             <span (click)="switchDatePicker()">December  2021</span>
-            <app-date-picker [@datePickerAnimation] class="sb9 mat-elevation-z8" *ngIf="showDatePicker"></app-date-picker>
+            <app-date-picker [@datePickerAnimation] (dateSelected)="onDateSelected($event)" class="sb9 mat-elevation-z8" *ngIf="showDatePicker"></app-date-picker>
         </span>
     </span>
 

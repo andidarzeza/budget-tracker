@@ -1,0 +1,18 @@
+.active {
+    background: #1d252a;
+}
+
+.month-class {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: 65px;
+    margin-left:15px;
+}
+
+.month-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    height: calc(100% - 70px);
+}
