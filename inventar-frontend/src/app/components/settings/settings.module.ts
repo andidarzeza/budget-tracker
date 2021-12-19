@@ -4,6 +4,7 @@ import { SettingsComponent } from './settings.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SettingsRoutingModule } from './settings-routing.module';
 
 
 
@@ -11,6 +12,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   declarations: [SettingsComponent],
   imports: [
     CommonModule,
+    SettingsRoutingModule,
     MatIconModule,
     MatCardModule,
     MatSlideToggleModule

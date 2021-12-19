@@ -8,6 +8,7 @@ import { DatePickerComponent } from '../../shared/date-picker/date-picker.compon
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { DashboardRoutingModule } from './dashboard-routing.module';
 
 
 
@@ -17,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
   ],
   imports: [
     CommonModule,
+    DashboardRoutingModule,
     MatProgressBarModule,
     MatCardModule,
     MatNativeDateModule,

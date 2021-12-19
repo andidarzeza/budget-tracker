@@ -11,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { IconSelectComponent } from '../../shared/icon-select/icon-select.component';
 import { MatButtonModule } from '@angular/material/button';
+import { CategoriesRoutingModule } from './categories-routing.module';
 
 
 
@@ -18,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
   declarations: [CategoriesComponent, AddCategoryComponent, IconSelectComponent],
   imports: [
     CommonModule,
+    CategoriesRoutingModule,
     MatTableModule,
     MatPaginatorModule,
     MatIconModule,
