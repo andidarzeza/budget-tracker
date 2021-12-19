@@ -21,7 +21,4 @@ export class DashboardService {
   getIncomeCategoriesData(): Observable<any> {
     return this.http.get(`${serverAPIURL}/api/dashboard/incomes`, {observe: 'response'});
   }
-
-  
-  
 }

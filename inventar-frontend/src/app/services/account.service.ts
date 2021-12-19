@@ -10,7 +10,6 @@ import { Account } from '../models/Account';
 export class AccountService {
   constructor(private http: HttpClient) { }
 
-
   getAccount(id: string): Observable<any> {
     return this.http.get(`${serverAPIURL}/api/account/${id}`, {observe: 'response'});
   }
@@ -19,5 +18,4 @@ export class AccountService {
   addAccount(account: Account): Observable<any> {
     return this.http.post(`${serverAPIURL}/api/account/`, account, {observe: 'response'});
   }
-  
 }

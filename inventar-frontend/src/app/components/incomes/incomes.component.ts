@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Incoming } from 'src/app/models/Incoming';
@@ -9,6 +9,8 @@ import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
 import { AddIncomingComponent } from './add-incoming/add-incoming.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
+import { Subscription } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-incomes',
@@ -38,7 +40,7 @@ import { ConfirmComponent } from '../../shared/confirm/confirm.component';
     )
   ]
 })
-export class IncomesComponent implements OnInit {
+export class IncomesComponent implements OnInit, OnDestroy {
   pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   page = 0;
   size = PAGE_SIZE;
@@ -48,13 +50,15 @@ export class IncomesComponent implements OnInit {
   sort = "createdTime,desc";
   displayedColumns: string[] = ['date', 'name', 'description', 'category', 'incoming', 'actions'];
   incomings: Incoming[] = [];
+  private deleteSubscription: Subscription = null;
+  private incomeSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private incomingsService: IncomingsService, public dialog: MatDialog, private toaster: ToastrService) { }
 
   ngOnInit(): void {
     this.query();
   }
 
-  paginatorEvent(event: any): void {
+  paginatorEvent(event: PageEvent): void {
     this.size = event?.pageSize;
     this.page = event?.pageIndex;
     this.query();
@@ -63,7 +67,8 @@ export class IncomesComponent implements OnInit {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.incomingsService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
+    this.unsubscribe(this.incomeSubscription);
+    this.incomeSubscription = this.incomingsService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
       this.incomings = res?.body.incomings;
       this.totalItems = res?.body.count;
       this.totalRequests--;
@@ -71,9 +76,9 @@ export class IncomesComponent implements OnInit {
     });
   }
 
-  openDialog(incoming?: Incoming): void {
+  openDialog(income?: Incoming): void {
     const dialogRef = this.dialog.open(AddIncomingComponent, {
-      data: incoming,
+      data: income,
       width: '700px',
       disableClose: true,
       panelClass: this.sharedService.theme + '-class'
@@ -90,10 +95,7 @@ export class IncomesComponent implements OnInit {
   deleteAssociate(id: string): void {
     this.openConfirmDialog().afterClosed().subscribe((result: any) => {
       if(result) {
-        this.incomingsService.delete(id).subscribe((res: any) => {
-          this.query();
-          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
-        });
+        this.delete(id);
       }
     });;
   }
@@ -106,8 +108,8 @@ export class IncomesComponent implements OnInit {
     return dialogRef;
   }
 
-  editAssociate(incoming: Incoming): void {
-    this.openDialog(incoming);
+  edit(income: Incoming): void {
+    this.openDialog(income);
   }
   
   refreshData(): void {
@@ -128,14 +130,26 @@ export class IncomesComponent implements OnInit {
   }
 
   delete(id: string): void {
-    this.incomingsService.delete(id).subscribe((res: any) => {
+    this.unsubscribe(this.deleteSubscription);
+    this.deleteSubscription = this.incomingsService.delete(id).subscribe(() => {
       this.query();
-      this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
+      this.toaster.info("Element deleted successfully", "Success", {timeOut: 7000, positionClass: TOASTER_POSITION});
     });
   }
 
   getHeight(difference: number): number {
     return window.innerHeight - 275 - difference;
+  }
+
+  private unsubscribe(subscription: Subscription): void {
+    if(subscription) {
+      subscription.unsubscribe();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe(this.incomeSubscription);
+    this.unsubscribe(this.deleteSubscription);
   }
 
 }

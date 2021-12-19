@@ -11,8 +11,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { IncomesRoutingModule } from './incomes-routing.module';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 
@@ -26,6 +26,7 @@ import { IncomesRoutingModule } from './incomes-routing.module';
     MatPaginatorModule,
     MatTableModule,
     MatIconModule,
+    MatDialogModule,
     MatButtonModule,
     MatProgressBarModule,
     MatFormFieldModule,

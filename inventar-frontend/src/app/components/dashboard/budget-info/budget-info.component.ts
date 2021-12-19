@@ -1,5 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Account } from 'src/app/models/Account';
 import { AccountService } from 'src/app/services/account.service';
 import { MONTHS } from 'src/environments/environment';
@@ -44,10 +45,11 @@ import { MONTHS } from 'src/environments/environment';
     )
   ]
 })
-export class BudgetInfoComponent implements OnInit {
+export class BudgetInfoComponent implements OnInit, OnDestroy {
 
   constructor(public accountService: AccountService) { }
   public account: Account;
+  private accountSubscription: Subscription = null;
   public hideBalance: boolean = false;
   public hiddenBalance: string = '';
   public months = MONTHS;
@@ -60,7 +62,7 @@ export class BudgetInfoComponent implements OnInit {
     
     this.hideBalance = (localStorage.getItem("hideBalance") === 'true');
     this.emitSelectedDate();
-    this.accountService.getAccount("61b614acf563e554ee4ebb9c").subscribe((response: any) => {
+    this.accountSubscription = this.accountService.getAccount("61b614acf563e554ee4ebb9c").subscribe((response: any) => {
       this.account = response.body;
       if(this.hideBalance) {
         this.generateHiddenBalanceValue();
@@ -101,4 +103,13 @@ export class BudgetInfoComponent implements OnInit {
     this.showDatePicker = false;
   }
 
+  private unsubscribe(subscription: Subscription): void {
+    if(subscription) {
+      subscription.unsubscribe();
+    }
+  }
+  
+  ngOnDestroy(): void {
+    this.unsubscribe(this.accountSubscription);
+  }
 }

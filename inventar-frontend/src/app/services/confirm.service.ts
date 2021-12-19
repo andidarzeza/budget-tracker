@@ -8,7 +8,9 @@ import { ConfirmComponent } from '../shared/confirm/confirm.component';
 export class ConfirmService {
 
   constructor(private dialog: MatDialog) { }
+
   private dialogRef = null;
+
   openConfirmDialog(): void  {
     this.dialogRef = this.dialog.open(ConfirmComponent, {
       width: '300px',
@@ -21,6 +23,4 @@ export class ConfirmService {
       this.dialogRef.close();
     }
   }
-
-
 }

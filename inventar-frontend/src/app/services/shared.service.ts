@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { IConfiguration } from '../models/IConfiguration';
-import { ConfigurationService } from './configuration.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SharedService {
-
   private dataSource = new BehaviorSubject<string>("");
   public theme = '';
   public sidebarWidth = 15;
@@ -32,21 +29,6 @@ export class SharedService {
 
   activateLoadingSpinner(): void {
     this.stillLoading = true;
-    // this.fitSpinnerToPage();
-  }
-
-  private fitSpinnerToPage(): void {
-    const spinner = document.getElementById('spinner-id') as HTMLElement;
-    const sidebar = document.getElementById('sidebar') as HTMLElement;
-    setTimeout(() => {
-      if(spinner && sidebar) {
-        if(sidebar.style.width === this.sidebarWidth + '%') {
-          spinner.style.width = 100 - this.sidebarWidth + '%';
-        } else {
-          spinner.style.width= 'calc(100% - 60px)';
-        }
-      }
-    }, 500);
   }
 
   checkLoadingSpinner(totalRequest: number): void { 

@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { Spending } from 'src/app/models/Spending';
 import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
@@ -14,10 +15,13 @@ import { TOASTER_POSITION } from 'src/environments/environment';
   templateUrl: './add-spending.component.html',
   styleUrls: ['./add-spending.component.css']
 })
-export class AddSpendingComponent implements OnInit {
+export class AddSpendingComponent implements OnInit, OnDestroy {
   buttonText = "Shto Anetar";
   private mode = '';
   private id = '';
+  private categoriesSubscription: Subscription = null;
+  private saveSubscription: Subscription = null;
+  private updateSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public spending: Spending, public dialogRef: MatDialogRef<AddSpendingComponent>, private formBuilder: FormBuilder, private spendingService: SpendingService, private categoryService: CategoriesService) {}
   formGroup: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
@@ -57,7 +61,8 @@ export class AddSpendingComponent implements OnInit {
   }
 
   private getCategories(): void {
-    this.categoryService.findAll(0, 100, "spendings").subscribe((response: any) => {
+    this.unsubscribe(this.categoriesSubscription);
+    this.categoriesSubscription = this.categoryService.findAll(0, 100, "spendings").subscribe((response: any) => {
       this.categories = response.body.categories;
     })
   }
@@ -68,16 +73,18 @@ export class AddSpendingComponent implements OnInit {
         this.spending.name = this.name.value;
         this.spending.description = this.description.value;
         this.spending.moneySpent = this.moneySpent.value;
-        this.spendingService.update(this.spending).subscribe((res:any) => {
+        this.unsubscribe(this.updateSubscription);
+        this.updateSubscription = this.spendingService.update(this.spending).subscribe(() => {
           this.closeDialog(true);  
-          this.toaster.success("Anetari u perditesua me sukses", "Sukses!", {
+          this.toaster.success("Expense updated successfully", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
       } else {
-        this.spendingService.save(this.formGroup.value).subscribe((res:any) => {
+        this.unsubscribe(this.saveSubscription);
+        this.saveSubscription = this.spendingService.save(this.formGroup.value).subscribe(() => {
           this.closeDialog(true);  
-          this.toaster.success("Anetari u shtua me sukses", "Sukses!", {
+          this.toaster.success("A new Expense has been inserted", "Sukses!", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });    
         });
@@ -89,4 +96,15 @@ export class AddSpendingComponent implements OnInit {
     this.dialogRef.close(update);
   }
 
+  private unsubscribe(subscription: Subscription): void {
+    if(subscription) {
+      subscription.unsubscribe();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe(this.categoriesSubscription);
+    this.unsubscribe(this.updateSubscription);
+    this.unsubscribe(this.saveSubscription);
+  }
 }

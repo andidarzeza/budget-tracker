@@ -33,5 +33,4 @@ export class SpendingService {
   delete(id: string): Observable<any> {
     return this.http.delete(`${serverAPIURL}/api/spending/${id}`, {observe: 'response'});
   }
-
 }

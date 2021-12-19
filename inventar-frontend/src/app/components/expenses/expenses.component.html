@@ -7,7 +7,7 @@
         <span class="title">Expenses</span>
     </div>
     <div class="table-actions {{sharedService.theme}}-text">
-        <mat-icon (click)="refreshData()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
+        <mat-icon (click)="refresh()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
         <mat-icon (click)="openDialog()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">add</mat-icon>
         <mat-icon (click)="openDialog()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">search</mat-icon>
 
@@ -59,7 +59,7 @@
                     <button mat-icon-button (click)="editAssociate(element)">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn" (click)="deleteAssociate(element.id)">
+                    <button mat-icon-button color="warn" (click)="deleteExpense(element.id)">
                         <mat-icon style="color: #ff6347;">delete</mat-icon>
                     </button>
                 </td>

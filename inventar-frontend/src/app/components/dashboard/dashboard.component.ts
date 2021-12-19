@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
@@ -6,6 +6,7 @@ import { DateUtil, Day, Month, MonthValue, Year } from 'src/app/utils/DateUtil';
 import { SharedService } from 'src/app/services/shared.service';
 import { strToColor } from 'src/app/utils/ColorUtil';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,7 +36,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
     )
   ]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   selectedDate = new Date();
   dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
@@ -45,8 +46,9 @@ export class DashboardComponent implements OnInit {
   totalSpendings: number = 0;
   totalIncome: number = 0;
   amountSpentAverage: number = 0;
-
-  testValue = 0;
+  dailySpendingsSubscription: Subscription = null;
+  categoriesDataSubscription: Subscription = null;
+  incomeCategoriesSubscription: Subscription = null;
   constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils, public sharedService: SharedService) { }
 
   ngOnInit(): void {
@@ -65,7 +67,8 @@ export class DashboardComponent implements OnInit {
     } else {
       labels = chartLabels;
     }
-    this.dashboardService.getDailySpendings().subscribe((response: any) => {
+    this.unsubscribe(this.dailySpendingsSubscription);
+    this.dailySpendingsSubscription = this.dashboardService.getDailySpendings().subscribe((response: any) => {
       this.amountSpentAverage = this.sum(response.body) / response.body.length;
       const data: number[] = this.fillMissingData(response.body, chartLabels);
       this.chartUtil.createChart("daily-chart", {
@@ -87,8 +90,9 @@ export class DashboardComponent implements OnInit {
   }
 
   // fires only from onDateSelected function below
-  private getCategoriesData(): void {    
-    this.dashboardService.getCategoriesData().subscribe((response: any) => {
+  private getCategoriesData(): void {  
+    this.unsubscribe(this.categoriesDataSubscription);  
+    this.categoriesDataSubscription = this.dashboardService.getCategoriesData().subscribe((response: any) => {
       const spendingResponse = response.body;
       this.totalSpendings = this.sum(spendingResponse)
       this.chartUtil.createChart("category-chart", {
@@ -109,7 +113,8 @@ export class DashboardComponent implements OnInit {
   }
 
   getIncomesCategoryData(): void {
-    this.dashboardService.getIncomeCategoriesData().subscribe((response: any) => {
+    this.unsubscribe(this.incomeCategoriesSubscription); 
+    this.incomeCategoriesSubscription = this.dashboardService.getIncomeCategoriesData().subscribe((response: any) => {
       const incomeResponse = response.body;
       this.totalIncome = this.sum(incomeResponse)
       this.chartUtil.createChart("incomes-chart", {
@@ -169,6 +174,18 @@ export class DashboardComponent implements OnInit {
 
   private getMonthlyLabels(days: Day[], currentYear: Year, currentMonth: Month): string[] {
     return days.map(day => day?.getDayNumber().toString() + "-" + (currentMonth.getMonth() + 1).toString() + "-" + currentYear.getYear().toString());
+  }
+
+  private unsubscribe(subscription: Subscription): void {
+    if(subscription) {
+      subscription.unsubscribe();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe(this.incomeCategoriesSubscription);
+    this.unsubscribe(this.dailySpendingsSubscription);
+    this.unsubscribe(this.categoriesDataSubscription);
   }
 
 }

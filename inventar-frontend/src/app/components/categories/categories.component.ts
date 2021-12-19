@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { SpendingCategory } from 'src/app/models/SpendingCategory';
@@ -9,6 +9,8 @@ import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
+import { Subscription } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-categories',
@@ -38,8 +40,7 @@ import { ConfirmComponent } from '../../shared/confirm/confirm.component';
     )
   ]
 })
-export class CategoriesComponent implements OnInit {
-
+export class CategoriesComponent implements OnInit, OnDestroy {
   pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   page = 0;
   size = PAGE_SIZE;
@@ -49,13 +50,15 @@ export class CategoriesComponent implements OnInit {
   theme = 'light';
   displayedColumns: string[] = ['icon', 'name', 'description', 'actions'];
   dataSource: SpendingCategory[] = [];
+  private categoriesSubscription: Subscription = null;
+  private deleteSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private categoriesService: CategoriesService, public dialog: MatDialog, private toaster: ToastrService) { }
 
   ngOnInit(): void {
     this.query();
   }
 
-  paginatorEvent(event: any): void {
+  paginatorEvent(event: PageEvent): void {
     this.size = event?.pageSize;
     this.page = event?.pageIndex;
     this.query();
@@ -64,7 +67,8 @@ export class CategoriesComponent implements OnInit {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.categoriesService.findAll(this.page, this.size, this.categoriesType).subscribe((res: HttpResponse<any>) => {
+    this.unsubscribe(this.categoriesSubscription);
+    this.categoriesSubscription =  this.categoriesService.findAll(this.page, this.size, this.categoriesType).subscribe((res: HttpResponse<any>) => {
       this.dataSource = res?.body.categories;
       this.totalItems = res?.body.count;
       this.totalRequests--;
@@ -87,14 +91,10 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
-
   deleteAssociate(id: string): void {
     this.openConfirmDialog().afterClosed().subscribe((result: any) => {
       if(result) {
-        this.categoriesService.delete(id).subscribe((res: any) => {
-          this.query();
-          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
-        });
+        this.delete(id);
       }
     });;
   }
@@ -119,7 +119,7 @@ export class CategoriesComponent implements OnInit {
     const del = document.getElementById(`${id}-delete`) as HTMLElement;
     const icn = document.getElementById(`${id}-icon`) as HTMLElement;
     const icn_cnt = document.getElementById(`${id}-icon-cnt`) as HTMLElement;
-    if(del &&icn_cnt &&icn) {
+    if(del && icn_cnt && icn) {
       del.style.width = '39.4px';
       del.style.padding = '10px';
       icn.style.width = '0';
@@ -129,9 +129,10 @@ export class CategoriesComponent implements OnInit {
   }
 
   delete(id: string): void {
-    this.categoriesService.delete(id).subscribe((res: any) => {
+    this.unsubscribe(this.deleteSubscription);
+    this.deleteSubscription = this.categoriesService.delete(id).subscribe(() => {
       this.query();
-      this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
+      this.toaster.info("Element deleted successfully", "Success", {timeOut: 7000, positionClass: TOASTER_POSITION});
     });
   }
 
@@ -149,5 +150,15 @@ export class CategoriesComponent implements OnInit {
     this.categoriesType = value;
     this.page = 0;
     this.query();
+  }
+
+  private unsubscribe(subscription: Subscription): void {
+    if(subscription) {
+      subscription.unsubscribe();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe(this.categoriesSubscription);
   }
 }

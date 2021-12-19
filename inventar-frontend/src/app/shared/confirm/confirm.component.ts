@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ConfirmService } from 'src/app/services/confirm.service';
+import { MatDialogRef } from '@angular/material/dialog';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({

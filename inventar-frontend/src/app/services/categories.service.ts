@@ -2,8 +2,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { IAssociate } from '../models/IAssociate';
-import { IBook } from '../models/IBook';
 import { SpendingCategory } from '../models/SpendingCategory';
 
 @Injectable({
@@ -35,5 +33,4 @@ export class CategoriesService {
   update(category: SpendingCategory): Observable<any> {
     return this.http.put(`${serverAPIURL}/api/categories/`, category, {observe: 'response'});
   }
-
 }

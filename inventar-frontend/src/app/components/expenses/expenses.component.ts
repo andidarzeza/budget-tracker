@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Spending } from 'src/app/models/Spending';
@@ -9,6 +9,8 @@ import { SpendingService } from 'src/app/services/spending.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
 import { AddSpendingComponent } from './add-spending/add-spending.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
+import { Subscription } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-expenses',
@@ -38,7 +40,7 @@ import { ConfirmComponent } from '../../shared/confirm/confirm.component';
     )
   ]
 })
-export class ExpensesComponent implements OnInit {
+export class ExpensesComponent implements OnInit, OnDestroy {
   pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   page = 0;
   size = PAGE_SIZE;
@@ -48,13 +50,15 @@ export class ExpensesComponent implements OnInit {
   sort = "createdTime,desc";
   displayedColumns: string[] = ['date', 'name', 'description', 'category', 'moneySpent', 'actions'];
   spendings: Spending[] = [];
+  private deleteSubscription: Subscription = null;
+  private expenseSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService) { }
 
   ngOnInit(): void {
     this.query();
   }
 
-  paginatorEvent(event: any): void {
+  paginatorEvent(event: PageEvent): void {
     this.size = event?.pageSize;
     this.page = event?.pageIndex;
     this.query();
@@ -63,7 +67,8 @@ export class ExpensesComponent implements OnInit {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
+    this.unsubscribe(this.expenseSubscription);
+    this.expenseSubscription = this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
       this.spendings = res?.body.spendings;
       this.totalItems = res?.body.count;
       this.totalRequests--;
@@ -87,15 +92,12 @@ export class ExpensesComponent implements OnInit {
   }
 
 
-  deleteAssociate(id: string): void {
+  deleteExpense(id: string): void {
     this.openConfirmDialog().afterClosed().subscribe((result: any) => {
       if(result) {
-        this.spendingService.delete(id).subscribe((res: any) => {
-          this.query();
-          this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
-        });
+        this.delete(id);
       }
-    });;
+    });
   }
 
   openConfirmDialog(): MatDialogRef<ConfirmComponent>  {
@@ -110,32 +112,31 @@ export class ExpensesComponent implements OnInit {
     this.openDialog(spending);
   }
   
-  refreshData(): void {
+  refresh(): void {
     this.query();
   }
 
-  openDeleteOption(id: string): void {
-    const del = document.getElementById(`${id}-delete`) as HTMLElement;
-    const icn = document.getElementById(`${id}-icon`) as HTMLElement;
-    const icn_cnt = document.getElementById(`${id}-icon-cnt`) as HTMLElement;
-    if(del &&icn_cnt &&icn) {
-      del.style.width = '39.4px';
-      del.style.padding = '10px';
-      icn.style.width = '0';
-      icn_cnt.style.paddingLeft = '0';
-      icn_cnt.style.paddingRight = '0';
-    }
-  }
-
   delete(id: string): void {
-    this.spendingService.delete(id).subscribe((res: any) => {
+    this.unsubscribe(this.deleteSubscription);
+    this.deleteSubscription = this.spendingService.delete(id).subscribe(() => {
       this.query();
-      this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
+      this.toaster.info("Element deleted successfully", "Success", {timeOut: 7000, positionClass: TOASTER_POSITION});
     });
   }
 
   getHeight(difference: number): number {
     return window.innerHeight - 275 - difference;
+  }
+
+  private unsubscribe(subscription: Subscription): void {
+    if(subscription) {
+      subscription.unsubscribe();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe(this.expenseSubscription);
+    this.unsubscribe(this.deleteSubscription);
   }
 
 }
