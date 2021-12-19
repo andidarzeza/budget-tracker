@@ -4,11 +4,11 @@ import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
-  selector: 'app-cilesimet',
-  templateUrl: './cilesimet.component.html',
-  styleUrls: ['./cilesimet.component.css']
+  selector: 'app-settings',
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.css']
 })
-export class CilesimetComponent implements OnInit {
+export class SettingsComponent implements OnInit {
   configuration: IConfiguration = null;
   constructor(public sharedService: SharedService, private configurationService: ConfigurationService) { }
 

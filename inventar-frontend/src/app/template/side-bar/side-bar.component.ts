@@ -17,11 +17,11 @@ export class SideBarComponent implements OnInit {
     },{
       icon: 'attach_money',
       text: 'Expenses',
-      link: '/spendings'
+      link: '/expenses'
     },{
       icon: 'transit_enterexit',
       text: 'Incomes',
-      link: '/incomings'
+      link: '/incomes'
     },
     {
       icon: 'library_books',
@@ -31,7 +31,7 @@ export class SideBarComponent implements OnInit {
     {
       icon: 'settings',
       text: 'Settings',
-      link: '/cilesimet'
+      link: '/settings'
     }
 
   ];

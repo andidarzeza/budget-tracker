@@ -3,17 +3,17 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Incoming } from 'src/app/models/Incoming';
-import { IncomingsService } from 'src/app/services/incomings.service';
+import { Spending } from 'src/app/models/Spending';
 import { SharedService } from 'src/app/services/shared.service';
+import { SpendingService } from 'src/app/services/spending.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
-import { AddIncomingComponent } from '../add-incoming/add-incoming.component';
-import { ConfirmComponent } from '../confirm/confirm.component';
+import { AddSpendingComponent } from './add-spending/add-spending.component';
+import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 
 @Component({
-  selector: 'app-incomings',
-  templateUrl: './incomings.component.html',
-  styleUrls: ['./incomings.component.css'],
+  selector: 'app-expenses',
+  templateUrl: './expenses.component.html',
+  styleUrls: ['./expenses.component.css'],
   animations: [
     trigger(
       'inOutAnimation', 
@@ -38,7 +38,7 @@ import { ConfirmComponent } from '../confirm/confirm.component';
     )
   ]
 })
-export class IncomingsComponent implements OnInit {
+export class ExpensesComponent implements OnInit {
   pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   page = 0;
   size = PAGE_SIZE;
@@ -46,9 +46,9 @@ export class IncomingsComponent implements OnInit {
   totalRequests = 0;
   theme = 'light';
   sort = "createdTime,desc";
-  displayedColumns: string[] = ['date', 'name', 'description', 'category', 'incoming', 'actions'];
-  incomings: Incoming[] = [];
-  constructor(public sharedService: SharedService, private incomingsService: IncomingsService, public dialog: MatDialog, private toaster: ToastrService) { }
+  displayedColumns: string[] = ['date', 'name', 'description', 'category', 'moneySpent', 'actions'];
+  spendings: Spending[] = [];
+  constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService) { }
 
   ngOnInit(): void {
     this.query();
@@ -63,17 +63,17 @@ export class IncomingsComponent implements OnInit {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.incomingsService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
-      this.incomings = res?.body.incomings;
+    this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
+      this.spendings = res?.body.spendings;
       this.totalItems = res?.body.count;
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);     
     });
   }
 
-  openDialog(incoming?: Incoming): void {
-    const dialogRef = this.dialog.open(AddIncomingComponent, {
-      data: incoming,
+  openDialog(spending?: Spending): void {
+    const dialogRef = this.dialog.open(AddSpendingComponent, {
+      data: spending,
       width: '700px',
       disableClose: true,
       panelClass: this.sharedService.theme + '-class'
@@ -90,7 +90,7 @@ export class IncomingsComponent implements OnInit {
   deleteAssociate(id: string): void {
     this.openConfirmDialog().afterClosed().subscribe((result: any) => {
       if(result) {
-        this.incomingsService.delete(id).subscribe((res: any) => {
+        this.spendingService.delete(id).subscribe((res: any) => {
           this.query();
           this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
         });
@@ -106,8 +106,8 @@ export class IncomingsComponent implements OnInit {
     return dialogRef;
   }
 
-  editAssociate(incoming: Incoming): void {
-    this.openDialog(incoming);
+  editAssociate(spending: Spending): void {
+    this.openDialog(spending);
   }
   
   refreshData(): void {
@@ -128,7 +128,7 @@ export class IncomingsComponent implements OnInit {
   }
 
   delete(id: string): void {
-    this.incomingsService.delete(id).subscribe((res: any) => {
+    this.spendingService.delete(id).subscribe((res: any) => {
       this.query();
       this.toaster.info("Elementi u hoq me sukses", "Sukses", {timeOut: 7000, positionClass: TOASTER_POSITION});
     });

@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { CategoriesComponent } from './components/categories/categories.component';
-import { CilesimetComponent } from './components/cilesimet/cilesimet.component';
+import { SettingsComponent } from './components/settings/settings.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { IncomingsComponent } from './components/incomings/incomings.component';
-import { SpendingsComponent } from './components/spendings/spendings.component';
+import { IncomesComponent } from './components/incomes/incomes.component';
+import { ExpensesComponent } from './components/expenses/expenses.component';
 
 
 const routes: Routes = [
   {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
   {path: 'categories', component: CategoriesComponent},
-  {path: 'cilesimet', component: CilesimetComponent},
-  {path: 'spendings', component: SpendingsComponent},
+  {path: 'settings', component: SettingsComponent},
+  {path: 'expenses', component: ExpensesComponent},
   {path: 'dashboard', component: DashboardComponent},
-  {path: 'incomings', component: IncomingsComponent}
+  {path: 'incomes', component: IncomesComponent}
 
 ];
 
