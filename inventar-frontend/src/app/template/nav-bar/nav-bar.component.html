@@ -1,4 +1,4 @@
-<mat-toolbar class="toolbar {{sharedService.theme}}">
+<mat-toolbar class="toolbar {{sharedService.theme}}" *ngIf="authenticationService.currentUserValue">
     <span></span>
     <div class="menu-container">
         <div class="menu-item pointer" (click)="toggleFullScreenMode()" style="color: white;">

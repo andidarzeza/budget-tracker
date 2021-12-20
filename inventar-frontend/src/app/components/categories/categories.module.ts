@@ -14,7 +14,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { CategoriesRoutingModule } from './categories-routing.module';
 
 
-
 @NgModule({
   declarations: [CategoriesComponent, AddCategoryComponent, IconSelectComponent],
   imports: [

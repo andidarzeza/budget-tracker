@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 
 
 @NgModule({
-  declarations: [ConfirmComponent],
+  declarations: [ConfirmComponent, NotFoundComponent],
   imports: [
     CommonModule,
     MatIconModule,

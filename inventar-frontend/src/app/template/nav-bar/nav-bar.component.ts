@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -10,7 +11,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
   pageTitle = 'Lista e Librave';
   fullScreenMode = false;
   interval = null;
-  constructor(public sharedService: SharedService) { }
+  constructor(public sharedService: SharedService, public authenticationService: AuthenticationService) { 
+  }
 
   currentDate = new Date();
   ngOnInit(): void {

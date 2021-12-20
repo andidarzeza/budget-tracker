@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { IConfiguration } from './models/IConfiguration';
+import { AuthenticationService } from './services/authentication.service';
 import { ConfigurationService } from './services/configuration.service';
 import { SharedService } from './services/shared.service';
 
@@ -15,7 +16,7 @@ export class AppComponent implements OnInit {
   title = 'inventar-front-end';
   success = true;
   error = false;
-  constructor(public sharedService: SharedService, private configurationService: ConfigurationService, private formBuilder: FormBuilder, private http: HttpClient) {
+  constructor(public authenticationService: AuthenticationService, public sharedService: SharedService, private configurationService: ConfigurationService, private formBuilder: FormBuilder, private http: HttpClient) {
 
   }
 

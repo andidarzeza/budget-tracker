@@ -1,5 +1,5 @@
 <div class="application-container">
-    <div class="sidebar {{sharedService.theme}}" id="sidebar">
+    <div class="sidebar {{sharedService.theme}}" id="sidebar" *ngIf="authenticationService.currentUserValue">
         <app-side-bar></app-side-bar>
     </div>
     <div class="application {{sharedService.theme}}-body" id="application-body">

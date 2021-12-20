@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -8,7 +9,7 @@ import { SharedService } from 'src/app/services/shared.service';
 })
 export class SideBarComponent implements OnInit {
   isOpened = false;
-  constructor(public sharedService: SharedService) { }
+  constructor(public sharedService: SharedService, public authenticationService: AuthenticationService) { }
   items = [
     {
       icon: 'dashboard',

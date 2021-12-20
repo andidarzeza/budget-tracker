@@ -1,0 +1,22 @@
+h1 {
+    font-size: 7.5em;
+    margin-bottom: 50px;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+p {
+    max-width: 483px;
+    font-size: 1rem;
+}
+
+div {
+    color: #9F9F9F;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Lato', sans-serif;
+}
