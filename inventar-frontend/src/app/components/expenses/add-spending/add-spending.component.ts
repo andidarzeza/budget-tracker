@@ -19,6 +19,7 @@ export class AddSpendingComponent implements OnInit, OnDestroy {
   buttonText = "Shto Anetar";
   private mode = '';
   private id = '';
+  public savingEntity = false;
   private categoriesSubscription: Subscription = null;
   private saveSubscription: Subscription = null;
   private updateSubscription: Subscription = null;
@@ -68,22 +69,26 @@ export class AddSpendingComponent implements OnInit, OnDestroy {
   }
 
   add(): void {
-    if(this.formGroup.valid){
+    if(this.formGroup.valid && !this.savingEntity){
       if(this.mode === 'edit') {
         this.spending.name = this.name.value;
         this.spending.description = this.description.value;
         this.spending.moneySpent = this.moneySpent.value;
         this.unsubscribe(this.updateSubscription);
+        this.savingEntity = true;
         this.updateSubscription = this.spendingService.update(this.spending).subscribe(() => {
-          this.closeDialog(true);  
+          this.closeDialog(true);
+          this.savingEntity = false;
           this.toaster.success("Expense updated successfully", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
-      } else {
+      } else if(!this.savingEntity) {
         this.unsubscribe(this.saveSubscription);
+        this.savingEntity = true;
         this.saveSubscription = this.spendingService.save(this.formGroup.value).subscribe(() => {
           this.closeDialog(true);  
+          this.savingEntity = false;
           this.toaster.success("A new Expense has been inserted", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });    

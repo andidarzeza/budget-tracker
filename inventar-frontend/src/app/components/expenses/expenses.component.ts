@@ -117,8 +117,12 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   }
 
   delete(id: string): void {
+    this.totalRequests++;
+    this.sharedService.activateLoadingSpinner();
     this.unsubscribe(this.deleteSubscription);
     this.deleteSubscription = this.spendingService.delete(id).subscribe(() => {
+      this.totalRequests--;
+      this.sharedService.checkLoadingSpinner(this.totalRequests);
       this.query();
       this.toaster.info("Element deleted successfully", "Success", {timeOut: 7000, positionClass: TOASTER_POSITION});
     });

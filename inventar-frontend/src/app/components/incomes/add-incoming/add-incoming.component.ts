@@ -19,6 +19,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
   buttonText = "Shto Anetar";
   private mode = '';
   private id = '';
+  savingEntity = false;
   private categoriesSubscription: Subscription = null;
   private updateSubscription: Subscription = null;
   private saveSubscription: Subscription = null;
@@ -68,22 +69,26 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
   }
 
   add(): void {
-    if(this.formGroup.valid){
+    if(this.formGroup.valid && !this.savingEntity){
       if(this.mode === 'edit') {
         this.incomings.name = this.name.value;
         this.incomings.description = this.description.value;
         this.incomings.incoming = this.incoming.value;
         this.unsubscribe(this.updateSubscription);
+        this.savingEntity = true;
         this.updateSubscription = this.incomingsService.update(this.incomings).subscribe(() => {
           this.closeDialog(true);  
+          this.savingEntity = false;
           this.toaster.success("Income updated with success", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
-      } else {
+      } else if(!this.savingEntity){
         this.unsubscribe(this.saveSubscription);
+        this.savingEntity = true;
         this.saveSubscription = this.incomingsService.save(this.formGroup.value).subscribe(() => {
-          this.closeDialog(true);  
+          this.closeDialog(true);
+          this.savingEntity = false;
           this.toaster.success("A new Income has been inserted", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });    

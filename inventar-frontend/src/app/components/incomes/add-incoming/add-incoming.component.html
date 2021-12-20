@@ -8,19 +8,19 @@
     <mat-form-field appearance="outline" style="width: 100%;">
         <mat-label class="{{sharedService.theme}}-text">Name</mat-label>
         <input type="text" autocomplete="off" matInput formControlName="name">
-        <mat-error *ngIf="name.errors?.required">Kjo fushe nuk mund te jete bosh.</mat-error>
+        <mat-error *ngIf="name.errors?.required">This field is required.</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" style="width: 100%;">
         <mat-label class="{{sharedService.theme}}-text">Description</mat-label>
         <input type="text" autocomplete="off" matInput formControlName="description">
-        <mat-error *ngIf="description.errors?.required">Kjo fushe nuk mund te jete bosh.</mat-error>
+        <mat-error *ngIf="description.errors?.required">This field is required.</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" style="width: 100%;">
         <mat-label class="{{sharedService.theme}}-text">Incoming</mat-label>
         <input type="number" autocomplete="off" matInput formControlName="incoming">
-        <mat-error *ngIf="incoming.errors?.required">Kjo fushe nuk mund te jete bosh.</mat-error>
+        <mat-error *ngIf="incoming.errors?.required">This field is required.</mat-error>
     </mat-form-field>
 
     <mat-form-field  style="width: 100%;">
@@ -30,7 +30,7 @@
             {{category?.category}}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="category.errors?.required">Kjo fushe nuk mund te jete bosh.</mat-error>
+        <mat-error *ngIf="category.errors?.required">This field is required.</mat-error>
       </mat-form-field>
 </form>
 

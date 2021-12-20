@@ -16,6 +16,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
   buttonText = "Shto Anetar";
   private mode = '';
   private id = '';
+  savingEntity = false;
   private updateSubscription: Subscription = null;
   private saveSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<AddCategoryComponent>, private formBuilder: FormBuilder, private categoriesService: CategoriesService) {}
@@ -49,7 +50,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
   }
 
   add(): void {
-    if(this.categoryGroup.valid){
+    if(this.categoryGroup.valid && !this.savingEntity){
       if(this.mode === 'edit') {
         this.data.spendingCategory.category = this.category.value;
         this.data.spendingCategory.description = this.description.value;
@@ -57,18 +58,22 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         const payload = this.data.spendingCategory;
         payload['categoryType'] = this.data.categoriesType;
         this.unsubscribe(this.updateSubscription);
-        this.updateSubscription = this.categoriesService.update(payload).subscribe((res:any) => {
-          this.closeDialog(true);  
+        this.savingEntity = true;
+        this.updateSubscription = this.categoriesService.update(payload).subscribe(() => {
+          this.closeDialog(true); 
+          this.savingEntity = false; 
           this.toaster.success("Category Updated with Success", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
-      } else {
+      } else if(!this.savingEntity){
         const payload = this.categoryGroup.value;
         payload['categoryType'] = this.data.categoriesType;
         this.unsubscribe(this.saveSubscription);
+        this.savingEntity = true;
         this.saveSubscription = this.categoriesService.save(payload).subscribe((res:any) => {
           this.closeDialog(true);  
+          this.savingEntity = false;
           this.toaster.success("A new Category has been inserted", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });    

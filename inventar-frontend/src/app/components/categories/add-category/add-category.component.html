@@ -8,13 +8,13 @@
     <mat-form-field appearance="outline" style="width: 100%;">
         <mat-label class="{{sharedService.theme}}-text">Category</mat-label>
         <input type="text" autocomplete="off" matInput formControlName="category">
-        <mat-error *ngIf="category.errors?.required">Kjo fushe nuk mund te jete bosh.</mat-error>
+        <mat-error *ngIf="category.errors?.required">This field is required.</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" style="width: 100%;">
         <mat-label class="{{sharedService.theme}}-text">Description</mat-label>
         <input type="text" autocomplete="off" matInput formControlName="description">
-        <mat-error *ngIf="description.errors?.required">Kjo fushe nuk mund te jete bosh.</mat-error>
+        <mat-error *ngIf="description.errors?.required">This field is required.</mat-error>
     </mat-form-field>
     <app-icon-select style="display:block; margin-bottom: 1.34375em;" [selectedIcon]="icon.value" (onIconSelect)="onIconSelect($event)"></app-icon-select>
 </form>
@@ -22,7 +22,7 @@
 <div class="actions">
     <span></span>
     <span>
-        <button mat-raised-button color="primary" class="{{sharedService.theme}}-add-entity" style="padding: 2px;" [disabled]="categoryGroup?.invalid" (click)="add()">
+        <button mat-raised-button color="primary" class="{{sharedService.theme}}-add-entity" style="padding: 2px;" [disabled]="categoryGroup?.invalid && savingEntity" (click)="add()">
             <mat-icon>done</mat-icon>
         </button>
     </span>
