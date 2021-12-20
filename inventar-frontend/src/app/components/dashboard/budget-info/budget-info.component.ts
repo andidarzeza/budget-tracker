@@ -58,8 +58,6 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   dateTo = new Date();
   @Output() dateSelected: EventEmitter<any> = new EventEmitter();
   ngOnInit(): void {
-    console.log(localStorage.getItem("hideBalance"));
-    
     this.hideBalance = (localStorage.getItem("hideBalance") === 'true');
     this.emitSelectedDate();
     this.accountSubscription = this.accountService.getAccount("61b614acf563e554ee4ebb9c").subscribe((response: any) => {

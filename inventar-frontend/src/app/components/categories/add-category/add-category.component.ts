@@ -59,7 +59,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         this.unsubscribe(this.updateSubscription);
         this.updateSubscription = this.categoriesService.update(payload).subscribe((res:any) => {
           this.closeDialog(true);  
-          this.toaster.success("Anetari u perditesua me sukses", "Sukses!", {
+          this.toaster.success("Category Updated with Success", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
@@ -69,7 +69,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         this.unsubscribe(this.saveSubscription);
         this.saveSubscription = this.categoriesService.save(payload).subscribe((res:any) => {
           this.closeDialog(true);  
-          this.toaster.success("Anetari u shtua me sukses", "Sukses!", {
+          this.toaster.success("A new Category has been inserted", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });    
         });

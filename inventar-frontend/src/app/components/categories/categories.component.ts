@@ -160,5 +160,6 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.unsubscribe(this.categoriesSubscription);
+    this.unsubscribe(this.deleteSubscription);
   }
 }

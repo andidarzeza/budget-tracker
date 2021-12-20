@@ -84,7 +84,7 @@ export class AddSpendingComponent implements OnInit, OnDestroy {
         this.unsubscribe(this.saveSubscription);
         this.saveSubscription = this.spendingService.save(this.formGroup.value).subscribe(() => {
           this.closeDialog(true);  
-          this.toaster.success("A new Expense has been inserted", "Sukses!", {
+          this.toaster.success("A new Expense has been inserted", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });    
         });

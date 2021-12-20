@@ -1,14 +1,13 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { Incoming } from 'src/app/models/Incoming';
-import { Spending } from 'src/app/models/Spending';
 import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { SpendingService } from 'src/app/services/spending.service';
 import { TOASTER_POSITION } from 'src/environments/environment';
 
 @Component({
@@ -16,10 +15,13 @@ import { TOASTER_POSITION } from 'src/environments/environment';
   templateUrl: './add-incoming.component.html',
   styleUrls: ['./add-incoming.component.css']
 })
-export class AddIncomingComponent implements OnInit {
+export class AddIncomingComponent implements OnInit, OnDestroy {
   buttonText = "Shto Anetar";
   private mode = '';
   private id = '';
+  private categoriesSubscription: Subscription = null;
+  private updateSubscription: Subscription = null;
+  private saveSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public incomings: Incoming, public dialogRef: MatDialogRef<AddIncomingComponent>, private formBuilder: FormBuilder, private incomingsService: IncomingsService, private categoryService: CategoriesService) {}
   formGroup: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
@@ -59,7 +61,8 @@ export class AddIncomingComponent implements OnInit {
   }
 
   private getCategories(): void {
-    this.categoryService.findAll(0, 100, "incomings").subscribe((response: any) => {
+    this.unsubscribe(this.categoriesSubscription);
+    this.categoriesSubscription = this.categoryService.findAll(0, 100, "incomings").subscribe((response: any) => {
       this.categories = response.body.categories;
     })
   }
@@ -70,16 +73,18 @@ export class AddIncomingComponent implements OnInit {
         this.incomings.name = this.name.value;
         this.incomings.description = this.description.value;
         this.incomings.incoming = this.incoming.value;
-        this.incomingsService.update(this.incomings).subscribe((res:any) => {
+        this.unsubscribe(this.updateSubscription);
+        this.updateSubscription = this.incomingsService.update(this.incomings).subscribe(() => {
           this.closeDialog(true);  
-          this.toaster.success("Anetari u perditesua me sukses", "Sukses!", {
+          this.toaster.success("Income updated with success", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });
         });
       } else {
-        this.incomingsService.save(this.formGroup.value).subscribe((res:any) => {
+        this.unsubscribe(this.saveSubscription);
+        this.saveSubscription = this.incomingsService.save(this.formGroup.value).subscribe(() => {
           this.closeDialog(true);  
-          this.toaster.success("Anetari u shtua me sukses", "Sukses!", {
+          this.toaster.success("A new Income has been inserted", "Success", {
             timeOut: 7000, positionClass: TOASTER_POSITION
           });    
         });
@@ -89,6 +94,18 @@ export class AddIncomingComponent implements OnInit {
 
   closeDialog(update: any): void {
     this.dialogRef.close(update);
+  }
+
+  private unsubscribe(subscription: Subscription): void {
+    if(subscription) {
+      subscription.unsubscribe();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe(this.saveSubscription);
+    this.unsubscribe(this.updateSubscription);
+    this.unsubscribe(this.categoriesSubscription);
   }
 
 }
