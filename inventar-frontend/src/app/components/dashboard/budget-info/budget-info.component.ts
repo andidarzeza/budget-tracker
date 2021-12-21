@@ -3,6 +3,7 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/cor
 import { Subscription } from 'rxjs';
 import { Account } from 'src/app/models/Account';
 import { AccountService } from 'src/app/services/account.service';
+import { SharedService } from 'src/app/services/shared.service';
 import { MONTHS } from 'src/environments/environment';
 
 @Component({
@@ -47,7 +48,7 @@ import { MONTHS } from 'src/environments/environment';
 })
 export class BudgetInfoComponent implements OnInit, OnDestroy {
 
-  constructor(public accountService: AccountService) { }
+  constructor(public accountService: AccountService, public sharedService: SharedService) { }
   public account: Account;
   private accountSubscription: Subscription = null;
   public hideBalance: boolean = false;

@@ -20,13 +20,7 @@
     background: #1d252a;
 }
 
-.light-body {
-    background: white;
-}
 
-.dark-body {
-    background: #111619;
-}
 
 .application {
     overflow-y: auto;

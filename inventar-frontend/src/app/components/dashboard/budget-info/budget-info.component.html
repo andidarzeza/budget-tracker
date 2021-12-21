@@ -9,7 +9,7 @@
             </span>
         </span>
         
-        <app-date-picker [@datePickerAnimation] (dateSelected)="onDateSelected($event)" class="sb9 mat-elevation-z8" *ngIf="showDatePicker"></app-date-picker>
+        <app-date-picker [@datePickerAnimation] (dateSelected)="onDateSelected($event)" class="{{sharedService.theme}}-sb9 sb9 mat-elevation-z8 {{sharedService.theme}}-body"  *ngIf="showDatePicker"></app-date-picker>
         <!-- <span class="no-select" style="margin-left: 40px;position: relative;cursor: pointer;">
             <span (click)="switchDatePicker()" id="selectedDateId">{{months[dateFrom?.getMonth()]}} {{dateFrom?.getFullYear()}}</span>
             
