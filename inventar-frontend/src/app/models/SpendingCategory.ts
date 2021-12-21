@@ -5,4 +5,5 @@ export interface SpendingCategory {
     category: string;
     description: string;
     categoryType: string;
+    user: string;
 }

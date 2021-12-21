@@ -5,5 +5,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface ConfigurationService {
     ResponseEntity updateConfiguration(Configuration configuration);
-    ResponseEntity getConfiguration();
+    ResponseEntity getConfiguration(String user);
 }

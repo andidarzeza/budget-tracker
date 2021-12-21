@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 public interface SpendingService {
-    ResponseEntity getSpendings(Pageable pageable);
+    ResponseEntity getExpenses(Pageable pageable, String user);
     ResponseEntity addSpending(Spending spending);
     ResponseEntity getSpendObject(String id);
     ResponseEntity delete(String id);

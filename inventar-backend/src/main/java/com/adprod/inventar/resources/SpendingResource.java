@@ -17,8 +17,8 @@ public class SpendingResource {
     }
 
     @GetMapping
-    public ResponseEntity findAll(Pageable pageable){
-        return spendingService.getSpendings(pageable);
+    public ResponseEntity findAll(Pageable pageable, @RequestParam String user){
+        return spendingService.getExpenses(pageable, user);
     }
 
     @GetMapping("/{id}")

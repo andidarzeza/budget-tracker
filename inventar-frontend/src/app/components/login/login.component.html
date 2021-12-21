@@ -1,7 +1,6 @@
 
-
-<form [formGroup]="loginGroup">
-    <mat-card class="login-card {{sharedService.theme}}-table">
+<mat-card class="login-card {{sharedService.theme}}-table">
+    <form [formGroup]="loginGroup" autocomplete="off">
         <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label class="{{sharedService.theme}}-text">Username</mat-label>
             <input type="text" autocomplete="off" matInput formControlName="username">
@@ -13,7 +12,13 @@
             <input type="password" autocomplete="off" matInput formControlName="password">
             <mat-error *ngIf="password.errors?.required">This field is required.</mat-error>
         </mat-form-field>
-    </mat-card>
-        
+
+        <div class="actions">
+            <span></span>
+            <button mat-raised-button style="background-color: #111619; color: #9F9F9F;" (click)="login()">
+                Login
+            </button>
+        </div>
     
-</form>
+    </form>
+</mat-card>        

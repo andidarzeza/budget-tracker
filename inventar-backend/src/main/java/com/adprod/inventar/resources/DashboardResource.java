@@ -15,17 +15,17 @@ public class DashboardResource {
     }
 
     @GetMapping
-    public ResponseEntity getDailySpendings(){
-        return dashboardService.getDailySpendings();
+    public ResponseEntity getDailyExpenses(@RequestParam String user){
+        return dashboardService.getDailyExpenses(user);
     }
 
     @GetMapping("/incomes")
-    public ResponseEntity getIncomeCategoriesData(){
-        return dashboardService.getIncomeCategoriesData();
+    public ResponseEntity getIncomeCategoriesData(@RequestParam String user){
+        return dashboardService.getIncomeCategoriesData(user);
     }
 
     @GetMapping("/categories")
-    public ResponseEntity getCategoriesData(){
-        return dashboardService.getCategoriesData();
+    public ResponseEntity getCategoriesData(@RequestParam String user){
+        return dashboardService.getCategoriesData(user);
     }
 }

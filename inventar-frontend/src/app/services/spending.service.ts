@@ -3,15 +3,16 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
 import { Spending } from '../models/Spending';
+import { AuthenticationService } from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpendingService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
 
   findAll(page: any, size: any, sort: any): Observable<any> {
-    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort);
+    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort).append("user", this.authenticationService.currentUserValue.username);
     return this.http.get(`${serverAPIURL}/api/spending`, {
       params: options,
       observe: 'response'
@@ -22,12 +23,14 @@ export class SpendingService {
     return this.http.get(`${serverAPIURL}/api/spending/${id}`, {observe: 'response'});
   }
 
-  save(spending: Spending): Observable<any> {
-    return this.http.post(`${serverAPIURL}/api/spending/`, spending, {observe: 'response'});
+  save(expense: Spending): Observable<any> {
+    expense['user'] = this.authenticationService.currentUserValue?.username;
+    return this.http.post(`${serverAPIURL}/api/spending/`, expense, {observe: 'response'});
   }
 
-  update(book: Spending): Observable<any> {
-    return this.http.put(`${serverAPIURL}/api/spending/`, book, {observe: 'response'});
+  update(expense: Spending): Observable<any> {
+    expense['user'] = this.authenticationService.currentUserValue?.username;
+    return this.http.put(`${serverAPIURL}/api/spending/`, expense, {observe: 'response'});
   }
 
   delete(id: string): Observable<any> {

@@ -2,14 +2,17 @@
     <span></span>
     <div class="menu-container">
         <div class="menu-item pointer" (click)="toggleFullScreenMode()" style="color: white;">
-            <mat-icon *ngIf="!fullScreenMode" class="{{sharedService.theme}}-icon" style="width: 28px;height: 28px;font-size: 28px;">fullscreen</mat-icon>
-            <mat-icon *ngIf="fullScreenMode" class="{{sharedService.theme}}-icon" style="width: 28px;height: 28px;font-size: 28px;">fullscreen_exit</mat-icon>
+            <mat-icon class="{{sharedService.theme}}-icon" style="width: 28px;height: 28px;font-size: 28px;">{{fullScreenMode ? 'fullscreen_exit' : 'fullscreen'}}</mat-icon>
+            <!-- <mat-icon *ngIf="fullScreenMode" class="{{sharedService.theme}}-icon" style="width: 28px;height: 28px;font-size: 28px;">fullscreen_exit</mat-icon> -->
         </div>
         <div class="menu-item" style="color: white;">
             <mat-icon class="{{sharedService.theme}}-icon">access_time</mat-icon>
-            <span style="margin-left: 5px;
+            <span style="margin-left: 5px;margin-top: 2px;
             font-weight: 200;
             font-size: 15px;">{{currentDate | date: 'medium'}}</span>
+        </div>
+        <div class="menu-item pointer" (click)="logout()">
+            <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>
         </div>
     </div>
 </mat-toolbar>

@@ -27,6 +27,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
     }
   }
 
+  public logout(): void {
+    this.authenticationService.logout();
+  }
+
   toggleFullScreenMode(): void {
     if(this.fullScreenMode) {
       document.exitFullscreen();

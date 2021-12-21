@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { serverAPIURL } from 'src/environments/environment';
@@ -12,7 +13,7 @@ export class AuthenticationService {
   public currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
       this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
       this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -35,5 +36,6 @@ export class AuthenticationService {
       // remove user from local storage and set current user to null
       localStorage.removeItem('currentUser');
       this.currentUserSubject.next(null);
+      this.router.navigate(['/login']);
   }
 }

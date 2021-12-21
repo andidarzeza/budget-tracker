@@ -15,13 +15,15 @@ public class Incoming {
     private Double incoming;
     private String description;
     private String spendingCategoryID;
+    private String user;
 
-    public Incoming(String id, String name, Double incoming, String description, String spendingCategoryID) {
+    public Incoming(String id, String name, Double incoming, String description, String spendingCategoryID, String user) {
         this.id = id;
         this.name = name;
         this.incoming = incoming;
         this.description = description;
         this.spendingCategoryID = spendingCategoryID;
+        this.user = user;
     }
 
     public Incoming() {
@@ -74,5 +76,13 @@ public class Incoming {
 
     public void setSpendingCategoryID(String spendingCategoryID) {
         this.spendingCategoryID = spendingCategoryID;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }

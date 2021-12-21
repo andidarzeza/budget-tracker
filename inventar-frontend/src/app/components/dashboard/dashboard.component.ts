@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       labels = chartLabels;
     }
     this.unsubscribe(this.dailySpendingsSubscription);
-    this.dailySpendingsSubscription = this.dashboardService.getDailySpendings().subscribe((response: any) => {
+    this.dailySpendingsSubscription = this.dashboardService.getDailyExpenses().subscribe((response: any) => {
       this.amountSpentAverage = this.sum(response.body) / response.body.length;
       const data: number[] = this.fillMissingData(response.body, chartLabels);
       this.chartUtil.createChart("daily-chart", {

@@ -20,8 +20,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseEntity findAll(Pageable pageable, String categoryType) {
-        Page<SpendingCategory> page = this.categoryRepository.findAllByCategoryType(pageable, categoryType);
+    public ResponseEntity findAll(Pageable pageable, String categoryType, String user) {
+        Page<SpendingCategory> page = this.categoryRepository.findAllByCategoryTypeAndUser(pageable, categoryType, user);
         CategoryWrapper categoryWrapper = new CategoryWrapper();
         categoryWrapper.setCategories(page.getContent());
         categoryWrapper.setCount(page.getTotalElements());

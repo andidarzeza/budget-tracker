@@ -11,6 +11,7 @@ import { AddSpendingComponent } from './add-spending/add-spending.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
   selector: 'app-expenses',
@@ -52,7 +53,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   spendings: Spending[] = [];
   private deleteSubscription: Subscription = null;
   private expenseSubscription: Subscription = null;
-  constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService) { }
+  constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService, private authenticationService: AuthenticationService) { }
 
   ngOnInit(): void {
     this.query();

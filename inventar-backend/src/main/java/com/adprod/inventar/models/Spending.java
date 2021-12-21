@@ -14,13 +14,15 @@ public class Spending {
     private Double moneySpent;
     private String description;
     private String spendingCategoryID;
+    private String user;
 
-    public Spending(String id, String name, Double moneySpent, String description, String spendingCategoryID) {
+    public Spending(String id, String name, Double moneySpent, String description, String spendingCategoryID, String user) {
         this.id = id;
         this.name = name;
         this.moneySpent = moneySpent;
         this.description = description;
         this.spendingCategoryID = spendingCategoryID;
+        this.user = user;
     }
 
     public Spending() {
@@ -73,5 +75,13 @@ public class Spending {
 
     public void setSpendingCategoryID(String spendingCategoryID) {
         this.spendingCategoryID = spendingCategoryID;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }

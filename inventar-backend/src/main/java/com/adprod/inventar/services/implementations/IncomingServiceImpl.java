@@ -31,8 +31,8 @@ public class IncomingServiceImpl implements IncomingService {
     }
 
     @Override
-    public ResponseEntity getIncomings(Pageable pageable) {
-        Page<Incoming> page = this.incomingRepository.findAll(pageable);
+    public ResponseEntity getIncomes(Pageable pageable, String user) {
+        Page<Incoming> page = this.incomingRepository.findAllByUser(pageable, user);
         IncomingWrapper incomingWrapper = new IncomingWrapper();
         List<Incoming> content = page.getContent();
         List<IncomingDTO> response = new ArrayList<>();

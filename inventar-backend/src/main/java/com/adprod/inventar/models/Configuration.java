@@ -9,11 +9,13 @@ public class Configuration {
     private String id;
     private boolean darkMode;
     private boolean animationMode;
+    private String user;
 
-    public Configuration(String id, boolean darkMode, boolean animationMode) {
+    public Configuration(String id, boolean darkMode, boolean animationMode, String user) {
         this.id = id;
         this.darkMode = darkMode;
         this.animationMode = animationMode;
+        this.user = user;
     }
 
     public Configuration() {
@@ -41,5 +43,13 @@ public class Configuration {
 
     public void setAnimationMode(boolean animationMode) {
         this.animationMode = animationMode;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -50,8 +51,9 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public ResponseEntity getDailySpendings() {
+    public ResponseEntity getDailyExpenses(String user) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
+        aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(
                 Aggregation.project("$moneySpent")
                         .andExpression("{$dateToString: { format: '%d-%m-%Y', date: '$createdTime'}}").as("day")
@@ -63,8 +65,9 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public ResponseEntity getCategoriesData() {
+    public ResponseEntity getCategoriesData(String user) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
+        aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$spendingCategoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("total"));
         TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
         List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", DailySpendingsDTO.class).getMappedResults();
@@ -80,8 +83,9 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public ResponseEntity getIncomeCategoriesData() {
+    public ResponseEntity getIncomeCategoriesData(String user) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
+        aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$spendingCategoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("total"));
         TypedAggregation<Incoming> tempAgg = Aggregation.newAggregation(Incoming.class, aggregationResult);
         List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incoming", DailySpendingsDTO.class).getMappedResults();

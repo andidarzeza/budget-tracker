@@ -11,13 +11,15 @@ public class SpendingCategory {
     private String category;
     private String description;
     private String categoryType;
+    private String user;
 
-    public SpendingCategory(String id, String icon, String category, String description, String categoryType) {
+    public SpendingCategory(String id, String icon, String category, String description, String categoryType, String user) {
         this.id = id;
         this.icon = icon;
         this.category = category;
         this.description = description;
         this.categoryType = categoryType;
+        this.user = user;
     }
 
     public String getCategoryType() {
@@ -61,5 +63,13 @@ public class SpendingCategory {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }

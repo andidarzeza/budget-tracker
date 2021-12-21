@@ -29,8 +29,8 @@ public class SpendingServiceImpl implements SpendingService {
     }
 
     @Override
-    public ResponseEntity getSpendings(Pageable pageable) {
-        Page<Spending> page = this.spendingRepository.findAll(pageable);
+    public ResponseEntity getExpenses(Pageable pageable, String user) {
+        Page<Spending> page = this.spendingRepository.findAllByUser(pageable, user);
         SpendingWrapper spendingWrapper = new SpendingWrapper();
         List<Spending> content = page.getContent();
         List<SpendingDTO> response = new ArrayList<>();

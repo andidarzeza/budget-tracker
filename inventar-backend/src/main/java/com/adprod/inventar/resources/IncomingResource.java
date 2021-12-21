@@ -17,8 +17,8 @@ public class IncomingResource {
     }
 
     @GetMapping
-    public ResponseEntity findAll(Pageable pageable){
-        return incomingService.getIncomings(pageable);
+    public ResponseEntity findAll(Pageable pageable, @RequestParam String user){
+        return incomingService.getIncomes(pageable, user);
     }
 
     @GetMapping("/{id}")

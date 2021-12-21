@@ -1,10 +1,8 @@
 package com.adprod.inventar.services.implementations;
 
-import com.adprod.inventar.models.LoginResponse;
-import com.adprod.inventar.models.ResponseMessage;
-import com.adprod.inventar.models.User;
-import com.adprod.inventar.models.UserRequest;
+import com.adprod.inventar.models.*;
 import com.adprod.inventar.models.enums.Role;
+import com.adprod.inventar.repositories.ConfigurationRepository;
 import com.adprod.inventar.repositories.UserRepository;
 import com.adprod.inventar.security.JwtManager;
 import com.adprod.inventar.services.UserService;
@@ -24,12 +22,14 @@ public class UserServiceImpl implements UserService {
     private final JwtManager jwtManager;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final ConfigurationRepository configurationRepository;
 
-    public UserServiceImpl(UserRepository repository, JwtManager jwtManager, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository repository, JwtManager jwtManager, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, ConfigurationRepository configurationRepository) {
         this.repository = repository;
         this.jwtManager = jwtManager;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = bCryptPasswordEncoder;
+        this.configurationRepository = configurationRepository;
     }
 
     @Override
@@ -42,6 +42,8 @@ public class UserServiceImpl implements UserService {
                     Role.USER
             );
             repository.save(user);
+            Configuration configuration = new Configuration(null, false, true, user.getUsername());
+            configurationRepository.save(configuration);
             return new ResponseEntity(new ResponseMessage("Registration Successful"), HttpStatus.OK);
         }
         return new ResponseEntity(new ResponseMessage("Username already in use"), HttpStatus.CONFLICT);

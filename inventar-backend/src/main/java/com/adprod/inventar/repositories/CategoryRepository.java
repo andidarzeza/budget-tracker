@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CategoryRepository extends MongoRepository<SpendingCategory, String> {
-    Page<SpendingCategory> findAllByCategoryType(Pageable pageable, String categoryType);
+    Page<SpendingCategory> findAllByCategoryTypeAndUser(Pageable pageable, String categoryType, String user);
 }

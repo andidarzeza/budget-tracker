@@ -16,8 +16,8 @@ public class ConfigurationResource {
     }
 
     @GetMapping
-    public ResponseEntity getConfiguration() {
-        return this.configurationService.getConfiguration();
+    public ResponseEntity getConfiguration(@RequestParam(required = false) String user) {
+        return this.configurationService.getConfiguration(user);
     }
 
     @PutMapping

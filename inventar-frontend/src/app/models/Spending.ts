@@ -5,4 +5,5 @@ export interface Spending {
     name: string;
     description: string;
     spendingCategoryID: string;
+    user: string;
 }

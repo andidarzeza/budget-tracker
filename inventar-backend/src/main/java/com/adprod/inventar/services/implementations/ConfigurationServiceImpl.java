@@ -1,11 +1,14 @@
 package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.models.Configuration;
+import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.repositories.ConfigurationRepository;
 import com.adprod.inventar.services.ConfigurationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ConfigurationServiceImpl implements ConfigurationService {
@@ -17,24 +20,24 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public ResponseEntity updateConfiguration(Configuration configuration) {
-        List<Configuration> configurations = configurationRepository.findAll();
-        if (!configurations.isEmpty()) {
-            Configuration configuration1 = configurations.get(0);
-            configuration.setId(configuration1.getId());
+        Optional<Configuration> configurationOptional = configurationRepository.findByUser(configuration.getUser());
+        if (configurationOptional.isPresent()) {
+            configuration.setId(configurationOptional.get().getId());
+            configurationRepository.save(configuration);
+            return ResponseEntity.ok(configuration);
         }
-        configuration = configurationRepository.save(configuration);
-        return ResponseEntity.ok(configuration);
+        return new ResponseEntity(new ResponseMessage("No Configuration Found for user " + configuration.getUser()), HttpStatus.NOT_FOUND);
     }
 
     @Override
-    public ResponseEntity getConfiguration() {
-        List<Configuration> configurations = this.configurationRepository.findAll();
-        if(configurations.isEmpty()) {
-            Configuration configuration = new Configuration(null, false, true);
-            configuration = configurationRepository.save(configuration);
-            return ResponseEntity.ok(configuration);
-        } else {
-            return ResponseEntity.ok(configurations.get(0));
+    public ResponseEntity getConfiguration(String user) {
+        if(Objects.isNull(user)) {
+            return ResponseEntity.ok(new Configuration(null, true, true, null));
         }
+        Optional<Configuration> configurationOptional = configurationRepository.findByUser(user);
+        if(configurationOptional.isPresent()) {
+            return ResponseEntity.ok(configurationOptional.get());
+        }
+        return ResponseEntity.ok(new Configuration(null, true, true, null));
     }
 }
