@@ -30,6 +30,11 @@ export class SideBarComponent implements AfterViewInit {
       link: '/categories'
     },
     {
+      icon: 'history',
+      text: 'History',
+      link: '/history'
+    },
+    {
       icon: 'settings',
       text: 'Settings',
       link: '/settings'
