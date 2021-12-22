@@ -3,11 +3,14 @@ package com.adprod.inventar.services.implementations;
 import com.adprod.inventar.models.Incoming;
 import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.models.SpendingCategory;
+import com.adprod.inventar.models.enums.EntityAction;
+import com.adprod.inventar.models.enums.EntityType;
 import com.adprod.inventar.models.wrappers.IncomingDTO;
 import com.adprod.inventar.models.wrappers.IncomingWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.repositories.IncomingRepository;
 import com.adprod.inventar.services.AccountService;
+import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.IncomingService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,15 +26,18 @@ public class IncomingServiceImpl implements IncomingService {
     private final IncomingRepository incomingRepository;
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
+    private final HistoryService historyService;
+    private final EntityType entityType = EntityType.INCOME;
 
-    public IncomingServiceImpl(IncomingRepository incomingRepository, CategoryRepository categoryRepository, AccountService accountService) {
+    public IncomingServiceImpl(IncomingRepository incomingRepository, CategoryRepository categoryRepository, AccountService accountService, HistoryService historyService) {
         this.incomingRepository = incomingRepository;
         this.categoryRepository = categoryRepository;
         this.accountService = accountService;
+        this.historyService = historyService;
     }
 
     @Override
-    public ResponseEntity getIncomes(Pageable pageable, String user) {
+    public ResponseEntity findAll(Pageable pageable, String user) {
         Page<Incoming> page = this.incomingRepository.findAllByUser(pageable, user);
         IncomingWrapper incomingWrapper = new IncomingWrapper();
         List<Incoming> content = page.getContent();
@@ -49,16 +55,17 @@ public class IncomingServiceImpl implements IncomingService {
     }
 
     @Override
-    public ResponseEntity addIncoming(Incoming incoming) {
+    public ResponseEntity save(Incoming incoming) {
         if(this.accountService.addToBalance(incoming.getIncoming())) {
             incomingRepository.save(incoming);
+            historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
             return ResponseEntity.ok(incoming);
         }
         return new ResponseEntity(new ResponseMessage("INTERNAL SERVER ERROR"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    public ResponseEntity getIncomingObject(String id) {
+    public ResponseEntity findOne(String id) {
         return null;
     }
 
@@ -67,6 +74,7 @@ public class IncomingServiceImpl implements IncomingService {
         Optional<Incoming> incoming = incomingRepository.findById(id);
         if(incoming.isPresent()) {
             incomingRepository.delete(incoming.get());
+            historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
             return ResponseEntity.ok(new ResponseMessage("Deleted"));
         }
         return new ResponseEntity(new ResponseMessage("Not Found"), HttpStatus.NOT_FOUND);
@@ -78,6 +86,7 @@ public class IncomingServiceImpl implements IncomingService {
         if(incomingOptional.isPresent()) {
             income.setId(id);
             incomingRepository.save(income);
+            historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
             return ResponseEntity.ok(income);
         }
         return new ResponseEntity(new ResponseMessage("No Category to update was found ."), HttpStatus.NOT_FOUND);

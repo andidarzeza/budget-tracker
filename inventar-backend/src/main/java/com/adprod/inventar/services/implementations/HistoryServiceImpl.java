@@ -3,6 +3,8 @@ package com.adprod.inventar.services.implementations;
 import com.adprod.inventar.models.History;
 import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.models.SpendingCategory;
+import com.adprod.inventar.models.enums.EntityAction;
+import com.adprod.inventar.models.enums.EntityType;
 import com.adprod.inventar.models.wrappers.CategoryWrapper;
 import com.adprod.inventar.models.wrappers.HistoryWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
@@ -13,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -43,4 +47,15 @@ public class HistoryServiceImpl implements HistoryService {
         return new ResponseEntity(new ResponseMessage("No History found for given id: " + id+ "."), HttpStatus.NOT_FOUND);
     }
 
+    @Override
+    public void save(History history) {
+        this.historyRepository.save(history);
+    }
+
+    @Override
+    public History from(EntityAction action, EntityType entity) {
+        String message = action.toString() + " action performed on " + entity.toString() + " Entity.";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return new History(action, authentication.getName(), message, entity);
+    }
 }

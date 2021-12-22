@@ -12,15 +12,13 @@ public class History {
 
     @Id
     private String id;
-    private Date date;
+    private Date date = new Date();
     private EntityAction action;
     private String user;
     private String message;
     private EntityType entity;
 
-    public History(String id, Date date, EntityAction action, String user, String message, EntityType entity) {
-        this.id = id;
-        this.date = date;
+    public History(EntityAction action, String user, String message, EntityType entity) {
         this.action = action;
         this.user = user;
         this.message = message;

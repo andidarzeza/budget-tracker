@@ -26,6 +26,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 if (jwtManager.validateToken(token)) {
                     jwtManager.username = jwtManager.extractUsername(token);
                     Authentication auth = jwtManager.getAuthentication(token);
+                    System.out.println(auth.getName());
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }

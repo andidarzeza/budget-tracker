@@ -18,12 +18,12 @@ public class IncomingResource {
 
     @GetMapping
     public ResponseEntity findAll(Pageable pageable, @RequestParam String user){
-        return incomingService.getIncomes(pageable, user);
+        return incomingService.findAll(pageable, user);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity findOne(@PathVariable String id){
-        return incomingService.getIncomingObject(id);
+        return incomingService.findOne(id);
     }
 
     @DeleteMapping("/{id}")
@@ -33,7 +33,7 @@ public class IncomingResource {
 
     @PostMapping
     public ResponseEntity save(@RequestBody Incoming incoming){
-        return incomingService.addIncoming(incoming);
+        return incomingService.save(incoming);
     }
 
     @PutMapping("/{id}")
