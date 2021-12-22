@@ -68,7 +68,7 @@ public class DashboardServiceImpl implements DashboardService {
     public ResponseEntity getCategoriesData(String user) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
-        aggregationResult.add(Aggregation.group("$spendingCategoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("total"));
+        aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("total"));
         TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
         List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", DailySpendingsDTO.class).getMappedResults();
         List<DailySpendingsDTO> response = new ArrayList<>();
@@ -86,7 +86,7 @@ public class DashboardServiceImpl implements DashboardService {
     public ResponseEntity getIncomeCategoriesData(String user) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
-        aggregationResult.add(Aggregation.group("$spendingCategoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("total"));
+        aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("total"));
         TypedAggregation<Incoming> tempAgg = Aggregation.newAggregation(Incoming.class, aggregationResult);
         List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incoming", DailySpendingsDTO.class).getMappedResults();
         List<DailySpendingsDTO> response = new ArrayList<>();

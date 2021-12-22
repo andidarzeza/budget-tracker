@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { Incoming } from '../models/Incoming';
+import { Income } from '../models/Income';
 import { AuthenticationService } from './authentication.service';
 
 @Injectable({
@@ -23,12 +23,12 @@ export class IncomingsService {
     return this.http.get(`${serverAPIURL}/api/incomes/${id}`, {observe: 'response'});
   }
 
-  save(income: Incoming): Observable<any> {
+  save(income: Income): Observable<any> {
     income['user'] = this.authenticationService.currentUserValue?.username;
     return this.http.post(`${serverAPIURL}/api/incomes/`, income, {observe: 'response'});
   }
 
-  update(id: string, income: Incoming): Observable<any> {
+  update(id: string, income: Income): Observable<any> {
     income['user'] = this.authenticationService.currentUserValue?.username;
     return this.http.put(`${serverAPIURL}/api/incomes/${id}`, income, {observe: 'response'});
   }

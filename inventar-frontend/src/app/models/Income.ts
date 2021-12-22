@@ -1,4 +1,4 @@
-export interface Incoming {
+export interface Income {
     id: string;
     createdTime: Date;
     incoming: number;

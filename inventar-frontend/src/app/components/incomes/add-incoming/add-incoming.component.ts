@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { Incoming } from 'src/app/models/Incoming';
+import { Income } from 'src/app/models/Income';
 import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { IncomingsService } from 'src/app/services/incomings.service';
@@ -16,18 +16,25 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   styleUrls: ['./add-incoming.component.css']
 })
 export class AddIncomingComponent implements OnInit, OnDestroy {
-  private mode = 'add';
-  savingEntity = false;
+  public savingEntity: boolean = false;
   private categoriesSubscription: Subscription = null;
   private updateSubscription: Subscription = null;
   private saveSubscription: Subscription = null;
-  constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public income: Incoming, public dialogRef: MatDialogRef<AddIncomingComponent>, private formBuilder: FormBuilder, private incomingsService: IncomingsService, private categoryService: CategoriesService) {}
-  formGroup: FormGroup = this.formBuilder.group({
+  public formGroup: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
     description: ['', Validators.required],
     categoryID: ['', Validators.required],
     incoming: ['', Validators.required]
-  });
+  });  
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public income: Income,
+    public sharedService: SharedService, 
+    private toaster: ToastrService,  
+    private dialogRef: MatDialogRef<AddIncomingComponent>, 
+    private formBuilder: FormBuilder, 
+    private incomingsService: IncomingsService, 
+    private categoryService: CategoriesService
+  ) {}
 
   get name(){
     return this.formGroup.controls['name'];
@@ -45,6 +52,10 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
     return this.formGroup.controls['incoming'];
   }
 
+  get editMode() {
+    return this.income != null && this.income != undefined;
+  }
+
   public categories: SpendingCategory[] = [];
 
   ngOnInit(): void {
@@ -55,10 +66,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
     this.unsubscribe(this.categoriesSubscription);
     this.categoriesSubscription = this.categoryService.findAll(0, 100, "incomings").subscribe((response: any) => {
       this.categories = response.body.categories;
-      if(this.income) {
-        this.mode = 'edit';
-        console.log(this.income);
-        
+      if(this.editMode) {
         this.formGroup.patchValue(this.income);
       }
     });
@@ -66,11 +74,9 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
 
   add(): void {
     if(this.formGroup.valid && !this.savingEntity){
-      if(this.mode === 'edit') {
+      if(this.editMode) {
         this.unsubscribe(this.updateSubscription);
         this.savingEntity = true;
-        console.log(this.income.id);
-        
         this.updateSubscription = this.incomingsService.update(this.income.id, this.formGroup.value).subscribe(() => {
           this.closeDialog(true);  
           this.savingEntity = false;
@@ -88,7 +94,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
     }
   }
 
-  closeDialog(update: any): void {
+  closeDialog(update: boolean): void {
     this.dialogRef.close(update);
   }
 

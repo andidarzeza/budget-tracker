@@ -3,7 +3,7 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Incoming } from 'src/app/models/Incoming';
+import { Income } from 'src/app/models/Income';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -41,18 +41,23 @@ import { PageEvent } from '@angular/material/paginator';
   ]
 })
 export class IncomesComponent implements OnInit, OnDestroy {
-  pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
-  page = 0;
-  size = PAGE_SIZE;
-  totalItems;
-  totalRequests = 0;
-  theme = 'light';
-  sort = "createdTime,desc";
-  displayedColumns: string[] = ['date', 'name', 'description', 'category', 'incoming', 'actions'];
-  incomes: Incoming[] = [];
+  public incomes: Income[] = [];
+  public totalItems: number = 0;
+  private totalRequests: number = 0;
+  public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
+  private page: number = 0;
+  public size: number = PAGE_SIZE;
+  private sort: string = "createdTime,desc";
+  public displayedColumns: string[] = ['date', 'name', 'description', 'category', 'incoming', 'actions'];
   private deleteSubscription: Subscription = null;
   private incomeSubscription: Subscription = null;
-  constructor(public sharedService: SharedService, private incomingsService: IncomingsService, public dialog: MatDialog, private toaster: ToastrService) { }
+
+  constructor(
+    public sharedService: SharedService,
+    private incomingsService: IncomingsService,
+    public dialog: MatDialog,
+    private toaster: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.query();
@@ -76,7 +81,7 @@ export class IncomesComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDialog(income?: Incoming): void {
+  openDialog(income?: Income): void {
     const dialogRef = this.dialog.open(AddIncomingComponent, {
       data: income,
       width: '700px',
@@ -91,8 +96,7 @@ export class IncomesComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  deleteAssociate(id: string): void {
+  deleteIncome(id: string): void {
     this.openConfirmDialog().afterClosed().subscribe((result: any) => {
       if(result) {
         this.delete(id);
@@ -108,7 +112,7 @@ export class IncomesComponent implements OnInit, OnDestroy {
     return dialogRef;
   }
 
-  edit(income: Incoming): void {
+  edit(income: Income): void {
     this.openDialog(income);
   }
   
