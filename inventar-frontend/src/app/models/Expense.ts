@@ -1,9 +1,9 @@
-export interface Spending {
+export interface Expense {
     id: string;
     createdTime: Date;
     moneySpent: number;
     name: string;
     description: string;
-    spendingCategoryID: string;
+    categoryID: string;
     user: string;
 }

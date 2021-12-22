@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 
 public interface SpendingService {
     ResponseEntity getExpenses(Pageable pageable, String user);
-    ResponseEntity addSpending(Spending spending);
+    ResponseEntity save(Spending expense);
     ResponseEntity getSpendObject(String id);
     ResponseEntity delete(String id);
-    ResponseEntity update(Spending spending);
+    ResponseEntity update(String id, Spending expense);
 }

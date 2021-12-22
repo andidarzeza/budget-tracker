@@ -23,10 +23,10 @@
         <mat-error *ngIf="moneySpent.errors?.required">This field is required.</mat-error>
     </mat-form-field>
 
-    <mat-form-field  style="width: 100%;">
-        <mat-label>Category</mat-label>
-        <mat-select formControlName="spendingCategoryID">
-          <mat-option *ngFor="let category of categories" [value]="category.id">
+    <mat-form-field style="width: 100%;" class="{{sharedService.theme}}-select">
+        <mat-label class="{{sharedService.theme}}-text">Category</mat-label>
+        <mat-select formControlName="categoryID" class="{{sharedService.theme}}-select">
+          <mat-option class="{{sharedService.theme}}-text {{sharedService.theme}}-option {{sharedService.theme}}-body" *ngFor="let category of categories" [value]="category.id">
             {{category?.category}}
           </mat-option>
         </mat-select>

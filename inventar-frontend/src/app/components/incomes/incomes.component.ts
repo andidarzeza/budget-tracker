@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Incoming } from 'src/app/models/Incoming';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
+import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddIncomingComponent } from './add-incoming/add-incoming.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
@@ -49,7 +49,7 @@ export class IncomesComponent implements OnInit, OnDestroy {
   theme = 'light';
   sort = "createdTime,desc";
   displayedColumns: string[] = ['date', 'name', 'description', 'category', 'incoming', 'actions'];
-  incomings: Incoming[] = [];
+  incomes: Incoming[] = [];
   private deleteSubscription: Subscription = null;
   private incomeSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private incomingsService: IncomingsService, public dialog: MatDialog, private toaster: ToastrService) { }
@@ -69,7 +69,7 @@ export class IncomesComponent implements OnInit, OnDestroy {
     this.sharedService.activateLoadingSpinner();
     this.unsubscribe(this.incomeSubscription);
     this.incomeSubscription = this.incomingsService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
-      this.incomings = res?.body.incomings;
+      this.incomes = res?.body.incomings;
       this.totalItems = res?.body.count;
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);     
@@ -133,7 +133,7 @@ export class IncomesComponent implements OnInit, OnDestroy {
     this.unsubscribe(this.deleteSubscription);
     this.deleteSubscription = this.incomingsService.delete(id).subscribe(() => {
       this.query();
-      this.toaster.info("Element deleted successfully", "Success", {timeOut: 7000, positionClass: TOASTER_POSITION});
+      this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
     });
   }
 

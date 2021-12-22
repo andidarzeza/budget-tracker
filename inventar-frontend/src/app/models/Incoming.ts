@@ -4,5 +4,5 @@ export interface Incoming {
     incoming: number;
     name: string;
     description: string;
-    spendingCategoryID: string;
+    categoryID: string;
 }

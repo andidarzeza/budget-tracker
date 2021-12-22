@@ -6,9 +6,12 @@ export const environment = {
   production: false
 };
 export const serverAPIURL = 'http://localhost:8081';
-export const TOASTER_POSITION = "toast-bottom-right";
 export const MONTHS_ABR = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 export const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+export const TOASTER_CONFIGURATION = {
+  timeOut: 7000, 
+  positionClass: 'toast-bottom-right'
+}
 
 // Pagination Options
 export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];

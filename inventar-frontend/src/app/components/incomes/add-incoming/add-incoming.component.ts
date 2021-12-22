@@ -8,7 +8,7 @@ import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { TOASTER_POSITION } from 'src/environments/environment';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add-incoming',
@@ -16,18 +16,16 @@ import { TOASTER_POSITION } from 'src/environments/environment';
   styleUrls: ['./add-incoming.component.css']
 })
 export class AddIncomingComponent implements OnInit, OnDestroy {
-  buttonText = "Shto Anetar";
-  private mode = '';
-  private id = '';
+  private mode = 'add';
   savingEntity = false;
   private categoriesSubscription: Subscription = null;
   private updateSubscription: Subscription = null;
   private saveSubscription: Subscription = null;
-  constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public incomings: Incoming, public dialogRef: MatDialogRef<AddIncomingComponent>, private formBuilder: FormBuilder, private incomingsService: IncomingsService, private categoryService: CategoriesService) {}
+  constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public income: Incoming, public dialogRef: MatDialogRef<AddIncomingComponent>, private formBuilder: FormBuilder, private incomingsService: IncomingsService, private categoryService: CategoriesService) {}
   formGroup: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
     description: ['', Validators.required],
-    spendingCategoryID: ['', Validators.required],
+    categoryID: ['', Validators.required],
     incoming: ['', Validators.required]
   });
 
@@ -40,7 +38,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
   }
 
   get category(){
-    return this.formGroup.controls['spendingCategoryID'];
+    return this.formGroup.controls['categoryID'];
   }
 
   get incoming() {
@@ -51,37 +49,32 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getCategories();
-    if(this.incomings) {
-      this.mode = 'edit';
-      this.id = this.incomings.id;
-      this.buttonText = 'Perditeso Anetar';
-      this.formGroup.patchValue(this.incomings);
-    }else{
-      this.mode = 'add';
-    }
   }
 
   private getCategories(): void {
     this.unsubscribe(this.categoriesSubscription);
     this.categoriesSubscription = this.categoryService.findAll(0, 100, "incomings").subscribe((response: any) => {
       this.categories = response.body.categories;
-    })
+      if(this.income) {
+        this.mode = 'edit';
+        console.log(this.income);
+        
+        this.formGroup.patchValue(this.income);
+      }
+    });
   }
 
   add(): void {
     if(this.formGroup.valid && !this.savingEntity){
       if(this.mode === 'edit') {
-        this.incomings.name = this.name.value;
-        this.incomings.description = this.description.value;
-        this.incomings.incoming = this.incoming.value;
         this.unsubscribe(this.updateSubscription);
         this.savingEntity = true;
-        this.updateSubscription = this.incomingsService.update(this.incomings).subscribe(() => {
+        console.log(this.income.id);
+        
+        this.updateSubscription = this.incomingsService.update(this.income.id, this.formGroup.value).subscribe(() => {
           this.closeDialog(true);  
           this.savingEntity = false;
-          this.toaster.success("Income updated with success", "Success", {
-            timeOut: 7000, positionClass: TOASTER_POSITION
-          });
+          this.toaster.success("Income updated with success", "Success", TOASTER_CONFIGURATION);
         });
       } else if(!this.savingEntity){
         this.unsubscribe(this.saveSubscription);
@@ -89,9 +82,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
         this.saveSubscription = this.incomingsService.save(this.formGroup.value).subscribe(() => {
           this.closeDialog(true);
           this.savingEntity = false;
-          this.toaster.success("A new Income has been inserted", "Success", {
-            timeOut: 7000, positionClass: TOASTER_POSITION
-          });    
+          this.toaster.success("A new Income has been inserted", "Success", TOASTER_CONFIGURATION);    
         });
       }
     }

@@ -37,7 +37,7 @@ public class IncomingServiceImpl implements IncomingService {
         List<Incoming> content = page.getContent();
         List<IncomingDTO> response = new ArrayList<>();
         content.forEach(item -> {
-            Optional<SpendingCategory> data = categoryRepository.findById(item.getSpendingCategoryID());
+            Optional<SpendingCategory> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
                 SpendingCategory sc = data.get();
                 response.add(new IncomingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getName(), item.getIncoming(), item.getDescription()));
@@ -73,11 +73,12 @@ public class IncomingServiceImpl implements IncomingService {
     }
 
     @Override
-    public ResponseEntity update(Incoming incoming) {
-        Optional<Incoming> incomingOptional = incomingRepository.findById(incoming.getId());
+    public ResponseEntity update(String id, Incoming income) {
+        Optional<Incoming> incomingOptional = incomingRepository.findById(id);
         if(incomingOptional.isPresent()) {
-            incomingRepository.save(incoming);
-            return ResponseEntity.ok(incoming);
+            income.setId(id);
+            incomingRepository.save(income);
+            return ResponseEntity.ok(income);
         }
         return new ResponseEntity(new ResponseMessage("No Category to update was found ."), HttpStatus.NOT_FOUND);
     }

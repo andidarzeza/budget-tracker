@@ -35,7 +35,7 @@ public class SpendingServiceImpl implements SpendingService {
         List<Spending> content = page.getContent();
         List<SpendingDTO> response = new ArrayList<>();
         content.forEach(item -> {
-            Optional<SpendingCategory> data = categoryRepository.findById(item.getSpendingCategoryID());
+            Optional<SpendingCategory> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
                 SpendingCategory sc = data.get();
                 response.add(new SpendingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getName(), item.getMoneySpent(), item.getDescription()));
@@ -47,7 +47,7 @@ public class SpendingServiceImpl implements SpendingService {
     }
 
     @Override
-    public ResponseEntity addSpending(Spending spending) {
+    public ResponseEntity save(Spending spending) {
         if(this.accountService.removeFromBalance(spending.getMoneySpent())) {
             spendingRepository.save(spending);
             return ResponseEntity.ok(spending);
@@ -71,12 +71,13 @@ public class SpendingServiceImpl implements SpendingService {
     }
 
     @Override
-    public ResponseEntity update(Spending spending) {
-        Optional<Spending> categoryOptional = spendingRepository.findById(spending.getId());
+    public ResponseEntity update(String id, Spending spending) {
+        Optional<Spending> categoryOptional = spendingRepository.findById(id);
         if(categoryOptional.isPresent()) {
+            spending.setId(id);
             spendingRepository.save(spending);
             return ResponseEntity.ok(spending);
         }
-        return new ResponseEntity(new ResponseMessage("No Category to update was found ."), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(new ResponseMessage("No Category to update was found."), HttpStatus.NOT_FOUND);
     }
 }

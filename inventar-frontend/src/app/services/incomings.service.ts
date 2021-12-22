@@ -13,27 +13,27 @@ export class IncomingsService {
 
   findAll(page: any, size: any, sort: any): Observable<any> {
     const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort).append("user", this.authenticationService.currentUserValue.username);
-    return this.http.get(`${serverAPIURL}/api/incomings`, {
+    return this.http.get(`${serverAPIURL}/api/incomes`, {
       params: options,
       observe: 'response'
     });
   }
 
   findOne(id: string): Observable<any> {
-    return this.http.get(`${serverAPIURL}/api/incomings/${id}`, {observe: 'response'});
+    return this.http.get(`${serverAPIURL}/api/incomes/${id}`, {observe: 'response'});
   }
 
   save(income: Incoming): Observable<any> {
     income['user'] = this.authenticationService.currentUserValue?.username;
-    return this.http.post(`${serverAPIURL}/api/incomings/`, income, {observe: 'response'});
+    return this.http.post(`${serverAPIURL}/api/incomes/`, income, {observe: 'response'});
   }
 
-  update(income: Incoming): Observable<any> {
+  update(id: string, income: Incoming): Observable<any> {
     income['user'] = this.authenticationService.currentUserValue?.username;
-    return this.http.put(`${serverAPIURL}/api/incomings/`, income, {observe: 'response'});
+    return this.http.put(`${serverAPIURL}/api/incomes/${id}`, income, {observe: 'response'});
   }
 
   delete(id: string): Observable<any> {
-    return this.http.delete(`${serverAPIURL}/api/incomings/${id}`, {observe: 'response'});
+    return this.http.delete(`${serverAPIURL}/api/incomes/${id}`, {observe: 'response'});
   }
 }

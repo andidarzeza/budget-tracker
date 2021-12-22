@@ -32,12 +32,12 @@ public class SpendingResource {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody Spending spending){
-        return spendingService.addSpending(spending);
+    public ResponseEntity save(@RequestBody Spending expense){
+        return spendingService.save(expense);
     }
 
-    @PutMapping
-    public ResponseEntity update(@RequestBody Spending spending) {
-        return spendingService.update(spending);
+    @PutMapping("/{id}")
+    public ResponseEntity update(@RequestBody Spending expense, @PathVariable String id) {
+        return spendingService.update(id, expense);
     }
 }

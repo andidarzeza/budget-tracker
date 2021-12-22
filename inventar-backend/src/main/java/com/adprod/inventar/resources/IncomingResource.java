@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/incomings")
+@RequestMapping("/api/incomes")
 @CrossOrigin(origins = "http://localhost:4200")
 public class IncomingResource {
     private final IncomingService incomingService;
@@ -36,8 +36,8 @@ public class IncomingResource {
         return incomingService.addIncoming(incoming);
     }
 
-    @PutMapping
-    public ResponseEntity update(@RequestBody Incoming incoming) {
-        return incomingService.update(incoming);
+    @PutMapping("/{id}")
+    public ResponseEntity update(@RequestBody Incoming income, @PathVariable String id) {
+        return incomingService.update(id, income);
     }
 }

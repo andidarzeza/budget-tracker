@@ -3,10 +3,10 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Spending } from 'src/app/models/Spending';
+import { Expense } from 'src/app/models/Expense';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
-import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
+import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddSpendingComponent } from './add-spending/add-spending.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
@@ -50,7 +50,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   theme = 'light';
   sort = "createdTime,desc";
   displayedColumns: string[] = ['date', 'name', 'description', 'category', 'moneySpent', 'actions'];
-  spendings: Spending[] = [];
+  expenses: Expense[] = [];
   private deleteSubscription: Subscription = null;
   private expenseSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService, private authenticationService: AuthenticationService) { }
@@ -70,16 +70,16 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     this.sharedService.activateLoadingSpinner();
     this.unsubscribe(this.expenseSubscription);
     this.expenseSubscription = this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
-      this.spendings = res?.body.spendings;
+      this.expenses = res?.body.spendings;
       this.totalItems = res?.body.count;
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);     
     });
   }
 
-  openDialog(spending?: Spending): void {
+  openDialog(expense?: Expense): void {
     const dialogRef = this.dialog.open(AddSpendingComponent, {
-      data: spending,
+      data: expense,
       width: '700px',
       disableClose: true,
       panelClass: this.sharedService.theme + '-class'
@@ -109,8 +109,8 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     return dialogRef;
   }
 
-  editAssociate(spending: Spending): void {
-    this.openDialog(spending);
+  editExpense(expense: Expense): void {
+    this.openDialog(expense);
   }
   
   refresh(): void {
@@ -125,7 +125,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);
       this.query();
-      this.toaster.info("Element deleted successfully", "Success", {timeOut: 7000, positionClass: TOASTER_POSITION});
+      this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
     });
   }
 

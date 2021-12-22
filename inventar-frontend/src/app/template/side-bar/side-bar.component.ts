@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
 
@@ -7,7 +7,7 @@ import { SharedService } from 'src/app/services/shared.service';
   templateUrl: './side-bar.component.html',
   styleUrls: ['./side-bar.component.css']
 })
-export class SideBarComponent implements OnInit {
+export class SideBarComponent implements AfterViewInit {
   isOpened = false;
   constructor(public sharedService: SharedService, public authenticationService: AuthenticationService) { }
   items = [
@@ -37,10 +37,12 @@ export class SideBarComponent implements OnInit {
 
   ];
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.items.forEach((item: any) => {
       if(item.link === window.location.pathname) {
         const index = this.items.indexOf(item);
+        console.log("test   dawdaw", index);
+        
         this.animateSelectedOption(index);
       }
     });
@@ -84,8 +86,9 @@ export class SideBarComponent implements OnInit {
 
 
   animateSelectedOption(index: number): void {
-    console.log(index);
     const activeItem = document.getElementById("active-item") as HTMLElement;
+    console.log(activeItem);
+    
     if(activeItem) {
       activeItem.style.transform = `translateY(${index * 100}%)`;
     }

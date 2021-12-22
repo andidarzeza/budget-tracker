@@ -13,21 +13,20 @@ public class Spending {
     private String name;
     private Double moneySpent;
     private String description;
-    private String spendingCategoryID;
+    private String categoryID;
     private String user;
 
-    public Spending(String id, String name, Double moneySpent, String description, String spendingCategoryID, String user) {
+    public Spending(String id, String name, Double moneySpent, String description, String categoryID, String user) {
         this.id = id;
         this.name = name;
         this.moneySpent = moneySpent;
         this.description = description;
-        this.spendingCategoryID = spendingCategoryID;
+        this.categoryID = categoryID;
         this.user = user;
     }
 
     public Spending() {
     }
-
 
     public String getId() {
         return id;
@@ -69,12 +68,12 @@ public class Spending {
         this.description = description;
     }
 
-    public String getSpendingCategoryID() {
-        return spendingCategoryID;
+    public String getCategoryID() {
+        return categoryID;
     }
 
-    public void setSpendingCategoryID(String spendingCategoryID) {
-        this.spendingCategoryID = spendingCategoryID;
+    public void setCategoryID(String categoryID) {
+        this.categoryID = categoryID;
     }
 
     public String getUser() {

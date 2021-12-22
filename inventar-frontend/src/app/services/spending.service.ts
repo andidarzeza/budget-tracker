@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { Spending } from '../models/Spending';
+import { Expense } from '../models/Expense';
 import { AuthenticationService } from './authentication.service';
 
 @Injectable({
@@ -23,14 +23,14 @@ export class SpendingService {
     return this.http.get(`${serverAPIURL}/api/spending/${id}`, {observe: 'response'});
   }
 
-  save(expense: Spending): Observable<any> {
+  save(expense: Expense): Observable<any> {
     expense['user'] = this.authenticationService.currentUserValue?.username;
     return this.http.post(`${serverAPIURL}/api/spending/`, expense, {observe: 'response'});
   }
 
-  update(expense: Spending): Observable<any> {
+  update(id: string, expense: Expense): Observable<any> {
     expense['user'] = this.authenticationService.currentUserValue?.username;
-    return this.http.put(`${serverAPIURL}/api/spending/`, expense, {observe: 'response'});
+    return this.http.put(`${serverAPIURL}/api/spending/${id}`, expense, {observe: 'response'});
   }
 
   delete(id: string): Observable<any> {

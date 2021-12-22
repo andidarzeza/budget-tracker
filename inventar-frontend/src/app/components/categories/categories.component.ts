@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_POSITION } from 'src/environments/environment';
+import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
@@ -132,7 +132,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     this.unsubscribe(this.deleteSubscription);
     this.deleteSubscription = this.categoriesService.delete(id).subscribe(() => {
       this.query();
-      this.toaster.info("Element deleted successfully", "Success", {timeOut: 7000, positionClass: TOASTER_POSITION});
+      this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
     });
   }
 

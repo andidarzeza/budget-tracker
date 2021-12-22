@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { TOASTER_POSITION } from 'src/environments/environment';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add-category',
@@ -62,9 +62,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         this.updateSubscription = this.categoriesService.update(payload).subscribe(() => {
           this.closeDialog(true); 
           this.savingEntity = false; 
-          this.toaster.success("Category Updated with Success", "Success", {
-            timeOut: 7000, positionClass: TOASTER_POSITION
-          });
+          this.toaster.success("Category Updated with Success", "Success", TOASTER_CONFIGURATION);
         });
       } else if(!this.savingEntity){
         const payload = this.categoryGroup.value;
@@ -74,9 +72,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         this.saveSubscription = this.categoriesService.save(payload).subscribe((res:any) => {
           this.closeDialog(true);  
           this.savingEntity = false;
-          this.toaster.success("A new Category has been inserted", "Success", {
-            timeOut: 7000, positionClass: TOASTER_POSITION
-          });    
+          this.toaster.success("A new Category has been inserted", "Success", TOASTER_CONFIGURATION);    
         });
       }
     }

@@ -1,9 +1,6 @@
 package com.adprod.inventar.models.wrappers;
 
-import com.adprod.inventar.models.Spending;
-import org.springframework.data.annotation.Id;
 import java.util.Date;
-import java.util.List;
 
 public class SpendingDTO {
     private String id;
@@ -40,14 +37,6 @@ public class SpendingDTO {
         this.category = category;
     }
 
-    public String getCategoryID() {
-        return categoryID;
-    }
-
-    public void setCategoryID(String categoryID) {
-        this.categoryID = categoryID;
-    }
-
     public Date getCreatedTime() {
         return createdTime;
     }
@@ -78,5 +67,13 @@ public class SpendingDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getCategoryID() {
+        return categoryID;
+    }
+
+    public void setCategoryID(String categoryID) {
+        this.categoryID = categoryID;
     }
 }

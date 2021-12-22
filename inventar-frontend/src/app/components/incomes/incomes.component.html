@@ -14,7 +14,7 @@
 
 <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="getHeight(0)">
     <div class="book-table">
-        <table mat-table [dataSource]="incomings" class="mat-elevation-z8 {{sharedService.theme}}-table" style="box-shadow: none;">
+        <table mat-table [dataSource]="incomes" class="mat-elevation-z8 {{sharedService.theme}}-table" style="box-shadow: none;">
     
             <!--- Note that these columns can be defined in any order.
                   The actual rendered columns are set as a property on the row definition" -->
@@ -61,14 +61,13 @@
                         <mat-icon style="color: #ff6347;">delete</mat-icon>
                     </button>
                 </td>
-    
             </ng-container>
     
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
     </div>
-    <div *ngIf="incomings.length == 0" class="no-data" [style.height.px]="getHeight(60)">
+    <div *ngIf="incomes.length == 0" class="no-data" [style.height.px]="getHeight(60)">
         No data to display!
     </div>
 </div>

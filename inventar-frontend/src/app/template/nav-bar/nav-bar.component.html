@@ -1,9 +1,10 @@
 <mat-toolbar class="toolbar {{sharedService.theme}}" *ngIf="authenticationService.currentUserValue">
-    <span></span>
+    <span style="display: flex;align-items: center;">
+        <img src="../../../assets/images/logo.png" style="height: 38px;">
+    </span>
     <div class="menu-container">
         <div class="menu-item pointer" (click)="toggleFullScreenMode()" style="color: white;">
             <mat-icon class="{{sharedService.theme}}-icon" style="width: 28px;height: 28px;font-size: 28px;">{{fullScreenMode ? 'fullscreen_exit' : 'fullscreen'}}</mat-icon>
-            <!-- <mat-icon *ngIf="fullScreenMode" class="{{sharedService.theme}}-icon" style="width: 28px;height: 28px;font-size: 28px;">fullscreen_exit</mat-icon> -->
         </div>
         <div class="menu-item" style="color: white;">
             <mat-icon class="{{sharedService.theme}}-icon">access_time</mat-icon>

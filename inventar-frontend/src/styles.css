@@ -63,6 +63,20 @@ app-date-picker {
     transform: translateX(-50%);
 }
 
+.dark-option:hover {
+    background: #1d252a !important;
+    color: #9F9F9F !important;
+}
+
+.dark-option {
+    background: #111619 !important;
+    color: #9F9F9F !important;
+}
+
+.dark-select .mat-select-value {
+    color: #9F9F9F !important;
+}
+
 .light-sb9:before {
     border-bottom: 19px solid white;
 }

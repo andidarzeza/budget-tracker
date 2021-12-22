@@ -14,15 +14,15 @@ public class Incoming {
     private String name;
     private Double incoming;
     private String description;
-    private String spendingCategoryID;
+    private String categoryID;
     private String user;
 
-    public Incoming(String id, String name, Double incoming, String description, String spendingCategoryID, String user) {
+    public Incoming(String id, String name, Double incoming, String description, String categoryID, String user) {
         this.id = id;
         this.name = name;
         this.incoming = incoming;
         this.description = description;
-        this.spendingCategoryID = spendingCategoryID;
+        this.categoryID = categoryID;
         this.user = user;
     }
 
@@ -70,12 +70,12 @@ public class Incoming {
         this.description = description;
     }
 
-    public String getSpendingCategoryID() {
-        return spendingCategoryID;
+    public String getCategoryID() {
+        return categoryID;
     }
 
-    public void setSpendingCategoryID(String spendingCategoryID) {
-        this.spendingCategoryID = spendingCategoryID;
+    public void setCategoryID(String categoryID) {
+        this.categoryID = categoryID;
     }
 
     public String getUser() {

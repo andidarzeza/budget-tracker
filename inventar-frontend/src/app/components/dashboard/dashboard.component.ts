@@ -46,6 +46,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   totalSpendings: number = 0;
   totalIncome: number = 0;
   amountSpentAverage: number = 0;
+  dailyIncomeAverage: number = 0;
   dailySpendingsSubscription: Subscription = null;
   categoriesDataSubscription: Subscription = null;
   incomeCategoriesSubscription: Subscription = null;
@@ -116,7 +117,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.unsubscribe(this.incomeCategoriesSubscription); 
     this.incomeCategoriesSubscription = this.dashboardService.getIncomeCategoriesData().subscribe((response: any) => {
       const incomeResponse = response.body;
-      this.totalIncome = this.sum(incomeResponse)
+      this.totalIncome = this.sum(incomeResponse);
+      const monthDays = this.dateUtil.fromYear(this.selectedDate.getFullYear()).getMonthByValue(this.selectedDate.getMonth()).getDaysOfMonth().length;
+      this.dailyIncomeAverage = this.totalIncome / monthDays;
       this.chartUtil.createChart("incomes-chart", {
         type: 'doughnut',
         labels: incomeResponse.map(item => item._id),
