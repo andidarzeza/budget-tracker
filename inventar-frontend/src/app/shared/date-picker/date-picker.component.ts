@@ -11,26 +11,40 @@ export class DatePickerComponent implements OnInit {
 
   today = new Date();
   selectedYear: number = this.today.getFullYear();
+  actualYear: number = this.today.getFullYear();
   avalaibleYears: number[] = [];
+  selectedRange: number[] = [];
   selectedMonth = this.today.getMonth();
+  selectedDay = this.today.getDate();
   increased = 0;
   months: string[] = MONTHS_ABR;
-  selectedType: string = "Monthly";
-  @ViewChild('selectedOption') selectedOption: ElementRef;
   @ViewChild('daily') daily: ElementRef;
   @ViewChild('monthly') monthly: ElementRef;
   @ViewChild('yearly') yearly: ElementRef;
-  constructor() { 
+  @ViewChild('monthlyCnt') monthlyCnt: ElementRef;
+  @ViewChild('yearlyCnt') yearlyCnt: ElementRef;
+  @ViewChild('dailyCnt') dailyCnt: ElementRef;
 
+  constructor() { 
     document.addEventListener('click', this.offClickHandler.bind(this)); // bind on doc
   }
 
   ngOnInit(): void {
     this.populateYearsArray();
+    this.populateRangeArray();
+  }
+
+  private populateRangeArray(): void {
+    const rangeStart = this.selectedYear - 11;
+    let counter = 0;
+    for(let i = rangeStart;i<=this.selectedYear;i++) {
+      this.selectedRange.push(rangeStart+counter);
+      counter++;
+    }
   }
 
   private populateYearsArray(): void {
-    for(let i = 1975;i<=2021;i++) {
+    for(let i = 1975;i<=this.actualYear;i++) {
       this.avalaibleYears.push(i);
     }
     this.increased = this.avalaibleYears.length - 1;
@@ -38,16 +52,33 @@ export class DatePickerComponent implements OnInit {
   }
 
   public increaseYear(): void {
-    if(this.increased !== this.avalaibleYears.length - 1) {
-      this.increased++;
-      this.changeYear();
+    if(this.selectedYear < this.actualYear) {
+      this.selectedYear++;
     }
   }
 
   public decreaseYear(): void {
-    if(this.increased !== 0) {
-      this.increased--;
-      this.changeYear();
+    if(this.selectedYear > 1975) {
+      this.selectedYear--;
+    }
+  }
+
+  public increaseRange(): void {
+    if(this.selectedRange[this.selectedRange.length-1] !== this.actualYear) {
+      this.selectedRange = this.selectedRange.map((year: number) => {
+        return year + 11;
+      });
+    }
+  }
+
+  public decreaseRange(): void {
+    if(this.selectedRange[0] > 1975) {
+      this.selectedRange = this.selectedRange.map((year: number) => {
+        if(year-11 >= 1975)
+          return year - 11;
+        else 
+          return null;
+      }).filter(item => item!=null);
     }
   }
 
@@ -59,12 +90,22 @@ export class DatePickerComponent implements OnInit {
     }
   }
 
+  public selectDay(day: number): void {
+    this.selectedDay = day;
+  }
+
   public selectMonth(month: string): void {
     this.selectedMonth = this.months.indexOf(month);
+    this.changeViewType("Daily");
+  }
+
+  public selectYear(year: number): void {
+    this.selectedYear = year;
+    this.changeViewType("Monthly");
   }
 
   public close(): void {
-    this.dateSelected.emit(new Date(this.selectedYear, this.selectedMonth));
+    this.dateSelected.emit(new Date(this.selectedYear, this.selectedMonth, this.selectedDay));
   }
 
   public offClickHandler(event:any) {
@@ -79,24 +120,24 @@ export class DatePickerComponent implements OnInit {
     }
   }
 
-  public changeViewType(arg: string, templateReference: HTMLElement): void {
-    console.log(templateReference);
-    this.daily.nativeElement.style.color="inherit";
-    this.monthly.nativeElement.style.color="inherit";
-    this.yearly.nativeElement.style.color="inherit";
-    templateReference.style.color = "white";
-    this.selectedType = arg;
-    switch(this.selectedType) { 
+  public changeViewType(arg: string): void {
+    switch(arg) { 
       case "Daily": { 
-        this.selectedOption.nativeElement.style.transform = "translateY(-40px)";
+        this.monthlyCnt.nativeElement.style.transform = "translateX(0%)";
+        this.dailyCnt.nativeElement.style.transform = "translateX(0%)";
+        this.yearlyCnt.nativeElement.style.transform = "translateX(0%)";
          break; 
       } 
       case "Monthly": {
-        this.selectedOption.nativeElement.style.transform = "translateY(0px)";
-         break; 
+        this.dailyCnt.nativeElement.style.transform = "translateX(-100%)";
+        this.monthlyCnt.nativeElement.style.transform = "translateX(-100%)";
+        this.yearlyCnt.nativeElement.style.transform = "translateX(-100%)";
+        break; 
       } 
       case "Yearly": {
-        this.selectedOption.nativeElement.style.transform = "translateY(40px)";
+        this.dailyCnt.nativeElement.style.transform = "translateX(-200%)";
+        this.monthlyCnt.nativeElement.style.transform = "translateX(-200%)";
+        this.yearlyCnt.nativeElement.style.transform = "translateX(-200%)";
          break; 
       } 
    }

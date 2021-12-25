@@ -8,8 +8,6 @@
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    /* width: 65px; */
-    margin-left:15px;
     font-size: 14px;
 }
 
@@ -22,10 +20,59 @@
     height: calc(100% - 70px);
     grid-template-rows: 36px 36px 36px;
 }
+
+.days-container {
+    /* display: grid;
+    grid-template-columns: auto auto auto auto;
+    height: calc(100% - 70px); */
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto;
+    height: calc(100% - 70px);
+    grid-template-rows: auto auto auto auto auto auto;
+}
+
 .option {
     padding: 7px 7px;
     border-radius: 5px;
     margin: 3px 0px;
     z-index: 1;
     transition: color 200ms;
+}
+
+.option-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 230px);
+    flex-direction: column;
+    margin-top: 25px;
+    position: absolute;
+    left: 230px;
+}
+
+.selected-type {
+    width: 100px;
+    border-radius: 5px;
+    height:34px;
+    position: absolute; 
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    transition: transform 400ms;
+}
+
+.calendar-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 230px;
+    overflow: hidden;
+}
+
+.test-for-moment {
+    min-width: 220px;
+    padding: 0px 5px;
+    transition: transform 400ms;
+    padding-bottom: 7px;
 }

@@ -1,28 +1,29 @@
-<div style="
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;"
-    >
+<div class="calendar-container">
 
-    <div style="width: 230px;">
-        <div style="width: 100%;height: 40px;display: flex;justify-content: space-evenly;align-items: center;margin-top: 15px;">
-            <button mat-icon-button [disabled]="increased === 0">
+    <div class="test-for-moment" #dailyCnt>
+        <div style="width: 100%;height: 40px;display: flex;justify-content: space-evenly;align-items: center">
+            <span (click)="changeViewType('Monthly')">{{months[selectedMonth]}} - {{selectedYear}}</span>
+        </div>
+        <div class="days-container">
+            <div class="month-class" *ngFor="let weekDay of ['S', 'M', 'T', 'W', 'TH', 'F', 'S']">
+                {{weekDay}}
+            </div>
+            <div *ngFor="let day of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]" (click)="selectDay(day)" [ngClass]="{'active': day === selectedDay}" class="month-class">
+                <span>{{day}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-for-moment" #monthlyCnt>
+        <div style="width: 107%;height: 40px;display: flex;justify-content: space-evenly;align-items: center">
+            <button mat-icon-button [disabled]="selectedYear === 1975">
                 <mat-icon (click)="decreaseYear()">keyboard_arrow_left</mat-icon>
             </button>
-            <span style="max-width: 47px;overflow: hidden;"> 
-                <span style="display: flex;" id="year-container">
-                    <span *ngFor="let year of avalaibleYears" style="min-width: 50px;">
-                        {{year}}
-                    </span>
-                </span>
-            </span>
-            <button mat-icon-button [disabled]="increased === avalaibleYears.length - 1">
+            <span (click)="changeViewType('Yearly')">{{selectedYear}}</span>
+            <button mat-icon-button [disabled]="selectedYear === actualYear">
                 <mat-icon (click)="increaseYear()">keyboard_arrow_right</mat-icon>    
             </button>
         </div>
-        
-        
         <div class="month-container">
             <div *ngFor="let month of months" class="month-class" [ngClass]="{'active': month === months[selectedMonth]}" (click)="selectMonth(month)">
                 <span>{{month}}</span>
@@ -30,28 +31,21 @@
         </div>
     </div>
 
-    <div style="
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: calc(100% - 230px);
-        flex-direction: column;
-        margin-top: 25px;"
-        >
-        <span class="option" #daily (click)="changeViewType('Daily', daily)">
-            Daily
-        </span>
-        <span class="active" #selectedOption style="width: 100px;border-radius: 5px;height:34px;position: absolute; display: flex; align-items: center; justify-content: center;
-        transition: transform 400ms;">
-        <!-- {{selectedType}} -->
-    </span>
-        <span class="option" style="color: white;" #monthly (click)="changeViewType('Monthly', monthly)">
-            Monthly
-        </span>
-        <span class="option" #yearly (click)="changeViewType('Yearly', yearly)">
-            Yearly
-        </span>
+    <div class="test-for-moment" #yearlyCnt>
+        <div style="width: 100%;height: 40px;display: flex;justify-content: space-evenly;align-items: center">
+            <button mat-icon-button [disabled]="selectedRange[0] <= 1975">
+                <mat-icon (click)="decreaseRange()">keyboard_arrow_left</mat-icon>
+            </button>
+            <span>{{selectedRange[0]}} - {{selectedRange[selectedRange.length-1]}}</span>
+            <button mat-icon-button [disabled]="selectedRange[selectedRange.length-1] === actualYear">
+                <mat-icon (click)="increaseRange()">keyboard_arrow_right</mat-icon>    
+            </button>
+        </div>
+        <div class="month-container">
+            <div *ngFor="let year of selectedRange" class="month-class" [ngClass]="{'active': year === selectedYear}" (click)="selectYear(year)">
+                <span>{{year}}</span>
+            </div>
+        </div>
     </div>
-    
-    
+
 </div>
