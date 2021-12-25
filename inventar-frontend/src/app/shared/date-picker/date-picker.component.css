@@ -22,3 +22,10 @@
     height: calc(100% - 70px);
     grid-template-rows: 36px 36px 36px;
 }
+.option {
+    padding: 7px 7px;
+    border-radius: 5px;
+    margin: 3px 0px;
+    z-index: 1;
+    transition: color 200ms;
+}

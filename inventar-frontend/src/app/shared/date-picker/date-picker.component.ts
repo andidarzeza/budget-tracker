@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MONTHS_ABR } from 'src/environments/environment';
 
 @Component({
@@ -15,6 +15,11 @@ export class DatePickerComponent implements OnInit {
   selectedMonth = this.today.getMonth();
   increased = 0;
   months: string[] = MONTHS_ABR;
+  selectedType: string = "Monthly";
+  @ViewChild('selectedOption') selectedOption: ElementRef;
+  @ViewChild('daily') daily: ElementRef;
+  @ViewChild('monthly') monthly: ElementRef;
+  @ViewChild('yearly') yearly: ElementRef;
   constructor() { 
 
     document.addEventListener('click', this.offClickHandler.bind(this)); // bind on doc
@@ -72,6 +77,29 @@ export class DatePickerComponent implements OnInit {
         this.close();
       }
     }
+  }
+
+  public changeViewType(arg: string, templateReference: HTMLElement): void {
+    console.log(templateReference);
+    this.daily.nativeElement.style.color="inherit";
+    this.monthly.nativeElement.style.color="inherit";
+    this.yearly.nativeElement.style.color="inherit";
+    templateReference.style.color = "white";
+    this.selectedType = arg;
+    switch(this.selectedType) { 
+      case "Daily": { 
+        this.selectedOption.nativeElement.style.transform = "translateY(-40px)";
+         break; 
+      } 
+      case "Monthly": {
+        this.selectedOption.nativeElement.style.transform = "translateY(0px)";
+         break; 
+      } 
+      case "Yearly": {
+        this.selectedOption.nativeElement.style.transform = "translateY(40px)";
+         break; 
+      } 
+   }
   }
 
 }
