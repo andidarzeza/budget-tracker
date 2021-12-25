@@ -1,3 +1,5 @@
+<mat-progress-bar class="{{sharedService.theme}}" mode="indeterminate" [@inOutAnimation] *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled" style="position: absolute;top: 64px;left:0"></mat-progress-bar>
+
 <div class="button-container">
     <div class="titulli">
         <mat-icon class="{{sharedService.theme}}-icon">settings</mat-icon>

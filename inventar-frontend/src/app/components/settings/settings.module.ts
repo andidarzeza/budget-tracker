@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SettingsRoutingModule } from './settings-routing.module';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 
@@ -15,7 +16,8 @@ import { SettingsRoutingModule } from './settings-routing.module';
     SettingsRoutingModule,
     MatIconModule,
     MatCardModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatProgressBarModule
   ]
 })
 export class SettingsModule { }

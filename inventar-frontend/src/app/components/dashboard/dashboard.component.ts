@@ -40,6 +40,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectedDate = new Date();
   dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
+  private totalRequests = 0;
   chart1Loaded = false;
   chart2Loaded = false;
   chart3Loaded = false;
@@ -69,7 +70,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       labels = chartLabels;
     }
     this.unsubscribe(this.dailySpendingsSubscription);
+
+    this.sharedService.activateLoadingSpinner();
+    this.totalRequests++;
     this.dailySpendingsSubscription = this.dashboardService.getDailyExpenses().subscribe((response: any) => {
+      this.totalRequests--;
+      this.sharedService.checkLoadingSpinner(this.totalRequests);
+      
       this.amountSpentAverage = this.sum(response.body) / response.body.length;
       const data: number[] = this.fillMissingData(response.body, chartLabels);
       this.chartUtil.createChart("daily-chart", {
