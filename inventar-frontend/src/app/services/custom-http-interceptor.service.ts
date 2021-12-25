@@ -14,7 +14,9 @@ export class CustomHttpInterceptorService implements HttpInterceptor{
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if(currentUser?.token){
       request = request.clone({
-        setHeaders: {Authorization: 'Bearer ' + currentUser.token}
+        setHeaders: {
+          Authorization: 'Bearer ' + currentUser.token
+        }
       });
     }else{
       console.log("Token is not avaible");

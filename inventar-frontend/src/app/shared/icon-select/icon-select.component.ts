@@ -53,6 +53,7 @@ export class IconSelectComponent implements OnInit, OnChanges {
 
   icons: string[] = [
     'fastfood',
+    'build',
     'local_cafe',
     'restaurant',
     'directions_car',

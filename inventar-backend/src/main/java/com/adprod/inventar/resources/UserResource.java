@@ -28,17 +28,17 @@ public class UserResource {
     }
 
     @GetMapping("/admin/all")
-    public ResponseEntity<Object> getAllUsers(){
-        return userService.getAllUsers();
+    public ResponseEntity<Object> findAll(){
+        return userService.findAll();
     }
 
     @DeleteMapping("/admin/delete/{userID:.+}")
-    public ResponseEntity<Object> deleteUser(@PathVariable String userID){
-        return userService.deleteUser(userID);
+    public ResponseEntity<Object> delete(@PathVariable String userID){
+        return userService.delete(userID);
     }
 
     @PutMapping("/admin/update/{userID:.+}")
-    public ResponseEntity<Object> updateUser(@RequestParam("newUsername") String newUsername, @PathVariable String userID){
-        return userService.updateUser(newUsername, userID);
+    public ResponseEntity<Object> update(@RequestParam("newUsername") String newUsername, @PathVariable String userID){
+        return userService.update(newUsername, userID);
     }
 }

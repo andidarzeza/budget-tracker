@@ -35,3 +35,9 @@
     height: 50px;
     margin: 5px;
 }
+
+.custom-icon-size {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+}

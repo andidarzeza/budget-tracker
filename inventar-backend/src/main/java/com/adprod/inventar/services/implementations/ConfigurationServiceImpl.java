@@ -19,7 +19,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public ResponseEntity updateConfiguration(Configuration configuration) {
+    public ResponseEntity update(Configuration configuration) {
         Optional<Configuration> configurationOptional = configurationRepository.findByUser(configuration.getUser());
         if (configurationOptional.isPresent()) {
             configuration.setId(configurationOptional.get().getId());

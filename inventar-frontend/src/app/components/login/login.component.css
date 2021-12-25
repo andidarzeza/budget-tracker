@@ -22,3 +22,37 @@ input {
     color: #9F9F9F;
     font-size: 16px;
 }
+
+.caps-lock {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    color: #9F9F9F;
+    font-family: 'Source Sans Pro', sans-serif;
+    overflow: hidden;
+    height: 0;
+    transition: height 200ms ease
+}
+
+.show-hide-password {
+    position: absolute;
+    cursor: pointer;
+    color: #9F9F9F;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    user-select: none;
+}
+
+.icon-slash {
+    width: 31px;
+    height: 2px;
+    position: absolute;
+    background: #9F9F9F;
+    top: 83%;
+    left: 31%;
+    transform: rotate(46deg) translate(-50%, -50%);
+    border-radius: 58px;
+    opacity: 1;
+    transition: opacity 200ms;
+}

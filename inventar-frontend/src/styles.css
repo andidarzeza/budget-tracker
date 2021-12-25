@@ -171,10 +171,14 @@ app-date-picker {
 }
 
 .mat-progress-bar {
-    height: 2px !important;
+    height: 4px !important;
 }
 
-.mat-progress-bar-buffer {
+.light > .mat-progress-bar-buffer {
+    background-color: white !important;
+}
+
+.dark > .mat-progress-bar-buffer {
     background-color: #111619 !important;
 }
 

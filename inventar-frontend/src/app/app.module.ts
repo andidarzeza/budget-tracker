@@ -9,6 +9,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { TemplateModule } from './template/template.module';
 import { SharedModule } from './shared/shared.module';
 import { CustomHttpInterceptorService } from './services/custom-http-interceptor.service';
+import { CapsLockDirective } from './directives/caps-lock.directive';
 
 @NgModule({
   declarations: [

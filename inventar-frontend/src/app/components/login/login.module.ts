@@ -7,10 +7,12 @@ import { MatCardModule } from '@angular/material/card';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { CapsLockDirective } from 'src/app/directives/caps-lock.directive';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @NgModule({
-  declarations: [LoginComponent],
+  declarations: [LoginComponent,  CapsLockDirective],
   imports: [
     CommonModule,
     LoginRoutingModule,
@@ -19,6 +21,7 @@ import { MatButtonModule } from '@angular/material/button';
     ReactiveFormsModule,
     MatInputModule,
     FormsModule,
+    MatIconModule,
     MatButtonModule
   ]
 })

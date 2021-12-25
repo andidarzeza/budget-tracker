@@ -44,7 +44,7 @@ export class HistoryComponent implements OnInit {
   public size: number = PAGE_SIZE;
   public totalItems: number = 0;
   private totalRequests: number = 0;
-  private sort: string = "createdTime,desc";
+  private sort: string = "date,desc";
   public displayedColumns: string[] = ['date', 'action', 'entity', 'message', 'user', 'actions'];
   public historyList: History[] = [];
   private historySubscription: Subscription = null;

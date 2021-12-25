@@ -62,24 +62,31 @@ public class UserServiceImpl implements UserService {
         if(userOptional.isPresent()) {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
             final String jwt = jwtManager.createToken(userOptional.get());
-            historyService.save(historyService.from(EntityAction.AUTHENTICATION, this.entityType));
+            historyService.save(
+                    new History(
+                            EntityAction.AUTHENTICATION,
+                            userRequest.getUsername(),
+                            "User " + userRequest.getUsername() + " has logged in.",
+                            EntityType.USER
+                    )
+            );
             return new ResponseEntity(new LoginResponse(userRequest.getUsername(), jwt), HttpStatus.OK);
         }
         return new ResponseEntity(new ResponseMessage("An Error Occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    public ResponseEntity getAllUsers() {
+    public ResponseEntity findAll() {
         return null;
     }
 
     @Override
-    public ResponseEntity deleteUser(String userID) {
+    public ResponseEntity delete(String userID) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Object> updateUser(String newUsername, String username) {
+    public ResponseEntity<Object> update(String newUsername, String username) {
         return null;
     }
 }

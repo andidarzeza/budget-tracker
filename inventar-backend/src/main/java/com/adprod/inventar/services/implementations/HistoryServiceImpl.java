@@ -54,8 +54,8 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public History from(EntityAction action, EntityType entity) {
-        String message = action.toString() + " action performed on " + entity.toString() + " Entity.";
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String message = entity.toString() + " entity " + " " + action.toString() + " by user " + authentication.getName();
         return new History(action, authentication.getName(), message, entity);
     }
 }

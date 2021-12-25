@@ -8,10 +8,10 @@ import com.adprod.inventar.models.enums.EntityType;
 import com.adprod.inventar.models.wrappers.IncomingDTO;
 import com.adprod.inventar.models.wrappers.IncomingWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
-import com.adprod.inventar.repositories.IncomingRepository;
+import com.adprod.inventar.repositories.IncomeRepository;
 import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.HistoryService;
-import com.adprod.inventar.services.IncomingService;
+import com.adprod.inventar.services.IncomeService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,15 +22,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class IncomingServiceImpl implements IncomingService {
-    private final IncomingRepository incomingRepository;
+public class IncomeServiceImpl implements IncomeService {
+    private final IncomeRepository incomeRepository;
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
     private final HistoryService historyService;
     private final EntityType entityType = EntityType.INCOME;
 
-    public IncomingServiceImpl(IncomingRepository incomingRepository, CategoryRepository categoryRepository, AccountService accountService, HistoryService historyService) {
-        this.incomingRepository = incomingRepository;
+    public IncomeServiceImpl(IncomeRepository incomeRepository, CategoryRepository categoryRepository, AccountService accountService, HistoryService historyService) {
+        this.incomeRepository = incomeRepository;
         this.categoryRepository = categoryRepository;
         this.accountService = accountService;
         this.historyService = historyService;
@@ -38,7 +38,7 @@ public class IncomingServiceImpl implements IncomingService {
 
     @Override
     public ResponseEntity findAll(Pageable pageable, String user) {
-        Page<Incoming> page = this.incomingRepository.findAllByUser(pageable, user);
+        Page<Incoming> page = this.incomeRepository.findAllByUser(pageable, user);
         IncomingWrapper incomingWrapper = new IncomingWrapper();
         List<Incoming> content = page.getContent();
         List<IncomingDTO> response = new ArrayList<>();
@@ -57,7 +57,7 @@ public class IncomingServiceImpl implements IncomingService {
     @Override
     public ResponseEntity save(Incoming incoming) {
         if(this.accountService.addToBalance(incoming.getIncoming())) {
-            incomingRepository.save(incoming);
+            incomeRepository.save(incoming);
             historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
             return ResponseEntity.ok(incoming);
         }
@@ -71,9 +71,9 @@ public class IncomingServiceImpl implements IncomingService {
 
     @Override
     public ResponseEntity delete(String id) {
-        Optional<Incoming> incoming = incomingRepository.findById(id);
+        Optional<Incoming> incoming = incomeRepository.findById(id);
         if(incoming.isPresent()) {
-            incomingRepository.delete(incoming.get());
+            incomeRepository.delete(incoming.get());
             historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
             return ResponseEntity.ok(new ResponseMessage("Deleted"));
         }
@@ -82,10 +82,10 @@ public class IncomingServiceImpl implements IncomingService {
 
     @Override
     public ResponseEntity update(String id, Incoming income) {
-        Optional<Incoming> incomingOptional = incomingRepository.findById(id);
+        Optional<Incoming> incomingOptional = incomeRepository.findById(id);
         if(incomingOptional.isPresent()) {
             income.setId(id);
-            incomingRepository.save(income);
+            incomeRepository.save(income);
             historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
             return ResponseEntity.ok(income);
         }

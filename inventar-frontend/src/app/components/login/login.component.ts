@@ -6,10 +6,34 @@ import { Router } from '@angular/router';
 import { mergeMap } from 'rxjs/operators';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { IConfiguration } from 'src/app/models/IConfiguration';
+import { animate, style, transition, trigger } from '@angular/animations';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  animations: [
+    trigger(
+      'inOutAnimation', 
+      [
+        transition(
+          ':enter', 
+          [
+            style({ opacity: 0 }),
+            animate('400ms ease-out', 
+                    style({opacity: 1 }))
+          ]
+        ),
+        transition(
+          ':leave', 
+          [
+            style({ opacity: 1 }),
+            animate('400ms ease-in', 
+                    style({ opacity: 0 }))
+          ]
+        )
+      ]
+    )
+  ]
 })
 export class LoginComponent implements OnInit {
 
@@ -44,6 +68,16 @@ export class LoginComponent implements OnInit {
         this.sharedService.changeTheme(configuration.darkMode);  
         this.router.navigate(['/dashboard']);
       });
+    }
+  }
+
+  togglePasswordVisibility(passwordInput: HTMLInputElement, iconSlash: HTMLElement): void {
+    if(passwordInput.type == "text") {
+      passwordInput.type = "password";
+      iconSlash.style.opacity = "1";
+    } else {
+      passwordInput.type = "text";
+      iconSlash.style.opacity = "0";
     }
   }
 }

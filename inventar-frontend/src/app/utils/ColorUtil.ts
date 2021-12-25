@@ -12,5 +12,5 @@ function intToRGB(i: number): string{
 }
 
 export function strToColor(str: string): string {
-    return intToRGB(hashCode(str))
+    return "#" + intToRGB(hashCode(str))
 }

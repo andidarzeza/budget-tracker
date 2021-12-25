@@ -4,7 +4,7 @@ import com.adprod.inventar.models.Incoming;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-public interface IncomingService {
+public interface IncomeService {
     ResponseEntity findAll(Pageable pageable, String user);
     ResponseEntity save(Incoming incomeincoming);
     ResponseEntity findOne(String id);

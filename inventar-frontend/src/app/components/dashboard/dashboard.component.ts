@@ -94,7 +94,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private getCategoriesData(): void {  
     this.unsubscribe(this.categoriesDataSubscription);  
     this.categoriesDataSubscription = this.dashboardService.getCategoriesData().subscribe((response: any) => {
-      const spendingResponse = response.body;
+      const spendingResponse: any[] = response.body.sort((obj1: any, obj2: any) => obj1.total > obj2.total ? -1 : 1);
+      console.log(spendingResponse);
+      
       this.totalSpendings = this.sum(spendingResponse)
       this.chartUtil.createChart("category-chart", {
         type: 'doughnut',
@@ -104,8 +106,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           label: 'Categories',
           data: spendingResponse.map(item => item.total * 100 / (this.totalSpendings)),
           tension: 0.2,
-          backgroundColor: ['#ff6347', 'rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
-          borderColor: ['#ff6347', 'rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
+          backgroundColor: spendingResponse.map(item => strToColor(item._id))
+          // ['#ff6347', 'rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
+          ,
+          borderColor: spendingResponse.map(item => strToColor(item._id)) 
+          // ['#ff6347', 'rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
+          ,
           borderWidth: 1
         }]
       });
@@ -128,8 +134,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           label: 'Incomes',
           data: incomeResponse.map(item => item.total),
           tension: 0.2,
-          backgroundColor: ['#305680', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
-          borderColor: ['#305680', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)'],
+          backgroundColor: incomeResponse.map(item => strToColor(item._id))
+          // ['#305680', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
+          ,
+          borderColor: incomeResponse.map(item => strToColor(item._id))
+          // ['#305680', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
+          ,
           borderWidth: 1
         }]
       });

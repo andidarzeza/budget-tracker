@@ -4,6 +4,6 @@ import com.adprod.inventar.models.Configuration;
 import org.springframework.http.ResponseEntity;
 
 public interface ConfigurationService {
-    ResponseEntity updateConfiguration(Configuration configuration);
+    ResponseEntity update(Configuration configuration);
     ResponseEntity getConfiguration(String user);
 }

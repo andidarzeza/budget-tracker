@@ -25,10 +25,13 @@ export class ChartUtils {
                 },
                 plugins: {
                     legend: {
+                        maxHeight: 50,
                         display: true,
                         position: 'bottom'
                     }
-                }
+                },
+                responsive: true,
+                maintainAspectRatio: true
             }
         });;
     }

@@ -21,7 +21,7 @@ public class ConfigurationResource {
     }
 
     @PutMapping
-    public ResponseEntity updateConfiguration(@RequestBody Configuration configuration) {
-        return this.configurationService.updateConfiguration(configuration);
+    public ResponseEntity update(@RequestBody Configuration configuration) {
+        return this.configurationService.update(configuration);
     }
 }
