@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 export class SharedService {
   private dataSource = new BehaviorSubject<string>("");
   public theme = 'light';
-  public sidebarWidth = 15;
+  public sidebarWidth = 270;
   public stillLoading = false;
   private darkMode = true;
   public isSpinnerEnabled = true;

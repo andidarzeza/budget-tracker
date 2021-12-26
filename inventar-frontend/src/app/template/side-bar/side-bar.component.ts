@@ -45,9 +45,7 @@ export class SideBarComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.items.forEach((item: any) => {
       if(item.link === window.location.pathname) {
-        const index = this.items.indexOf(item);
-        console.log("test   dawdaw", index);
-        
+        const index = this.items.indexOf(item);        
         this.animateSelectedOption(index);
       }
     });
@@ -64,9 +62,15 @@ export class SideBarComponent implements AfterViewInit {
 
   openSideBar(): void {
     const sideBar = document.getElementById('sidebar') as HTMLElement;
+    const shadow = document.getElementById('shadow') as HTMLElement;
     const application = document.getElementById('application-body') as HTMLElement;
-    sideBar.style.width = this.sharedService.sidebarWidth + '%';
-    application.style.width = 100 - this.sharedService.sidebarWidth + '%';
+    sideBar.style.width = `${this.sharedService.sidebarWidth}px`;
+    if(window.innerWidth > 1140) {
+      application.style.width = `calc(${100}% - ${this.sharedService.sidebarWidth}px)`; 
+    } else {
+      shadow.style.opacity = "0.4";
+      shadow.style.pointerEvents = "auto";
+    }
     const items = document.getElementsByClassName('opened-menu-item') as HTMLCollection;
     for(var i = 0;i<items.length;i++) {
       const item = items[i] as HTMLElement;
@@ -77,9 +81,15 @@ export class SideBarComponent implements AfterViewInit {
   closeSideBar(): void {
     const sideBar = document.getElementById('sidebar') as HTMLElement;
     const application = document.getElementById('application-body') as HTMLElement;
+    const shadow = document.getElementById('shadow') as HTMLElement;
     const toggle = document.getElementById('toggle-id') as HTMLElement;
-    sideBar.style.width =   '60px';
-    application.style.width = '100%';
+    sideBar.style.width = '60px';
+    if(window.innerWidth > 1140) {
+      application.style.width = '100%';
+    } else {
+      shadow.style.opacity = "0";
+      shadow.style.pointerEvents = "none";
+    }
     toggle.style.left = '50%';
     toggle.style.transform =  'translateX(-50%)';
     const items = document.getElementsByClassName('opened-menu-item') as HTMLCollection;
@@ -92,8 +102,6 @@ export class SideBarComponent implements AfterViewInit {
 
   animateSelectedOption(index: number): void {
     const activeItem = document.getElementById("active-item") as HTMLElement;
-    console.log(activeItem);
-    
     if(activeItem) {
       activeItem.style.transform = `translateY(${index * 100}%)`;
     }
