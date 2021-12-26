@@ -14,8 +14,8 @@
         </div>
     </div>
 
-    <button mat-raised-button (click)="toggleSideBar()" id="toggle-id" >
-        <mat-icon class="custom-icon-size {{sharedService.theme}}-icon" *ngIf="isOpened">arrow_back_ios</mat-icon>
-        <mat-icon class="custom-icon-size {{sharedService.theme}}-icon" *ngIf="!isOpened">arrow_forward_ios</mat-icon>
+    <button mat-raised-button (click)="sideBarService.toggleSideBar()" id="toggle-id" >
+        <mat-icon class="custom-icon-size {{sharedService.theme}}-icon" *ngIf="sideBarService.isOpened">arrow_back_ios</mat-icon>
+        <mat-icon class="custom-icon-size {{sharedService.theme}}-icon" *ngIf="!sideBarService.isOpened">arrow_forward_ios</mat-icon>
     </button>
 </div>

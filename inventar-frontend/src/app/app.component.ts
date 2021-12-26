@@ -6,6 +6,7 @@ import { IConfiguration } from './models/IConfiguration';
 import { AuthenticationService } from './services/authentication.service';
 import { ConfigurationService } from './services/configuration.service';
 import { SharedService } from './services/shared.service';
+import { SideBarService } from './services/side-bar.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,12 @@ export class AppComponent implements OnInit {
   title = 'inventar-front-end';
   success = true;
   error = false;
-  constructor(public authenticationService: AuthenticationService, public sharedService: SharedService, private configurationService: ConfigurationService, private formBuilder: FormBuilder, private http: HttpClient) {
+  constructor(
+    public authenticationService: AuthenticationService,
+    public sharedService: SharedService,
+    private configurationService: ConfigurationService, 
+    public sideBarService: SideBarService
+  ) {
 
   }
 
@@ -25,6 +31,10 @@ export class AppComponent implements OnInit {
       this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
     });
     this.sharedService.listenForThemeChange();
+  }
+
+  test(): void {
+    this.sideBarService.toggleSideBar();
   }
 
 }
