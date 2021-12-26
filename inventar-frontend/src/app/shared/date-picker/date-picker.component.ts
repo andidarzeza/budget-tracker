@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { DateUtil, Day, MonthValue, Year } from 'src/app/utils/DateUtil';
 import { MONTHS_ABR } from 'src/environments/environment';
 
 @Component({
@@ -18,6 +19,7 @@ export class DatePickerComponent implements OnInit {
   selectedDay = this.today.getDate();
   increased = 0;
   months: string[] = MONTHS_ABR;
+  days: number[] = [];
   @ViewChild('daily') daily: ElementRef;
   @ViewChild('monthly') monthly: ElementRef;
   @ViewChild('yearly') yearly: ElementRef;
@@ -32,6 +34,7 @@ export class DatePickerComponent implements OnInit {
   ngOnInit(): void {
     this.populateYearsArray();
     this.populateRangeArray();
+    this.populateDaysArray(this.selectedYear, this.selectedMonth);
   }
 
   private populateRangeArray(): void {
@@ -49,6 +52,19 @@ export class DatePickerComponent implements OnInit {
     }
     this.increased = this.avalaibleYears.length - 1;
     this.changeYear();
+  }
+
+  private populateDaysArray(year: number, month: number): void {
+    this.days = [];
+    const currentYearObject = new DateUtil().fromYear(year).getMonthByValue(month).getDaysOfMonth();
+    const copyNullValuesTimes = currentYearObject[0].getDayOfWeek();
+    for(let i = 0;i<copyNullValuesTimes-1;i++)
+      this.days.push(null);
+    this.days = this.days.concat(currentYearObject.map((dateObject: Day) => {
+      return dateObject.getDayNumber();
+    }));
+    console.log(this.days);
+    
   }
 
   public increaseYear(): void {
@@ -91,11 +107,13 @@ export class DatePickerComponent implements OnInit {
   }
 
   public selectDay(day: number): void {
-    this.selectedDay = day;
+    if(day)
+      this.selectedDay = day;
   }
 
   public selectMonth(month: string): void {
     this.selectedMonth = this.months.indexOf(month);
+    this.populateDaysArray(this.selectedYear, this.selectedMonth);
     this.changeViewType("Daily");
   }
 

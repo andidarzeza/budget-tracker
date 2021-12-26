@@ -51,6 +51,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dailySpendingsSubscription: Subscription = null;
   categoriesDataSubscription: Subscription = null;
   incomeCategoriesSubscription: Subscription = null;
+  chart: Chart = null; 
   constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils, public sharedService: SharedService) { }
 
   ngOnInit(): void {
@@ -79,10 +80,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       
       this.amountSpentAverage = this.sum(response.body) / response.body.length;
       const data: number[] = this.fillMissingData(response.body, chartLabels);
-      this.chartUtil.createChart("daily-chart", {
+      this.chart = this.chartUtil.createChart("daily-chart", {
         type: 'line',
         colors: ['#ff6347'],
-        labels: labels,
+        labels: labels.map(label => {
+          const array = label.split("-");
+          return array[0] + "/" + array[1] + "/" + array[2].slice(-2);
+        }),
         showGridLines: true,
         datasets: [{
           label: 'Money Spent',
@@ -99,6 +103,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // fires only from onDateSelected function below
   private getCategoriesData(): void {  
+    
     this.unsubscribe(this.categoriesDataSubscription);  
     this.categoriesDataSubscription = this.dashboardService.getCategoriesData().subscribe((response: any) => {
       const spendingResponse: any[] = response.body.sort((obj1: any, obj2: any) => obj1.total > obj2.total ? -1 : 1);
@@ -206,6 +211,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.unsubscribe(this.incomeCategoriesSubscription);
     this.unsubscribe(this.dailySpendingsSubscription);
     this.unsubscribe(this.categoriesDataSubscription);
+  }
+
+  public calculateHeight(templateReference: HTMLElement): string {
+    // console.log(templateReference);
+    let clientHeight = templateReference.clientHeight;
+    clientHeight +=126
+    // [ngStyle]="{'height': 'calc(100% - 57px)'"}
+    return `calc(100% - ${clientHeight}px)`;
   }
 
 }
