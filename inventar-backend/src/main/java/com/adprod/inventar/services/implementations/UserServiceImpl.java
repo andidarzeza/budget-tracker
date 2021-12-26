@@ -71,8 +71,9 @@ public class UserServiceImpl implements UserService {
                     )
             );
             return new ResponseEntity(new LoginResponse(userRequest.getUsername(), jwt), HttpStatus.OK);
+        } else {
+            return new ResponseEntity(new ResponseMessage("Authentication Failed"), HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity(new ResponseMessage("An Error Occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override

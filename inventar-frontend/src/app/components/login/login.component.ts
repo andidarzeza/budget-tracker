@@ -7,6 +7,8 @@ import { mergeMap } from 'rxjs/operators';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { IConfiguration } from 'src/app/models/IConfiguration';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { ToastrService, TOAST_CONFIG } from 'ngx-toastr';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -37,7 +39,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private configurationSevice: ConfigurationService, public sharedService: SharedService, private formBuilder: FormBuilder, public authenticationService: AuthenticationService, private router: Router) { 
+  constructor(private toasterService: ToastrService, private configurationSevice: ConfigurationService, public sharedService: SharedService, private formBuilder: FormBuilder, public authenticationService: AuthenticationService, private router: Router) { 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if(currentUser) {
       this.router.navigate(['/dashboard']);
@@ -67,6 +69,11 @@ export class LoginComponent implements OnInit {
       ).subscribe((configuration: IConfiguration) => {
         this.sharedService.changeTheme(configuration.darkMode);  
         this.router.navigate(['/dashboard']);
+      },
+      (error: any) => {
+        if(error?.status === 403) {
+          this.toasterService.error("Authentication Failed", "Failed", TOASTER_CONFIGURATION)
+        }
       });
     }
   }
