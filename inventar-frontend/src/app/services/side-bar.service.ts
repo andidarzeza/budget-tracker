@@ -43,10 +43,10 @@ export class SideBarService {
     sideBar.style.width = '60px';
     if(window.innerWidth > 1140) {
       application.style.width = '100%';
-    } else {
-      shadow.style.opacity = "0";
-      shadow.style.pointerEvents = "none";
     }
+
+    shadow.style.opacity = "0";
+    shadow.style.pointerEvents = "none";
     toggle.style.left = '50%';
     toggle.style.transform =  'translateX(-50%)';
     const items = document.getElementsByClassName('opened-menu-item') as HTMLCollection;
