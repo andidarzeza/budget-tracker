@@ -156,6 +156,9 @@
     .chart-title {
         font-size: 21px;
     }
+    .percentage-badge {
+        font-size: 14px;
+    }
 }
 
 @media only screen and (max-width: 1250px) {
@@ -195,5 +198,39 @@
 
     .average-cards {
         padding-bottom: calc(25% + 43px);
+    }
+}
+
+@media only screen and (max-width: 650px) {
+
+    .card-label {
+        font-size: 30px;
+    }
+
+    .income-description {
+        font-size: 18px;
+    }
+
+    .chart-title {
+        font-size: 20px;
+    }
+}
+
+
+@media only screen and (max-width: 640px) {
+    .avg-card-cnt {
+        flex-direction: column;
+    }
+
+    .average-cards {
+        padding-bottom: calc(20% + 43px);
+    }
+
+    .bottom-margin {
+        margin-bottom: 10px;
+    }
+
+    .right-margin{
+        margin-right: 0;
     }
 }
