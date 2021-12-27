@@ -16,12 +16,12 @@
 
     <div class="test-for-moment" #monthlyCnt>
         <div style="width: 100%;height: 35px;display: flex;justify-content: space-evenly;align-items: center">
-            <button mat-icon-button [disabled]="selectedYear === 1975">
-                <mat-icon (click)="decreaseYear()">keyboard_arrow_left</mat-icon>
+            <button mat-icon-button (click)="decreaseYear()">
+                <mat-icon>keyboard_arrow_left</mat-icon>
             </button>
             <span (click)="changeViewType('Yearly')">{{selectedYear}}</span>
-            <button mat-icon-button [disabled]="selectedYear === actualYear">
-                <mat-icon (click)="increaseYear()">keyboard_arrow_right</mat-icon>    
+            <button mat-icon-button (click)="increaseYear()" [disabled]="selectedYear === actualYear">
+                <mat-icon>keyboard_arrow_right</mat-icon>    
             </button>
         </div>
         <div class="month-container">
@@ -33,12 +33,12 @@
 
     <div class="test-for-moment" #yearlyCnt>
         <div style="width: 100%;height: 35px;display: flex;justify-content: space-evenly;align-items: center">
-            <button mat-icon-button [disabled]="selectedRange[0] <= 1975">
-                <mat-icon (click)="decreaseRange()">keyboard_arrow_left</mat-icon>
+            <button mat-icon-button (click)="decreaseRange()">
+                <mat-icon>keyboard_arrow_left</mat-icon>
             </button>
             <span>{{selectedRange[0]}} - {{selectedRange[selectedRange.length-1]}}</span>
-            <button mat-icon-button [disabled]="selectedRange[selectedRange.length-1] === actualYear">
-                <mat-icon (click)="increaseRange()">keyboard_arrow_right</mat-icon>    
+            <button mat-icon-button (click)="increaseRange()" [disabled]="selectedRange[selectedRange.length-1] === actualYear">
+                <mat-icon>keyboard_arrow_right</mat-icon>    
             </button>
         </div>
         <div class="month-container">

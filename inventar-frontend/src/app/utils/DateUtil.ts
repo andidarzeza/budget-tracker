@@ -75,11 +75,11 @@ export class Month {
 }
 
 export class Year {
-    private year = 1970;
+    private year = 1100;
     private months: Month[] = [];
 
     constructor(year: number) {
-        if(year >=1970) {
+        if(year >=1100) {
             this.year = year;
             this.populateMonths();
         }

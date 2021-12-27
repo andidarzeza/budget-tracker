@@ -13,13 +13,12 @@ export class DatePickerComponent implements OnInit {
   today = new Date();
   selectedYear: number = this.today.getFullYear();
   actualYear: number = this.today.getFullYear();
-  avalaibleYears: number[] = [];
   selectedRange: number[] = [];
   selectedMonth = this.today.getMonth();
   selectedDay = this.today.getDate();
-  increased = 0;
   months: string[] = MONTHS_ABR;
   days: number[] = [];
+
   @ViewChild('daily') daily: ElementRef;
   @ViewChild('monthly') monthly: ElementRef;
   @ViewChild('yearly') yearly: ElementRef;
@@ -38,33 +37,24 @@ export class DatePickerComponent implements OnInit {
   }
 
   private populateRangeArray(): void {
-    const rangeStart = this.selectedYear - 11;
-    let counter = 0;
-    for(let i = rangeStart;i<=this.selectedYear;i++) {
-      this.selectedRange.push(rangeStart+counter);
-      counter++;
+    for(let i = this.selectedYear - 11;i<=this.selectedYear;i++) {
+      this.selectedRange.push(i);
     }
   }
 
+
   private populateYearsArray(): void {
-    for(let i = 1975;i<=this.actualYear;i++) {
-      this.avalaibleYears.push(i);
-    }
-    this.increased = this.avalaibleYears.length - 1;
-    this.changeYear();
+
   }
 
   private populateDaysArray(year: number, month: number): void {
     this.days = [];
     const currentYearObject = new DateUtil().fromYear(year).getMonthByValue(month).getDaysOfMonth();
     const copyNullValuesTimes = currentYearObject[0].getDayOfWeek();
-    for(let i = 0;i<copyNullValuesTimes-1;i++)
+    for(let i = 0;i<copyNullValuesTimes-1;i++) {
       this.days.push(null);
-    this.days = this.days.concat(currentYearObject.map((dateObject: Day) => {
-      return dateObject.getDayNumber();
-    }));
-    console.log(this.days);
-    
+    }
+    this.days = this.days.concat(currentYearObject.map((dateObject: Day) => dateObject.getDayNumber()));
   }
 
   public increaseYear(): void {
@@ -74,35 +64,17 @@ export class DatePickerComponent implements OnInit {
   }
 
   public decreaseYear(): void {
-    if(this.selectedYear > 1975) {
       this.selectedYear--;
-    }
   }
 
   public increaseRange(): void {
-    if(this.selectedRange[this.selectedRange.length-1] !== this.actualYear) {
-      this.selectedRange = this.selectedRange.map((year: number) => {
-        return year + 11;
-      });
-    }
+    if(this.selectedRange[this.selectedRange.length-1] !== this.actualYear)
+      this.selectedRange = this.selectedRange.map((year: number) => year + 12);
   }
 
   public decreaseRange(): void {
-    if(this.selectedRange[0] > 1975) {
-      this.selectedRange = this.selectedRange.map((year: number) => {
-        if(year-11 >= 1975)
-          return year - 11;
-        else 
-          return null;
-      }).filter(item => item!=null);
-    }
-  }
-
-  public changeYear(): void {
-    const yearCnt = document.getElementById("year-container");
-    if(yearCnt) {
-      yearCnt.style.transform = `translateX(${-50 * this.increased}px)`;
-      this.selectedYear = this.avalaibleYears[this.increased];
+    if(this.selectedRange[0] >=1250 + 12) {
+      this.selectedRange = this.selectedRange.map((year: number) => year - 12);
     }
   }
 
@@ -128,9 +100,7 @@ export class DatePickerComponent implements OnInit {
 
   public offClickHandler(event:any) {
     const elem = document.getElementsByTagName("app-date-picker") as any;
-    const selectedDateElem = document.getElementById("selectedDateId");
-    console.log(elem);
-    
+    const selectedDateElem = document.getElementById("selectedDateId");    
     if(elem && selectedDateElem) {
       if(!elem[0].contains(event.target) && !selectedDateElem.contains(event.target)) {
         this.close();
