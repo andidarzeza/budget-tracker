@@ -5,7 +5,13 @@
 export const environment = {
   production: false
 };
-export const serverAPIURL = 'http://localhost:8081';
+
+// HOME NETWORK
+export const serverAPIURL = 'http://192.168.1.9:8081';
+
+// LOCALHOST
+// export const serverAPIURL = 'http://localhost:8081';
+
 export const MONTHS_ABR = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 export const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 export const TOASTER_CONFIGURATION = {

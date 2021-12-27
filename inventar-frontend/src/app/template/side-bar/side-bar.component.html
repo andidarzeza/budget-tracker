@@ -8,7 +8,8 @@
         <div id="active-item">
 
         </div>
-        <div class="opened-menu-item pointer" *ngFor="let item of items;let i = index" [routerLink]="[item.link]" routerLinkActive="router-link-active" (click)="animateSelectedOption(i)">
+        <div class="opened-menu-item pointer" *ngFor="let item of items;let i = index" [routerLink]="[item.link]" routerLinkActive="router-link-active"
+         (click)="animateSelectedOption(i)">
             <mat-icon class="{{sharedService.theme}}-icon">{{item.icon}}</mat-icon>
             <span  class="title {{sharedService.theme}}-text">{{item.text}}</span>
         </div>

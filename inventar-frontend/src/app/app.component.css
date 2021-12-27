@@ -23,8 +23,6 @@
 
 .application {
     overflow-y: auto;
-    transition: width 300ms linear;
-    width: 100%;
     z-index: 1;
 }
 
@@ -53,14 +51,21 @@
     left: 0;
     opacity: 0;
     pointer-events: none;
+    cursor: pointer;
+    transition: opacity 400ms;
 }
 
+.app-width {
+    width: calc(100% - 60px);
+    margin-left: 60px;
+}
 
-@media only screen and (max-width: 1140px) {
-    .application {
-        width: calc(100% - 60px);
-        margin-left: 60px;
-    }
+.app-full-width {
+    width: 100%;
+    margin-left: 0px;
+}
+
+@media only screen and (max-width: 3000px) {
 
     .sidebar {
         position: absolute;

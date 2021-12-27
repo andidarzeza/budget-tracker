@@ -26,13 +26,10 @@ export class CapsLockDirective {
 
     }
     if(event.code === "CapsLock") {     
-      console.log();
       if(event.getModifierState("CapsLock")) {
         this.capsLockOn = false;
-        localStorage.setItem("capsLock", "false");
       } else {
         this.capsLockOn = true;
-        localStorage.setItem("capsLock", "true");
       }
        
       if(this.capsLockOn)

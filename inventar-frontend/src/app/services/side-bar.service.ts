@@ -6,6 +6,7 @@ import { SharedService } from './shared.service';
 })
 export class SideBarService {
   isOpened = false;
+  public sidebarWidth = 300;
   constructor(public sharedService: SharedService) { }
 
   toggleSideBar(): void {
@@ -21,9 +22,9 @@ export class SideBarService {
     const sideBar = document.getElementById('sidebar') as HTMLElement;
     const shadow = document.getElementById('shadow') as HTMLElement;
     const application = document.getElementById('application-body') as HTMLElement;
-    sideBar.style.width = `${this.sharedService.sidebarWidth}px`;
-    if(window.innerWidth > 1140) {
-      application.style.width = `calc(${100}% - ${this.sharedService.sidebarWidth}px)`; 
+    sideBar.style.width = `${this.sidebarWidth}px`;
+    if(window.innerWidth > 3000) {
+      application.style.width = `calc(${100}% - ${this.sidebarWidth}px)`; 
     } else {
       shadow.style.opacity = "0.4";
       shadow.style.pointerEvents = "auto";
@@ -41,7 +42,7 @@ export class SideBarService {
     const shadow = document.getElementById('shadow') as HTMLElement;
     const toggle = document.getElementById('toggle-id') as HTMLElement;
     sideBar.style.width = '60px';
-    if(window.innerWidth > 1140) {
+    if(window.innerWidth > 3000) {
       application.style.width = '100%';
     }
 

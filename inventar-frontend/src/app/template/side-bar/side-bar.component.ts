@@ -57,9 +57,6 @@ export class SideBarComponent implements AfterViewInit {
 
   }
 
-  
-
-
   animateSelectedOption(index: number): void {
     const activeItem = document.getElementById("active-item") as HTMLElement;
     if(activeItem) {

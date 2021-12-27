@@ -56,3 +56,9 @@ input {
     opacity: 1;
     transition: opacity 200ms;
 }
+
+@media only screen and (max-width: 500px) {
+    .login-card {
+        width: 20rem;
+    }
+}
