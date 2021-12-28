@@ -5,11 +5,11 @@
             <span (click)="changeViewType('Monthly')">{{months[selectedMonth]}} - {{selectedYear}}</span>
         </div>
         <div class="days-container">
-            <div  class="month-class" *ngFor="let weekDay of ['M', 'T', 'W', 'TH', 'F', 'S', 'S']" [ngClass]="{'red-text': weekDay === 'S'}">
+            <div class="month-class" *ngFor="let weekDay of ['M', 'T', 'W', 'TH', 'F', 'S', 'S']" [ngClass]="{'red-text': weekDay === 'S'}">
                 {{weekDay}}
             </div>
-            <div *ngFor="let day of days" (click)="selectDay(day)" [ngClass]="{'active': day === selectedDay}" class="month-class">
-                <span>{{day ? day : ''}}</span>
+            <div *ngFor="let day of days; let i = index" (click)="selectDay(day)" [ngClass]="{'active': day === selectedDay}" class="month-class">
+                <span [ngStyle]="{'color': (i+1)%7==0 || (i+2)%7==0 ? '#747474' : 'inherit' }">{{day ? day : ''}}</span>
             </div>
         </div>
     </div>
