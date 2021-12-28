@@ -1,6 +1,5 @@
 .active {
     background: #ff6347;
-    color: white;
 }
 
 .month-class {
@@ -81,4 +80,12 @@
 
 .red-text {
     color: #ff6347;
+}
+
+.weekend-day {
+    color: #747474;
+}
+
+.active-color {
+    color: white;
 }

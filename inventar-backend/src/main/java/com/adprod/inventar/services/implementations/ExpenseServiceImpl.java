@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,8 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity save(Spending spending) {
-        if(this.accountService.removeFromBalance(spending.getMoneySpent())) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(this.accountService.removeFromBalance(spending.getMoneySpent(), authentication.getName())) {
             expenseRepository.save(spending);
             historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
             return ResponseEntity.ok(spending);
@@ -69,11 +72,15 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity delete(String id) {
-        Optional<Spending> spending = expenseRepository.findById(id);
-        if(spending.isPresent()) {
-            expenseRepository.delete(spending.get());
-            historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
-            return ResponseEntity.ok(new ResponseMessage("Deleted"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Optional<Spending> expenseOptional = expenseRepository.findById(id);
+        if(expenseOptional.isPresent()) {
+            if(this.accountService.addToBalance(expenseOptional.get().getMoneySpent(), authentication.getName())) {
+                expenseRepository.delete(expenseOptional.get());
+                historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
+                return ResponseEntity.ok(new ResponseMessage("Deleted"));
+            }
+            return new ResponseEntity(new ResponseMessage("Something went wrong, cannot proceed with request."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity(new ResponseMessage("Not Found"), HttpStatus.NOT_FOUND);
     }
@@ -82,10 +89,15 @@ public class ExpenseServiceImpl implements ExpenseService {
     public ResponseEntity update(String id, Spending spending) {
         Optional<Spending> expenseOptional = expenseRepository.findById(id);
         if(expenseOptional.isPresent()) {
-            spending.setId(id);
-            expenseRepository.save(spending);
-            historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
-            return ResponseEntity.ok(spending);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            double removeAndAddAmount = expenseOptional.get().getMoneySpent() -spending.getMoneySpent();
+            if(this.accountService.addToBalance(removeAndAddAmount, authentication.getName())) {
+                spending.setId(id);
+                expenseRepository.save(spending);
+                historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
+                return ResponseEntity.ok(spending);
+            }
+            return new ResponseEntity(new ResponseMessage("Something went wrong, cannot proceed with request."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity(new ResponseMessage("No Expense to update was found."), HttpStatus.NOT_FOUND);
     }

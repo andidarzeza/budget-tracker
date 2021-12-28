@@ -1,6 +1,5 @@
 package com.adprod.inventar.resources;
 
-import com.adprod.inventar.models.Account;
 import com.adprod.inventar.services.AccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +13,8 @@ public class AccountResource {
         this.accountService = accountService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity getAccount(@PathVariable String id){
-        return accountService.getAccount(id);
-    }
-
-    @PostMapping
-    public ResponseEntity createAccount(@RequestBody Account account){
-        return accountService.createAccount(account);
+    @GetMapping("/{username}")
+    public ResponseEntity getAccount(@PathVariable String username){
+        return accountService.find(username);
     }
 }

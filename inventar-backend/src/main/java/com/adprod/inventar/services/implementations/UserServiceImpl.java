@@ -4,9 +4,12 @@ import com.adprod.inventar.models.*;
 import com.adprod.inventar.models.enums.EntityAction;
 import com.adprod.inventar.models.enums.EntityType;
 import com.adprod.inventar.models.enums.Role;
+import com.adprod.inventar.repositories.AccountRepository;
 import com.adprod.inventar.repositories.ConfigurationRepository;
 import com.adprod.inventar.repositories.UserRepository;
 import com.adprod.inventar.security.JwtManager;
+import com.adprod.inventar.services.AccountService;
+import com.adprod.inventar.services.ConfigurationService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -25,16 +28,18 @@ public class UserServiceImpl implements UserService {
     private final JwtManager jwtManager;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final ConfigurationRepository configurationRepository;
+    private final ConfigurationService configurationService;
+    private final AccountService accountService;
     private final HistoryService historyService;
     private final EntityType entityType = EntityType.USER;
 
-    public UserServiceImpl(UserRepository repository, JwtManager jwtManager, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, ConfigurationRepository configurationRepository, HistoryService historyService) {
+    public UserServiceImpl(UserRepository repository, JwtManager jwtManager, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, ConfigurationService configurationService, AccountService accountService, HistoryService historyService) {
         this.repository = repository;
         this.jwtManager = jwtManager;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = bCryptPasswordEncoder;
-        this.configurationRepository = configurationRepository;
+        this.configurationService = configurationService;
+        this.accountService = accountService;
         this.historyService = historyService;
     }
 
@@ -48,8 +53,8 @@ public class UserServiceImpl implements UserService {
                     Role.USER
             );
             repository.save(user);
-            Configuration configuration = new Configuration(null, false, true, user.getUsername());
-            configurationRepository.save(configuration);
+            accountService.save(new Account(null, user.getUsername(), 0.0));
+            configurationService.save(new Configuration(null, false, true, user.getUsername()));
             historyService.save(historyService.from(EntityAction.REGISTRATION, this.entityType));
             return new ResponseEntity(new ResponseMessage("Registration Successful"), HttpStatus.OK);
         }

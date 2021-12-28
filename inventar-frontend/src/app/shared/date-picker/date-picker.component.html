@@ -9,7 +9,7 @@
                 {{weekDay}}
             </div>
             <div *ngFor="let day of days; let i = index" (click)="selectDay(day)" [ngClass]="{'active': day === selectedDay}" class="month-class">
-                <span [ngStyle]="{'color': (i+1)%7==0 || (i+2)%7==0 ? '#747474' : 'inherit' }">{{day ? day : ''}}</span>
+                <span [ngClass]="{'weekend-day': (i+1)%7==0 || (i+2)%7==0, 'active-color': day === selectedDay}">{{day ? day : ''}}</span>
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
         </div>
         <div class="month-container">
             <div *ngFor="let month of months" class="month-class" [ngClass]="{'active': month === months[selectedMonth]}" (click)="selectMonth(month)">
-                <span>{{month}}</span>
+                <span [ngClass]="{'active-color': month === months[selectedMonth]}">{{month}}</span>
             </div>
         </div>
     </div>
@@ -43,7 +43,7 @@
         </div>
         <div class="month-container">
             <div *ngFor="let year of selectedRange" class="month-class" [ngClass]="{'active': year === selectedYear}" (click)="selectYear(year)">
-                <span>{{year}}</span>
+                <span [ngClass]="{'active-color': year === selectedYear}">{{year}}</span>
             </div>
         </div>
     </div>

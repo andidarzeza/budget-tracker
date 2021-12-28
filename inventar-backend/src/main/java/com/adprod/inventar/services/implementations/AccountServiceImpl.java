@@ -17,8 +17,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseEntity getAccount(String id) {
-        Optional<Account> accountOptional = accountRepository.findById(id);
+    public ResponseEntity find(String username) {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if(accountOptional.isPresent()) {
             return ResponseEntity.ok(accountOptional.get());
         }
@@ -26,14 +26,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseEntity createAccount(Account account) {
+    public Account save(Account account) {
         accountRepository.save(account);
-        return ResponseEntity.ok(account);
+        return account;
     }
 
     @Override
-    public boolean removeFromBalance(Double amount) {
-        Optional<Account> accountOptional = accountRepository.findById("61b614acf563e554ee4ebb9c");
+    public boolean removeFromBalance(Double amount, String username) {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if(accountOptional.isPresent()) {
             Account account = accountOptional.get();
             account.setBalance(account.getBalance() - amount);
@@ -44,8 +44,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean addToBalance(Double amount) {
-        Optional<Account> accountOptional = accountRepository.findById("61b614acf563e554ee4ebb9c");
+    public boolean addToBalance(Double amount, String username) {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if(accountOptional.isPresent()) {
             Account account = accountOptional.get();
             account.setBalance(account.getBalance() + amount);

@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,8 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public ResponseEntity save(Incoming incoming) {
-        if(this.accountService.addToBalance(incoming.getIncoming())) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(this.accountService.addToBalance(incoming.getIncoming(), authentication.getName())) {
             incomeRepository.save(incoming);
             historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
             return ResponseEntity.ok(incoming);
@@ -71,11 +74,15 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public ResponseEntity delete(String id) {
-        Optional<Incoming> incoming = incomeRepository.findById(id);
-        if(incoming.isPresent()) {
-            incomeRepository.delete(incoming.get());
-            historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
-            return ResponseEntity.ok(new ResponseMessage("Deleted"));
+        Optional<Incoming> incomeOptional = incomeRepository.findById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(incomeOptional.isPresent()) {
+            if(this.accountService.removeFromBalance(incomeOptional.get().getIncoming(), authentication.getName())) {
+                incomeRepository.delete(incomeOptional.get());
+                historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
+                return ResponseEntity.ok(new ResponseMessage("Deleted"));
+            }
+            return new ResponseEntity(new ResponseMessage("Something went wrong, cannot proceed with request."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity(new ResponseMessage("Not Found"), HttpStatus.NOT_FOUND);
     }
@@ -84,10 +91,16 @@ public class IncomeServiceImpl implements IncomeService {
     public ResponseEntity update(String id, Incoming income) {
         Optional<Incoming> incomingOptional = incomeRepository.findById(id);
         if(incomingOptional.isPresent()) {
-            income.setId(id);
-            incomeRepository.save(income);
-            historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
-            return ResponseEntity.ok(income);
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            double removeAndAddAmount =  income.getIncoming() - incomingOptional.get().getIncoming();
+            if(this.accountService.addToBalance(removeAndAddAmount, authentication.getName())) {
+                income.setId(id);
+                incomeRepository.save(income);
+                historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
+                return ResponseEntity.ok(income);
+            }
+            return new ResponseEntity(new ResponseMessage("Something went wrong, cannot proceed with request."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity(new ResponseMessage("No Category to update was found ."), HttpStatus.NOT_FOUND);
     }

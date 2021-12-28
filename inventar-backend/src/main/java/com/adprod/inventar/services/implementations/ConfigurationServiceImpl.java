@@ -30,6 +30,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
+    public Configuration save(Configuration configuration) {
+        return configurationRepository.save(configuration);
+    }
+
+    @Override
     public ResponseEntity getConfiguration(String user) {
         if(Objects.isNull(user)) {
             return ResponseEntity.ok(new Configuration(null, true, true, null));
