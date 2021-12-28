@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { DateUtil, Day, MonthValue, Year } from 'src/app/utils/DateUtil';
 import { MONTHS_ABR } from 'src/environments/environment';
 
@@ -11,11 +11,11 @@ export class DatePickerComponent implements OnInit {
   @Output() dateSelected: EventEmitter<any> = new EventEmitter();
 
   today = new Date();
-  selectedYear: number = this.today.getFullYear();
+  @Input() selectedYear: number = this.today.getFullYear();
   actualYear: number = this.today.getFullYear();
   selectedRange: number[] = [];
-  selectedMonth = this.today.getMonth();
-  selectedDay = this.today.getDate();
+  @Input() selectedMonth = this.today.getMonth();
+  @Input() selectedDay = this.today.getDate();
   months: string[] = MONTHS_ABR;
   days: number[] = [];
 
@@ -31,6 +31,10 @@ export class DatePickerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.selectedYear);
+    console.log(this.selectedMonth);
+    console.log(this.selectedDay);
+    
     this.populateYearsArray();
     this.populateRangeArray();
     this.populateDaysArray(this.selectedYear, this.selectedMonth);

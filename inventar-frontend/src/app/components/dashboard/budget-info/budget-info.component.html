@@ -9,11 +9,13 @@
             </span>
         </span>
         
-        <app-date-picker [@datePickerAnimation] (dateSelected)="onDateSelected($event)" class="{{sharedService.theme}}-sb9 sb9 mat-elevation-z8 {{sharedService.theme}}-body"  *ngIf="showDatePicker"></app-date-picker>
-        <!-- <span class="no-select" style="margin-left: 40px;position: relative;cursor: pointer;">
-            <span (click)="switchDatePicker()" id="selectedDateId">{{months[dateFrom?.getMonth()]}} {{dateFrom?.getFullYear()}}</span>
-            
-        </span> -->
+        <app-date-picker 
+            [@datePickerAnimation]
+            [selectedYear]="dateFrom.getFullYear()"
+            [selectedMonth]="dateFrom.getMonth()"
+            [selectedDay]="dateFrom.getDate()"
+            (dateSelected)="onDateSelected($event)" class="{{sharedService.theme}}-sb9 sb9 mat-elevation-z8 {{sharedService.theme}}-body"  *ngIf="showDatePicker"></app-date-picker>
+        
     </span>
 
     <div class="current-balance">
