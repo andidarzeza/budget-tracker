@@ -591,3 +591,9 @@ button.toast-close-button {
     justify-content: center;
     align-items: center;
 }
+
+@media only screen and (max-width: 475px) { 
+    app-date-picker {
+        top: 170%;
+    }
+}

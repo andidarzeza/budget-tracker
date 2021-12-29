@@ -1,11 +1,19 @@
 <div class="container">
-    <span style="margin-left: 25px;font-size: 20px;font-family: 'Lato', sans-serif;position: relative;cursor: pointer;">
-        <span (click)="switchDatePicker()" id="selectedDateId" style="display: flex;
-        justify-content: center;
-        align-items: center;">
-            <mat-icon >calendar_today</mat-icon> 
-            <span style="margin-left: 5px;">
-                From: {{dateFrom | date:'dd/MM/yyyy'}} - To: {{dateTo | date:'dd/MM/yyyy'}}
+    <span class="date-picker-container">
+        <span (click)="switchDatePicker()" id="selectedDateId">
+            <mat-icon class="selected-date-icon">calendar_today</mat-icon> 
+            <span class="selected-date-container">
+                <span>
+                    From: {{dateFrom | date:'dd/MM/yyyy'}}
+                </span>
+
+                <span class="date-divider">
+                    -
+                </span>
+
+                <span>
+                    To: {{dateTo | date:'dd/MM/yyyy'}}
+                </span>
             </span>
         </span>
         
@@ -25,7 +33,7 @@
         <span [@inOutAnimation] *ngIf="hideBalance" style="margin-top: 6px;">
             {{hiddenBalance}}
         </span>
-        <button mat-icon-button style="margin-bottom: 5px;" (click)="toggleHideBalance()">
+        <button mat-icon-button (click)="toggleHideBalance()">
             <mat-icon>remove_red_eye</mat-icon>
         </button>
     </div>

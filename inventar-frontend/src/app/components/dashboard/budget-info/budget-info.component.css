@@ -2,18 +2,107 @@
     width: 100%;
     display: flex;
     align-items: center;
-    font-size: 28px;
+    font-size: 20px;
     justify-content: space-between;
     color: #9F9F9F;
+    margin: 8px 0px;
 }
 
 .current-balance {
     padding-right: 20px;
-    padding-top: 12px;
-    padding-bottom: 5px;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     font-family: 'Lato', sans-serif;
-    /* font-weight:bold; */
+}
+
+.selected-date-container {
+    margin-left: 5px;
+}
+
+.date-picker-container {
+    margin-left: 25px;
+    font-size: 20px;
+    font-family: 'Lato', sans-serif;
+    position: relative;
+    cursor: pointer;
+}
+
+#selectedDateId {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width: 700px) { 
+    .current-balance {
+        display: none;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+    .date-picker-container {
+        margin-left: 0;
+    }
+}
+
+@media only screen and (max-width: 475px) { 
+    .selected-date-container {
+        font-size: 18px;
+    }
+
+    .selected-date-icon {
+        font-size: 23px;
+        width: 23px;
+        height: 23px;
+    }
+}
+
+@media only screen and (max-width: 450px) { 
+    .selected-date-container {
+        font-size: 17px;
+    }
+
+    .selected-date-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+    }
+}
+
+@media only screen and (max-width: 400px) { 
+    .selected-date-container {
+        font-size: 15px;
+    }
+
+    .selected-date-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@media only screen and (max-width: 350px) { 
+    .selected-date-container {
+        font-size: 13px;
+    }
+
+    .selected-date-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media only screen and (max-width: 300px) { 
+    .selected-date-container {
+        font-size: 11px;
+    }
+
+    .selected-date-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+    }
 }

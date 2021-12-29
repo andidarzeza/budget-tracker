@@ -46,7 +46,6 @@ export class DatePickerComponent implements OnInit {
     }
   }
 
-
   private populateYearsArray(): void {
 
   }
@@ -59,6 +58,22 @@ export class DatePickerComponent implements OnInit {
       this.days.push(null);
     }
     this.days = this.days.concat(currentYearObject.map((dateObject: Day) => dateObject.getDayNumber()));
+  }
+
+  increaseMonth(): void {
+    const date = new Date(this.selectedYear, this.selectedMonth);
+    date.setMonth(date.getMonth() + 1);
+    this.selectedYear = date.getFullYear();
+    this.selectedMonth = date.getMonth();
+    this.populateDaysArray(this.selectedYear, this.selectedMonth);
+  }
+
+  decreaseMonth(): void {
+    const date = new Date(this.selectedYear, this.selectedMonth);
+    date.setMonth(date.getMonth() - 1);
+    this.selectedYear = date.getFullYear();
+    this.selectedMonth = date.getMonth();
+    this.populateDaysArray(this.selectedYear, this.selectedMonth);
   }
 
   public increaseYear(): void {
@@ -106,7 +121,7 @@ export class DatePickerComponent implements OnInit {
     const elem = document.getElementsByTagName("app-date-picker") as any;
     const selectedDateElem = document.getElementById("selectedDateId");    
     if(elem && selectedDateElem) {
-      if(!elem[0].contains(event.target) && !selectedDateElem.contains(event.target)) {
+      if(!elem[0]?.contains(event.target) && !selectedDateElem?.contains(event.target)) {
         this.close();
       }
     }
