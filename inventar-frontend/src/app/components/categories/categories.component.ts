@@ -11,6 +11,7 @@ import { AddCategoryComponent } from './add-category/add-category.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
+import { Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-categories',
@@ -48,8 +49,10 @@ export class CategoriesComponent implements OnInit, OnDestroy {
   totalRequests = 0;
   categoriesType: string = 'spendings';
   theme = 'light';
-  displayedColumns: string[] = ['icon', 'name', 'description', 'actions'];
+  displayedColumns: string[] = ['icon', 'category', 'description', 'actions'];
   dataSource: SpendingCategory[] = [];
+  defaultSort: string = "createdTime,desc";
+  sort = this.defaultSort;
   private categoriesSubscription: Subscription = null;
   private deleteSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private categoriesService: CategoriesService, public dialog: MatDialog, private toaster: ToastrService) { }
@@ -68,7 +71,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
     this.unsubscribe(this.categoriesSubscription);
-    this.categoriesSubscription =  this.categoriesService.findAll(this.page, this.size, this.categoriesType).subscribe((res: HttpResponse<any>) => {
+    this.categoriesSubscription =  this.categoriesService.findAll(this.page, this.size, this.categoriesType, this.sort).subscribe((res: HttpResponse<any>) => {
       this.dataSource = res?.body.categories;
       this.totalItems = res?.body.count;
       this.totalRequests--;
@@ -161,5 +164,14 @@ export class CategoriesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe(this.categoriesSubscription);
     this.unsubscribe(this.deleteSubscription);
+  }
+
+  announceSortChange(sort: Sort): void {
+    if(sort.direction) {
+      this.sort = `${sort.active},${sort.direction}`;
+    } else {
+      this.sort = this.defaultSort;
+    }
+    this.query();
   }
 }

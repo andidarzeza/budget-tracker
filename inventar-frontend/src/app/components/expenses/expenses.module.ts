@@ -14,6 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { ExpensesRoutingModule } from './expenses-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSortModule } from '@angular/material/sort';
 
 
 
@@ -25,6 +26,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatDialogModule,
     MatIconModule,
     MatTableModule,
+    MatSortModule,
     MatProgressBarModule,
     MatPaginatorModule,
     MatButtonModule,

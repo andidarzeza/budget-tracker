@@ -28,26 +28,33 @@
 
 <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="getHeight(0)">
     <div class="book-table">
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 {{sharedService.theme}}-table" style="box-shadow: none;">
+        <table 
+            mat-table 
+            [dataSource]="dataSource" 
+            class="mat-elevation-z8 {{sharedService.theme}}-table" 
+            style="box-shadow: none;"
+            matSort 
+            (matSortChange)="announceSortChange($event)"
+            >
     
             <!--- Note that these columns can be defined in any order.
                   The actual rendered columns are set as a property on the row definition" -->
     
             <!-- Name Column -->
             <ng-container matColumnDef="icon">
-                <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Icon </th>
+                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Icon </th>
                 <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> <mat-icon>{{element?.icon}}</mat-icon></td>
             </ng-container>
     
             <!-- Weight Column -->
-            <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Category </th>
+            <ng-container matColumnDef="category">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Category </th>
                 <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.category}} </td>
             </ng-container>
     
             <!-- Symbol Column -->
             <ng-container matColumnDef="description">
-                <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Description </th>
+                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Description </th>
                 <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.description}} </td>
             </ng-container>
     

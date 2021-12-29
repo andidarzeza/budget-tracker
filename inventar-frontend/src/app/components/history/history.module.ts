@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { HistoryComponent } from './history.component';
+import { MatSortModule } from '@angular/material/sort';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { HistoryComponent } from './history.component';
     MatDialogModule,
     MatIconModule,
     MatTableModule,
+    MatSortModule,
     MatProgressBarModule,
     MatPaginatorModule,
     MatButtonModule,

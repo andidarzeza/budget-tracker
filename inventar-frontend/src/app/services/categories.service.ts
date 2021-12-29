@@ -11,8 +11,11 @@ import { AuthenticationService } from './authentication.service';
 export class CategoriesService {
   constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
 
-  findAll(page: any, size: any, categoryType: string): Observable<any> {
-    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("categoryType", categoryType).append("user", this.authenticationService.currentUserValue?.username);
+  findAll(page: any, size: any, categoryType: string, sort?: string): Observable<any> {
+    let options: HttpParams = new HttpParams().append("page", page).append("size", size).append("categoryType", categoryType).append("user", this.authenticationService.currentUserValue?.username);
+    if(sort) {
+      options = options.append("sort", sort);
+    }
     return this.http.get(`${serverAPIURL}/api/categories`, {
       params: options,
       observe: 'response'

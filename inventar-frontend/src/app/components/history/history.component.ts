@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { HistoryService } from 'src/app/services/history.service';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-history',
@@ -44,7 +45,8 @@ export class HistoryComponent implements OnInit {
   public size: number = PAGE_SIZE;
   public totalItems: number = 0;
   private totalRequests: number = 0;
-  private sort: string = "date,desc";
+  private defaultSort: string = "date,desc";
+  private sort: string = this.defaultSort;
   public displayedColumns: string[] = ['date', 'action', 'entity', 'message', 'user', 'actions'];
   public historyList: History[] = [];
   private historySubscription: Subscription = null;
@@ -97,6 +99,15 @@ export class HistoryComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.unsubscribe(this.historySubscription);
+  }
+
+  announceSortChange(sort: Sort): void {
+    if(sort.direction) {
+      this.sort = `${sort.active},${sort.direction}`;
+    } else {
+      this.sort = this.defaultSort;
+    }
+    this.query();
   }
 
 }

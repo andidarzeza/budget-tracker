@@ -12,6 +12,7 @@ import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-expenses',
@@ -48,8 +49,9 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   totalItems;
   totalRequests = 0;
   theme = 'light';
-  sort = "createdTime,desc";
-  displayedColumns: string[] = ['date', 'name', 'description', 'category', 'moneySpent', 'actions'];
+  defaultSort: string = "createdTime,desc";
+  sort = this.defaultSort;
+  displayedColumns: string[] = ['createdTime', 'name', 'description', 'category', 'moneySpent', 'actions'];
   expenses: Expense[] = [];
   private deleteSubscription: Subscription = null;
   private expenseSubscription: Subscription = null;
@@ -144,4 +146,12 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     this.unsubscribe(this.deleteSubscription);
   }
 
+  announceSortChange(sort: Sort): void {
+    if(sort.direction) {
+      this.sort = `${sort.active},${sort.direction}`;
+    } else {
+      this.sort = this.defaultSort;
+    }
+    this.query();
+  }
 }

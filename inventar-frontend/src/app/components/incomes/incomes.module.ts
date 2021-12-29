@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { IncomesRoutingModule } from './incomes-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSortModule } from '@angular/material/sort';
 
 
 
@@ -25,6 +26,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     IncomesRoutingModule,
     MatPaginatorModule,
     MatTableModule,
+    MatSortModule,
     MatIconModule,
     MatDialogModule,
     MatButtonModule,

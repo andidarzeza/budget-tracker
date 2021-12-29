@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { IconSelectComponent } from '../../shared/icon-select/icon-select.component';
 import { MatButtonModule } from '@angular/material/button';
 import { CategoriesRoutingModule } from './categories-routing.module';
+import { MatSortModule } from '@angular/material/sort';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { CategoriesRoutingModule } from './categories-routing.module';
     CommonModule,
     CategoriesRoutingModule,
     MatTableModule,
+    MatSortModule,
     MatPaginatorModule,
     MatIconModule,
     MatButtonModule,

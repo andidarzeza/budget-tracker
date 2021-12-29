@@ -267,4 +267,8 @@
     .percentage-badge {
         top: -85%;
     }
+
+    .category-container {
+        margin-left: 11px;
+    }
 }

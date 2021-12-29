@@ -11,6 +11,7 @@ import { AddIncomingComponent } from './add-incoming/add-incoming.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
+import { Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-incomes',
@@ -47,7 +48,8 @@ export class IncomesComponent implements OnInit, OnDestroy {
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   private page: number = 0;
   public size: number = PAGE_SIZE;
-  private sort: string = "createdTime,desc";
+  private defaultSort: string = "createdTime,desc";
+  private sort: string = this.defaultSort;
   public displayedColumns: string[] = ['date', 'name', 'description', 'category', 'incoming', 'actions'];
   private deleteSubscription: Subscription = null;
   private incomeSubscription: Subscription = null;
@@ -155,5 +157,16 @@ export class IncomesComponent implements OnInit, OnDestroy {
     this.unsubscribe(this.incomeSubscription);
     this.unsubscribe(this.deleteSubscription);
   }
+
+
+  announceSortChange(sort: Sort): void {
+    if(sort.direction) {
+      this.sort = `${sort.active},${sort.direction}`;
+    } else {
+      this.sort = this.defaultSort;
+    }
+    this.query();
+  }
+
 
 }
