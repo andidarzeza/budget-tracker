@@ -9,7 +9,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { DashboardRoutingModule } from './dashboard-routing.module';
-
+import {MatMenuModule} from '@angular/material/menu';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -23,7 +25,10 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     MatCardModule,
     MatNativeDateModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatMenuModule,
+    MatTooltipModule,
+    SharedModule
   ]
 })
 export class DashboardModule { }

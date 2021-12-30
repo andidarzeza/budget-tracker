@@ -7,6 +7,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { strToColor } from 'src/app/utils/ColorUtil';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
+import { FloatingMenuConfig } from 'src/app/shared/floating-menu/FloatingMenuConfig';
 
 @Component({
   selector: 'app-dashboard',
@@ -52,7 +53,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
   categoriesDataSubscription: Subscription = null;
   incomeCategoriesSubscription: Subscription = null;
   chart: Chart = null; 
-  constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils, public sharedService: SharedService) { }
+  
+  public floatingMenu: FloatingMenuConfig = {
+    position: "above",
+    buttons: [
+      {
+        tooltip: "Export as PDF",
+        icon: "picture_as_pdf",
+        action: () => {
+          // export pdf here....
+        }
+      }
+    ]
+  };
+
+  constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils, public sharedService: SharedService) {}
 
   ngOnInit(): void {
     Chart.register(...registerables);

@@ -6,21 +6,27 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { FloatingMenuComponent } from './floating-menu/floating-menu.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
 @NgModule({
-  declarations: [ConfirmComponent, NotFoundComponent],
+  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent],
   imports: [
     CommonModule,
     MatIconModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatMenuModule,
+    MatTooltipModule
   ],
   exports: [
     CommonModule,
     FormsModule,
-    ConfirmComponent
+    ConfirmComponent,
+    FloatingMenuComponent
   ]
 })
 export class SharedModule { }

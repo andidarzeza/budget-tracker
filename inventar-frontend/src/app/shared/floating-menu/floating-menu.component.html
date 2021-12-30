@@ -1,0 +1,14 @@
+<div class="menu-cnt">
+    <button mat-fab color="warn" [matMenuTriggerFor]="menu" style="height: 70px;width: 70px;cursor: pointer;">
+        <mat-icon>
+            menu
+        </mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" [yPosition]="floatingMenu?.position">
+      <button *ngFor="let button of floatingMenu?.buttons" (click)="executeAction(button.action)" mat-fab color="warn" style="margin-bottom: 5px;" [matTooltip]="button?.tooltip" matTooltipPosition="left">
+          <mat-icon>
+              {{button.icon}}
+          </mat-icon>
+      </button>
+    </mat-menu>
+</div>

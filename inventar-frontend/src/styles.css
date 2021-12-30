@@ -596,6 +596,30 @@ button.toast-close-button {
     justify-content: center;
 }
 
+
+.dark-login-button {
+    background-color: #111619 !important;
+    color: #9F9F9F !important;
+}
+
+ /* TODO: fix in future */
+
+ .mat-menu-content:not(:empty) {
+     padding: 0 !important;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+ }
+
+ .mat-menu-panel{
+    min-width: 70px !important;
+    max-width: unset !important;
+    max-height: unset !important;
+    background: inherit !important;
+    margin-bottom: 10px;
+    overflow: hidden !important;
+    box-shadow: none !important;
+ }
 @media only screen and (max-width: 475px) { 
     app-date-picker {
         top: 170%;
