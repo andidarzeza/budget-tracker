@@ -13,7 +13,11 @@ import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,8 +55,10 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public ResponseEntity getDailyExpenses(String user) {
+    public ResponseEntity getDailyExpenses(String user, Instant from, Instant to) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
+        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
+        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(
                 Aggregation.project("$moneySpent")
@@ -65,8 +71,11 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public ResponseEntity getCategoriesData(String user) {
+    public ResponseEntity getCategoriesData(String user, Instant from, Instant to) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
+
+        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
+        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("total"));
         TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
@@ -83,8 +92,10 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public ResponseEntity getIncomeCategoriesData(String user) {
+    public ResponseEntity getIncomeCategoriesData(String user, Instant from, Instant to) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
+        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
+        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("total"));
         TypedAggregation<Incoming> tempAgg = Aggregation.newAggregation(Incoming.class, aggregationResult);

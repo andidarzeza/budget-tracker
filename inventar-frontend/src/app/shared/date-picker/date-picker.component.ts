@@ -1,5 +1,5 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { DateUtil, Day, MonthValue, Year } from 'src/app/utils/DateUtil';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { DateUtil, Day } from 'src/app/utils/DateUtil';
 import { MONTHS_ABR } from 'src/environments/environment';
 
 @Component({
@@ -7,7 +7,7 @@ import { MONTHS_ABR } from 'src/environments/environment';
   templateUrl: './date-picker.component.html',
   styleUrls: ['./date-picker.component.css']
 })
-export class DatePickerComponent implements OnInit {
+export class DatePickerComponent implements OnInit, OnDestroy {
   @Output() dateSelected: EventEmitter<any> = new EventEmitter();
 
   today = new Date();
@@ -30,11 +30,11 @@ export class DatePickerComponent implements OnInit {
     document.addEventListener('click', this.offClickHandler.bind(this)); // bind on doc
   }
 
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.offClickHandler.bind(this), true); // bind on doc
+  }
+
   ngOnInit(): void {
-    console.log(this.selectedYear);
-    console.log(this.selectedMonth);
-    console.log(this.selectedDay);
-    
     this.populateYearsArray();
     this.populateRangeArray();
     this.populateDaysArray(this.selectedYear, this.selectedMonth);

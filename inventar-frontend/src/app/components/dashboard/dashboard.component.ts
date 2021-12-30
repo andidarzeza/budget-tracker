@@ -2,12 +2,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
-import { DateUtil, Day, Month, MonthValue, Year } from 'src/app/utils/DateUtil';
+import { DateUtil, Day, Month, Year } from 'src/app/utils/DateUtil';
 import { SharedService } from 'src/app/services/shared.service';
 import { strToColor } from 'src/app/utils/ColorUtil';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { FloatingMenuConfig } from 'src/app/shared/floating-menu/FloatingMenuConfig';
+import { ExportService } from 'src/app/services/export.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -53,7 +54,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   categoriesDataSubscription: Subscription = null;
   incomeCategoriesSubscription: Subscription = null;
   chart: Chart = null; 
-  
+  category_chart: Chart = null;
+  incomes_chart: Chart = null;
   public floatingMenu: FloatingMenuConfig = {
     position: "above",
     buttons: [
@@ -61,20 +63,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
         tooltip: "Export as PDF",
         icon: "picture_as_pdf",
         action: () => {
-          // export pdf here....
+          this.exportService.exportDashboardPDF().subscribe((pdfDocument: Blob) => {
+            var fileURL = URL.createObjectURL(pdfDocument);
+            var a = document.createElement('a');
+            a.href = fileURL;
+            a.target = '_blank';
+            a.download = 'Monthly-Report-DEC/2021.pdf';
+            document.body.appendChild(a);
+            a.click();
+          })
         }
       }
     ]
   };
 
-  constructor(public dashboardService: DashboardService, public chartUtil: ChartUtils, public sharedService: SharedService) {}
+  constructor(
+    public dashboardService: DashboardService,
+    public chartUtil: ChartUtils,
+    public sharedService: SharedService,
+    public exportService: ExportService) {}
 
   ngOnInit(): void {
     Chart.register(...registerables);
   }
 
   // fires only from onDateSelected function below
-  private getDailySpendings(dateFrom: Date, dateTo: Date): void {
+  private getDailySpendings(dateFrom: Date): void {
     const currentYear = this.dateUtil.fromYear(dateFrom.getFullYear());
     const currentMonth = currentYear.getMonthByValue(dateFrom.getMonth());
     const days = currentMonth.getDaysOfMonth();
@@ -89,12 +103,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.sharedService.activateLoadingSpinner();
     this.totalRequests++;
-    this.dailySpendingsSubscription = this.dashboardService.getDailyExpenses().subscribe((response: any) => {
+    this.dailySpendingsSubscription = this.dashboardService.getDailyExpenses(
+      new Date(currentYear.getYear(), currentMonth.getMonth()),
+      new Date(currentYear.getYear(), currentMonth.getMonth()+1)
+    ).subscribe((response: any) => {
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);
-      
       this.amountSpentAverage = this.sum(response.body) / response.body.length;
       const data: number[] = this.fillMissingData(response.body, chartLabels);
+      if(this.chart) {
+        this.chart.destroy();
+      }
       this.chart = this.chartUtil.createChart("daily-chart", {
         type: 'line',
         colors: ['#ff6347'],
@@ -117,15 +136,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   // fires only from onDateSelected function below
-  private getCategoriesData(): void {  
+  private getCategoriesData(dateFrom: Date): void {  
     
     this.unsubscribe(this.categoriesDataSubscription);  
-    this.categoriesDataSubscription = this.dashboardService.getCategoriesData().subscribe((response: any) => {
+    this.categoriesDataSubscription = this.dashboardService.getCategoriesData(
+      new Date(dateFrom.getFullYear(), dateFrom.getMonth()),
+      new Date(dateFrom.getFullYear(), dateFrom.getMonth() + 1)  
+    ).subscribe((response: any) => {
       const spendingResponse: any[] = response.body.sort((obj1: any, obj2: any) => obj1.total > obj2.total ? -1 : 1);
-      console.log(spendingResponse);
-      
       this.totalSpendings = this.sum(spendingResponse)
-      this.chartUtil.createChart("category-chart", {
+      if(this.category_chart) {
+        this.category_chart.destroy();
+      }
+      this.category_chart = this.chartUtil.createChart("category-chart", {
         type: 'doughnut',
         labels: spendingResponse.map(item => item._id),
         showGridLines: false,
@@ -146,14 +169,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  getIncomesCategoryData(): void {
+  getIncomesCategoryData(dateFrom: Date): void {
     this.unsubscribe(this.incomeCategoriesSubscription); 
-    this.incomeCategoriesSubscription = this.dashboardService.getIncomeCategoriesData().subscribe((response: any) => {
+    this.incomeCategoriesSubscription = this.dashboardService.getIncomeCategoriesData(
+      new Date(dateFrom.getFullYear(), dateFrom.getMonth()),
+      new Date(dateFrom.getFullYear(), dateFrom.getMonth() + 1)  
+    ).subscribe((response: any) => {
       const incomeResponse = response.body;
       this.totalIncome = this.sum(incomeResponse);
       const monthDays = this.dateUtil.fromYear(this.selectedDate.getFullYear()).getMonthByValue(this.selectedDate.getMonth()).getDaysOfMonth().length;
       this.dailyIncomeAverage = this.totalIncome / monthDays;
-      this.chartUtil.createChart("incomes-chart", {
+      if(this.incomes_chart) {
+        this.incomes_chart.destroy();
+      }
+      this.incomes_chart = this.chartUtil.createChart("incomes-chart", {
         type: 'doughnut',
         labels: incomeResponse.map(item => item._id),
         showGridLines: false,
@@ -207,9 +236,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onDateSelected(event: any): void {
-    this.getDailySpendings(event.dateFrom, event.dateTo);
-    this.getCategoriesData();
-    this.getIncomesCategoryData();
+    this.getDailySpendings(event.dateFrom);
+    this.getCategoriesData(event.dateFrom);
+    this.getIncomesCategoryData(event.dateFrom);
   }
 
   private getMonthlyLabels(days: Day[], currentYear: Year, currentMonth: Month): string[] {

@@ -4,6 +4,8 @@ import com.adprod.inventar.services.DashboardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardResource {
@@ -14,17 +16,17 @@ public class DashboardResource {
     }
 
     @GetMapping
-    public ResponseEntity getDailyExpenses(@RequestParam String user){
-        return dashboardService.getDailyExpenses(user);
+    public ResponseEntity getDailyExpenses(@RequestParam String user, @RequestParam Instant from, @RequestParam Instant to){
+        return dashboardService.getDailyExpenses(user, from, to);
     }
 
     @GetMapping("/incomes")
-    public ResponseEntity getIncomeCategoriesData(@RequestParam String user){
-        return dashboardService.getIncomeCategoriesData(user);
+    public ResponseEntity getIncomeCategoriesData(@RequestParam String user, @RequestParam Instant from, @RequestParam Instant to){
+        return dashboardService.getIncomeCategoriesData(user, from, to);
     }
 
     @GetMapping("/categories")
-    public ResponseEntity getCategoriesData(@RequestParam String user){
-        return dashboardService.getCategoriesData(user);
+    public ResponseEntity getCategoriesData(@RequestParam String user, @RequestParam Instant from, @RequestParam Instant to){
+        return dashboardService.getCategoriesData(user, from, to);
     }
 }

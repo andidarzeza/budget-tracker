@@ -11,18 +11,27 @@ export class DashboardService {
   constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
 
 
-  getDailyExpenses(): Observable<any> {
-    const httpParams = new HttpParams().append("user", this.authenticationService.currentUserValue?.username);
+  getDailyExpenses(from: Date, to: Date): Observable<any> {
+    const httpParams = new HttpParams()
+      .append("user", this.authenticationService.currentUserValue?.username)
+      .append("from", from.toISOString())
+      .append("to", to.toISOString());
     return this.http.get(`${serverAPIURL}/api/dashboard`, {observe: 'response', params: httpParams});
   }
 
-  getCategoriesData(): Observable<any> {
-    const httpParams = new HttpParams().append("user", this.authenticationService.currentUserValue?.username);
+  getCategoriesData(from: Date, to: Date): Observable<any> {
+    const httpParams = new HttpParams()
+      .append("user", this.authenticationService.currentUserValue?.username)
+      .append("from", from.toISOString())
+      .append("to", to.toISOString());
     return this.http.get(`${serverAPIURL}/api/dashboard/categories`, {observe: 'response', params: httpParams});
   }
 
-  getIncomeCategoriesData(): Observable<any> {
-    const httpParams = new HttpParams().append("user", this.authenticationService.currentUserValue?.username);
+  getIncomeCategoriesData(from: Date, to: Date): Observable<any> {
+    const httpParams = new HttpParams()
+      .append("user", this.authenticationService.currentUserValue?.username)
+      .append("from", from.toISOString())
+      .append("to", to.toISOString());
     return this.http.get(`${serverAPIURL}/api/dashboard/incomes`, {observe: 'response', params: httpParams});
   }
 }
