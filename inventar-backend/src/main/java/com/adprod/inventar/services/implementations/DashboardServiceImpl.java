@@ -15,9 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +26,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    private static class DailySpendingsDTO{
+    public static class DailySpendingsDTO{
         String _id;
         Double total;
 
@@ -55,7 +53,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public ResponseEntity getDailyExpenses(String user, Instant from, Instant to) {
+    public ResponseEntity<List<DailySpendingsDTO>> getDailyExpenses(String user, Instant from, Instant to) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));

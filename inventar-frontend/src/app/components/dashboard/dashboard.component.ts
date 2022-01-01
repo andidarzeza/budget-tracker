@@ -63,7 +63,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         tooltip: "Export as PDF",
         icon: "picture_as_pdf",
         action: () => {
-          this.exportService.exportDashboardPDF().subscribe((pdfDocument: Blob) => {
+          this.exportService.exportDashboardPDF(
+            new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth()),
+            new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth() + 1)
+          ).subscribe((pdfDocument: Blob) => {
             var fileURL = URL.createObjectURL(pdfDocument);
             var a = document.createElement('a');
             a.href = fileURL;
@@ -94,11 +97,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const days = currentMonth.getDaysOfMonth();
     let labels = [];
     const chartLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
-    if(currentMonth.getMonth() === this.currentMonth) {
-      labels = chartLabels.filter(label => +(label.split("-")[0]) <= this.selectedDate.getDate());
-    } else {
       labels = chartLabels;
-    }
+    
     this.unsubscribe(this.dailySpendingsSubscription);
 
     this.sharedService.activateLoadingSpinner();
@@ -109,7 +109,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).subscribe((response: any) => {
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);
-      this.amountSpentAverage = this.sum(response.body) / response.body.length;
+      if(response.body.length > 0)
+        this.amountSpentAverage = this.sum(response.body) / response.body.length;
       const data: number[] = this.fillMissingData(response.body, chartLabels);
       if(this.chart) {
         this.chart.destroy();
@@ -173,7 +174,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.unsubscribe(this.incomeCategoriesSubscription); 
     this.incomeCategoriesSubscription = this.dashboardService.getIncomeCategoriesData(
       new Date(dateFrom.getFullYear(), dateFrom.getMonth()),
-      new Date(dateFrom.getFullYear(), dateFrom.getMonth() + 1)  
+      new Date(dateFrom.getFullYear(), dateFrom.getMonth() + 1)
     ).subscribe((response: any) => {
       const incomeResponse = response.body;
       this.totalIncome = this.sum(incomeResponse);
@@ -236,6 +237,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onDateSelected(event: any): void {
+    this.selectedDate = event.dateFrom;
     this.getDailySpendings(event.dateFrom);
     this.getCategoriesData(event.dateFrom);
     this.getIncomesCategoryData(event.dateFrom);

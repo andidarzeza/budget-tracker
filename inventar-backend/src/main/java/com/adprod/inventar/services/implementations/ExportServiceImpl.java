@@ -1,21 +1,28 @@
 package com.adprod.inventar.services.implementations;
 
-import java.awt.Color;
 import java.io.IOException;
+import java.time.Instant;
+import java.util.List;
+
+import com.adprod.inventar.services.DashboardService;
 import com.adprod.inventar.services.ExportService;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 
 
 @Service
 public class ExportServiceImpl implements ExportService {
-
-    public ExportServiceImpl() {}
+    private final DashboardService dashboardService;
+    public ExportServiceImpl(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
+    }
 
     @Override
-    public void exportDashboardPDF(HttpServletResponse response) throws DocumentException, IOException {
+    public void exportDashboardPDF(HttpServletResponse response, Instant from, Instant to) throws DocumentException, IOException {
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, response.getOutputStream());
 
@@ -42,7 +49,7 @@ public class ExportServiceImpl implements ExportService {
         table.setSpacingBefore(10);
 
         writeTableHeader(table);
-        writeTableData(table);
+        writeTableData(table, from, to);
 
         document.add(table);
 
@@ -68,11 +75,15 @@ public class ExportServiceImpl implements ExportService {
         table.addCell(cell);
     }
 
-    private void writeTableData(PdfPTable table) {
-            table.addCell("23/12/2021");
-            table.addCell("2,430 ALL");
+    private void writeTableData(PdfPTable table, Instant from, Instant to) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<DashboardServiceImpl.DailySpendingsDTO> list = this.dashboardService.getDailyExpenses(authentication.getName(), from, to).getBody();
+        list.forEach(item -> {
+            table.addCell(item.get_id());
+            table.addCell(item.getTotal().toString());
             table.addCell("2,300.39 ALL");
             table.addCell("1,579.44 ALL");
+        });
     }
 
 }

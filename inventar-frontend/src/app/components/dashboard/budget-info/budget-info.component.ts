@@ -55,8 +55,8 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   public hiddenBalance: string = '';
   public months = MONTHS;
   showDatePicker: boolean = false;
-  dateFrom = new Date(2021, 11, 1);
-  dateTo = new Date();
+  dateFrom = new Date();
+  dateTo = new Date(this.dateFrom.getFullYear(), this.dateFrom.getMonth() + 1);
   @Output() dateSelected: EventEmitter<any> = new EventEmitter();
   ngOnInit(): void {
     this.hideBalance = (localStorage.getItem("hideBalance") === 'true');
