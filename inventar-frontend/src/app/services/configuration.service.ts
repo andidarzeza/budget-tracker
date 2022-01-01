@@ -9,7 +9,7 @@ import { AuthenticationService } from './authentication.service';
   providedIn: 'root'
 })
 export class ConfigurationService {
-  constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
+  constructor(private http: HttpClient) { }
 
   updateConfiguration(configuration: IConfiguration): Observable<any> {
     delete configuration['user'];

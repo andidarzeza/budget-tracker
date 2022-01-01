@@ -2,11 +2,16 @@ package com.adprod.inventar.services.implementations;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import com.adprod.inventar.services.DashboardService;
 import com.adprod.inventar.services.ExportService;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -21,7 +26,6 @@ public class ExportServiceImpl implements ExportService {
     public void exportDashboardPDF(HttpServletResponse response, Instant from, Instant to) throws DocumentException, IOException {
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, response.getOutputStream());
-
         document.open();
 
         Font dateFont = FontFactory.getFont(FontFactory.HELVETICA);
@@ -29,9 +33,11 @@ public class ExportServiceImpl implements ExportService {
 
         Font titleFont = FontFactory.getFont(FontFactory.HELVETICA);
         titleFont.setSize(16);
+        LocalDateTime ldtFrom = LocalDateTime.ofInstant(from, ZoneId.systemDefault());
+        LocalDateTime ldtTo = LocalDateTime.ofInstant(to, ZoneId.systemDefault());
 
-        Paragraph date = new Paragraph("Date: 01/12/2021 - 31/12/2021", dateFont);
-        Paragraph title = new Paragraph("Monthly Report - December", titleFont);
+        Paragraph date = new Paragraph("Date: " + ldtFrom.getDayOfMonth() + "/" + ldtFrom.getMonth().getValue() + "/" + ldtFrom.getYear() + " - " + ldtTo.getDayOfMonth() + "/" + ldtTo.getMonth().getValue() + "/" + ldtTo.getYear(), dateFont);
+        Paragraph title = new Paragraph("Monthly Report - " + StringUtils.capitalize(ldtFrom.getMonth().toString().toLowerCase()), titleFont);
         date.setAlignment(Paragraph.ALIGN_LEFT);
         title.setAlignment(Paragraph.ALIGN_CENTER);
         title.setSpacingBefore(15);

@@ -213,8 +213,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let response = [];
     dailyExpensesLabels.forEach((label: string) => {
       const filtered: DailyExpenseDTO[] = dailyExpenses.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);
-      console.log(filtered);
-      
       if(filtered.length !== 0) {
         response.push(filtered[0].dailyExpense);
       } else {
