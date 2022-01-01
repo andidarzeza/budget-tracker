@@ -2,6 +2,7 @@ package com.adprod.inventar.resources;
 
 import com.adprod.inventar.services.AccountService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,8 +14,9 @@ public class AccountResource {
         this.accountService = accountService;
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity getAccount(@PathVariable String username){
-        return accountService.find(username);
+    @GetMapping
+    public ResponseEntity getAccount(){
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        return accountService.find(user);
     }
 }

@@ -49,6 +49,8 @@ public class IncomeServiceImpl implements IncomeService {
             if(data.isPresent()) {
                 SpendingCategory sc = data.get();
                 response.add(new IncomingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getName(), item.getIncoming(), item.getDescription()));
+            } else {
+                response.add(new IncomingDTO(item.getId(), "No Category Found", "0", item.getCreatedTime(), item.getName(), item.getIncoming(), item.getDescription()));
             }
         });
         incomingWrapper.setIncomings(response);

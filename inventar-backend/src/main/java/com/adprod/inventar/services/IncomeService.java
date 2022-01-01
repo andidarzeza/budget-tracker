@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface IncomeService {
     ResponseEntity findAll(Pageable pageable, String user);
-    ResponseEntity save(Incoming incomeincoming);
+    ResponseEntity save(Incoming income);
     ResponseEntity findOne(String id);
     ResponseEntity delete(String id);
     ResponseEntity update(String id, Incoming income);

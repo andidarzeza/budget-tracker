@@ -3,6 +3,7 @@ package com.adprod.inventar.resources;
 import com.adprod.inventar.models.Configuration;
 import com.adprod.inventar.services.ConfigurationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +16,8 @@ public class ConfigurationResource {
     }
 
     @GetMapping
-    public ResponseEntity getConfiguration(@RequestParam(required = false) String user) {
+    public ResponseEntity getConfiguration() {
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.configurationService.getConfiguration(user);
     }
 

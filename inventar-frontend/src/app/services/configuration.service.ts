@@ -12,16 +12,11 @@ export class ConfigurationService {
   constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
 
   updateConfiguration(configuration: IConfiguration): Observable<any> {
+    delete configuration['user'];
     return this.http.put(`${serverAPIURL}/api/configuration`, configuration);
   }
   
   getConfiguration(): Observable<any> {
-    let user = null;
-    let httpParams = new HttpParams();
-    if(this.authenticationService.currentUserValue?.username) {
-      user = this.authenticationService.currentUserValue?.username;
-      httpParams = httpParams.append("user", user);
-    }
-    return this.http.get(`${serverAPIURL}/api/configuration`, {params: httpParams});
+    return this.http.get(`${serverAPIURL}/api/configuration`);
   }
 }

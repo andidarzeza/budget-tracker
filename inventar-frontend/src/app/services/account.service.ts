@@ -8,12 +8,9 @@ import { AuthenticationService } from './authentication.service';
   providedIn: 'root'
 })
 export class AccountService {
-  constructor(
-    private http: HttpClient,
-    private authenticationService: AuthenticationService) { }
+  constructor(private http: HttpClient) { }
 
   getAccount(): Observable<any> {
-    const username = this.authenticationService.currentUserValue?.username;
-    return this.http.get(`${serverAPIURL}/api/account/${username}`, {observe: 'response'});
+    return this.http.get(`${serverAPIURL}/api/account`, {observe: 'response'});
   }
 }

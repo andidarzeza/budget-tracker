@@ -2,16 +2,15 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { AuthenticationService } from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HistoryService {
-  constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
+  constructor(private http: HttpClient) { }
 
   findAll(page: any, size: any, sort: any): Observable<any> {
-    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort).append("user", this.authenticationService.currentUserValue?.username);
+    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort);
     return this.http.get(`${serverAPIURL}/api/history`, {
       params: options,
       observe: 'response'

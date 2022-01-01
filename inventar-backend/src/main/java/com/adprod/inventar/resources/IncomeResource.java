@@ -4,6 +4,7 @@ import com.adprod.inventar.models.Incoming;
 import com.adprod.inventar.services.IncomeService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +17,8 @@ public class IncomeResource {
     }
 
     @GetMapping
-    public ResponseEntity findAll(Pageable pageable, @RequestParam String user){
+    public ResponseEntity findAll(Pageable pageable){
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
         return incomeService.findAll(pageable, user);
     }
 
@@ -31,12 +33,16 @@ public class IncomeResource {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody Incoming incoming){
-        return incomeService.save(incoming);
+    public ResponseEntity save(@RequestBody Incoming income){
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        income.setUser(user);
+        return incomeService.save(income);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity update(@RequestBody Incoming income, @PathVariable String id) {
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        income.setUser(user);
         return incomeService.update(id, income);
     }
 }

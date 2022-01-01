@@ -6,6 +6,7 @@ import com.adprod.inventar.repositories.ConfigurationRepository;
 import com.adprod.inventar.services.ConfigurationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,7 +21,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public ResponseEntity update(Configuration configuration) {
-        Optional<Configuration> configurationOptional = configurationRepository.findByUser(configuration.getUser());
+
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Configuration> configurationOptional = configurationRepository.findByUser(user);
         if (configurationOptional.isPresent()) {
             configuration.setId(configurationOptional.get().getId());
             configurationRepository.save(configuration);

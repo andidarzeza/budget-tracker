@@ -4,6 +4,7 @@ import com.adprod.inventar.models.SpendingCategory;
 import com.adprod.inventar.services.CategoryService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +17,8 @@ public class CategoryResource {
     }
 
     @GetMapping(value = "", produces = "application/json")
-    public ResponseEntity findAll(Pageable pageable, @RequestParam String categoryType, @RequestParam String user){
+    public ResponseEntity findAll(Pageable pageable, @RequestParam String categoryType){
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
         return categoryService.findAll(pageable, categoryType, user);
     }
 
@@ -32,11 +34,15 @@ public class CategoryResource {
 
     @PostMapping
     public ResponseEntity save(@RequestBody SpendingCategory spendingCategory){
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        spendingCategory.setUser(user);
         return categoryService.save(spendingCategory);
     }
 
     @PutMapping
     public ResponseEntity update(@RequestBody SpendingCategory spendingCategory) {
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        spendingCategory.setUser(user);
         return categoryService.update(spendingCategory);
     }
 }

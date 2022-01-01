@@ -3,6 +3,7 @@ package com.adprod.inventar.resources;
 import com.adprod.inventar.services.HistoryService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +16,8 @@ public class HistoryResource {
     }
 
     @GetMapping(value = "", produces = "application/json")
-    public ResponseEntity findAll(Pageable pageable, @RequestParam String user){
+    public ResponseEntity findAll(Pageable pageable){
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
         return historyService.findAll(pageable, user);
     }
 

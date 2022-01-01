@@ -3,16 +3,15 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
 import { Income } from '../models/Income';
-import { AuthenticationService } from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IncomingsService {
-  constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
+  constructor(private http: HttpClient) { }
 
   findAll(page: any, size: any, sort: any): Observable<any> {
-    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort).append("user", this.authenticationService.currentUserValue.username);
+    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort);
     return this.http.get(`${serverAPIURL}/api/incomes`, {
       params: options,
       observe: 'response'
@@ -24,12 +23,10 @@ export class IncomingsService {
   }
 
   save(income: Income): Observable<any> {
-    income['user'] = this.authenticationService.currentUserValue?.username;
     return this.http.post(`${serverAPIURL}/api/incomes/`, income, {observe: 'response'});
   }
 
   update(id: string, income: Income): Observable<any> {
-    income['user'] = this.authenticationService.currentUserValue?.username;
     return this.http.put(`${serverAPIURL}/api/incomes/${id}`, income, {observe: 'response'});
   }
 
