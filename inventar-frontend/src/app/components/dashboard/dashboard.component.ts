@@ -9,6 +9,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { FloatingMenuConfig } from 'src/app/shared/floating-menu/FloatingMenuConfig';
 import { ExportService } from 'src/app/services/export.service';
+import { DailyExpenseDTO, DashboardDTO, ExpenseInfoDTO, IncomeInfoDTO } from 'src/app/models/DashboardModels';
 
 @Component({
   selector: 'app-dashboard',
@@ -43,16 +44,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
   private totalRequests = 0;
-  chart1Loaded = false;
-  chart2Loaded = false;
-  chart3Loaded = false;
+
   totalSpendings: number = 0;
   totalIncome: number = 0;
   amountSpentAverage: number = 0;
   dailyIncomeAverage: number = 0;
-  dailySpendingsSubscription: Subscription = null;
-  categoriesDataSubscription: Subscription = null;
-  incomeCategoriesSubscription: Subscription = null;
+  dashboardSubscription: Subscription = null;
   chart: Chart = null; 
   category_chart: Chart = null;
   incomes_chart: Chart = null;
@@ -67,13 +64,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth()),
             new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth() + 1)
           ).subscribe((pdfDocument: Blob) => {
-            var fileURL = URL.createObjectURL(pdfDocument);
-            var a = document.createElement('a');
-            a.href = fileURL;
-            a.target = '_blank';
-            a.download = 'Monthly-Report-DEC/2021.pdf';
-            document.body.appendChild(a);
-            a.click();
+            this.exportToPDF(pdfDocument);
           })
         }
       }
@@ -84,187 +75,167 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public dashboardService: DashboardService,
     public chartUtil: ChartUtils,
     public sharedService: SharedService,
-    public exportService: ExportService) {}
+    public exportService: ExportService
+  ) {}
 
   ngOnInit(): void {
     Chart.register(...registerables);
   }
 
   // fires only from onDateSelected function below
-  private getDailySpendings(dateFrom: Date): void {
+  private getDashboardData(dateFrom: Date): void {
+    this.dashboardSubscription?.unsubscribe();
+
     const currentYear = this.dateUtil.fromYear(dateFrom.getFullYear());
     const currentMonth = currentYear.getMonthByValue(dateFrom.getMonth());
     const days = currentMonth.getDaysOfMonth();
-    let labels = [];
-    const chartLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
-      labels = chartLabels;
-    
-    this.unsubscribe(this.dailySpendingsSubscription);
 
+    let dailyExpensesLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
+    
     this.sharedService.activateLoadingSpinner();
     this.totalRequests++;
-    this.dailySpendingsSubscription = this.dashboardService.getDailyExpenses(
+
+    this.dashboardSubscription = this.dashboardService.getDashboardData(
       new Date(currentYear.getYear(), currentMonth.getMonth()),
       new Date(currentYear.getYear(), currentMonth.getMonth()+1)
-    ).subscribe((response: any) => {
+    ).subscribe((dashboardData: DashboardDTO) => {
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);
-      if(response.body.length > 0)
-        this.amountSpentAverage = this.sum(response.body) / response.body.length;
-      const data: number[] = this.fillMissingData(response.body, chartLabels);
-      if(this.chart) {
-        this.chart.destroy();
-      }
-      this.chart = this.chartUtil.createChart("daily-chart", {
-        type: 'line',
-        colors: ['#ff6347'],
-        labels: labels.map(label => {
-          const array = label.split("-");
-          return array[0] + "/" + array[1] + "/" + array[2].slice(-2);
-        }),
-        showGridLines: true,
-        datasets: [{
-          label: 'Money Spent',
-          data: data,
-          tension: 0.2,
-          backgroundColor: ['#ff6347'],
-          borderColor: ['#ff6347'],
-          borderWidth: 1
-        }]
-      });
-      this.chart1Loaded = true;
+
+      this.totalIncome = dashboardData.incomes;
+      this.totalSpendings = dashboardData.expenses;
+      this.amountSpentAverage = dashboardData.averageDailyExpenses;
+      this.dailyIncomeAverage = dashboardData.averageDailyIncome;
+      
+
+      this.createDailyChart(
+        dailyExpensesLabels, 
+        this.getDailyExpensesData(dailyExpensesLabels, dashboardData.dailyExpenses)
+      );
+      
+      this.createCategoryChart(
+        dashboardData.expensesInfo.map((expenseInfo: ExpenseInfoDTO) => expenseInfo._id),
+        dashboardData.expensesInfo.map((expenseInfo: ExpenseInfoDTO) => expenseInfo.total),
+      );
+
+      this.createIncomesChart(
+        dashboardData.incomesInfo.map((incomeInfo: IncomeInfoDTO) => incomeInfo._id),
+        dashboardData.incomesInfo.map((incomeInfo: IncomeInfoDTO) => incomeInfo.total),
+      );
+
     });
   }
 
-  // fires only from onDateSelected function below
-  private getCategoriesData(dateFrom: Date): void {  
-    
-    this.unsubscribe(this.categoriesDataSubscription);  
-    this.categoriesDataSubscription = this.dashboardService.getCategoriesData(
-      new Date(dateFrom.getFullYear(), dateFrom.getMonth()),
-      new Date(dateFrom.getFullYear(), dateFrom.getMonth() + 1)  
-    ).subscribe((response: any) => {
-      const spendingResponse: any[] = response.body.sort((obj1: any, obj2: any) => obj1.total > obj2.total ? -1 : 1);
-      this.totalSpendings = this.sum(spendingResponse)
-      if(this.category_chart) {
-        this.category_chart.destroy();
-      }
-      this.category_chart = this.chartUtil.createChart("category-chart", {
-        type: 'doughnut',
-        labels: spendingResponse.map(item => item._id),
-        showGridLines: false,
-        datasets: [{
-          label: 'Categories',
-          data: spendingResponse.map(item => item.total * 100 / (this.totalSpendings)),
-          tension: 0.2,
-          backgroundColor: spendingResponse.map(item => strToColor(item._id))
-          // ['#ff6347', 'rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
-          ,
-          borderColor: spendingResponse.map(item => strToColor(item._id)) 
-          // ['#ff6347', 'rgb(90,183,138)', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
-          ,
-          borderWidth: 1
-        }]
-      });
-      this.chart2Loaded = true;
+  private exportToPDF(pdfDocument: Blob): void {
+    const fileURL = URL.createObjectURL(pdfDocument);
+    const a = document.createElement('a');
+    a.href = fileURL;
+    a.target = '_blank';
+    a.download = 'Monthly-Report-DEC/2021.pdf';
+    document.body.appendChild(a);
+    a.click();
+  }
+
+  private getMonthlyLabels(days: Day[], currentYear: Year, currentMonth: Month): string[] {
+    return days.map(day => {
+      const dayString: string = (day?.getDayNumber() <= 9) ? "0" + day?.getDayNumber().toString() : day?.getDayNumber().toString();
+      const monthString: string = (currentMonth.getMonth() + 1 <= 9) ? "0" + (currentMonth.getMonth() + 1).toString() : (currentMonth.getMonth() + 1).toString();
+      return dayString + "-" + monthString + "-" + currentYear.getYear().toString()
     });
   }
 
-  getIncomesCategoryData(dateFrom: Date): void {
-    this.unsubscribe(this.incomeCategoriesSubscription); 
-    this.incomeCategoriesSubscription = this.dashboardService.getIncomeCategoriesData(
-      new Date(dateFrom.getFullYear(), dateFrom.getMonth()),
-      new Date(dateFrom.getFullYear(), dateFrom.getMonth() + 1)
-    ).subscribe((response: any) => {
-      const incomeResponse = response.body;
-      this.totalIncome = this.sum(incomeResponse);
-      const monthDays = this.dateUtil.fromYear(this.selectedDate.getFullYear()).getMonthByValue(this.selectedDate.getMonth()).getDaysOfMonth().length;
-      this.dailyIncomeAverage = this.totalIncome / monthDays;
-      if(this.incomes_chart) {
-        this.incomes_chart.destroy();
-      }
-      this.incomes_chart = this.chartUtil.createChart("incomes-chart", {
-        type: 'doughnut',
-        labels: incomeResponse.map(item => item._id),
-        showGridLines: false,
-        datasets: [{
-          label: 'Incomes',
-          data: incomeResponse.map(item => item.total),
-          tension: 0.2,
-          backgroundColor: incomeResponse.map(item => strToColor(item._id))
-          // ['#305680', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
-          ,
-          borderColor: incomeResponse.map(item => strToColor(item._id))
-          // ['#305680', 'rgb(73,97,206)', 'rgb(81,190,202)', '#ff6347', 'rgb(158,127,255)']
-          ,
-          borderWidth: 1
-        }]
-      });
-      this.chart3Loaded = true;
+  // currentMonth.getMonth()
+
+  private createDailyChart(labels: string[], data: number[]): void {
+    if(this.chart) {
+      this.chart.destroy();
+    }
+    this.chart = this.chartUtil.createChart("daily-chart", {
+      type: 'line',
+      colors: ['#ff6347'],
+      labels: labels.map(label => {
+        const array = label.split("-");
+        return array[0] + "/" + array[1] + "/" + array[2].slice(-2);
+      }),
+      showGridLines: true,
+      datasets: [{
+        label: 'Money Spent',
+        data,
+        tension: 0.2,
+        backgroundColor: ['#ff6347'],
+        borderColor: ['#ff6347'],
+        borderWidth: 1
+      }]
     });
   }
 
-  private fillMissingData(data: any, chartLabels: string[]): number[] {
-    const response = []
-    for(let i = 0;i<chartLabels.length;i++) {
-      const chartLabel = chartLabels[i];
-      const index = this.contains(data, chartLabel);
-      if(index > -1) {
-        response.push(data[index].total);
+  private createCategoryChart(labels: string[], data: number[]): void {
+    if(this.category_chart) {
+      this.category_chart.destroy();
+    }
+    this.category_chart = this.chartUtil.createChart("category-chart", {
+      type: 'doughnut',
+      labels,
+      showGridLines: false,
+      datasets: [{
+        label: 'Categories',
+        data,
+        tension: 0.2,
+        backgroundColor: labels.map(label => strToColor(label)),
+        borderColor: labels.map(label => strToColor(label)),
+        borderWidth: 1
+      }]
+    });
+  }
+
+  private createIncomesChart(labels: string[], data: number[]): void {
+    if(this.incomes_chart) {
+      this.incomes_chart.destroy();
+    }
+    this.incomes_chart = this.chartUtil.createChart("incomes-chart", {
+      type: 'doughnut',
+      labels,
+      showGridLines: false,
+      datasets: [{
+        label: 'Incomes',
+        data,
+        tension: 0.2,
+        backgroundColor: labels.map(label => strToColor(label)),
+        borderColor: labels.map(label => strToColor(label)),
+        borderWidth: 1
+      }]
+    });
+  }
+
+  getDailyExpensesData(dailyExpensesLabels: string[], dailyExpenses: DailyExpenseDTO[]): number[] {
+    console.log(dailyExpensesLabels);
+    console.log(dailyExpenses);
+    let response = [];
+    dailyExpensesLabels.forEach((label: string) => {
+      const filtered: DailyExpenseDTO[] = dailyExpenses.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);
+      console.log(filtered);
+      
+      if(filtered.length !== 0) {
+        response.push(filtered[0].dailyExpense);
       } else {
         response.push(0);
       }
-    }
+    });
     return response;
   }
 
-  private contains(array: any[], value: any): number {
-    let index = -1;
-    for(let i = 0;i<array.length;i++) {
-      if(array[i]._id === value) {
-        index = i;
-      }
-    }
-    return index;
-  }
-
-  private sum(array: any[]): number {
-    let sum = 0;
-    array.forEach(num => {
-      sum+=num?.total;
-    });
-    return sum;
+  calculateHeight(templateReference: HTMLElement): string {
+    let clientHeight = templateReference.clientHeight;
+    clientHeight +=126
+    return `calc(100% - ${clientHeight}px)`;
   }
 
   onDateSelected(event: any): void {
     this.selectedDate = event.dateFrom;
-    this.getDailySpendings(event.dateFrom);
-    this.getCategoriesData(event.dateFrom);
-    this.getIncomesCategoryData(event.dateFrom);
-  }
-
-  private getMonthlyLabels(days: Day[], currentYear: Year, currentMonth: Month): string[] {
-    return days.map(day => day?.getDayNumber().toString() + "-" + (currentMonth.getMonth() + 1).toString() + "-" + currentYear.getYear().toString());
-  }
-
-  private unsubscribe(subscription: Subscription): void {
-    if(subscription) {
-      subscription.unsubscribe();
-    }
+    this.getDashboardData(event.dateFrom);
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe(this.incomeCategoriesSubscription);
-    this.unsubscribe(this.dailySpendingsSubscription);
-    this.unsubscribe(this.categoriesDataSubscription);
+    this.dashboardSubscription?.unsubscribe();
   }
-
-  public calculateHeight(templateReference: HTMLElement): string {
-    // console.log(templateReference);
-    let clientHeight = templateReference.clientHeight;
-    clientHeight +=126
-    // [ngStyle]="{'height': 'calc(100% - 57px)'"}
-    return `calc(100% - ${clientHeight}px)`;
-  }
-
 }

@@ -16,17 +16,7 @@ public class DashboardResource {
     }
 
     @GetMapping
-    public ResponseEntity getDailyExpenses(@RequestParam String user, @RequestParam Instant from, @RequestParam Instant to){
-        return dashboardService.getDailyExpenses(user, from, to);
-    }
-
-    @GetMapping("/incomes")
-    public ResponseEntity getIncomeCategoriesData(@RequestParam String user, @RequestParam Instant from, @RequestParam Instant to){
-        return dashboardService.getIncomeCategoriesData(user, from, to);
-    }
-
-    @GetMapping("/categories")
-    public ResponseEntity getCategoriesData(@RequestParam String user, @RequestParam Instant from, @RequestParam Instant to){
-        return dashboardService.getCategoriesData(user, from, to);
+    public ResponseEntity getDashboardData(@RequestParam Instant from, @RequestParam Instant to){
+        return dashboardService.getDashboardData(from, to);
     }
 }

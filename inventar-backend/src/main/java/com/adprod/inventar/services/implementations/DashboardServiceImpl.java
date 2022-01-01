@@ -1,111 +1,45 @@
 package com.adprod.inventar.services.implementations;
 
+import com.adprod.inventar.aggregations.*;
 import com.adprod.inventar.models.*;
-import com.adprod.inventar.repositories.CategoryRepository;
-import org.springframework.data.mongodb.MongoExpression;
 import com.adprod.inventar.services.DashboardService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
-    @Autowired
-    private MongoTemplate mongoTemplate;
-    @Autowired
-    private CategoryRepository categoryRepository;
 
-    public static class DailySpendingsDTO{
-        String _id;
-        Double total;
+    private final DailyExpenseAggregation dailyExpenseAggregation;
+    private final AverageIncomeAggregation averageIncomeAggregation;
+    private final AverageExpenseAggregation averageExpenseAggregation;
+    private final ExpensesInfoAggregation expensesInfoAggregation;
+    private final IncomesInfoAggregation incomesInfoAggregation;
+    private final IncomeAggregation incomeAggregation;
 
-        public DailySpendingsDTO(String _id, Double total) {
-            this._id = _id;
-            this.total = total;
-        }
-
-        public String get_id() {
-            return _id;
-        }
-
-        public void set_id(String _id) {
-            this._id = _id;
-        }
-
-        public Double getTotal() {
-            return total;
-        }
-
-        public void setTotal(Double total) {
-            this.total = total;
-        }
+    public DashboardServiceImpl(DailyExpenseAggregation dailyExpenseAggregation, AverageIncomeAggregation averageIncomeAggregation, AverageExpenseAggregation averageExpenseAggregation, ExpensesInfoAggregation expensesInfoAggregation, IncomesInfoAggregation incomesInfoAggregation, IncomeAggregation incomeAggregation) {
+        this.dailyExpenseAggregation = dailyExpenseAggregation;
+        this.averageIncomeAggregation = averageIncomeAggregation;
+        this.averageExpenseAggregation = averageExpenseAggregation;
+        this.expensesInfoAggregation = expensesInfoAggregation;
+        this.incomesInfoAggregation = incomesInfoAggregation;
+        this.incomeAggregation = incomeAggregation;
     }
+
 
     @Override
-    public ResponseEntity<List<DailySpendingsDTO>> getDailyExpenses(String user, Instant from, Instant to) {
-        List<AggregationOperation> aggregationResult = new ArrayList<>();
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
-        aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
-        aggregationResult.add(
-                Aggregation.project("$moneySpent")
-                        .andExpression("{$dateToString: { format: '%d-%m-%Y', date: '$createdTime'}}").as("day")
-        );
-        aggregationResult.add(Aggregation.group("$day").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("total"));
-        TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
-        List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", DailySpendingsDTO.class).getMappedResults();
-        return ResponseEntity.ok(resultSR);
+    public ResponseEntity<DashboardDTO> getDashboardData(Instant from, Instant to) {
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        DashboardDTO dashboardDTO = new DashboardDTO();
+        dashboardDTO.setDailyExpenses(dailyExpenseAggregation.getDailyExpenses(user, from, to));
+        dashboardDTO.setAverageDailyIncome(averageIncomeAggregation.getAverageDailyIncome(user, from, to));
+        dashboardDTO.setAverageDailyExpenses(averageExpenseAggregation.getAverageDailyExpense(user, from, to));
+        dashboardDTO.setExpensesInfo(expensesInfoAggregation.getExpensesInfo(user, from, to));
+        dashboardDTO.setIncomesInfo(incomesInfoAggregation.getIncomesInfo(user, from, to));
+        dashboardDTO.setIncomes(incomeAggregation.getIncomes(user, from, to));
+        dashboardDTO.setExpenses(dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get());
+        return ResponseEntity.ok(dashboardDTO);
     }
 
-    @Override
-    public ResponseEntity getCategoriesData(String user, Instant from, Instant to) {
-        List<AggregationOperation> aggregationResult = new ArrayList<>();
-
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
-        aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
-        aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("total"));
-        TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
-        List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", DailySpendingsDTO.class).getMappedResults();
-        List<DailySpendingsDTO> response = new ArrayList<>();
-        resultSR.forEach(result -> {
-            String id = result.get_id();
-            Optional<SpendingCategory> category = categoryRepository.findById(id);
-            if(category.isPresent()) {
-                response.add(new DailySpendingsDTO(category.get().getCategory(), result.getTotal()));
-            }
-        });
-        return ResponseEntity.ok(response);
-    }
-
-    @Override
-    public ResponseEntity getIncomeCategoriesData(String user, Instant from, Instant to) {
-        List<AggregationOperation> aggregationResult = new ArrayList<>();
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
-        aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
-        aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("total"));
-        TypedAggregation<Incoming> tempAgg = Aggregation.newAggregation(Incoming.class, aggregationResult);
-        List<DailySpendingsDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incoming", DailySpendingsDTO.class).getMappedResults();
-        List<DailySpendingsDTO> response = new ArrayList<>();
-        resultSR.forEach(result -> {
-            String id = result.get_id();
-            Optional<SpendingCategory> category = categoryRepository.findById(id);
-            if(category.isPresent()) {
-                response.add(new DailySpendingsDTO(category.get().getCategory(), result.getTotal()));
-            }
-        });
-        return ResponseEntity.ok(response);
-    }
 }

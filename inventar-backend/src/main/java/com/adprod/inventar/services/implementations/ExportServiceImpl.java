@@ -2,14 +2,10 @@ package com.adprod.inventar.services.implementations;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
-
 import com.adprod.inventar.services.DashboardService;
 import com.adprod.inventar.services.ExportService;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 
@@ -76,14 +72,13 @@ public class ExportServiceImpl implements ExportService {
     }
 
     private void writeTableData(PdfPTable table, Instant from, Instant to) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<DashboardServiceImpl.DailySpendingsDTO> list = this.dashboardService.getDailyExpenses(authentication.getName(), from, to).getBody();
-        list.forEach(item -> {
-            table.addCell(item.get_id());
-            table.addCell(item.getTotal().toString());
-            table.addCell("2,300.39 ALL");
-            table.addCell("1,579.44 ALL");
-        });
+//        List<DailyExpenseDTO> list = this.dashboardService.getDashboardData(from, to).getBody();
+//        list.forEach(item -> {
+//            table.addCell(item.get_id());
+//            table.addCell(item.getTotal().toString());
+//            table.addCell("2,300.39 ALL");
+//            table.addCell("1,579.44 ALL");
+//        });
     }
 
 }
