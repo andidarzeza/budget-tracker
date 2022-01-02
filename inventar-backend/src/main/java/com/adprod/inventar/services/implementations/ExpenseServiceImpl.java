@@ -93,6 +93,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             double removeAndAddAmount = expenseOptional.get().getMoneySpent() -spending.getMoneySpent();
             if(this.accountService.addToBalance(removeAndAddAmount, authentication.getName())) {
                 spending.setId(id);
+                spending.setCreatedTime(expenseOptional.get().getCreatedTime());
                 expenseRepository.save(spending);
                 historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
                 return ResponseEntity.ok(spending);

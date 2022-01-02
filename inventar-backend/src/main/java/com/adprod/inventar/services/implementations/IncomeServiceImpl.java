@@ -98,6 +98,7 @@ public class IncomeServiceImpl implements IncomeService {
             double removeAndAddAmount =  income.getIncoming() - incomingOptional.get().getIncoming();
             if(this.accountService.addToBalance(removeAndAddAmount, authentication.getName())) {
                 income.setId(id);
+                income.setCreatedTime(incomingOptional.get().getCreatedTime());
                 incomeRepository.save(income);
                 historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
                 return ResponseEntity.ok(income);
