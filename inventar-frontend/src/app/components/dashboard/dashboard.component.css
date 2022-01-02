@@ -97,7 +97,28 @@
     justify-content: space-between;
 }
 
+.income-chart-container, #incomes-chart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: calc(100% - 70px);
+    max-width: 80%;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 318px;
+    width: 280px;
+    font-family: 'Source Sans Pro', sans-serif;
+    color: #9F9F9F;
+}
 
+.no-data-message {
+    margin-top: -40px;
+    text-align: center;
+}
 
 @media only screen and (max-width: 1500px) {
     .card-label {

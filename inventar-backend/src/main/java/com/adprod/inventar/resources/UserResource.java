@@ -22,22 +22,22 @@ public class UserResource {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody UserRequest userRequest){
+    public ResponseEntity login(@RequestBody UserRequest userRequest){
         return userService.login(userRequest);
     }
 
     @GetMapping("/admin/all")
-    public ResponseEntity<Object> findAll(){
+    public ResponseEntity findAll(){
         return userService.findAll();
     }
 
     @DeleteMapping("/admin/delete/{userID:.+}")
-    public ResponseEntity<Object> delete(@PathVariable String userID){
+    public ResponseEntity delete(@PathVariable String userID){
         return userService.delete(userID);
     }
 
     @PutMapping("/admin/update/{userID:.+}")
-    public ResponseEntity<Object> update(@RequestParam("newUsername") String newUsername, @PathVariable String userID){
+    public ResponseEntity update(@RequestParam("newUsername") String newUsername, @PathVariable String userID){
         return userService.update(newUsername, userID);
     }
 }

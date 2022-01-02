@@ -101,7 +101,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).subscribe((dashboardData: DashboardDTO) => {
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);
-
+      console.log(dashboardData);
+      
       this.totalIncome = dashboardData.incomes;
       this.totalSpendings = dashboardData.expenses;
       this.amountSpentAverage = dashboardData.averageDailyExpenses;

@@ -33,7 +33,7 @@ public class AverageExpenseAggregation {
         YearMonth yearMonthObject = YearMonth.of(ldt.getYear(), ldt.getMonth().getValue());
         int daysInMonth = yearMonthObject.lengthOfMonth(); //28
         if(currentDate.getYear() == ldt.getYear() && currentDate.getMonth().getValue() == ldt.getMonth().getValue()) {
-            daysInMonth = ldt.getDayOfMonth();
+            daysInMonth = currentDate.getDayOfMonth();
         }
         List<AggregationOperation> aggregationResult = new ArrayList<>();
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));

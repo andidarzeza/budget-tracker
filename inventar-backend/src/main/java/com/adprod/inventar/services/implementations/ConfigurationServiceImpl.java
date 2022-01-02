@@ -29,7 +29,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             configurationRepository.save(configuration);
             return ResponseEntity.ok(configuration);
         }
-        return new ResponseEntity(new ResponseMessage("No Configuration Found for user " + configuration.getUser()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(new ResponseMessage("No Configuration Found for user: " + user), HttpStatus.NOT_FOUND);
     }
 
     @Override

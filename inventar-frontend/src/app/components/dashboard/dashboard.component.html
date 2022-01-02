@@ -49,12 +49,22 @@
             <div class="chart-title" style="left: 10px;transform: none;">
                 Income - {{totalIncome | number:'1.0':'en-US'}} ALL
             </div>
-            <canvas id="incomes-chart" style="position: absolute;top:50%;left:50%;transform:translate(-50%, -50%);max-height: calc(100% - 70px);max-width:80%;margin-top: 20px;"></canvas>
+            <div *ngIf="totalIncome == 0" class="income-chart-container chart-title">
+                <span class="no-data-message">
+                    No Data to be displayed!
+                </span>
+            </div>
+            <canvas id="incomes-chart"></canvas>
         </mat-card>
     
         <mat-card class="chart-card {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card" style="position: relative">
             <div class="chart-title" style="left: 10px;transform: none;">
                 Amount spent - {{totalSpendings | number:'1.0':'en-US'}} ALL
+            </div>
+            <div *ngIf="totalSpendings == 0" class="income-chart-container chart-title">
+                <span class="no-data-message">
+                    No Data to be displayed!
+                </span>
             </div>
             <canvas id="category-chart" style="position: absolute;top:50%;left:50%;transform:translate(-50%, -50%);max-height: calc(100% - 70px);max-width:80%;margin-top: 20px;"></canvas>
         </mat-card>

@@ -35,8 +35,13 @@ public class ExportServiceImpl implements ExportService {
         titleFont.setSize(16);
         LocalDateTime ldtFrom = LocalDateTime.ofInstant(from, ZoneId.systemDefault());
         LocalDateTime ldtTo = LocalDateTime.ofInstant(to, ZoneId.systemDefault());
+        String fromDay = ldtFrom.getDayOfMonth() <=9? '0' + String.valueOf(ldtFrom.getDayOfMonth()) : String.valueOf(ldtFrom.getDayOfMonth());
+        String toDay = ldtTo.getDayOfMonth() <=9? '0' + String.valueOf(ldtTo.getDayOfMonth()) : String.valueOf(ldtTo.getDayOfMonth());
 
-        Paragraph date = new Paragraph("Date: " + ldtFrom.getDayOfMonth() + "/" + ldtFrom.getMonth().getValue() + "/" + ldtFrom.getYear() + " - " + ldtTo.getDayOfMonth() + "/" + ldtTo.getMonth().getValue() + "/" + ldtTo.getYear(), dateFont);
+        String fromMonth = ldtFrom.getMonth().getValue() <=9? '0' + String.valueOf(ldtFrom.getMonth().getValue()) : String.valueOf(ldtFrom.getMonth().getValue());
+        String toMonth = ldtTo.getMonth().getValue() <=9? '0' + String.valueOf(ldtTo.getMonth().getValue()) : String.valueOf(ldtTo.getMonth().getValue());
+
+        Paragraph date = new Paragraph("Date: " + fromDay + "/" + fromMonth + "/" + ldtFrom.getYear() + " - " + toDay + "/" + toMonth + "/" + ldtTo.getYear(), dateFont);
         Paragraph title = new Paragraph("Monthly Report - " + StringUtils.capitalize(ldtFrom.getMonth().toString().toLowerCase()), titleFont);
         date.setAlignment(Paragraph.ALIGN_LEFT);
         title.setAlignment(Paragraph.ALIGN_CENTER);
