@@ -26,6 +26,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         Optional<Configuration> configurationOptional = configurationRepository.findByUser(user);
         if (configurationOptional.isPresent()) {
             configuration.setId(configurationOptional.get().getId());
+            configuration.setUser(user);
             configurationRepository.save(configuration);
             return ResponseEntity.ok(configuration);
         }

@@ -1,10 +1,12 @@
 package com.adprod.inventar.services.implementations;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import com.adprod.inventar.models.DashboardDTO;
 import com.adprod.inventar.services.DashboardService;
 import com.adprod.inventar.services.ExportService;
 import com.lowagie.text.*;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 @Service
 public class ExportServiceImpl implements ExportService {
     private final DashboardService dashboardService;
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     public ExportServiceImpl(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
     }
@@ -83,13 +86,17 @@ public class ExportServiceImpl implements ExportService {
     }
 
     private void writeTableData(PdfPTable table, Instant from, Instant to) {
-//        List<DailyExpenseDTO> list = this.dashboardService.getDashboardData(from, to).getBody();
-//        list.forEach(item -> {
-//            table.addCell(item.get_id());
-//            table.addCell(item.getTotal().toString());
-//            table.addCell("2,300.39 ALL");
-//            table.addCell("1,579.44 ALL");
-//        });
+        DashboardDTO dashboardDTO = this.dashboardService.getDashboardData(from, to).getBody();
+        dashboardDTO.getDailyExpenses().forEach(dailyExpenseDTO -> {
+            table.addCell(dailyExpenseDTO.get_id());
+            table.addCell(df.format(dashboardDTO.getAverageDailyIncome()) + " ALL");
+            table.addCell(df.format(dailyExpenseDTO.getDailyExpense()) + " ALL");
+            table.addCell(df.format(dashboardDTO.getAverageDailyIncome() - dailyExpenseDTO.getDailyExpense()) + " ALL");
+        });
+        table.addCell("Total");
+        table.addCell(df.format(dashboardDTO.getDailyExpenses().size() * dashboardDTO.getAverageDailyIncome()) + " ALL");
+        table.addCell(df.format(dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get()) + " ALL");
+        table.addCell(df.format((dashboardDTO.getDailyExpenses().size() * dashboardDTO.getAverageDailyIncome()) - dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get()) + " ALL");
     }
 
 }
