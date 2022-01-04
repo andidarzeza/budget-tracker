@@ -19,4 +19,6 @@ public class DashboardDTO {
     private Double expenses;
     private List<ExpenseInfoDTO> expensesInfo;
     private List<IncomeInfoDTO> incomesInfo;
+    private Double increaseInIncome;
+    private Double increaseInExpense;
 }

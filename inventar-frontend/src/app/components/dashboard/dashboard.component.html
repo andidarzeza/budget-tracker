@@ -13,8 +13,14 @@
                 <div class="average-income">
                     <span class="card-label">
                         {{dailyIncomeAverage | number:'1.2-2':'en-US'}} ALL
-                        <span class="percentage-badge percentage-up">
-                            <span>↑</span>40%
+                        <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
+                            <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
+                        </span>
+                        <span *ngIf="increaseInIncome<0" class="percentage-badge percentage-down">
+                            <span>&darr;</span>{{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
+                        </span>
+                        <span *ngIf="increaseInIncome==0" class="percentage-badge">
+                           {{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
                         </span>
                     </span>
                     <div class="income-description">
@@ -32,9 +38,15 @@
                 <div class="average-income">
                     <span class="card-label">
                         {{amountSpentAverage | number:'1.2-2':'en-US'}} ALL
-                        <span class="percentage-badge percentage-down">
-                            <span>&darr;</span>32.2%
+                        <span *ngIf="increaseInExpense>0" class="percentage-badge percentage-down">
+                            <span>↑</span>{{increaseInExpense | number:'1.2-2':'en-US'}}%
                         </span>
+                        <span *ngIf="increaseInExpense<0" class="percentage-badge percentage-up">
+                            <span>&darr;</span>{{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
+                        </span>
+                        <span *ngIf="increaseInExpense==0" class="percentage-badge">
+                            {{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
+                         </span>
                     </span>
                     <div class="income-description">
                         Average daily expenses so far.

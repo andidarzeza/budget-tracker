@@ -17,14 +17,18 @@ public class DashboardServiceImpl implements DashboardService {
     private final ExpensesInfoAggregation expensesInfoAggregation;
     private final IncomesInfoAggregation incomesInfoAggregation;
     private final IncomeAggregation incomeAggregation;
+    private final IncomeIncreaseAggregation incomeIncreaseAggregation;
+    private final ExpenseIncreaseAggregation expenseIncreaseAggregation;
 
-    public DashboardServiceImpl(DailyExpenseAggregation dailyExpenseAggregation, AverageIncomeAggregation averageIncomeAggregation, AverageExpenseAggregation averageExpenseAggregation, ExpensesInfoAggregation expensesInfoAggregation, IncomesInfoAggregation incomesInfoAggregation, IncomeAggregation incomeAggregation) {
+    public DashboardServiceImpl(DailyExpenseAggregation dailyExpenseAggregation, AverageIncomeAggregation averageIncomeAggregation, AverageExpenseAggregation averageExpenseAggregation, ExpensesInfoAggregation expensesInfoAggregation, IncomesInfoAggregation incomesInfoAggregation, IncomeAggregation incomeAggregation, IncomeIncreaseAggregation incomeIncreaseAggregation, ExpenseIncreaseAggregation expenseIncreaseAggregation) {
         this.dailyExpenseAggregation = dailyExpenseAggregation;
         this.averageIncomeAggregation = averageIncomeAggregation;
         this.averageExpenseAggregation = averageExpenseAggregation;
         this.expensesInfoAggregation = expensesInfoAggregation;
         this.incomesInfoAggregation = incomesInfoAggregation;
         this.incomeAggregation = incomeAggregation;
+        this.incomeIncreaseAggregation = incomeIncreaseAggregation;
+        this.expenseIncreaseAggregation = expenseIncreaseAggregation;
     }
 
 
@@ -39,6 +43,8 @@ public class DashboardServiceImpl implements DashboardService {
         dashboardDTO.setIncomesInfo(incomesInfoAggregation.getIncomesInfo(user, from, to));
         dashboardDTO.setIncomes(incomeAggregation.getIncomes(user, from, to));
         dashboardDTO.setExpenses(dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get());
+        dashboardDTO.setIncreaseInExpense(expenseIncreaseAggregation.getExpenseIncreaseValue(user, from, to, dashboardDTO.getAverageDailyExpenses()));
+        dashboardDTO.setIncreaseInIncome(incomeIncreaseAggregation.getIncomeIncreaseValue(user, from, to, dashboardDTO.getAverageDailyIncome()));
         return ResponseEntity.ok(dashboardDTO);
     }
 

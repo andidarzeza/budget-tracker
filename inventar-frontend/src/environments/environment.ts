@@ -7,10 +7,10 @@ export const environment = {
 };
 
 // HOME NETWORK
-export const serverAPIURL = 'http://192.168.1.9:8081';
+// export const serverAPIURL = 'http://192.168.1.9:8081';
 
 // BAR NETWORK
-// export const serverAPIURL = 'http://192.168.100.156:8081';
+export const serverAPIURL = 'http://192.168.100.156:8081';
 
 // LOCALHOST
 // export const serverAPIURL = 'http://localhost:8081';

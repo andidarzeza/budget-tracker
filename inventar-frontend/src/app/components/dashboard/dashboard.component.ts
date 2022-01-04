@@ -45,6 +45,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentMonth = this.selectedDate.getMonth();
   private totalRequests = 0;
 
+  increaseInIncome: number = 0;
+  increaseInExpense: number = 0;
   totalSpendings: number = 0;
   totalIncome: number = 0;
   amountSpentAverage: number = 0;
@@ -102,7 +104,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);
       console.log(dashboardData);
-      
+      this.increaseInExpense = dashboardData.increaseInExpense;
+      this.increaseInIncome = dashboardData.increaseInIncome;
       this.totalIncome = dashboardData.incomes;
       this.totalSpendings = dashboardData.expenses;
       this.amountSpentAverage = dashboardData.averageDailyExpenses;
@@ -113,6 +116,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         dailyExpensesLabels, 
         this.getDailyExpensesData(dailyExpensesLabels, dashboardData.dailyExpenses)
       );
+
+      console.log(dashboardData.expensesInfo);
+      
       
       this.createCategoryChart(
         dashboardData.expensesInfo.map((expenseInfo: ExpenseInfoDTO) => expenseInfo._id),
@@ -209,8 +215,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getDailyExpensesData(dailyExpensesLabels: string[], dailyExpenses: DailyExpenseDTO[]): number[] {
-    console.log(dailyExpensesLabels);
-    console.log(dailyExpenses);
     let response = [];
     dailyExpensesLabels.forEach((label: string) => {
       const filtered: DailyExpenseDTO[] = dailyExpenses.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);

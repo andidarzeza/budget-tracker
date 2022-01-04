@@ -12,9 +12,7 @@ import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class IncomesInfoAggregation {
@@ -42,6 +40,9 @@ public class IncomesInfoAggregation {
                 response.add(new IncomeInfoDTO(category.get().getCategory(), result.getTotal()));
             }
         });
+
+        Collections.sort(response, Comparator.comparing(IncomeInfoDTO::getTotal));
+        Collections.reverse(response);
         return response;
     }
 }

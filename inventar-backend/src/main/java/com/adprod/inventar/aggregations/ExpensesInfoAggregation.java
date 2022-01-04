@@ -14,9 +14,7 @@ import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ExpensesInfoAggregation {
@@ -44,6 +42,8 @@ public class ExpensesInfoAggregation {
                 response.add(new ExpenseInfoDTO(category.get().getCategory(), result.getTotal()));
             }
         });
+        Collections.sort(response, Comparator.comparing(ExpenseInfoDTO::getTotal));
+        Collections.reverse(response);
         return response;
     }
 }

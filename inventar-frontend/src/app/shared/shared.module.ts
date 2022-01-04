@@ -9,11 +9,12 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { FloatingMenuComponent } from './floating-menu/floating-menu.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AbsoluteValuePipe } from '../pipes/absolute-value.pipe';
 
 
 
 @NgModule({
-  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent],
+  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe],
   imports: [
     CommonModule,
     MatIconModule,
@@ -26,7 +27,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     CommonModule,
     FormsModule,
     ConfirmComponent,
-    FloatingMenuComponent
+    FloatingMenuComponent,
+    AbsoluteValuePipe
   ]
 })
 export class SharedModule { }

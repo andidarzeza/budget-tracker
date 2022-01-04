@@ -6,6 +6,8 @@ export interface DashboardDTO {
 	expenses: number;
 	expensesInfo: ExpenseInfoDTO[];
 	incomesInfo: IncomeInfoDTO[];
+    increaseInIncome: number;
+    increaseInExpense: number;
 }
 
 export interface ExpenseInfoDTO {
