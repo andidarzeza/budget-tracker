@@ -126,3 +126,7 @@ table {
     table-layout: fixed;
     display: table;  
 }
+
+.mat-column-actions {
+    width: 15%;
+}

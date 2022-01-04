@@ -115,7 +115,7 @@ tr {
     table-layout: fixed;
 }
 .mat-column-message {
-    width: 25rem;
+    width: 30%;
 }
 
 thead {

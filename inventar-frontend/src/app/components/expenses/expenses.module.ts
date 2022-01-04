@@ -15,6 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ExpensesRoutingModule } from './expenses-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSortModule } from '@angular/material/sort';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 
@@ -36,7 +37,8 @@ import { MatSortModule } from '@angular/material/sort';
     MatFormFieldModule,
     MatInputModule,
     MatOptionModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatMenuModule
   ]
 })
 export class ExpensesModule { }

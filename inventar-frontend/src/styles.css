@@ -414,7 +414,7 @@ button.toast-close-button {
 }
 
 .dark-icon {
-    color: #f6af06;
+    color: #f6af06 !important;
 }
 
 .light-button {
@@ -620,8 +620,38 @@ button.toast-close-button {
     overflow: hidden !important;
     box-shadow: none !important;
  }
+
+ .mobile-action-container {
+    display: none !important;
+ }
+
+ .light-mobile-action-menu {
+     background: white !important;
+ }
+
+ .dark-mobile-action-menu {
+    background: #111619 !important;
+}
+
+
+th, td {
+    overflow: hidden;
+    width:auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 @media only screen and (max-width: 475px) { 
     app-date-picker {
         top: 170%;
     }
+}
+
+@media only screen and (max-width: 990px) { 
+    .mobile-action-container {
+        display: inline-block !important;
+     }
+    
+     .action-container {
+        display: none !important;
+     }
 }
