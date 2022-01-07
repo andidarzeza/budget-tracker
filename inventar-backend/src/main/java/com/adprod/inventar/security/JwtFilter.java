@@ -26,14 +26,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 if (jwtManager.validateToken(token)) {
                     jwtManager.username = jwtManager.extractUsername(token);
                     Authentication auth = jwtManager.getAuthentication(token);
-                    System.out.println(auth.getName());
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
         }catch(Exception e){
             SecurityContextHolder.clearContext();
-            System.out.println(e.getMessage());
-            return;
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }

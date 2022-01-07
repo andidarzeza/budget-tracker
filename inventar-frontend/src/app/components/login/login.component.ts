@@ -67,7 +67,12 @@ export class LoginComponent implements OnInit {
       this.authenticationService.login(this.username.value, this.password.value).pipe(
         mergeMap(() => this.configurationSevice.getConfiguration())
       ).subscribe((configuration: IConfiguration) => {
-        this.sharedService.changeTheme(configuration.darkMode);  
+        this.sharedService.changeTheme(configuration.darkMode); 
+        const registeredAccounts = localStorage.getItem("registeredAccounts"); 
+        if(!registeredAccounts) {
+          console.log("Reduce number of times to sign in?");
+          
+        }
         this.router.navigate(['/dashboard']);
       },
       (error: any) => {

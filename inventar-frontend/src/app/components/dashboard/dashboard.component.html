@@ -1,4 +1,4 @@
-<mat-progress-bar class="{{sharedService.theme}}" mode="indeterminate" [@inOutAnimation] *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled" style="position: absolute;top: 64px;left:0"></mat-progress-bar>
+<mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation] *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled" style="position: absolute;top: 64px;left:0"></mat-progress-bar>
 
 <app-budget-info (dateSelected)="onDateSelected($event)"></app-budget-info>
 

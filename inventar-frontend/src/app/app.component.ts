@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {   
     this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
       this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
     });

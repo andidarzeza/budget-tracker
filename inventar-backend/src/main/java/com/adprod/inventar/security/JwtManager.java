@@ -2,10 +2,7 @@ package com.adprod.inventar.security;
 
 import com.adprod.inventar.models.User;
 import com.adprod.inventar.services.implementations.MyUserDetailsService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,12 +20,13 @@ public class JwtManager {
     }
     public static String username = "";
     private final String SECRET_KEY = "secret";
+    private final Integer jwtRenewTime = 1000 * 60 * 60 * 3;
 
     public String createToken(User user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("Role", user.getRole());
         return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtRenewTime))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 
@@ -37,13 +35,12 @@ public class JwtManager {
             if(!this.isTokenExpired(token)){
                 Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
                 return true;
-            }else{
-                return false;
             }
         }catch (JwtException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
+        return false;
     }
 
     public String extractUsername(String token) {
