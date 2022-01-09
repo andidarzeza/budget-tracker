@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { SideBarService } from 'src/app/services/side-bar.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -8,14 +9,18 @@ import { SharedService } from 'src/app/services/shared.service';
   styleUrls: ['./nav-bar.component.css']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
-  pageTitle = 'Lista e Librave';
   fullScreenMode = false;
   interval = null;
-  constructor(public sharedService: SharedService, public authenticationService: AuthenticationService) { 
-  }
-
   currentDate = new Date();
+  constructor(
+    public sharedService: SharedService,
+    public authenticationService: AuthenticationService,
+    public sidebarService: SideBarService) { 
+  }
   ngOnInit(): void {
+
+
+
     this.interval = setInterval(() => {
       this.currentDate = new Date();
     }, 1000);
@@ -27,7 +32,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     }
   }
 
-  public logout(): void {
+  logout(): void {
     this.authenticationService.logout();
   }
 
@@ -40,4 +45,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.fullScreenMode = !this.fullScreenMode;
   }
 
+  toggleSidebar(): void {
+
+    this.sidebarService.toggleSideBar();
+  }
 }

@@ -62,7 +62,6 @@ export class SideBarComponent implements AfterViewInit {
     if(activeItem) {
       activeItem.style.transform = `translateY(${index * 100}%)`;
     }
-    
   }
 
 }

@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     this.sharedService.listenForThemeChange();
   }
 
-  test(): void {
+  toggleSidebar(): void {
     this.sideBarService.toggleSideBar();
   }
 

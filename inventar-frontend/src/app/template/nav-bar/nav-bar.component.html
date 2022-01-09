@@ -1,18 +1,20 @@
 <mat-toolbar class="toolbar {{sharedService.theme}}" *ngIf="authenticationService.currentUserValue">
-    <span style="display: flex;align-items: center;">
-        <!-- <img src="../../../assets/images/logo.png" style="height: 38px;"> -->
+    <span>
+        <button *ngIf="sharedService.mobileView" mat-icon-button (click)="toggleSidebar()">
+            <mat-icon class="{{sharedService.theme}}-icon">
+                menu
+            </mat-icon>
+        </button>
     </span>
     <div class="menu-container">
-        <div class="menu-item pointer" (click)="toggleFullScreenMode()" style="color: white;">
-            <mat-icon class="{{sharedService.theme}}-icon" style="width: 28px;height: 28px;font-size: 28px;">{{fullScreenMode ? 'fullscreen_exit' : 'fullscreen'}}</mat-icon>
+        <div *ngIf="!sharedService.mobileView" class="menu-item pointer" (click)="toggleFullScreenMode()">
+            <mat-icon class="fullscreen-icon {{sharedService.theme}}-icon">{{fullScreenMode ? 'fullscreen_exit' : 'fullscreen'}}</mat-icon>
         </div>
-        <div class="menu-item" style="color: white;">
+        <div *ngIf="!sharedService.mobileView" class="menu-item">
             <mat-icon class="{{sharedService.theme}}-icon">access_time</mat-icon>
-            <span style="margin-left: 5px;margin-top: 2px;
-            font-weight: 200;
-            font-size: 15px;">{{currentDate | date: 'medium'}}</span>
+            <span class="currentDate">{{currentDate | date: 'medium'}}</span>
         </div>
-        <div class="menu-item pointer" style="color: white;" (click)="logout()">
+        <div class="menu-item pointer" (click)="logout()">
             <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>
         </div>
     </div>

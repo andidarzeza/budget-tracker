@@ -54,7 +54,6 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['createdTime', 'name', 'description', 'category', 'moneySpent', 'actions'];
   mobileColumns: string[] = ['name', 'category', 'moneySpent', 'actions'];
   expenses: Expense[] = [];
-  mobileView: boolean = false;
   private deleteSubscription: Subscription = null;
   private expenseSubscription: Subscription = null;
   constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService, private authenticationService: AuthenticationService) {
@@ -62,10 +61,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log(window.screen.width);
-    
-    if(window.screen.width < 600) {
-      this.mobileView = true;
+    if(this.sharedService.mobileView) {
       this.displayedColumns = this.mobileColumns;
     }
     this.query();

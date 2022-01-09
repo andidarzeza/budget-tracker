@@ -6,13 +6,18 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SharedService {
   private dataSource = new BehaviorSubject<string>("");
-  public theme = 'dark';
-  public stillLoading = false;
-  private darkMode = true;
-  public isSpinnerEnabled = true;
+  public theme: string = 'dark';
+  public stillLoading: boolean = false;
+  private darkMode: boolean = true;
+  public isSpinnerEnabled: boolean = true;
+  public mobileView: boolean = false;
   themeSubscribable = this.dataSource.asObservable();
   item: any = null;
-  constructor() { }
+  constructor() { 
+    if(window.screen.width < 600) {
+      this.mobileView = true;
+    }
+  }
   changeTheme(darkMode: any): void {
     this.darkMode = darkMode;
     this.darkMode? this.theme = 'dark': this.theme = 'light';
@@ -37,9 +42,7 @@ export class SharedService {
       }, 500);
     } else {
       const spinner = document.getElementById('spinner-id') as HTMLElement;
-      const sidebar = document.getElementById('sidebar') as HTMLElement;
-      console.log(sidebar.style.width);
-      
+      const sidebar = document.getElementById('sidebar') as HTMLElement;      
       if(sidebar.style.width === '18%') {
         if(spinner) {
           spinner.style.width= '82%';

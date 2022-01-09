@@ -41,7 +41,8 @@ export class SideBarService {
     const application = document.getElementById('application-body') as HTMLElement;
     const shadow = document.getElementById('shadow') as HTMLElement;
     const toggle = document.getElementById('toggle-id') as HTMLElement;
-    sideBar.style.width = '60px';
+    if(this.sharedService.mobileView) sideBar.style.width = '0px';
+    else sideBar.style.width = '60px';
     if(window.innerWidth > 3000) {
       application.style.width = '100%';
     }

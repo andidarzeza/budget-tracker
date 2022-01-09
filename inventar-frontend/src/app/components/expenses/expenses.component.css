@@ -66,6 +66,7 @@ table {
 
 .titulli {
     display: flex;
+    align-items: center;
     padding: 25px 25px;
     font-size: 25px;
     color: #9F9F9F;
@@ -133,6 +134,18 @@ table {
 
 @media only screen and (max-width: 500px) {
     .titulli{
-        padding: 15px 15px;
+        padding: 12px 12px;
+        font-size: 19px;
     }
+
+    .titulli > mat-icon {
+        font-size: 19px !important;
+        width: 19px !important;
+        height: 19px !important;
+    }
+
+    .title {
+        margin-left: 0px;
+    }
+    
 }
