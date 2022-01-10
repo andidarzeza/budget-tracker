@@ -1,5 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IConfiguration } from 'src/app/models/IConfiguration';
 import { ConfigurationService } from 'src/app/services/configuration.service';

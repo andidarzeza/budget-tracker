@@ -1,115 +1,115 @@
 
-
+<!-- LOADING SPINNER - PROGRESS BAR -->
 <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation] *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled" style="position: absolute;top: 64px;left:0"></mat-progress-bar>
+
+<!-- TABLE - ACTIONS: CREATE, REFRESH, SEARCH -->
 <div class="table-container {{sharedService.theme}}-table">
-    <div class="titulli">
+    <div class="title-container">
         <mat-icon class="{{sharedService.theme}}-icon">attach_money</mat-icon>
         <span class="title">Expenses</span>
     </div>
-    <div class="table-actions {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">
+    
+    <div class="table-actions action-container {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">
         <mat-icon (click)="refresh()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
         <mat-icon (click)="openDialog()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">add</mat-icon>
-        <mat-icon (click)="openDialog()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">search</mat-icon>
+        <mat-icon class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-right: 9px">search</mat-icon>
     </div>
+
+
 </div>
 
 <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="getHeight(0)">
-    <div class="book-table">
-        <table 
-            mat-table 
-            [dataSource]="expenses"
-            class="mat-elevation-z8 {{sharedService.theme}}-table"
-            style="box-shadow: none;"
-            matSort 
-            (matSortChange)="announceSortChange($event)"
-            >
-    
-            <!--- Note that these columns can be defined in any order.
-                  The actual rendered columns are set as a property on the row definition" -->
-            <!-- Name Column -->
-            <ng-container matColumnDef="createdTime">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Date </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.createdTime | date:'dd/MM/yyyy - HH:mm'}}</td>
-            </ng-container>
+    <table 
+        mat-table 
+        [dataSource]="expenses"
+        class="mat-elevation-z8 {{sharedService.theme}}-table"
+        style="box-shadow: none;"
+        matSort 
+        (matSortChange)="announceSortChange($event)"
+        >
+        <!-- Created Time Column -->
+        <ng-container matColumnDef="createdTime">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Date </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.createdTime | date:'dd/MM/yyyy - HH:mm'}}</td>
+        </ng-container>
 
-            <!-- Name Column -->
-            <ng-container matColumnDef="name">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Name </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.name}}</td>
-            </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Name </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.name}}</td>
+        </ng-container>
     
-            <!-- Weight Column -->
-            <ng-container matColumnDef="description">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Description </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.description}} </td>
-            </ng-container>
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Description </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.description}} </td>
+        </ng-container>
 
-            <!-- Symbol Column -->
-            <ng-container matColumnDef="moneySpent">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Money Spent </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.moneySpent | number:'1.0':'en-US'}} ALL</td>
-            </ng-container>
+        <!-- Expenses Column -->
+        <ng-container matColumnDef="moneySpent">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Expense </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.moneySpent | number:'1.0':'en-US'}} ALL</td>
+        </ng-container>
     
-            <!-- Symbol Column -->
-            <ng-container matColumnDef="category">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Category </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.category}} </td>
-            </ng-container>
+        <!-- Category Column -->
+        <ng-container matColumnDef="category">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Category </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.category}} </td>
+        </ng-container>
     
-            <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">
-                    <span *ngIf = "!sharedService.mobileView">
-                        Actions
-                    </span></th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text" style="padding: 0;">
-                    <div class="action-container">
-                        <button mat-icon-button color="primary">
-                            <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
-                        </button>
-                        <button mat-icon-button (click)="editExpense(element)">
-                            <mat-icon>edit</mat-icon>
-                        </button>
-                        <button mat-icon-button color="warn" (click)="deleteExpense(element.id)">
-                            <mat-icon style="color: #ff6347;">delete</mat-icon>
-                        </button>
-                    </div>
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">
+                <span *ngIf = "!sharedService.mobileView">Actions</span>
+            </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text" style="padding: 0;">
+                <div class="action-container">
+                    <button mat-icon-button color="primary">
+                        <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="editExpense(element)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteExpense(element.id)">
+                        <mat-icon color="warn">delete</mat-icon>
+                    </button>
+                </div>
                     
-
-                    <button class="mobile-action-container" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-                        <mat-icon>more_vert</mat-icon>
-                      </button>
-                      <mat-menu class="{{sharedService.theme}}-mobile-action-menu" #menu="matMenu">
-                        <button mat-menu-item>
-                          <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
-                          <span class="{{sharedService.theme}}-text">View</span>
-                        </button>
-                        <button mat-menu-item (click)="editExpense(element)">
-                          <mat-icon style="color: #9F9F9F !important;">edit</mat-icon>
-                          <span class="{{sharedService.theme}}-text">Edit</span>
-                        </button>
-                        <button mat-menu-item (click)="deleteExpense(element.id)">
-                          <mat-icon style="color: #ff6347;">delete</mat-icon>
-                          <span class="{{sharedService.theme}}-text">Delete</span>
-                        </button>
-                      </mat-menu>
-                </td>
+                <button class="mobile-action-container" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                
+                <mat-menu class="{{sharedService.theme}}-mobile-action-menu" #menu="matMenu">
+                    <button mat-menu-item>
+                        <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
+                        <span class="{{sharedService.theme}}-text">View</span>
+                    </button>
+                    <button mat-menu-item (click)="editExpense(element)">
+                        <mat-icon style="color: #9F9F9F !important;">edit</mat-icon>
+                        <span class="{{sharedService.theme}}-text">Edit</span>
+                    </button>
+                    <button mat-menu-item (click)="deleteExpense(element.id)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        <span class="{{sharedService.theme}}-text">Delete</span>
+                    </button>
+                </mat-menu>
+            </td>
     
-            </ng-container>
+        </ng-container>
     
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-    </div>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
     <div *ngIf="expenses.length == 0 && !sharedService.stillLoading" class="no-data" [style.height.px]="getHeight(60)">
         No data to display!
     </div>
 </div>
 
 
-
-<div class="book-table">
-    <mat-paginator [length]="totalItems" class="{{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text" [pageSize]="size" [pageSizeOptions]="pageSizeOptions" (page)="paginatorEvent($event) " style="box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px
-        3px 14px 2px rgba(0, 0, 0, 0.12); position: sticky;bottom: 0;width:95% ">
-    </mat-paginator>
-
-</div>
+<mat-paginator 
+    [length]="totalItems"
+    [pageSize]="size"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="paginatorEvent($event)"
+    class="table-paginator {{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text">
+</mat-paginator>

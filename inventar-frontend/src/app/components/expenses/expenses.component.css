@@ -1,8 +1,4 @@
-.book-table {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
+
 
 table {
     width: 100%;
@@ -64,7 +60,7 @@ table {
     text-align: center;
 }
 
-.titulli {
+.title-container {
     display: flex;
     align-items: center;
     padding: 25px 25px;
@@ -133,12 +129,12 @@ table {
 }
 
 @media only screen and (max-width: 500px) {
-    .titulli{
+    .title-container{
         padding: 12px 12px;
         font-size: 19px;
     }
 
-    .titulli > mat-icon {
+    .title-container > mat-icon {
         font-size: 19px !important;
         width: 19px !important;
         height: 19px !important;

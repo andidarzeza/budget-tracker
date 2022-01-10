@@ -14,10 +14,16 @@ export class SharedService {
   themeSubscribable = this.dataSource.asObservable();
   item: any = null;
   constructor() { 
-    if(window.screen.width < 600) {
-      this.mobileView = true;
-    }
+    this.mobileView = window.screen.width < 600;
+    this.listenForResizeEvent();
   }
+
+  private listenForResizeEvent(): void {
+    window.addEventListener('resize', (event: any) => {
+      this.mobileView = event.target.innerWidth < 600;
+    });
+  }
+
   changeTheme(darkMode: any): void {
     this.darkMode = darkMode;
     this.darkMode? this.theme = 'dark': this.theme = 'light';
