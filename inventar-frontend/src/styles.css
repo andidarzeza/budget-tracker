@@ -619,6 +619,7 @@ button.toast-close-button {
     margin-bottom: 10px;
     overflow: hidden !important;
     box-shadow: none !important;
+    min-height: unset !important;
  }
 
  .mobile-action-container {

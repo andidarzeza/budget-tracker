@@ -94,7 +94,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteAssociate(id: string): void {
+  openDeleteDialog(id: string): void {
     this.openConfirmDialog().afterClosed().subscribe((result: any) => {
       if(result) {
         this.delete(id);
@@ -110,7 +110,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     return dialogRef;
   }
 
-  editAssociate(spendingCategory: SpendingCategory): void {
+  editCategory(spendingCategory: SpendingCategory): void {
     this.openDialog(spendingCategory);
   }
   

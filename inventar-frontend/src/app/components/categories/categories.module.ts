@@ -13,6 +13,7 @@ import { IconSelectComponent } from '../../shared/icon-select/icon-select.compon
 import { MatButtonModule } from '@angular/material/button';
 import { CategoriesRoutingModule } from './categories-routing.module';
 import { MatSortModule } from '@angular/material/sort';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { MatSortModule } from '@angular/material/sort';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    MatMenuModule
   ]
 })
 export class CategoriesModule { }

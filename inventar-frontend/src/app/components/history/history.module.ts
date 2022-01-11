@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { HistoryComponent } from './history.component';
 import { MatSortModule } from '@angular/material/sort';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     MatFormFieldModule,
     MatInputModule,
     MatOptionModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatMenuModule
   ]
 })
 export class HistoryModule { }

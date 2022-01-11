@@ -56,15 +56,37 @@
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">Actions</th>
                 <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text" style="padding: 0;">
-                    <button mat-icon-button color="primary">
-                        <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
+                    
+                    <div class="action-container">
+                        <button mat-icon-button color="primary">
+                            <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="editCategory(element)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="openDeleteDialog(element.id)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+
+                    <button class="mobile-action-container" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
                     </button>
-                    <button mat-icon-button (click)="editAssociate(element)">
-                        <mat-icon>edit</mat-icon>
-                    </button>
-                    <button mat-icon-button color="warn" (click)="deleteAssociate(element.id)">
-                        <mat-icon style="color: #ff6347;">delete</mat-icon>
-                    </button>
+                    
+                    <mat-menu class="{{sharedService.theme}}-mobile-action-menu" #menu="matMenu">
+                        <button mat-menu-item>
+                            <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
+                            <span class="{{sharedService.theme}}-text">View</span>
+                        </button>
+                        <button mat-menu-item (click)="editCategory(element)">
+                            <mat-icon style="color: #9F9F9F !important;">edit</mat-icon>
+                            <span class="{{sharedService.theme}}-text">Edit</span>
+                        </button>
+                        <button mat-menu-item (click)="openDeleteDialog(element.id)">
+                            <mat-icon color="warn">delete</mat-icon>
+                            <span class="{{sharedService.theme}}-text">Delete</span>
+                        </button>
+                    </mat-menu>
                 </td>
     
             </ng-container>
@@ -80,9 +102,10 @@
 
 
 
-<div class="book-table">
-    <mat-paginator [length]="totalItems" class="{{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text" [pageSize]="size" [pageSizeOptions]="pageSizeOptions" (page)="paginatorEvent($event) " style="box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px
-        3px 14px 2px rgba(0, 0, 0, 0.12); position: sticky;bottom: 0;width:95% ">
-    </mat-paginator>
-
-</div>
+<mat-paginator 
+    [length]="totalItems" 
+    class="table-paginator {{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text" 
+    [pageSize]="size" 
+    [pageSizeOptions]="pageSizeOptions" 
+    (page)="paginatorEvent($event)">
+</mat-paginator>

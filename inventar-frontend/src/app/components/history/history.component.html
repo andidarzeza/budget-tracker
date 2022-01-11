@@ -47,9 +47,22 @@
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">Actions</th>
             <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text" style="padding: 0;">
-                <button mat-icon-button color="primary">
-                    <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
+                <div class="action-container">
+                    <button mat-icon-button color="primary">
+                        <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
+                    </button>
+                </div>
+                
+                <button class="mobile-action-container" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                    <mat-icon>more_vert</mat-icon>
                 </button>
+                
+                <mat-menu class="{{sharedService.theme}}-mobile-action-menu" #menu="matMenu">
+                    <button mat-menu-item>
+                        <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
+                        <span class="{{sharedService.theme}}-text">View</span>
+                    </button>
+                </mat-menu>
             </td>
         </ng-container>
     

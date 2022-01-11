@@ -15,6 +15,7 @@ import { IncomesRoutingModule } from './incomes-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSortModule } from '@angular/material/sort';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 
@@ -37,7 +38,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
-    MatSelectModule
+    MatSelectModule,
+    MatMenuModule
   ]
 })
 export class IncomesModule { }
