@@ -2,21 +2,10 @@
 <!-- LOADING SPINNER - PROGRESS BAR -->
 <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation] *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled" style="position: absolute;top: 64px;left:0"></mat-progress-bar>
 
-<!-- TABLE - ACTIONS: CREATE, REFRESH, SEARCH -->
-<div class="table-container {{sharedService.theme}}-table">
-    <div class="title-container">
-        <mat-icon class="{{sharedService.theme}}-icon">attach_money</mat-icon>
-        <span class="title">Expenses</span>
-    </div>
-    
-    <div class="table-actions action-container {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">
-        <mat-icon (click)="refresh()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
-        <mat-icon (click)="openDialog()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">add</mat-icon>
-        <mat-icon class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-right: 9px">search</mat-icon>
-    </div>
-
-
-</div>
+<app-table-actions
+    [tableActionInput]="tableActionInput"
+    (onOpenDialog)="openDialog()"
+    (onRefresh)="refresh()"></app-table-actions>
 
 <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="getHeight(0)">
     <table 

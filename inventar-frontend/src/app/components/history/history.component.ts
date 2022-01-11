@@ -9,6 +9,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { HistoryService } from 'src/app/services/history.service';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Sort } from '@angular/material/sort';
+import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 
 @Component({
   selector: 'app-history',
@@ -50,6 +51,15 @@ export class HistoryComponent implements OnInit {
   public displayedColumns: string[] = ['date', 'action', 'entity', 'message', 'user', 'actions'];
   public historyList: History[] = [];
   private historySubscription: Subscription = null;
+
+  public tableActionInput: TableActionInput = {
+    pageName: "History",
+    icon: 'history',
+    extra: {
+      hideInsertButton: true
+    }
+  };
+
   constructor(public sharedService: SharedService, private historyService: HistoryService, public dialog: MatDialog) { }
 
   ngOnInit(): void {

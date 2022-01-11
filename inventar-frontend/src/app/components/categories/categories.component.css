@@ -79,6 +79,12 @@ table {
 }
 
 #tab-underline {
+    width: 290px;
+    height: 2px;
+    position: absolute;
+    background: rgb(237,94,70);
+    bottom: 15px;
+    left: 25px;
     transition: transform 500ms;
 }
 

@@ -12,6 +12,7 @@ import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
+import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 
 @Component({
   selector: 'app-incomes',
@@ -53,6 +54,11 @@ export class IncomesComponent implements OnInit, OnDestroy {
   public displayedColumns: string[] = ['date', 'name', 'description', 'category', 'incoming', 'actions'];
   private deleteSubscription: Subscription = null;
   private incomeSubscription: Subscription = null;
+
+  public tableActionInput: TableActionInput = {
+    pageName: "Incomes",
+    icon: 'transit_enterexit'
+  };
 
   constructor(
     public sharedService: SharedService,
@@ -118,7 +124,7 @@ export class IncomesComponent implements OnInit, OnDestroy {
     this.openDialog(income);
   }
   
-  refreshData(): void {
+  refresh(): void {
     this.query();
   }
 

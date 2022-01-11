@@ -1,12 +1,7 @@
 <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation] *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled" style="position: absolute;top: 64px;left:0"></mat-progress-bar>
 <div class="table-container {{sharedService.theme}}-table">
     <div class="titulli">
-        <div id="tab-underline" style="width: 290px;
-        height: 2px;
-        position: absolute;
-        background: rgb(237,94,70);
-        bottom: 15px;
-        left: 25px;">
+        <div id="tab-underline">
 
         </div>
         <div class="tab-option" [ngClass]="{'selected-tab': categoriesType==='spendings'}" (click)="changeCategoriesType('spendings')">

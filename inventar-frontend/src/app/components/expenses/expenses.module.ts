@@ -16,6 +16,7 @@ import { ExpensesRoutingModule } from './expenses-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSortModule } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 
@@ -28,6 +29,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatIconModule,
     MatTableModule,
     MatSortModule,
+    SharedModule,
     MatProgressBarModule,
     MatPaginatorModule,
     MatButtonModule,

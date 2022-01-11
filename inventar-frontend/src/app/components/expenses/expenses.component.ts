@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Sort } from '@angular/material/sort';
+import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 
 @Component({
   selector: 'app-expenses',
@@ -56,6 +57,12 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   expenses: Expense[] = [];
   private deleteSubscription: Subscription = null;
   private expenseSubscription: Subscription = null;
+
+  tableActionInput: TableActionInput = {
+    pageName: "Expenses",
+    icon: 'attach_money'
+  };
+
   constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService, private authenticationService: AuthenticationService) {
     
   }

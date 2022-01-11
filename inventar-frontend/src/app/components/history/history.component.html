@@ -1,75 +1,61 @@
 
 
 <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation] *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled" style="position: absolute;top: 64px;left:0"></mat-progress-bar>
-<div class="table-container {{sharedService.theme}}-table">
-    <div class="titulli">
-        <mat-icon class="{{sharedService.theme}}-icon">history</mat-icon>
-        <span class="title">History</span>
-    </div>
-    <div class="table-actions {{sharedService.theme}}-text">
-        <mat-icon (click)="refresh()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
-        <mat-icon class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">search</mat-icon>
 
-    </div>
-</div>
+<app-table-actions 
+    [tableActionInput]="tableActionInput"
+    (onRefresh)="refresh()"
+    ></app-table-actions>
 
 <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="getHeight(0)">
-    <div class="book-table">
-        <table 
-            mat-table 
-            [dataSource]="historyList" 
-            class="mat-elevation-z8 {{sharedService.theme}}-table" 
-            style="box-shadow: none;"
-            matSort 
-            (matSortChange)="announceSortChange($event)"
-        >
-    
-            <!--- Note that these columns can be defined in any order.
-                  The actual rendered columns are set as a property on the row definition" -->
-            <!-- Name Column -->
-            <ng-container matColumnDef="date">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Date </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.date | date:'dd/MM/yyyy - HH:mm'}}</td>
-            </ng-container>
+    <table 
+        mat-table matSort
+        [dataSource]="historyList" 
+        class="{{sharedService.theme}}-table" 
+        (matSortChange)="announceSortChange($event)"
+    >
+        <ng-container matColumnDef="date">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Date </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.date | date:'dd/MM/yyyy - HH:mm'}}</td>
+        </ng-container>
 
-            <!-- Name Column -->
-            <ng-container matColumnDef="entity">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Entity </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.entity}}</td>
-            </ng-container>
-    
-            <!-- Weight Column -->
-            <ng-container matColumnDef="action">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Action </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.action}} </td>
-            </ng-container>
+         <!-- Entity Column -->
+        <ng-container matColumnDef="entity">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Entity </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.entity}}</td>
+        </ng-container>
 
-            <!-- Symbol Column -->
-            <ng-container matColumnDef="message">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Message </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.message}}</td>
-            </ng-container>
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Action </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.action}} </td>
+        </ng-container>
+
+        <!-- Message Column -->
+        <ng-container matColumnDef="message">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Message </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.message}}</td>
+        </ng-container>
     
-            <!-- Symbol Column -->
-            <ng-container matColumnDef="user">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> User </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.user}} </td>
-            </ng-container>
+        <!-- User Column -->
+        <ng-container matColumnDef="user">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> User </th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.user}} </td>
+        </ng-container>
     
-            <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">Actions</th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text" style="padding: 0;">
-                    <button mat-icon-button color="primary">
-                        <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
-                    </button>
-                </td>
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">Actions</th>
+            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text" style="padding: 0;">
+                <button mat-icon-button color="primary">
+                    <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
+                </button>
+            </td>
+        </ng-container>
     
-            </ng-container>
-    
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-    </div>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
     <div *ngIf="historyList.length == 0 && !sharedService.stillLoading" class="no-data" [style.height.px]="getHeight(60)">
         No data to display!
     </div>
@@ -77,9 +63,11 @@
 
 
 
-<div class="book-table">
-    <mat-paginator [length]="totalItems" class="{{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text" [pageSize]="size " [pageSizeOptions]="pageSizeOptions" (page)="paginatorEvent($event) " style="box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px
-        3px 14px 2px rgba(0, 0, 0, 0.12); position: sticky;bottom: 0;width:95% ">
-    </mat-paginator>
+<mat-paginator 
+    [length]="totalItems" 
+    class="table-paginator {{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text" 
+    [pageSize]="size" 
+    [pageSizeOptions]="pageSizeOptions" 
+    (page)="paginatorEvent($event)">
+</mat-paginator>
 
-</div>

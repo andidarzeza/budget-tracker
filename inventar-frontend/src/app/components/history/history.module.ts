@@ -14,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { HistoryComponent } from './history.component';
 import { MatSortModule } from '@angular/material/sort';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatIconModule,
     MatTableModule,
     MatSortModule,
+    SharedModule,
     MatProgressBarModule,
     MatPaginatorModule,
     MatButtonModule,

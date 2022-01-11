@@ -10,11 +10,12 @@ import { FloatingMenuComponent } from './floating-menu/floating-menu.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AbsoluteValuePipe } from '../pipes/absolute-value.pipe';
+import { TableActionsComponent } from './table-actions/table-actions.component';
 
 
 
 @NgModule({
-  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe],
+  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, TableActionsComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -28,7 +29,8 @@ import { AbsoluteValuePipe } from '../pipes/absolute-value.pipe';
     FormsModule,
     ConfirmComponent,
     FloatingMenuComponent,
-    AbsoluteValuePipe
+    AbsoluteValuePipe,
+    TableActionsComponent
   ]
 })
 export class SharedModule { }
