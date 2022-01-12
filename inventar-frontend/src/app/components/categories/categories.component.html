@@ -13,7 +13,7 @@
             <span class="title">Income Categories</span>
         </div>
     </div>
-    <div class="table-actions {{sharedService.theme}}-text">
+    <div class="table-actions {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">
         <mat-icon (click)="query()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
         <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">add</mat-icon>
         <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">search</mat-icon>
@@ -22,7 +22,6 @@
 </div>
 
 <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="getHeight(0)">
-    <div class="book-table">
         <table 
             mat-table 
             [dataSource]="dataSource" 
@@ -94,7 +93,6 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-    </div>
     <div *ngIf="dataSource.length == 0" class="no-data" [style.height.px]="getHeight(60)">
         No data to display!
     </div>

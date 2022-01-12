@@ -113,6 +113,7 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   }
 
   getHeight(difference: number): number {
+    difference = this.sharedService.mobileView ? (difference - 40) : 0;
     return window.innerHeight - 275 - difference;
   }
 

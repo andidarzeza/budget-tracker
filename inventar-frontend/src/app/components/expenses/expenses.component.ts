@@ -123,6 +123,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   getHeight(difference: number): number {
+    difference = this.sharedService.mobileView ? (difference - 40) : 0;
     return window.innerHeight - 275 - difference;
   }
 

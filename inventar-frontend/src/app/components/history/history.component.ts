@@ -47,6 +47,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
   private defaultSort: string = "date,desc";
   private sort: string = this.defaultSort;
   public displayedColumns: string[] = ['date', 'action', 'entity', 'message', 'user', 'actions'];
+  public mobileColumns: string[] = ['entity', 'message', 'user', 'actions'];
   public historyList: History[] = [];
   private historySubscription: Subscription = null;
   public tableActionInput: TableActionInput = {
@@ -62,7 +63,10 @@ export class HistoryComponent implements OnInit, OnDestroy {
     private historyService: HistoryService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
+    if(this.sharedService.mobileView) {
+      this.displayedColumns = this.mobileColumns;
+    }
     this.query();
   }
 
@@ -85,6 +89,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
   }
 
   getHeight(difference: number): number {
+    difference = this.sharedService.mobileView ? (difference - 40) : 0;
     return window.innerHeight - 275 - difference;
   }
 

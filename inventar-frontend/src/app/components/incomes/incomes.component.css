@@ -4,10 +4,6 @@
     justify-content: center;
 }
 
-table {
-    width: 100%;
-}
-
 .button-container {
     height: 100px;
     width: 100%;
@@ -124,5 +120,6 @@ thead {
 table {
     width: 100%;
     table-layout: fixed;
-    display: table;  
+    display: block;
+    height: calc(100% - 65px); 
 }

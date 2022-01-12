@@ -76,4 +76,5 @@
     background: hsla(0, 0%, 100%, .15);
     pointer-events: none;
     transition: transform ease 200ms;
+    transform: translate(-50%, 5px);
 }

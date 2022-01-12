@@ -112,7 +112,7 @@ app-date-picker {
 
 .mat-table tbody {
     display: block !important;
-    max-height: 649px !important;
+    max-height: 100% !important;
     overflow: auto !important;
 }
 
@@ -663,6 +663,10 @@ th, td {
 
     .progress-bar {
         top: 56px !important;
+    }
+
+    .table-container {
+        margin-top: 20px;
     }
 }
 
