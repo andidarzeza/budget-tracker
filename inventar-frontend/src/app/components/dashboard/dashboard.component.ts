@@ -103,7 +103,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).subscribe((dashboardData: DashboardDTO) => {
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);
-      console.log(dashboardData);
       this.increaseInExpense = dashboardData.increaseInExpense;
       this.increaseInIncome = dashboardData.increaseInIncome;
       this.totalIncome = dashboardData.incomes;
@@ -116,9 +115,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         dailyExpensesLabels, 
         this.getDailyExpensesData(dailyExpensesLabels, dashboardData.dailyExpenses)
       );
-
-      console.log(dashboardData.expensesInfo);
-      
       
       this.createCategoryChart(
         dashboardData.expensesInfo.map((expenseInfo: ExpenseInfoDTO) => expenseInfo._id),

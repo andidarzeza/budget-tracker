@@ -14,9 +14,9 @@
         </div>
     </div>
     <div class="table-actions {{sharedService.theme}}-text">
-        <mat-icon (click)="refreshData()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
-        <mat-icon (click)="openDialog()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">add</mat-icon>
-        <mat-icon (click)="openDialog()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">search</mat-icon>
+        <mat-icon (click)="query()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
+        <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">add</mat-icon>
+        <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">search</mat-icon>
 
     </div>
 </div>
@@ -61,10 +61,10 @@
                         <button mat-icon-button color="primary">
                             <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
                         </button>
-                        <button mat-icon-button (click)="editCategory(element)">
+                        <button mat-icon-button (click)="openAddEditForm(element)">
                             <mat-icon>edit</mat-icon>
                         </button>
-                        <button mat-icon-button color="warn" (click)="openDeleteDialog(element.id)">
+                        <button mat-icon-button color="warn" (click)="openDeleteConfirmDialog(element.id)">
                             <mat-icon>delete</mat-icon>
                         </button>
                     </div>
@@ -78,11 +78,11 @@
                             <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
                             <span class="{{sharedService.theme}}-text">View</span>
                         </button>
-                        <button mat-menu-item (click)="editCategory(element)">
+                        <button mat-menu-item (click)="openAddEditForm(element)">
                             <mat-icon style="color: #9F9F9F !important;">edit</mat-icon>
                             <span class="{{sharedService.theme}}-text">Edit</span>
                         </button>
-                        <button mat-menu-item (click)="openDeleteDialog(element.id)">
+                        <button mat-menu-item (click)="openDeleteConfirmDialog(element.id)">
                             <mat-icon color="warn">delete</mat-icon>
                             <span class="{{sharedService.theme}}-text">Delete</span>
                         </button>
