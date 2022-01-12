@@ -5,13 +5,19 @@
     </div>
 
     <div class="menu-items">
-        <div id="active-item">
-
-        </div>
-        <div class="opened-menu-item pointer" *ngFor="let item of items;let i = index" [routerLink]="[item.link]" routerLinkActive="router-link-active"
-         (click)="animateSelectedOption(i)">
+        <div id="active-item"></div>
+        <div 
+            class="opened-menu-item pointer" 
+            *ngFor="let item of items;let i = index" 
+            [routerLink]="[item.link]" 
+            routerLinkActive="router-link-active"
+            (click)="animateSelectedOption(i)"
+            [matTooltip]="item.text"
+            matTooltipPosition="below"
+            matTooltipClass="sidebar-tooltip"
+        >
             <mat-icon class="{{sharedService.theme}}-icon">{{item.icon}}</mat-icon>
-            <span  class="title {{sharedService.theme}}-text">{{item.text}}</span>
+            <span *ngIf="sideBarService.isOpened" class="title {{sharedService.theme}}-text">{{item.text}}</span>
         </div>
     </div>
 

@@ -1,9 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from 'src/environments/environment';
-import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { HistoryService } from 'src/app/services/history.service';
@@ -39,7 +37,7 @@ import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput'
     )
   ]
 })
-export class HistoryComponent implements OnInit {
+export class HistoryComponent implements OnInit, OnDestroy {
 
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   public page: number = 0;
@@ -51,7 +49,6 @@ export class HistoryComponent implements OnInit {
   public displayedColumns: string[] = ['date', 'action', 'entity', 'message', 'user', 'actions'];
   public historyList: History[] = [];
   private historySubscription: Subscription = null;
-
   public tableActionInput: TableActionInput = {
     pageName: "History",
     icon: 'history',
@@ -60,7 +57,10 @@ export class HistoryComponent implements OnInit {
     }
   };
 
-  constructor(public sharedService: SharedService, private historyService: HistoryService, public dialog: MatDialog) { }
+  constructor(
+    public sharedService: SharedService, 
+    private historyService: HistoryService
+  ) {}
 
   ngOnInit(): void {
     this.query();
@@ -75,7 +75,7 @@ export class HistoryComponent implements OnInit {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.unsubscribe(this.historySubscription);
+    this.historySubscription?.unsubscribe();
     this.historySubscription = this.historyService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
       this.historyList = res?.body.historyList;
       this.totalItems = res?.body.count;
@@ -84,40 +84,17 @@ export class HistoryComponent implements OnInit {
     });
   }
 
-  openConfirmDialog(): MatDialogRef<ConfirmComponent>  {
-    const dialogRef = this.dialog.open(ConfirmComponent, {
-      disableClose: true,
-      panelClass: this.sharedService.theme + '-class'
-    });
-    return dialogRef;
-  }
-  
-  refresh(): void {
-    this.query();
-  }
-
-
   getHeight(difference: number): number {
     return window.innerHeight - 275 - difference;
   }
 
-  private unsubscribe(subscription: Subscription): void {
-    if(subscription) {
-      subscription.unsubscribe();
-    }
+  announceSortChange(sort: Sort): void {
+    this.sort = sort.direction ? `${sort.active},${sort.direction}` : this.defaultSort;
+    this.query();
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe(this.historySubscription);
-  }
-
-  announceSortChange(sort: Sort): void {
-    if(sort.direction) {
-      this.sort = `${sort.active},${sort.direction}`;
-    } else {
-      this.sort = this.defaultSort;
-    }
-    this.query();
+    this.historySubscription?.unsubscribe();
   }
 
 }

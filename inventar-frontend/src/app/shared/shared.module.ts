@@ -11,6 +11,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AbsoluteValuePipe } from '../pipes/absolute-value.pipe';
 import { TableActionsComponent } from './table-actions/table-actions.component';
+import { DialogService } from '../services/dialog.service';
+import { AddSpendingComponent } from '../components/expenses/add-spending/add-spending.component';
 
 
 
@@ -31,6 +33,12 @@ import { TableActionsComponent } from './table-actions/table-actions.component';
     FloatingMenuComponent,
     AbsoluteValuePipe,
     TableActionsComponent
+  ],
+  providers: [
+    DialogService
+  ],
+  entryComponents: [
+    AddSpendingComponent
   ]
 })
 export class SharedModule { }

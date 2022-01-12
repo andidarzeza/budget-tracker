@@ -25,6 +25,11 @@ export const TOASTER_CONFIGURATION = {
   positionClass: 'toast-bottom-right'
 }
 
+export const CREATE_DIALOG_CONFIGURATION = {
+  width: '700px',
+  disableClose: true
+}
+
 // Pagination Options
 export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 export const PAGE_SIZE = 20;

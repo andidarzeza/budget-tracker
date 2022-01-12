@@ -4,8 +4,8 @@
 
 <app-table-actions
     [tableActionInput]="tableActionInput"
-    (onOpenDialog)="openDialog()"
-    (onRefresh)="refresh()"></app-table-actions>
+    (onOpenDialog)="openAddEditForm()"
+    (onRefresh)="query()"></app-table-actions>
 
 <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="getHeight(0)">
     <table 
@@ -56,10 +56,10 @@
                     <button mat-icon-button color="primary">
                         <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
                     </button>
-                    <button mat-icon-button (click)="editExpense(element)">
+                    <button mat-icon-button (click)="openAddEditForm(element)">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn" (click)="deleteExpense(element.id)">
+                    <button mat-icon-button color="warn" (click)="openDeleteConfirmDialog(element.id)">
                         <mat-icon color="warn">delete</mat-icon>
                     </button>
                 </div>
@@ -73,11 +73,11 @@
                         <mat-icon class="{{sharedService.theme}}-icon">open_in_new</mat-icon>
                         <span class="{{sharedService.theme}}-text">View</span>
                     </button>
-                    <button mat-menu-item (click)="editExpense(element)">
+                    <button mat-menu-item (click)="openAddEditForm(element)">
                         <mat-icon style="color: #9F9F9F !important;">edit</mat-icon>
                         <span class="{{sharedService.theme}}-text">Edit</span>
                     </button>
-                    <button mat-menu-item (click)="deleteExpense(element.id)">
+                    <button mat-menu-item (click)="openDeleteConfirmDialog(element.id)">
                         <mat-icon color="warn">delete</mat-icon>
                         <span class="{{sharedService.theme}}-text">Delete</span>
                     </button>

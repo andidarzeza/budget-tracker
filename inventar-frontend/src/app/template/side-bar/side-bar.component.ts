@@ -60,7 +60,8 @@ export class SideBarComponent implements AfterViewInit {
   animateSelectedOption(index: number): void {
     const activeItem = document.getElementById("active-item") as HTMLElement;
     if(activeItem) {
-      activeItem.style.transform = `translateY(${index * 100}%)`;
+      const margin = index+1;
+      activeItem.style.transform = `translate(-50%, calc(${index * 100}% + ${(index * 5) + (margin *5)}px))`;
     }
   }
 

@@ -648,7 +648,14 @@ th, td {
     width:auto;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
+}
+
+.mat-tooltip.sidebar-tooltip {
+    /* background-color: darkblue; */
+    font-size: 14px;
+    /* margin-left: 0px; */
+}
+
 @media only screen and (max-width: 475px) { 
     app-date-picker {
         top: 170%;

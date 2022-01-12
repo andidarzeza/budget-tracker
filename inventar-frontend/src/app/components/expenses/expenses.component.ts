@@ -1,7 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Expense } from 'src/app/models/Expense';
 import { SharedService } from 'src/app/services/shared.service';
@@ -11,9 +10,11 @@ import { AddSpendingComponent } from './add-spending/add-spending.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
-import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
+import { EntityOperation } from 'src/app/models/core/EntityOperation';
+import { filter } from 'rxjs/operators';
+import { DialogService } from 'src/app/services/dialog.service';
 
 @Component({
   selector: 'app-expenses',
@@ -43,29 +44,31 @@ import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput'
     )
   ]
 })
-export class ExpensesComponent implements OnInit, OnDestroy {
-  pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
-  page = 0;
-  size = PAGE_SIZE;
-  totalItems;
-  totalRequests = 0;
-  theme = 'light';
-  defaultSort: string = "createdTime,desc";
-  sort = this.defaultSort;
-  displayedColumns: string[] = ['createdTime', 'name', 'description', 'category', 'moneySpent', 'actions'];
-  mobileColumns: string[] = ['name', 'category', 'moneySpent', 'actions'];
-  expenses: Expense[] = [];
+export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Expense> {
+  public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
+  public page: number = 0;
+  public size: number = PAGE_SIZE;
+  public totalItems: number = 0;
+  public totalRequests: number = 0;
+  public theme: string = 'light';
+  public defaultSort: string = "createdTime,desc";
+  public sort: string = this.defaultSort;
+  public displayedColumns: string[] = ['createdTime', 'name', 'description', 'category', 'moneySpent', 'actions'];
+  public mobileColumns: string[] = ['name', 'category', 'moneySpent', 'actions'];
+  public expenses: Expense[] = [];
   private deleteSubscription: Subscription = null;
   private expenseSubscription: Subscription = null;
-
-  tableActionInput: TableActionInput = {
+  public tableActionInput: TableActionInput = {
     pageName: "Expenses",
     icon: 'attach_money'
   };
 
-  constructor(public sharedService: SharedService, private spendingService: SpendingService, public dialog: MatDialog, private toaster: ToastrService, private authenticationService: AuthenticationService) {
-    
-  }
+  constructor(
+    public sharedService: SharedService,
+    private spendingService: SpendingService,
+    public dialog: DialogService,
+    private toaster: ToastrService
+  ) {}
 
   ngOnInit(): void {
     if(this.sharedService.mobileView) {
@@ -83,7 +86,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.unsubscribe(this.expenseSubscription);
+    this.expenseSubscription?.unsubscribe();
     this.expenseSubscription = this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
       this.expenses = res?.body.spendings;
       this.totalItems = res?.body.count;
@@ -92,50 +95,25 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDialog(expense?: Expense): void {
-    const dialogRef = this.dialog.open(AddSpendingComponent, {
-      data: expense,
-      width: '700px',
-      disableClose: true,
-      panelClass: this.sharedService.theme + '-class'
-    });
-
-    dialogRef.afterClosed().subscribe((update: boolean) => {
-      if(update) {
-        this.query();
-      }
-    });
+  openAddEditForm(expense?: Expense): void {
+    this.dialog.openDialog(AddSpendingComponent, expense)
+      .afterClosed()
+      .pipe(filter((update)=>update))
+      .subscribe(() => this.query());
   }
 
 
-  deleteExpense(id: string): void {
-    this.openConfirmDialog().afterClosed().subscribe((result: any) => {
-      if(result) {
-        this.delete(id);
-      }
-    });
-  }
-
-  openConfirmDialog(): MatDialogRef<ConfirmComponent>  {
-    const dialogRef = this.dialog.open(ConfirmComponent, {
-      disableClose: true,
-      panelClass: this.sharedService.theme + '-class'
-    });
-    return dialogRef;
-  }
-
-  editExpense(expense: Expense): void {
-    this.openDialog(expense);
-  }
-  
-  refresh(): void {
-    this.query();
+  openDeleteConfirmDialog(id: string): void {
+    this.dialog.openDialog(ConfirmComponent)
+      .afterClosed()
+      .pipe(filter((update)=>update))
+      .subscribe(() => this.delete(id));
   }
 
   delete(id: string): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.unsubscribe(this.deleteSubscription);
+    this.deleteSubscription?.unsubscribe();
     this.deleteSubscription = this.spendingService.delete(id).subscribe(() => {
       this.totalRequests--;
       this.sharedService.checkLoadingSpinner(this.totalRequests);
@@ -148,23 +126,13 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     return window.innerHeight - 275 - difference;
   }
 
-  private unsubscribe(subscription: Subscription): void {
-    if(subscription) {
-      subscription.unsubscribe();
-    }
+  announceSortChange(sort: Sort): void {
+    this.sort = sort.direction ? `${sort.active},${sort.direction}` : this.defaultSort; 
+    this.query();
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe(this.expenseSubscription);
-    this.unsubscribe(this.deleteSubscription);
-  }
-
-  announceSortChange(sort: Sort): void {
-    if(sort.direction) {
-      this.sort = `${sort.active},${sort.direction}`;
-    } else {
-      this.sort = this.defaultSort;
-    }
-    this.query();
+    this.expenseSubscription?.unsubscribe();
+    this.deleteSubscription?.unsubscribe();
   }
 }

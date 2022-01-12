@@ -9,6 +9,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { TemplateModule } from './template/template.module';
 import { SharedModule } from './shared/shared.module';
 import { CustomHttpInterceptorService } from './services/custom-http-interceptor.service';
+import {MatDialogModule} from '@angular/material/dialog';
+import { DialogService } from './services/dialog.service';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,7 @@ import { CustomHttpInterceptorService } from './services/custom-http-interceptor
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
+    MatDialogModule,
     TemplateModule,
     ToastrModule.forRoot()
   ],
@@ -29,7 +32,8 @@ import { CustomHttpInterceptorService } from './services/custom-http-interceptor
     provide: HTTP_INTERCEPTORS,
     useClass: CustomHttpInterceptorService,
     multi: true
-   }],
+   }
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

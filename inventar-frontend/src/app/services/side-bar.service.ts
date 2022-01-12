@@ -6,7 +6,7 @@ import { SharedService } from './shared.service';
 })
 export class SideBarService {
   isOpened = false;
-  public sidebarWidth = 300;
+  public sidebarWidth = 280;
   constructor(public sharedService: SharedService) { }
 
   toggleSideBar(): void {
@@ -29,11 +29,6 @@ export class SideBarService {
       shadow.style.opacity = "0.4";
       shadow.style.pointerEvents = "auto";
     }
-    const items = document.getElementsByClassName('opened-menu-item') as HTMLCollection;
-    for(var i = 0;i<items.length;i++) {
-      const item = items[i] as HTMLElement;
-      item.style.padding = '10px 25px';
-    }
   }
 
   private closeSideBar(): void {
@@ -42,7 +37,7 @@ export class SideBarService {
     const shadow = document.getElementById('shadow') as HTMLElement;
     const toggle = document.getElementById('toggle-id') as HTMLElement;
     if(this.sharedService.mobileView) sideBar.style.width = '0px';
-    else sideBar.style.width = '60px';
+    else sideBar.style.width = '76px';
     if(window.innerWidth > 3000) {
       application.style.width = '100%';
     }
@@ -51,10 +46,5 @@ export class SideBarService {
     shadow.style.pointerEvents = "none";
     toggle.style.left = '50%';
     toggle.style.transform =  'translateX(-50%)';
-    const items = document.getElementsByClassName('opened-menu-item') as HTMLCollection;
-    for(var i = 0;i<items.length;i++) {
-      const item = items[i] as HTMLElement;
-      item.style.padding = '10px 18px';
-    }
   }
 }

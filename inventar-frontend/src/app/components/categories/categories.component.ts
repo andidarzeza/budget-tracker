@@ -1,7 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { SpendingCategory } from 'src/app/models/SpendingCategory';
 import { CategoriesService } from 'src/app/services/categories.service';
@@ -12,6 +11,9 @@ import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
+import { DialogService } from 'src/app/services/dialog.service';
+import { filter } from 'rxjs/operators';
+import { EntityOperation } from 'src/app/models/core/EntityOperation';
 
 @Component({
   selector: 'app-categories',
@@ -41,21 +43,26 @@ import { Sort } from '@angular/material/sort';
     )
   ]
 })
-export class CategoriesComponent implements OnInit, OnDestroy {
-  pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
-  page = 0;
-  size = PAGE_SIZE;
-  totalItems;
-  totalRequests = 0;
-  categoriesType: string = 'spendings';
-  theme = 'light';
-  displayedColumns: string[] = ['icon', 'category', 'description', 'actions'];
-  dataSource: SpendingCategory[] = [];
-  defaultSort: string = "createdTime,desc";
-  sort = this.defaultSort;
+export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<SpendingCategory> {
+  public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
+  public page: number = 0;
+  public size: number = PAGE_SIZE;
+  public totalItems: number = 0;
+  public totalRequests: number = 0;
+  public categoriesType: string = 'spendings';
+  public theme: string = 'light';
+  public displayedColumns: string[] = ['icon', 'category', 'description', 'actions'];
+  public dataSource: SpendingCategory[] = [];
+  public defaultSort: string = "createdTime,desc";
+  public sort: string = this.defaultSort;
   private categoriesSubscription: Subscription = null;
   private deleteSubscription: Subscription = null;
-  constructor(public sharedService: SharedService, private categoriesService: CategoriesService, public dialog: MatDialog, private toaster: ToastrService) { }
+  constructor(
+    public sharedService: SharedService,
+    private categoriesService: CategoriesService,
+    public dialog: DialogService, 
+    private toaster: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.query();
@@ -70,7 +77,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
   query(): void {
     this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
-    this.unsubscribe(this.categoriesSubscription);
+    this.categoriesSubscription?.unsubscribe();
     this.categoriesSubscription =  this.categoriesService.findAll(this.page, this.size, this.categoriesType, this.sort).subscribe((res: HttpResponse<any>) => {
       this.dataSource = res?.body.categories;
       this.totalItems = res?.body.count;
@@ -79,60 +86,22 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDialog(spendingCategory?: SpendingCategory): void {
-    const dialogRef = this.dialog.open(AddCategoryComponent, {
-      data: {spendingCategory, categoriesType: this.categoriesType},
-      width: '700px',
-      disableClose: true,
-      panelClass: this.sharedService.theme + '-class'
-    });
-
-    dialogRef.afterClosed().subscribe((update: boolean) => {
-      if(update) {
-        this.query();
-      }
-    });
+  openAddEditForm(spendingCategory?: SpendingCategory): void {
+    this.dialog.openDialog(AddCategoryComponent, {spendingCategory, categoriesType: this.categoriesType})
+      .afterClosed()
+      .pipe(filter((update)=>update))
+      .subscribe(() => this.query());
   }
 
-  openDeleteDialog(id: string): void {
-    this.openConfirmDialog().afterClosed().subscribe((result: any) => {
-      if(result) {
-        this.delete(id);
-      }
-    });;
-  }
-
-  openConfirmDialog(): MatDialogRef<ConfirmComponent>  {
-    const dialogRef = this.dialog.open(ConfirmComponent, {
-      disableClose: true,
-      panelClass: this.sharedService.theme + '-class'
-    });
-    return dialogRef;
-  }
-
-  editCategory(spendingCategory: SpendingCategory): void {
-    this.openDialog(spendingCategory);
-  }
-  
-  refreshData(): void {
-    this.query();
-  }
-
-  openDeleteOption(id: string): void {
-    const del = document.getElementById(`${id}-delete`) as HTMLElement;
-    const icn = document.getElementById(`${id}-icon`) as HTMLElement;
-    const icn_cnt = document.getElementById(`${id}-icon-cnt`) as HTMLElement;
-    if(del && icn_cnt && icn) {
-      del.style.width = '39.4px';
-      del.style.padding = '10px';
-      icn.style.width = '0';
-      icn_cnt.style.paddingLeft = '0';
-      icn_cnt.style.paddingRight = '0';
-    }
+  openDeleteConfirmDialog(id: string): void {
+    this.dialog.openDialog(ConfirmComponent)
+      .afterClosed()
+      .pipe(filter((update)=>update))
+      .subscribe(() => this.delete(id));
   }
 
   delete(id: string): void {
-    this.unsubscribe(this.deleteSubscription);
+    this.deleteSubscription?.unsubscribe();
     this.deleteSubscription = this.categoriesService.delete(id).subscribe(() => {
       this.query();
       this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
@@ -155,23 +124,13 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     this.query();
   }
 
-  private unsubscribe(subscription: Subscription): void {
-    if(subscription) {
-      subscription.unsubscribe();
-    }
+  announceSortChange(sort: Sort): void {
+    this.sort = sort.direction ? `${sort.active},${sort.direction}` : this.defaultSort;
+    this.query();
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe(this.categoriesSubscription);
-    this.unsubscribe(this.deleteSubscription);
-  }
-
-  announceSortChange(sort: Sort): void {
-    if(sort.direction) {
-      this.sort = `${sort.active},${sort.direction}`;
-    } else {
-      this.sort = this.defaultSort;
-    }
-    this.query();
+    this.categoriesSubscription?.unsubscribe();
+    this.deleteSubscription?.unsubscribe()
   }
 }

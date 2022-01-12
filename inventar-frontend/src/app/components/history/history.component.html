@@ -4,7 +4,7 @@
 
 <app-table-actions 
     [tableActionInput]="tableActionInput"
-    (onRefresh)="refresh()"
+    (onRefresh)="query()"
     ></app-table-actions>
 
 <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="getHeight(0)">
