@@ -24,7 +24,7 @@ export class AddSpendingComponent implements OnInit, OnDestroy {
   constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public expense: Expense, public dialogRef: MatDialogRef<AddSpendingComponent>, private formBuilder: FormBuilder, private spendingService: SpendingService, private categoryService: CategoriesService) {}
   formGroup: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
-    description: ['', Validators.required],
+    description: [''],
     categoryID: ['', Validators.required],
     moneySpent: ['', Validators.required]
   });

@@ -22,7 +22,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
   private saveSubscription: Subscription = null;
   public formGroup: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
-    description: ['', Validators.required],
+    description: [''],
     categoryID: ['', Validators.required],
     incoming: ['', Validators.required]
   });  
@@ -63,7 +63,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
   }
 
   private getCategories(): void {
-    this.unsubscribe(this.categoriesSubscription);
+    this.categoriesSubscription?.unsubscribe();
     this.categoriesSubscription = this.categoryService.findAll(0, 100, "incomings").subscribe((response: any) => {
       this.categories = response.body.categories;
       if(this.editMode) {
@@ -75,7 +75,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
   add(): void {
     if(this.formGroup.valid && !this.savingEntity){
       if(this.editMode) {
-        this.unsubscribe(this.updateSubscription);
+        this.updateSubscription?.unsubscribe();
         this.savingEntity = true;
         this.updateSubscription = this.incomingsService.update(this.income.id, this.formGroup.value).subscribe(() => {
           this.closeDialog(true);  
@@ -83,7 +83,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
           this.toaster.success("Income updated with success", "Success", TOASTER_CONFIGURATION);
         });
       } else if(!this.savingEntity){
-        this.unsubscribe(this.saveSubscription);
+        this.saveSubscription?.unsubscribe();
         this.savingEntity = true;
         this.saveSubscription = this.incomingsService.save(this.formGroup.value).subscribe(() => {
           this.closeDialog(true);
@@ -98,16 +98,10 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
     this.dialogRef.close(update);
   }
 
-  private unsubscribe(subscription: Subscription): void {
-    if(subscription) {
-      subscription.unsubscribe();
-    }
-  }
-
   ngOnDestroy(): void {
-    this.unsubscribe(this.saveSubscription);
-    this.unsubscribe(this.updateSubscription);
-    this.unsubscribe(this.categoriesSubscription);
+    this.saveSubscription?.unsubscribe();
+    this.updateSubscription?.unsubscribe();
+    this.categoriesSubscription?.unsubscribe();
   }
 
 }

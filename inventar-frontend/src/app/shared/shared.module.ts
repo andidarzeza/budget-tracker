@@ -13,11 +13,12 @@ import { AbsoluteValuePipe } from '../pipes/absolute-value.pipe';
 import { TableActionsComponent } from './table-actions/table-actions.component';
 import { DialogService } from '../services/dialog.service';
 import { AddSpendingComponent } from '../components/expenses/add-spending/add-spending.component';
+import { RecordActionsComponent } from './record-actions/record-actions.component';
 
 
 
 @NgModule({
-  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, TableActionsComponent],
+  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, TableActionsComponent, RecordActionsComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -32,7 +33,8 @@ import { AddSpendingComponent } from '../components/expenses/add-spending/add-sp
     ConfirmComponent,
     FloatingMenuComponent,
     AbsoluteValuePipe,
-    TableActionsComponent
+    TableActionsComponent,
+    RecordActionsComponent
   ],
   providers: [
     DialogService

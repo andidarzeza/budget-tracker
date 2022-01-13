@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CategoriesRoutingModule } from './categories-routing.module';
 import { MatSortModule } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -29,7 +30,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    MatMenuModule
+    SharedModule
   ]
 })
 export class CategoriesModule { }
