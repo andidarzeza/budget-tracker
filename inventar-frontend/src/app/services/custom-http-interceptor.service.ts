@@ -10,7 +10,7 @@ import { AuthenticationService } from './authentication.service';
 })
 export class CustomHttpInterceptorService implements HttpInterceptor{
   
-  constructor(private router: Router, private authenticationService: AuthenticationService) {}
+  constructor(private authenticationService: AuthenticationService) {}
   
   intercept(request: HttpRequest<any>, next: HttpHandler) : Observable<HttpEvent<any>> {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -30,8 +30,7 @@ export class CustomHttpInterceptorService implements HttpInterceptor{
           // redirect home   
           this.authenticationService.logout();
         }
-          return throwError(error);
-        
+        return throwError(error);
       })
     );
   }

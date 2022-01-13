@@ -19,8 +19,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectedDate = new Date();
   dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
-  private totalRequests = 0;
-
   increaseInIncome: number = 0;
   increaseInExpense: number = 0;
   totalSpendings: number = 0;
@@ -41,9 +39,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.exportService.exportDashboardPDF(
             new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth()),
             new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth() + 1)
-          ).subscribe((pdfDocument: Blob) => {
-            this.exportToPDF(pdfDocument);
-          })
+          ).subscribe((pdfDocument: Blob) => this.exportToPDF(pdfDocument))
         }
       }
     ]
@@ -71,14 +67,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let dailyExpensesLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
     
     this.sharedService.activateLoadingSpinner();
-    this.totalRequests++;
 
     this.dashboardSubscription = this.dashboardService.getDashboardData(
       new Date(currentYear.getYear(), currentMonth.getMonth()),
       new Date(currentYear.getYear(), currentMonth.getMonth()+1)
     ).subscribe((dashboardData: DashboardDTO) => {
-      this.totalRequests--;
-      this.sharedService.checkLoadingSpinner(this.totalRequests);
+      this.sharedService.checkLoadingSpinner();
       this.increaseInExpense = dashboardData.increaseInExpense;
       this.increaseInIncome = dashboardData.increaseInIncome;
       this.totalIncome = dashboardData.incomes;
@@ -122,8 +116,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return dayString + "-" + monthString + "-" + currentYear.getYear().toString()
     });
   }
-
-  // currentMonth.getMonth()
 
   private createDailyChart(labels: string[], data: number[]): void {
     if(this.chart) {

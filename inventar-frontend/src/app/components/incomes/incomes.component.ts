@@ -23,13 +23,13 @@ import { EntityOperation } from 'src/app/models/core/EntityOperation';
 export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Income> {
   public incomes: Income[] = [];
   public totalItems: number = 0;
-  private totalRequests: number = 0;
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   private page: number = 0;
   public size: number = PAGE_SIZE;
   private defaultSort: string = "createdTime,desc";
   private sort: string = this.defaultSort;
   public displayedColumns: string[] = ['date', 'name', 'description', 'category', 'incoming', 'actions'];
+  public mobileColumns: string[] = ['name', 'category', 'incoming', 'actions'];
   private deleteSubscription: Subscription = null;
   private incomeSubscription: Subscription = null;
   public tableActionInput: TableActionInput = {
@@ -45,6 +45,7 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   ) {}
 
   ngOnInit(): void {
+    this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
     this.query();
   }
 
@@ -55,14 +56,12 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   }
 
   query(): void {
-    this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
     this.incomeSubscription?.unsubscribe();
     this.incomeSubscription = this.incomingsService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
       this.incomes = res?.body.incomings;
       this.totalItems = res?.body.count;
-      this.totalRequests--;
-      this.sharedService.checkLoadingSpinner(this.totalRequests);     
+      this.sharedService.checkLoadingSpinner();     
     });
   }
 
@@ -86,11 +85,6 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
       this.query();
       this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
     });
-  }
-
-  getHeight(difference: number): number {
-    difference = this.sharedService.mobileView ? (difference - 40) : 0;
-    return window.innerHeight - 275 - difference;
   }
 
   announceSortChange(sort: Sort): void {

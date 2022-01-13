@@ -26,7 +26,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.configurationSubscription = this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
       this.configuration = configuration;
       this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
-      this.sharedService.checkLoadingSpinner(0);
+      this.sharedService.checkLoadingSpinner();
     });
   }
 
@@ -36,7 +36,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.sharedService.activateLoadingSpinner();
     this.updateConfigurationSubscription = this.configurationService.updateConfiguration(this.configuration).subscribe(() => {
       this.sharedService.changeTheme(this.configuration.darkMode);
-      this.sharedService.checkLoadingSpinner(0);
+      this.sharedService.checkLoadingSpinner();
     });
   }
 
@@ -46,7 +46,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.sharedService.activateLoadingSpinner();
     this.spinnerSubscription = this.configurationService.updateConfiguration(this.configuration).subscribe(() => {
       this.sharedService.isSpinnerEnabled = this.configuration.animationMode;
-      this.sharedService.checkLoadingSpinner(0);
+      this.sharedService.checkLoadingSpinner();
     });
   }
 

@@ -6,7 +6,7 @@
     (onRefresh)="query()"
     ></app-table-actions>
 
-<div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="getHeight(0)">
+<div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
     <table 
         mat-table matSort
         [dataSource]="historyList" 
@@ -68,7 +68,7 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    <div *ngIf="historyList.length == 0 && !sharedService.stillLoading" class="no-data" [style.height.px]="getHeight(60)">
+    <div *ngIf="historyList.length == 0 && !sharedService.stillLoading" class="no-data" [style.height.px]="sharedService.getHeight(60)">
         No data to display!
     </div>
 </div>

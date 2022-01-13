@@ -11,8 +11,9 @@ export class SharedService {
   private darkMode: boolean = true;
   public isSpinnerEnabled: boolean = true;
   public mobileView: boolean = false;
+  private totalRequests: number = 0;
   themeSubscribable = this.dataSource.asObservable();
-  item: any = null;
+
   constructor() { 
     this.mobileView = window.screen.width < 600;
     this.listenForResizeEvent();
@@ -24,9 +25,14 @@ export class SharedService {
     });
   }
 
+  getHeight(difference: number): number {
+    difference = this.mobileView ? (difference - 40) : 0;
+    return window.innerHeight - 275 - difference;
+  }
+
   changeTheme(darkMode: any): void {
     this.darkMode = darkMode;
-    this.darkMode? this.theme = 'dark': this.theme = 'light';
+    this.theme = this.darkMode ? 'dark' : 'light';
     this.dataSource.next(this.theme);
   }
 
@@ -38,26 +44,12 @@ export class SharedService {
   }
 
   activateLoadingSpinner(): void {
+    this.totalRequests++;
     this.stillLoading = true;
   }
 
-  checkLoadingSpinner(totalRequest: number): void { 
-    if(totalRequest === 0) {
-      setTimeout(()=>{
-        this.stillLoading = false;
-      }, 500);
-    } else {
-      const spinner = document.getElementById('spinner-id') as HTMLElement;
-      const sidebar = document.getElementById('sidebar') as HTMLElement;      
-      if(sidebar.style.width === '18%') {
-        if(spinner) {
-          spinner.style.width= '82%';
-        }
-      } else {
-        if(spinner) {
-          spinner.style.width= 'calc(100% - 60px)';
-        }
-      }
-    }
+  checkLoadingSpinner(): void {
+    this.totalRequests--;
+    if(this.totalRequests === 0)  setTimeout(() => this.stillLoading = false, 500);
   }
 }

@@ -1,47 +1,36 @@
 import { Injectable } from '@angular/core';
+import { SIDEBAR_WIDTH } from 'src/environments/environment';
 import { SharedService } from './shared.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SideBarService {
-  isOpened = false;
-  public sidebarWidth = 280;
+  public isOpened = false;
+  public sidebarWidth = SIDEBAR_WIDTH;
   constructor(public sharedService: SharedService) { }
 
   toggleSideBar(): void {
-    if(this.isOpened) {
-      this.closeSideBar();
-    } else {
-      this.openSideBar();
-    }
+    this.isOpened ? this.closeSideBar() : this.openSideBar();
     this.isOpened = !this.isOpened;
   }
 
   private openSideBar(): void {
-    const sideBar = document.getElementById('sidebar') as HTMLElement;
-    const shadow = document.getElementById('shadow') as HTMLElement;
-    const application = document.getElementById('application-body') as HTMLElement;
-    sideBar.style.width = `${this.sidebarWidth}px`;
-    if(window.innerWidth > 3000) {
-      application.style.width = `calc(${100}% - ${this.sidebarWidth}px)`; 
-    } else {
+    const sideBar: HTMLElement = document.getElementById('sidebar');
+    const shadow: HTMLElement = document.getElementById('shadow');
+    if(sideBar && shadow) {
+      sideBar.style.width = `${this.sidebarWidth}px`;
       shadow.style.opacity = "0.4";
       shadow.style.pointerEvents = "auto";
     }
   }
 
   private closeSideBar(): void {
-    const sideBar = document.getElementById('sidebar') as HTMLElement;
-    const application = document.getElementById('application-body') as HTMLElement;
-    const shadow = document.getElementById('shadow') as HTMLElement;
-    const toggle = document.getElementById('toggle-id') as HTMLElement;
+    const sideBar: HTMLElement = document.getElementById('sidebar');
+    const shadow: HTMLElement = document.getElementById('shadow');
+    const toggle: HTMLElement = document.getElementById('toggle-id');
     if(this.sharedService.mobileView) sideBar.style.width = '0px';
     else sideBar.style.width = '76px';
-    if(window.innerWidth > 3000) {
-      application.style.width = '100%';
-    }
-
     shadow.style.opacity = "0";
     shadow.style.pointerEvents = "none";
     toggle.style.left = '50%';

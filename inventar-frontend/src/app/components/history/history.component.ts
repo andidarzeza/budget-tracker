@@ -19,7 +19,6 @@ export class HistoryComponent implements OnInit, OnDestroy {
   public page: number = 0;
   public size: number = PAGE_SIZE;
   public totalItems: number = 0;
-  private totalRequests: number = 0;
   private defaultSort: string = "date,desc";
   private sort: string = this.defaultSort;
   public displayedColumns: string[] = ['date', 'action', 'entity', 'message', 'user', 'actions'];
@@ -40,9 +39,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {    
-    if(this.sharedService.mobileView) {
-      this.displayedColumns = this.mobileColumns;
-    }
+    this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
     this.query();
   }
 
@@ -53,20 +50,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
   }
 
   query(): void {
-    this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
     this.historySubscription?.unsubscribe();
     this.historySubscription = this.historyService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
       this.historyList = res?.body.historyList;
       this.totalItems = res?.body.count;
-      this.totalRequests--;
-      this.sharedService.checkLoadingSpinner(this.totalRequests);     
+      this.sharedService.checkLoadingSpinner();     
     });
-  }
-
-  getHeight(difference: number): number {
-    difference = this.sharedService.mobileView ? (difference - 40) : 0;
-    return window.innerHeight - 275 - difference;
   }
 
   announceSortChange(sort: Sort): void {

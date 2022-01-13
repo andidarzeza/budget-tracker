@@ -25,8 +25,6 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   public page: number = 0;
   public size: number = PAGE_SIZE;
   public totalItems: number = 0;
-  public totalRequests: number = 0;
-  public theme: string = 'light';
   public defaultSort: string = "createdTime,desc";
   public sort: string = this.defaultSort;
   public displayedColumns: string[] = ['createdTime', 'name', 'description', 'category', 'moneySpent', 'actions'];
@@ -47,9 +45,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   ) {}
 
   ngOnInit(): void {
-    if(this.sharedService.mobileView) {
-      this.displayedColumns = this.mobileColumns;
-    }
+    this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
     this.query();
   }
 
@@ -60,14 +56,12 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   query(): void {
-    this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
     this.expenseSubscription?.unsubscribe();
     this.expenseSubscription = this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
       this.expenses = res?.body.spendings;
       this.totalItems = res?.body.count;
-      this.totalRequests--;
-      this.sharedService.checkLoadingSpinner(this.totalRequests);     
+      this.sharedService.checkLoadingSpinner();     
     });
   }
 
@@ -87,20 +81,13 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   delete(id: string): void {
-    this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
     this.deleteSubscription?.unsubscribe();
     this.deleteSubscription = this.spendingService.delete(id).subscribe(() => {
-      this.totalRequests--;
-      this.sharedService.checkLoadingSpinner(this.totalRequests);
+      this.sharedService.checkLoadingSpinner();
       this.query();
       this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
     });
-  }
-
-  getHeight(difference: number): number {
-    difference = this.sharedService.mobileView ? (difference - 40) : 0;
-    return window.innerHeight - 275 - difference;
   }
 
   announceSortChange(sort: Sort): void {

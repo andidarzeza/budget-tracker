@@ -30,6 +30,9 @@ export const CREATE_DIALOG_CONFIGURATION = {
   disableClose: true
 }
 
+// Template Settings
+export const SIDEBAR_WIDTH = 280
+
 // Pagination Options
 export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 export const PAGE_SIZE = 20;

@@ -33,6 +33,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<S
   public sort: string = this.defaultSort;
   private categoriesSubscription: Subscription = null;
   private deleteSubscription: Subscription = null;
+
   constructor(
     public sharedService: SharedService,
     private categoriesService: CategoriesService,
@@ -51,14 +52,12 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<S
   }
 
   query(): void {
-    this.totalRequests++;
     this.sharedService.activateLoadingSpinner();
     this.categoriesSubscription?.unsubscribe();
     this.categoriesSubscription =  this.categoriesService.findAll(this.page, this.size, this.categoriesType, this.sort).subscribe((res: HttpResponse<any>) => {
       this.dataSource = res?.body.categories;
       this.totalItems = res?.body.count;
-      this.totalRequests--;
-      this.sharedService.checkLoadingSpinner(this.totalRequests);     
+      this.sharedService.checkLoadingSpinner();     
     });
   }
 
@@ -82,11 +81,6 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<S
       this.query();
       this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
     });
-  }
-
-  getHeight(difference: number): number {
-    difference = this.sharedService.mobileView ? (difference - 40) : 0;
-    return window.innerHeight - 275 - difference;
   }
 
   changeCategoriesType(value: string): void {

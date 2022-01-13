@@ -102,14 +102,8 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
     this.showDatePicker = false;
     this.emitSelectedDate();
   }
-
-  private unsubscribe(subscription: Subscription): void {
-    if(subscription) {
-      subscription.unsubscribe();
-    }
-  }
   
   ngOnDestroy(): void {
-    this.unsubscribe(this.accountSubscription);
+    this.accountSubscription?.unsubscribe();
   }
 }
