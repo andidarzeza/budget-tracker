@@ -5,37 +5,13 @@ import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from 'src/environments/environment';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { HistoryService } from 'src/app/services/history.service';
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
-  styleUrls: ['./history.component.css'],
-  animations: [
-    trigger(
-      'inOutAnimation', 
-      [
-        transition(
-          ':enter', 
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out', 
-                    style({opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave', 
-          [
-            style({ opacity: 1 }),
-            animate('400ms ease-in', 
-                    style({ opacity: 0 }))
-          ]
-        )
-      ]
-    )
-  ]
+  styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit, OnDestroy {
 

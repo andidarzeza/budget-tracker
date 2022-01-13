@@ -29,13 +29,6 @@
     margin-left: 18px;
 }
 
-.opened-menu-item:hover {
-    /* background: hsla(0, 0%, 100%, .05); */
-}
-
-/* .router-link-active {
-    background: hsla(0, 0%, 100%, .15);
-} */
 
 .dark-text {
     color: #9F9F9F;
@@ -53,6 +46,7 @@
     transform: translateX(-50%);
     background: transparent;
     box-shadow: none;
+    width: calc(100%);
 }
 
 

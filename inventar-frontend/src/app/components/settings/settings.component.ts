@@ -1,6 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IConfiguration } from 'src/app/models/IConfiguration';
 import { ConfigurationService } from 'src/app/services/configuration.service';
@@ -9,37 +8,18 @@ import { SharedService } from 'src/app/services/shared.service';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css'],
-  animations: [
-    trigger(
-      'inOutAnimation', 
-      [
-        transition(
-          ':enter', 
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out', 
-                    style({opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave', 
-          [
-            style({ opacity: 1 }),
-            animate('400ms ease-in', 
-                    style({ opacity: 0 }))
-          ]
-        )
-      ]
-    )
-  ]
+  styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit, OnDestroy {
   configuration: IConfiguration = null;
   private configurationSubscription: Subscription = null;
   private updateConfigurationSubscription: Subscription = null;
   private spinnerSubscription: Subscription = null;
-  constructor(public sharedService: SharedService, private configurationService: ConfigurationService) { }
+  
+  constructor(
+    public sharedService: SharedService, 
+    private configurationService: ConfigurationService
+  ) { }
 
   ngOnInit(): void {
     this.sharedService.activateLoadingSpinner();
@@ -51,7 +31,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   changeTheme(): void {
-    this.unsubscribe(this.updateConfigurationSubscription);
+    this.updateConfigurationSubscription?.unsubscribe();
     this.configuration.darkMode = !this.configuration.darkMode;
     this.sharedService.activateLoadingSpinner();
     this.updateConfigurationSubscription = this.configurationService.updateConfiguration(this.configuration).subscribe(() => {
@@ -61,7 +41,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   setAnimationLoading(): void {
-    this.unsubscribe(this.spinnerSubscription);
+    this.spinnerSubscription?.unsubscribe();
     this.configuration.animationMode = !this.sharedService.isSpinnerEnabled;
     this.sharedService.activateLoadingSpinner();
     this.spinnerSubscription = this.configurationService.updateConfiguration(this.configuration).subscribe(() => {
@@ -70,16 +50,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private unsubscribe(subscription: Subscription): void {
-    if(subscription) {
-      subscription.unsubscribe();
-    }
-  }
-
   ngOnDestroy(): void {
-    this.unsubscribe(this.spinnerSubscription);
-    this.unsubscribe(this.updateConfigurationSubscription);
-    this.unsubscribe(this.configurationSubscription);
+    this.spinnerSubscription?.unsubscribe();
+    this.updateConfigurationSubscription?.unsubscribe();
+    this.configurationSubscription?.unsubscribe();
   }
 
 }

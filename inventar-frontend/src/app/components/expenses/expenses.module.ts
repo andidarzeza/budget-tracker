@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ExpensesComponent } from './expenses.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
@@ -30,7 +29,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
     MatTableModule,
     MatSortModule,
     SharedModule,
-    MatProgressBarModule,
     MatPaginatorModule,
     MatButtonModule,
     MatSelectModule,

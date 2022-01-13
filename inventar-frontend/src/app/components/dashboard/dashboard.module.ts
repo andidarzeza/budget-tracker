@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardComponent } from './dashboard.component';
 import { MatCardModule } from '@angular/material/card';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { BudgetInfoComponent } from './budget-info/budget-info.component';
 import { DatePickerComponent } from '../../shared/date-picker/date-picker.component';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -21,7 +20,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     DashboardRoutingModule,
-    MatProgressBarModule,
     MatCardModule,
     MatNativeDateModule,
     MatIconModule,

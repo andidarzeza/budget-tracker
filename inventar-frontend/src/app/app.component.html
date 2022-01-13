@@ -10,6 +10,7 @@
     <div [ngClass]="authenticationService.currentUserValue ? 'app-width' : 'app-full-width'" class="application {{sharedService.theme}}-body" id="application-body">
         <div class="shadow" id="shadow" (click)="toggleSidebar()"></div>
         <app-nav-bar></app-nav-bar>
+        <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation] *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled" style="position: absolute;top: 64px;left:0"></mat-progress-bar>
         <router-outlet></router-outlet>
     </div>
 </div>

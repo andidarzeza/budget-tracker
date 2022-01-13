@@ -10,7 +10,7 @@ import { TemplateModule } from './template/template.module';
 import { SharedModule } from './shared/shared.module';
 import { CustomHttpInterceptorService } from './services/custom-http-interceptor.service';
 import {MatDialogModule} from '@angular/material/dialog';
-import { DialogService } from './services/dialog.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -26,6 +26,7 @@ import { DialogService } from './services/dialog.service';
     SharedModule,
     MatDialogModule,
     TemplateModule,
+    MatProgressBarModule,
     ToastrModule.forRoot()
   ],
   providers: [{

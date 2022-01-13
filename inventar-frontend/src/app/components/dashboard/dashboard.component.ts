@@ -5,7 +5,6 @@ import { ChartUtils } from 'src/app/utils/chart';
 import { DateUtil, Day, Month, Year } from 'src/app/utils/DateUtil';
 import { SharedService } from 'src/app/services/shared.service';
 import { strToColor } from 'src/app/utils/ColorUtil';
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { FloatingMenuConfig } from 'src/app/shared/floating-menu/FloatingMenuConfig';
 import { ExportService } from 'src/app/services/export.service';
@@ -14,30 +13,7 @@ import { DailyExpenseDTO, DashboardDTO, ExpenseInfoDTO, IncomeInfoDTO } from 'sr
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'],
-  animations: [
-    trigger(
-      'inOutAnimation', 
-      [
-        transition(
-          ':enter', 
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out', 
-                    style({opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave', 
-          [
-            style({ opacity: 1 }),
-            animate('400ms ease-in', 
-                    style({ opacity: 0 }))
-          ]
-        )
-      ]
-    )
-  ]
+  styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   selectedDate = new Date();

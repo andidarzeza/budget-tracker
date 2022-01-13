@@ -4,7 +4,6 @@ import { CategoriesComponent } from './categories.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,7 +25,6 @@ import { MatMenuModule } from '@angular/material/menu';
     MatPaginatorModule,
     MatIconModule,
     MatButtonModule,
-    MatProgressBarModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
