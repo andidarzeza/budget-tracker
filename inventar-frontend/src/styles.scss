@@ -1,8 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Lato&family=Raleway&family=Source+Sans+Pro&family=Ubuntu&display=swap');
+@import '../../inventar-frontend/src/app/template/light-theme.scss';
+@import '../../inventar-frontend/src/app/template/dark-theme.scss';
 html,
 body {
     height: 100%;
+}
+
+:root {
+    --light: #00695c;
+    --dark: #1d252a;
+    --deep-blue: #116466;
 }
 
 body {
@@ -40,13 +48,6 @@ app-date-picker {
     border-radius: 4px;
 }
 
-.light-body {
-    background: white;
-}
-
-.dark-body {
-    background: #111619;
-}
 
 .sb9:before {
     content: "";
@@ -59,48 +60,6 @@ app-date-picker {
     left: 50%;
     top: -28px;
     transform: translateX(-50%);
-}
-
-.dark-option:hover {
-    background: #1d252a !important;
-    color: #9F9F9F !important;
-}
-
-.dark-option {
-    background: #111619 !important;
-    color: #9F9F9F !important;
-}
-
-.dark-select .mat-select-value {
-    color: #9F9F9F !important;
-}
-
-.light-sb9:before {
-    border-bottom: 19px solid white;
-}
-
-.dark-sb9:before {
-    border-bottom: 19px solid #111619;
-}
-
-.dark-border {
-    border: 2px solid #ff6347;    
-}
-
-.light-border{
-    border: 2px solid #305680;
-}
-
-.dark-icon-2 {
-    color: #f6af06;    
-}
-
-.light-icon-2{
-    color: #305680;
-}
-
-.light-dashboard-card, .dark-dashboard-card {
-    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%) !important;
 }
 
 
@@ -174,14 +133,6 @@ app-date-picker {
 
 .mat-progress-bar {
     height: 4px !important;
-}
-
-.light > .mat-progress-bar-buffer {
-    background-color: white !important;
-}
-
-.dark > .mat-progress-bar-buffer {
-    background-color: #111619 !important;
 }
 
 .mat-progress-bar-fill::after {
@@ -399,70 +350,6 @@ button.toast-close-button {
     padding-bottom: 29.5px !important;
 }
 
-.mat-dialog-container {}
-
-.light-table {
-    background: white;
-}
-
-.dark-table {
-    background: #1d252a;
-}
-
-.light-text {
-    color: black;
-}
-
-.dark-text {
-    color: #9F9F9F;
-}
-
-.dark-icon {
-    color: #f6af06 !important;
-}
-
-.light-button {
-    background: #305680 !important;
-}
-
-.dark-button {
-    background: #222831;
-}
-
-.dark-class>mat-dialog-container {
-    background: #1d252a;
-    color: white;
-}
-
-.light-class>mat-dialog-container {
-    background: white;
-}
-
-.dark-card {
-    background: #1d252a;
-    color: #9F9F9F;
-}
-
-.light-book-tb-container {
-    width: 95%;
-    height: 700px;
-    background-color: white;
-    overflow: auto;
-    margin: auto;
-    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
-}
-
-.dark-book-tb-container {
-    width: 95%;
-    height: 700px;
-    background-color: #1d252a;
-    overflow: auto;
-    margin: auto;
-    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
-}
-
-.light-card {}
-
 .lds-ellipsis {
     display: inline-block;
     width: 80px;
@@ -549,23 +436,6 @@ button.toast-close-button {
     padding: 25px 25px;
 }
 
-.dark-paginator .mat-select-value {
-    color: #9F9F9F !important;
-}
-
-.dark-paginator .mat-select-arrow {
-    color: #9F9F9F !important;
-}
-
-.dark-paginator .mat-form-field.mat-focused .mat-form-field-ripple {
-    background-color: #f6af06;
-}
-
-.dark-add-entity {
-    background: #ff6347 !important;
-    color: white !important;
-}
-
 .mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid .mat-form-field-outline-thick {
     color: #ff6347;
 }
@@ -583,10 +453,6 @@ button.toast-close-button {
     color: #9F9F9F !important;
 }
 
-.dark-confirm-button {
-    color: white;
-}
-
 .no-data {
     text-align: center;
     font-size: 17px;
@@ -600,22 +466,16 @@ button.toast-close-button {
     justify-content: center;
 }
 
-
-.dark-login-button {
-    background-color: #111619 !important;
-    color: #9F9F9F !important;
-}
-
  /* TODO: fix in future */
 
- .mat-menu-content:not(:empty) {
-     padding: 0 !important;
-     display: flex;
-     flex-direction: column;
-     align-items: center;
- }
+.mat-menu-content:not(:empty) {
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
- .mat-menu-panel{
+.mat-menu-panel{
     min-width: 70px !important;
     max-width: unset !important;
     max-height: unset !important;
@@ -626,16 +486,8 @@ button.toast-close-button {
     min-height: unset !important;
  }
 
- .mobile-action-container {
+.mobile-action-container {
     display: none !important;
- }
-
- .light-mobile-action-menu {
-     background: white !important;
- }
-
- .dark-mobile-action-menu {
-    background: #111619 !important;
 }
 
 .table-paginator {
@@ -646,7 +498,6 @@ button.toast-close-button {
     margin: auto; 
 }
 
-
 th, td {
     overflow: hidden;
     width:auto;
@@ -655,9 +506,7 @@ th, td {
 }
 
 .mat-tooltip.sidebar-tooltip {
-    /* background-color: darkblue; */
     font-size: 14px;
-    /* margin-left: 0px; */
 }
 
 @media only screen and (max-width: 475px) { 

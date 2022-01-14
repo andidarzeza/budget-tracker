@@ -1,0 +1,106 @@
+.dark {
+    background: var(--dark);
+}
+
+.dark-body {
+    background: #111619;
+}
+
+.dark-sb9:before {
+    border-bottom: 19px solid #111619;
+}
+
+.dark-border {
+    border: 2px solid #ff6347;    
+}
+
+.dark-icon-2 {
+    color: #f6af06;    
+}
+
+.dark-dashboard-card {
+    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%) !important;
+}
+
+.dark > .mat-progress-bar-buffer {
+    background-color: #111619 !important;
+}
+
+.dark-table {
+    background: #1d252a;
+}
+
+.dark-text {
+    color: #9F9F9F;
+}
+
+.dark-button {
+    background: #222831;
+}
+
+.dark-class>mat-dialog-container {
+    background: #1d252a;
+    color: white;
+}
+
+.dark-book-tb-container {
+    width: 95%;
+    height: 700px;
+    background-color: #1d252a;
+    overflow: auto;
+    margin: auto;
+    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+}
+
+.dark-mobile-action-menu {
+    background: #111619 !important;
+}
+
+.dark-option:hover {
+    background: #1d252a !important;
+    color: #9F9F9F !important;
+}
+
+.dark-option {
+    background: #111619 !important;
+    color: #9F9F9F !important;
+}
+
+.dark-select .mat-select-value {
+    color: #9F9F9F !important;
+}
+
+.dark-icon {
+    color: #f6af06 !important;
+}
+
+.dark-card {
+    background: #1d252a;
+    color: #9F9F9F;
+}
+
+.dark-paginator .mat-select-value {
+    color: #9F9F9F !important;
+}
+
+.dark-paginator .mat-select-arrow {
+    color: #9F9F9F !important;
+}
+
+.dark-paginator .mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: #f6af06;
+}
+
+.dark-add-entity {
+    background: #ff6347 !important;
+    color: white !important;
+}
+
+.dark-confirm-button {
+    color: white;
+}
+
+.dark-login-button {
+    background-color: #111619 !important;
+    color: #9F9F9F !important;
+}

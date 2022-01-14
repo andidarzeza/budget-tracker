@@ -1,0 +1,61 @@
+.light {
+    background: var(--light);   
+}
+
+.light-body {
+    background: white;
+}
+
+.light-sb9:before {
+    border-bottom: 19px solid white;
+}
+
+.light-border{
+    border: 2px solid #305680;
+}
+
+.light-icon-2{
+    color: #305680;
+}
+
+.light-dashboard-card {
+    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%) !important;
+}
+
+.light > .mat-progress-bar-buffer {
+    background-color: white !important;
+}
+
+.light-table {
+    background: white;
+}
+
+.light-text {
+    color: black;
+}
+
+.light-button {
+    background: #305680 !important;
+}
+
+.light-class>mat-dialog-container {
+    background: white;
+}
+
+.light-book-tb-container {
+    width: 95%;
+    height: 700px;
+    background-color: white;
+    overflow: auto;
+    margin: auto;
+    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+}
+
+.light-mobile-action-menu {
+    background: white !important;
+}
+
+.light-add-entity {
+    background: #ff6347 !important;
+    color: white !important;
+}
