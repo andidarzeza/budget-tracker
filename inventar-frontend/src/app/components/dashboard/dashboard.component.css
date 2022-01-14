@@ -14,7 +14,6 @@
 
 
 .chart-title {
-    color: #9F9F9F;
     font-size: 23px;
     position: absolute;
     left: 50%;
@@ -25,7 +24,6 @@
 }
 
 .card-label {
-    color: #9F9F9F;
     font-size: 45px;
     position: relative;
     font-family: 'Source Sans Pro', sans-serif;
@@ -41,7 +39,6 @@
 }
 
 .income-description {
-    color: #9F9F9F;
     font-size: 24px;
     margin-top: 34px;
 }

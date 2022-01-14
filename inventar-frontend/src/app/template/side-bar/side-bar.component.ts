@@ -65,4 +65,8 @@ export class SideBarComponent implements AfterViewInit {
     }
   }
 
+  toggleSidebar(): void {
+    
+  }
+
 }

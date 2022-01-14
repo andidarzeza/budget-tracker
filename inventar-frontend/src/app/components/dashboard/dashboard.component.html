@@ -4,12 +4,12 @@
 <div #categoryContainer class="category-container">
     <div class="avg-card-cnt">
         <mat-card class="bottom-margin right-margin average-cards {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card">
-            <div class="chart-title" style="left: 10px;transform: none;">
+            <div class="chart-title {{sharedService.theme}}-title" style="left: 10px;transform: none;">
                 Average daily income
             </div>  
             <div class="cnt">
                 <div class="average-income">
-                    <span class="card-label">
+                    <span class="{{sharedService.theme}}-title card-label">
                         {{dailyIncomeAverage | number:'1.2-2':'en-US'}} ALL
                         <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
                             <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
@@ -21,7 +21,7 @@
                            {{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
                         </span>
                     </span>
-                    <div class="income-description">
+                    <div class="income-description {{sharedService.theme}}-title">
                         Average daily income so far.
                     </div>
                 </div>
@@ -29,12 +29,12 @@
         </mat-card>
     
         <mat-card class="average-cards {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card">
-            <div class="chart-title" style="left: 10px;transform: none;">
+            <div class="chart-title {{sharedService.theme}}-title" style="left: 10px;transform: none;">
                 Average daily expenses
             </div>  
             <div class="cnt">
                 <div class="average-income">
-                    <span class="card-label">
+                    <span class="{{sharedService.theme}}-title card-label">
                         {{amountSpentAverage | number:'1.2-2':'en-US'}} ALL
                         <span *ngIf="increaseInExpense>0" class="percentage-badge percentage-down">
                             <span>↑</span>{{increaseInExpense | number:'1.2-2':'en-US'}}%
@@ -46,7 +46,7 @@
                             {{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
                          </span>
                     </span>
-                    <div class="income-description">
+                    <div class="income-description {{sharedService.theme}}-title">
                         Average daily expenses so far.
                     </div>
                 </div>
@@ -56,11 +56,11 @@
 
     <div class="chart-card-cnt">
         <mat-card class="card-bottom-margin right-margin chart-card {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card" style="position: relative;">
-            <div class="chart-title" style="left: 10px;transform: none;">
+            <div class="chart-title {{sharedService.theme}}-title" style="left: 10px;transform: none;">
                 Income - {{totalIncome | number:'1.0':'en-US'}} ALL
             </div>
-            <div *ngIf="totalIncome == 0" class="income-chart-container chart-title">
-                <span class="no-data-message">
+            <div *ngIf="totalIncome == 0" class="income-chart-container chart-title {{sharedService.theme}}-title">
+                <span class="no-data-message {{sharedService.theme}}-title">
                     No Data to be displayed!
                 </span>
             </div>
@@ -68,10 +68,10 @@
         </mat-card>
     
         <mat-card class="chart-card {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card" style="position: relative">
-            <div class="chart-title" style="left: 10px;transform: none;">
+            <div class="chart-title {{sharedService.theme}}-title" style="left: 10px;transform: none;">
                 Amount spent - {{totalSpendings | number:'1.0':'en-US'}} ALL
             </div>
-            <div *ngIf="totalSpendings == 0" class="income-chart-container chart-title">
+            <div *ngIf="totalSpendings == 0" class="income-chart-container chart-title {{sharedService.theme}}-title">
                 <span class="no-data-message">
                     No Data to be displayed!
                 </span>

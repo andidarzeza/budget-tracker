@@ -88,7 +88,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<S
     if(value === 'spendings') {
       underline.style.transform = "translateX(0)";
     } else {
-      underline.style.transform = "translateX(297px)";
+      underline.style.transform = "translateX(280px)";
     }
     this.categoriesType = value;
     this.page = 0;

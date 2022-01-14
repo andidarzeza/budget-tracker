@@ -18,9 +18,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
     public sidebarService: SideBarService) { 
   }
   ngOnInit(): void {
-
-
-
     this.interval = setInterval(() => {
       this.currentDate = new Date();
     }, 1000);
@@ -43,10 +40,5 @@ export class NavBarComponent implements OnInit, OnDestroy {
       document.documentElement.requestFullscreen();
     }
     this.fullScreenMode = !this.fullScreenMode;
-  }
-
-  toggleSidebar(): void {
-
-    this.sidebarService.toggleSideBar();
   }
 }

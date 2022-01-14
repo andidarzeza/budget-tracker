@@ -10,7 +10,7 @@ body {
 :root {
     --light: #00695c;
     --dark: #1d252a;
-    --deep-blue: #116466;
+    --deep-blue: #2B3F55;
 }
 
 body {
@@ -62,7 +62,6 @@ app-date-picker {
     transform: translateX(-50%);
 }
 
-
 .flex-centered {
     display: flex;
     justify-content: center;
@@ -70,7 +69,7 @@ app-date-picker {
 }
 
 .centered-text {
-    text-align: center;
+    text-align: center !important;
 }
 
 .mat-table tbody {
@@ -530,5 +529,11 @@ th, td {
     
      .action-container {
         display: none !important;
+     }
+
+     .toast-container {
+        left: 50% !important;
+        width: fit-content !important;
+        transform: translateX(-50%) !important;
      }
 }

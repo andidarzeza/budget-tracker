@@ -2,9 +2,13 @@
     color: white;
     height: 63px;
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, .12);
+}
+
+.logo-container > button {
+    margin-left: 18px;
 }
 
 .menu-container {
@@ -40,8 +44,10 @@
 
 #toggle-id {
     position: absolute; 
-    bottom: 10px; 
+    bottom: 0px; 
     left: 50%;
+    height: 30px;
+    padding: 10px 0px;
     color: white; 
     transform: translateX(-50%);
     background: transparent;

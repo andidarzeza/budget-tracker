@@ -2,8 +2,8 @@
 <!-- TABLE - ACTIONS: CREATE, REFRESH, SEARCH -->
 <div class="table-container {{sharedService.theme}}-table">
     <div class="title-container">
-        <mat-icon class="{{sharedService.theme}}-icon">{{tableActionInput?.icon}}</mat-icon>
-        <span class="title">{{tableActionInput?.pageName}}</span>
+        <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">{{tableActionInput?.icon}}</mat-icon>
+        <span class="title {{sharedService.theme}}-title">{{tableActionInput?.pageName}}</span>
     </div>
     
     <div class="table-actions action-container {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">

@@ -22,6 +22,14 @@
     box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%) !important;
 }
 
+.light-title {
+    color: rgba(0, 0, 0, 0.57);
+}
+
+.light-view-button {
+    color: var(--light);
+}
+
 .light > .mat-progress-bar-buffer {
     background-color: white !important;
 }
@@ -31,7 +39,7 @@
 }
 
 .light-text {
-    color: black;
+    color: rgba(0,0,0,.67);
 }
 
 .light-button {

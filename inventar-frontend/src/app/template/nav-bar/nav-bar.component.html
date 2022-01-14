@@ -1,6 +1,6 @@
 <mat-toolbar class="toolbar {{sharedService.theme}}" *ngIf="authenticationService.currentUserValue">
     <span>
-        <button *ngIf="sharedService.mobileView" class="menu-item" mat-icon-button (click)="toggleSidebar()">
+        <button *ngIf="sharedService.mobileView" class="menu-item" mat-icon-button (click)="sidebarService.toggleSideBar()">
             <mat-icon class="{{sharedService.theme}}-icon">
                 menu
             </mat-icon>
