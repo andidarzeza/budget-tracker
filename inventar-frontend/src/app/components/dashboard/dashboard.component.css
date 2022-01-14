@@ -58,8 +58,9 @@
 .percentage-badge {
     font-size: 18px;
     position: absolute;
-    top: -71%;
-    margin-left: -5px;
+    right: 0;
+    transform: translate(100%, -50%);
+    top: 0;
     font-family: 'Source Sans Pro', sans-serif;
 }
 
@@ -272,18 +273,6 @@
 
     .card-bottom-margin {
         margin-bottom: 10px;
-    }
-
-    .percentage-up {
-        right: -34px;
-    }
-
-    .percentage-down {
-        right: -44px;
-    }
-
-    .percentage-badge {
-        top: -85%;
     }
 
     .category-container {

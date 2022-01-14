@@ -10,7 +10,9 @@
             <div class="cnt">
                 <div class="average-income">
                     <span class="{{sharedService.theme}}-title card-label">
-                        {{dailyIncomeAverage | number:'1.2-2':'en-US'}} ALL
+                        <span>
+                            {{dailyIncomeAverage | number:'1.2-2':'en-US'}} ALL
+                        </span>
                         <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
                             <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
                         </span>
@@ -35,7 +37,9 @@
             <div class="cnt">
                 <div class="average-income">
                     <span class="{{sharedService.theme}}-title card-label">
-                        {{amountSpentAverage | number:'1.2-2':'en-US'}} ALL
+                        <span>
+                            {{amountSpentAverage | number:'1.2-2':'en-US'}} ALL
+                        </span>
                         <span *ngIf="increaseInExpense>0" class="percentage-badge percentage-down">
                             <span>↑</span>{{increaseInExpense | number:'1.2-2':'en-US'}}%
                         </span>
