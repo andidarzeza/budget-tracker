@@ -15,7 +15,7 @@ export class SharedService {
   themeSubscribable = this.dataSource.asObservable();
 
   constructor() { 
-    this.mobileView = window.screen.width < 600;
+    this.mobileView = window.innerWidth < 600;
     this.listenForResizeEvent();
   }
 
@@ -28,6 +28,10 @@ export class SharedService {
   getHeight(difference: number): number {
     difference = this.mobileView ? (difference - 40) : 0;
     return window.innerHeight - 275 - difference;
+  }
+
+  getAnimation(entity: any): string {
+    return (Date.now() - new Date(entity?.lastModifiedDate).getTime() < 5000) ? 'animate-pulse' : '';
   }
 
   changeTheme(darkMode: any): void {

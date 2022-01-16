@@ -1,24 +1,13 @@
 package com.adprod.inventar.models.wrappers;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
 public class SpendingWrapper {
-    List<SpendingDTO> spendings;
+    List<SpendingDTO> expenses;
     long count;
-
-    public List<SpendingDTO> getSpendings() {
-        return spendings;
-    }
-
-    public void setSpendings(List<SpendingDTO> spendings) {
-        this.spendings = spendings;
-    }
-
-    public long getCount() {
-        return count;
-    }
-
-    public void setCount(long count) {
-        this.count = count;
-    }
 }

@@ -1,6 +1,6 @@
 .titulli {
     display: flex;
-    padding: 25px 25px;
+    padding: 25px 0px;
     font-size: 25px;
     color: #9F9F9F;
     font-weight: 200;
@@ -17,14 +17,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 95%;
+    width: calc(100% - 52px);
     margin: auto;
     margin-top: 5px;
 }
 
 .button-container {
-    height: 100px;
-    width: 100%;
+    width: calc(100% - 30px);
+    margin: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -32,11 +32,8 @@
 
 
 @media only screen and (max-width: 500px) {
-    .configuration {
-        width: 87%;
-    }
     .titulli{
-        padding: 12px 12px;
+        padding: 20px 0px;
         font-size: 19px;
     }
 

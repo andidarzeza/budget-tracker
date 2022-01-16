@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,10 +47,10 @@ public class ExpenseServiceImpl implements ExpenseService {
             Optional<SpendingCategory> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
                 SpendingCategory sc = data.get();
-                response.add(new SpendingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getName(), item.getMoneySpent(), item.getDescription()));
+                response.add(new SpendingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getMoneySpent(), item.getDescription()));
             }
         });
-        spendingWrapper.setSpendings(response);
+        spendingWrapper.setExpenses(response);
         spendingWrapper.setCount(page.getTotalElements());
         return ResponseEntity.ok().body(spendingWrapper);
     }
@@ -94,6 +95,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             if(this.accountService.addToBalance(removeAndAddAmount, authentication.getName())) {
                 spending.setId(id);
                 spending.setCreatedTime(expenseOptional.get().getCreatedTime());
+                spending.setLastModifiedDate(new Date());
                 expenseRepository.save(spending);
                 historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
                 return ResponseEntity.ok(spending);

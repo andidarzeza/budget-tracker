@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,12 +49,12 @@ public class IncomeServiceImpl implements IncomeService {
             Optional<SpendingCategory> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
                 SpendingCategory sc = data.get();
-                response.add(new IncomingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getName(), item.getIncoming(), item.getDescription()));
+                response.add(new IncomingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
             } else {
-                response.add(new IncomingDTO(item.getId(), "No Category Found", "0", item.getCreatedTime(), item.getName(), item.getIncoming(), item.getDescription()));
+                response.add(new IncomingDTO(item.getId(), "No Category Found", "0", item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
             }
         });
-        incomingWrapper.setIncomings(response);
+        incomingWrapper.setIncomes(response);
         incomingWrapper.setCount(page.getTotalElements());
         return ResponseEntity.ok().body(incomingWrapper);
     }
@@ -99,6 +100,7 @@ public class IncomeServiceImpl implements IncomeService {
             if(this.accountService.addToBalance(removeAndAddAmount, authentication.getName())) {
                 income.setId(id);
                 income.setCreatedTime(incomingOptional.get().getCreatedTime());
+                income.setLastModifiedDate(new Date());
                 incomeRepository.save(income);
                 historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
                 return ResponseEntity.ok(income);

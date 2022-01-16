@@ -54,7 +54,7 @@
         </ng-container>
     
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
     <div *ngIf="incomes.length == 0 && !sharedService.stillLoading" class="no-data" [style.height.px]="sharedService.getHeight(60)">
         No data to display!

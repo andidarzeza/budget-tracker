@@ -2,6 +2,7 @@ export interface History {
     id: string;
     date: Date;
     action: EntityAction;
+    lastModifiedDate: Date;
     entity: EntityType;
     user: string;
     message: string;

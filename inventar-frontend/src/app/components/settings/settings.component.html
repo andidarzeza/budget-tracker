@@ -1,17 +1,17 @@
 
 <div class="button-container">
     <div class="titulli">
-        <mat-icon class="{{sharedService.theme}}-icon">settings</mat-icon>
-        <span class="title">Settings</span>
+        <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-text">settings</mat-icon>
+        <span class="title {{sharedService.theme}}-text">Settings</span>
     </div>
     <span></span>
 </div>
-<mat-card class="{{sharedService.theme}}-card configuration">
+<mat-card class="{{sharedService.theme}}-card {{sharedService.theme}}-dashboard-card configuration {{sharedService.theme}}-text" style="margin-top: 0;">
     <span>Dark Theme</span>
     <mat-slide-toggle [checked]="sharedService.theme === 'dark'" (change)="changeTheme()"></mat-slide-toggle>
 </mat-card>
 
-<mat-card class="{{sharedService.theme}}-card configuration">
+<mat-card class="{{sharedService.theme}}-card {{sharedService.theme}}-dashboard-card configuration {{sharedService.theme}}-text">
     <span>Activate loading progress bar.</span>
     <mat-slide-toggle [checked]="sharedService.isSpinnerEnabled" (change)="setAnimationLoading()"></mat-slide-toggle>
 </mat-card>

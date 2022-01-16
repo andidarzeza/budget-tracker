@@ -14,7 +14,7 @@
     </div>
     <div class="table-actions {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">
         <mat-icon (click)="query()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
-        <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">add</mat-icon>
+        <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">add</mat-icon>
         <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">search</mat-icon>
     </div>
 </div>
@@ -55,7 +55,7 @@
         </ng-container>
     
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
     <div *ngIf="dataSource.length == 0" class="no-data" [style.height.px]="sharedService.getHeight(60)">
         No data to display!

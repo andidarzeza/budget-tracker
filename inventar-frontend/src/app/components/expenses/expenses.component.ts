@@ -59,7 +59,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     this.sharedService.activateLoadingSpinner();
     this.expenseSubscription?.unsubscribe();
     this.expenseSubscription = this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
-      this.expenses = res?.body.spendings;
+      this.expenses = res?.body.expenses;
       this.totalItems = res?.body.count;
       this.sharedService.checkLoadingSpinner();     
     });

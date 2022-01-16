@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -65,6 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
     public ResponseEntity update(SpendingCategory spendingCategory) {
         Optional<SpendingCategory> categoryOptional = categoryRepository.findById(spendingCategory.getId());
         if(categoryOptional.isPresent()) {
+            spendingCategory.setLastModifiedDate(new Date());
             categoryRepository.save(spendingCategory);
             historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
             return ResponseEntity.ok(spendingCategory);
