@@ -85,14 +85,21 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<S
 
   changeCategoriesType(value: string): void {
     const underline = document.getElementById("tab-underline");
+    const shiftValue = this.getShiftValue();
     if(value === 'spendings') {
       underline.style.transform = "translateX(0)";
     } else {
-      underline.style.transform = "translateX(280px)";
+      underline.style.transform = `translateX(${shiftValue}px)`;
     }
     this.categoriesType = value;
     this.page = 0;
     this.query();
+  }
+
+  private getShiftValue(): number {
+    if(window.innerWidth <= 475) return 160;
+    else if(window.innerWidth <=680) return 210;
+    return 260;
   }
 
   announceSortChange(sort: Sort): void {

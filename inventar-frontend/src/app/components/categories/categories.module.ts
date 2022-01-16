@@ -30,6 +30,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
+    MatMenuModule,
     SharedModule
   ]
 })

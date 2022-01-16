@@ -469,14 +469,20 @@ button.toast-close-button {
     align-items: center;
 }
 
+
+.mat-menu-panel.floating-menu{
+    background: inherit !important;
+    box-shadow: none !important;
+}
+
 .mat-menu-panel{
     min-width: 70px !important;
     max-width: unset !important;
     max-height: unset !important;
-    background: inherit !important;
+    // background: inherit !important;
     margin-bottom: 10px;
     overflow: hidden !important;
-    box-shadow: none !important;
+    // box-shadow: none !important;
     min-height: unset !important;
  }
 

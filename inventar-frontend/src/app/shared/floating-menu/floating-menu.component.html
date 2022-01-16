@@ -4,7 +4,7 @@
             menu
         </mat-icon>
     </button>
-    <mat-menu #menu="matMenu" [yPosition]="floatingMenu?.position">
+    <mat-menu class="floating-menu" #menu="matMenu" [yPosition]="floatingMenu?.position">
       <button *ngFor="let button of floatingMenu?.buttons" (click)="executeAction(button.action)" mat-fab color="warn" style="margin-bottom: 5px;" [matTooltip]="button?.tooltip" matTooltipPosition="left">
           <mat-icon>
               {{button.icon}}

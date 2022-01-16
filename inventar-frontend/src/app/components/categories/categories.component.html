@@ -1,5 +1,5 @@
 <div class="table-container {{sharedService.theme}}-table">
-    <div class="titulli">
+    <div class="titulli tab-option-container">
         <div id="tab-underline">
 
         </div>
@@ -12,11 +12,13 @@
             <span class="title {{sharedService.theme}}-title">Income Categories</span>
         </div>
     </div>
-    <div class="table-actions {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">
+
+    <div style="padding: 0 25px;" class="action-container {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">
         <mat-icon (click)="query()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
         <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">add</mat-icon>
         <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">search</mat-icon>
     </div>
+    
 </div>
 
 <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">

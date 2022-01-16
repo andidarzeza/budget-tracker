@@ -1,5 +1,5 @@
 .tab-option {
-    padding: 10px 10px;
+    padding: 10px 0px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8,7 +8,7 @@
 }
 
 #tab-underline {
-    width: 280px;
+    width: 260px;
     height: 2px;
     position: absolute;
     background: rgb(237,94,70);
@@ -50,4 +50,40 @@ table {
     table-layout: fixed;
     display: block;
     height: calc(100% - 65px); 
+}
+
+
+@media only screen and (max-width: 990px) {
+    .tab-option-container {
+        margin: auto;
+    }
+}
+
+
+@media only screen and (max-width: 680px) {
+    .titulli {
+        font-size: 20px;
+    }
+
+    .tab-option {
+        min-width: 210px;
+    }
+
+    #tab-underline {
+        width: 210px;
+    }
+}
+
+@media only screen and (max-width: 475px) {
+    .titulli {
+        font-size: 14px;
+    }
+
+    .tab-option {
+        min-width: 160px;
+    }
+
+    #tab-underline {
+        width: 160px;
+    }
 }
