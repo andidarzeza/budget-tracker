@@ -30,7 +30,7 @@ import { MONTHS } from 'src/environments/environment';
           ':enter', 
           [
             style({ opacity: 0 }),
-            animate('200ms ease-out', 
+            animate('150ms ease-out', 
                     style({opacity: 1 }))
           ]
         ),
@@ -38,7 +38,7 @@ import { MONTHS } from 'src/environments/environment';
           ':leave', 
           [
             style({ opacity: 1 }),
-            animate('200ms ease-in', 
+            animate('150ms ease-in', 
                     style({ opacity: 0 }))
           ]
         )
@@ -48,16 +48,23 @@ import { MONTHS } from 'src/environments/environment';
 })
 export class BudgetInfoComponent implements OnInit, OnDestroy {
 
-  constructor(public accountService: AccountService, public sharedService: SharedService) { }
+  constructor(
+    public accountService: AccountService, 
+    public sharedService: SharedService
+  ) {
+    document.addEventListener('click', this.offClickHandler.bind(this)); // bind on doc
+  }
+
   public account: Account;
   private accountSubscription: Subscription = null;
   public hideBalance: boolean = false;
   public hiddenBalance: string = '';
-  public months = MONTHS;
-  showDatePicker: boolean = false;
-  dateFrom = new Date();
-  dateTo = new Date(this.dateFrom.getFullYear(), this.dateFrom.getMonth() + 1);
+  public showDatePicker: boolean = false;
+  public dateFrom: Date = new Date();
+  public dateTo: Date = new Date(this.dateFrom.getFullYear(), this.dateFrom.getMonth() + 1);
+  
   @Output() dateSelected: EventEmitter<any> = new EventEmitter();
+  
   ngOnInit(): void {
     this.hideBalance = (localStorage.getItem("hideBalance") === 'true');
     this.emitSelectedDate();
@@ -97,13 +104,28 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   }
 
   public onDateSelected(date: Date): void {
+    console.log(date);
+    
     this.dateFrom = date;
     this.dateTo = new Date(this.dateFrom.getFullYear(), this.dateFrom.getMonth() + 1)
-    this.showDatePicker = false;
+    // this.showDatePicker = false;
     this.emitSelectedDate();
   }
-  
+
   ngOnDestroy(): void {
+    document.removeEventListener('click', this.offClickHandler.bind(this), true); // bind on doc
     this.accountSubscription?.unsubscribe();
+  }
+
+  public offClickHandler(event:any) {
+    // const elem = document.getElementsByTagName("mat-calendar") as any;
+    console.log(event.target);
+    
+    const selectedDateElem = document.getElementById("selectedDateId");
+    if(selectedDateElem) {
+      if(!selectedDateElem?.contains(event.target)) {
+        this.showDatePicker = false;
+      }
+    }
   }
 }

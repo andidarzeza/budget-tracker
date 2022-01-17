@@ -11,7 +11,7 @@
     width: 260px;
     height: 2px;
     position: absolute;
-    background: rgb(237,94,70);
+    background: var(--light);
     bottom: 15px;
     left: 25px;
     transition: transform 500ms;

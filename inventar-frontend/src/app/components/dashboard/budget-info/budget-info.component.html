@@ -1,29 +1,25 @@
 <div class="container {{sharedService.theme}}-title">
-    <span class="date-picker-container">
-        <span (click)="switchDatePicker()" id="selectedDateId">
-            <mat-icon class="selected-date-icon">calendar_today</mat-icon> 
-            <span class="selected-date-container">
-                <span>
-                    From: {{dateFrom | date:'dd/MM/yyyy'}}
-                </span>
 
-                <span class="date-divider">
-                    -
-                </span>
+    <span  id="selectedDateId">
+        <mat-icon (click)="switchDatePicker()" class="selected-date-icon">calendar_today</mat-icon> 
+        <span (click)="switchDatePicker()" class="selected-date-container">
+            <span>
+                From: {{dateFrom | date:'dd/MM/yyyy'}}
+            </span>
 
-                <span>
-                    To: {{dateTo | date:'dd/MM/yyyy'}}
-                </span>
+            <span class="date-divider">
+                -
+            </span>
+
+            <span>
+                To: {{dateTo | date:'dd/MM/yyyy'}}
             </span>
         </span>
-        
-        <app-date-picker 
-            [@datePickerAnimation]
-            [selectedYear]="dateFrom.getFullYear()"
-            [selectedMonth]="dateFrom.getMonth()"
-            [selectedDay]="dateFrom.getDate()"
-            (dateSelected)="onDateSelected($event)" class="{{sharedService.theme}}-sb9 sb9 mat-elevation-z8 {{sharedService.theme}}-body"  *ngIf="showDatePicker"></app-date-picker>
-        
+        <mat-calendar 
+            (selectedChange)="onDateSelected($event)"    
+            [@datePickerAnimation] 
+            class="custom-calendar {{sharedService.theme}}-body" 
+            *ngIf="showDatePicker"></mat-calendar>
     </span>
 
     <div class="current-balance">

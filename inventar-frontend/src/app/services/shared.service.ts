@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -41,10 +42,9 @@ export class SharedService {
   }
 
   listenForThemeChange(): void {
-    this.themeSubscribable.subscribe((theme => {
-      if(theme !== "")
-      this.theme = theme;
-    }));
+    this.themeSubscribable
+      .pipe(filter(value => value !== ""))
+      .subscribe(theme => this.theme = theme);
   }
 
   activateLoadingSpinner(): void {
