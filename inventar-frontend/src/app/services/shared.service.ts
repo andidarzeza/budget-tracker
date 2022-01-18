@@ -35,7 +35,7 @@ export class SharedService {
     return (Date.now() - new Date(entity?.lastModifiedDate).getTime() < 5000) ? 'animate-pulse' : '';
   }
 
-  changeTheme(darkMode: any): void {
+  changeTheme(darkMode: boolean): void {
     this.darkMode = darkMode;
     this.theme = this.darkMode ? 'dark' : 'light';
     this.dataSource.next(this.theme);
@@ -56,4 +56,5 @@ export class SharedService {
     this.totalRequests--;
     if(this.totalRequests === 0)  setTimeout(() => this.stillLoading = false, 500);
   }
+  
 }

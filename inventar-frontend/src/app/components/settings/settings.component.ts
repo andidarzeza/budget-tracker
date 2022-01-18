@@ -55,5 +55,4 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.updateConfigurationSubscription?.unsubscribe();
     this.configurationSubscription?.unsubscribe();
   }
-
 }

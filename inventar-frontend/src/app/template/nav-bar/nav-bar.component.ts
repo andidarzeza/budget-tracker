@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { IConfiguration } from 'src/app/models/IConfiguration';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 
@@ -12,15 +14,23 @@ export class NavBarComponent implements OnInit, OnDestroy {
   fullScreenMode = false;
   interval = null;
   currentDate = new Date();
+  configuration: IConfiguration;
   constructor(
     public sharedService: SharedService,
     public authenticationService: AuthenticationService,
-    public sidebarService: SideBarService) { 
+    public sidebarService: SideBarService,
+    private configurationService: ConfigurationService
+  ) { 
   }
   ngOnInit(): void {
     this.interval = setInterval(() => {
       this.currentDate = new Date();
     }, 1000);
+
+    this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
+      this.configuration = configuration;
+      this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
+    });
   }
 
   ngOnDestroy(): void {
@@ -40,5 +50,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
       document.documentElement.requestFullscreen();
     }
     this.fullScreenMode = !this.fullScreenMode;
+  }
+
+  toggleDarkMode(): void {
+    this.configuration.darkMode = !this.configuration.darkMode;
+    this.sharedService.activateLoadingSpinner();
+    this.configurationService.updateConfiguration(this.configuration).subscribe(() => {
+      this.sharedService.changeTheme(this.configuration.darkMode);
+      this.sharedService.checkLoadingSpinner();
+    });
   }
 }

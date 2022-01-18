@@ -7,6 +7,11 @@
         </button>
     </span>
     <div class="menu-container">
+
+        <div *ngIf="!sharedService.mobileView" class="menu-item pointer" (click)="toggleDarkMode()">
+            <mat-icon class="fullscreen-icon {{sharedService.theme}}-icon">{{this.configuration.darkMode ? 'wb_sunny' : 'brightness_3'}}</mat-icon>
+        </div>
+
         <div *ngIf="!sharedService.mobileView" class="menu-item pointer" (click)="toggleFullScreenMode()">
             <mat-icon class="fullscreen-icon {{sharedService.theme}}-icon">{{fullScreenMode ? 'fullscreen_exit' : 'fullscreen'}}</mat-icon>
         </div>
