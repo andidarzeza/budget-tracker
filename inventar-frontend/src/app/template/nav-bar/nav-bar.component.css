@@ -9,7 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 11px;
+    margin-right: 20px;
     color: white;
 }
 
@@ -23,7 +23,7 @@
     justify-content: space-between !important;
     position: sticky !important;
     z-index: 2 !important;
-    /* padding: 0; */
+    padding: 0;
 }
 
 .titulli {

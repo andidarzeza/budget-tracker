@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Theme } from 'src/app/models/core/Theme';
 import { IConfiguration } from 'src/app/models/IConfiguration';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
@@ -15,6 +16,26 @@ export class NavBarComponent implements OnInit, OnDestroy {
   interval = null;
   currentDate = new Date();
   configuration: IConfiguration;
+
+  public themesArray: Theme[] = [
+    {
+      name: 'Default',
+      color: '#00695c'
+    },
+    {
+      name: 'Pink & Blue-grey',
+      color: '#e91e63'
+    },
+    {
+      name: 'Amber',
+      color: '#673ab7'
+    },
+    {
+      name: 'Indigo Pink',
+      color: '#3f51b5'
+    }
+  ]
+
   constructor(
     public sharedService: SharedService,
     public authenticationService: AuthenticationService,
