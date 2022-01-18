@@ -12,15 +12,36 @@
             <mat-icon class="fullscreen-icon {{sharedService.theme}}-icon">{{this.configuration.darkMode ? 'wb_sunny' : 'brightness_3'}}</mat-icon>
         </div>
 
-        <div *ngIf="!sharedService.mobileView" class="menu-item pointer" (click)="toggleFullScreenMode()">
-            <mat-icon class="fullscreen-icon {{sharedService.theme}}-icon">{{fullScreenMode ? 'fullscreen_exit' : 'fullscreen'}}</mat-icon>
+        <div class="flex-centered">
+            <button class="user-name-button" mat-icon-button color="primary" [matMenuTriggerFor]="userMenu">
+                <div class="user-name fw-500 {{sharedService.theme}}-user-circle">
+                    AD
+                </div>
+            </button>
+            <mat-icon class="pointer menu-item {{sharedService.theme}}-icon" style="margin-right: 0;">keyboard_arrow_down</mat-icon>
+            
+            <mat-menu xPosition="before" class="{{sharedService.theme}}-user-menu user-menu" #userMenu="matMenu">
+                <button mat-menu-item>Logged in as Andi Darzeza</button>
+                <mat-divider style="width: 100%;"></mat-divider>
+                <button mat-menu-item [matMenuTriggerFor]="themes"><mat-icon>color_lens</mat-icon> Themes</button>
+                <mat-divider style="width: 100%;"></mat-divider>
+                <button (click)="logout()" mat-menu-item> <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>Logout</button>
+            </mat-menu>
+
+            <mat-menu #themes="matMenu">
+                <button mat-menu-item class="flex-centered" style="justify-content: inherit;" (click)="changeThemeColor('#00695c')"><div class="round" style="background-color: #00695c;"></div> Default</button>
+                <button mat-menu-item class="flex-centered" style="justify-content: inherit;" (click)="changeThemeColor('#e91e63')"><div class="round" style="background-color: #e91e63;"></div>Pink & Blue-grey</button>
+                <button mat-menu-item class="flex-centered" style="justify-content: inherit;" (click)="changeThemeColor('#673ab7')"><div class="round" style="background-color: #673ab7;"></div>Amber</button>
+                <button mat-menu-item class="flex-centered" style="justify-content: inherit;" (click)="changeThemeColor('#3f51b5')"><div class="round" style="background-color: #3f51b5;"></div>Indigo Pink</button>
+              </mat-menu>
+            
         </div>
+        <mat-divider [vertical]="true" style="width: 1px;height: 50px;margin: 0 8px;background-color: rgba(241, 245, 249, 0.12);"></mat-divider>
         <div *ngIf="!sharedService.mobileView" class="menu-item">
-            <mat-icon class="{{sharedService.theme}}-icon">access_time</mat-icon>
-            <span class="currentDate">{{currentDate | date: 'medium'}}</span>
-        </div>
-        <div class="menu-item pointer" (click)="logout()">
-            <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>
+            <div class="current-date-container">
+                <span class="current-date fw-800">{{currentDate | date: 'h:mm:ss'}}</span>
+                <span style="margin-top: -5px;" class="mt-10 current-date">{{currentDate | date: 'd-MM-yyyy'}}</span>
+            </div>
         </div>
     </div>
 </mat-toolbar>

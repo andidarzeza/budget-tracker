@@ -27,10 +27,17 @@ export class NavBarComponent implements OnInit, OnDestroy {
       this.currentDate = new Date();
     }, 1000);
 
+    this.setInitialTheme();
+
     this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
       this.configuration = configuration;
       this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
     });
+  }
+
+  private setInitialTheme(): void {
+    const theme: string = localStorage.getItem("themeColor");
+    if(theme) this.changeThemeColor(theme);
   }
 
   ngOnDestroy(): void {
@@ -43,15 +50,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.authenticationService.logout();
   }
 
-  toggleFullScreenMode(): void {
-    if(this.fullScreenMode) {
-      document.exitFullscreen();
-    } else {
-      document.documentElement.requestFullscreen();
-    }
-    this.fullScreenMode = !this.fullScreenMode;
-  }
-
   toggleDarkMode(): void {
     this.configuration.darkMode = !this.configuration.darkMode;
     this.sharedService.activateLoadingSpinner();
@@ -59,5 +57,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
       this.sharedService.changeTheme(this.configuration.darkMode);
       this.sharedService.checkLoadingSpinner();
     });
+  }
+
+  changeThemeColor(color: string): void {
+    const r: any = document.querySelector(':root');
+    if(r) {
+      r.style.setProperty('--light', color);
+      localStorage.setItem("themeColor", color);
+    }
   }
 }

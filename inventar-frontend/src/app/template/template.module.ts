@@ -7,6 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { AppRoutingModule } from '../app-routing.module';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatDividerModule} from '@angular/material/divider';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 
@@ -18,6 +20,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatButtonModule,
     AppRoutingModule,
     MatToolbarModule,
+    MatDividerModule,
+    MatMenuModule,
     MatTooltipModule
   ],
   exports: [NavBarComponent, SideBarComponent]

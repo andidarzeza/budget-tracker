@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato&family=Raleway&family=Source+Sans+Pro&family=Ubuntu&display=swap');
 @import '../../inventar-frontend/src/app/template/light-theme.scss';
 @import '../../inventar-frontend/src/app/template/dark-theme.scss';
+@import '../../inventar-frontend/src/app/template/shared.scss';
 html,
 body {
     height: 100%;
@@ -63,7 +64,7 @@ app-date-picker {
 }
 
 .flex-centered {
-    display: flex;
+    display: flex !important;
     justify-content: center;
     align-items: center;
 }
@@ -475,6 +476,10 @@ button.toast-close-button {
     box-shadow: none !important;
 }
 
+.mat-menu-panel.user-menu{
+    width: 200px;
+}
+
 .mat-menu-panel{
     min-width: 70px !important;
     max-width: unset !important;
@@ -515,10 +520,12 @@ th {
 
 .animate-pulse {
     animation: pulse 2s cubic-bezier(.4,0,.6,1) 3;
-  }
+}
+
+
   
-  @keyframes pulse{50%{opacity:.5}}
-  
+@keyframes pulse{50%{opacity:.5}}
+
 
 @media only screen and (max-width: 475px) { 
     app-date-picker {

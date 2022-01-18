@@ -27,7 +27,7 @@
 }
 
 .light-view-button {
-    color: var(--light);
+    color: var(--light) !important;
 }
 
 .light > .mat-progress-bar-buffer {
@@ -70,5 +70,14 @@
 
 /* Handle */
 .light-table tbody::-webkit-scrollbar-thumb {
+    background: white;
+}
+
+.light-user-circle {
+    background-color: white;
+    color: var(--light);
+}
+
+.mat-menu-panel.light-user-menu{
     background: white;
 }

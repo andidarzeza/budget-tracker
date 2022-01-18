@@ -27,7 +27,7 @@
 }
 
 .dark-view-button {
-    color: var(--dark);
+    color: var(--dark) !important;
 }
 
 .dark > .mat-progress-bar-buffer {
@@ -116,4 +116,13 @@
 /* Handle */
 .dark-table tbody::-webkit-scrollbar-thumb {
     background: #1d252a;
+}
+
+.dark-user-circle {
+    background-color: #f6af06;
+    color: white;
+}
+
+.mat-menu-panel.dark-user-menu{
+    background: #111619;
 }
