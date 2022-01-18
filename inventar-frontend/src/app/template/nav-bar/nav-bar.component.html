@@ -9,11 +9,12 @@
     <div class="menu-container">
 
         <div *ngIf="!sharedService.mobileView" class="menu-item pointer" (click)="toggleDarkMode()">
-            <mat-icon class="fullscreen-icon {{sharedService.theme}}-icon">{{this.configuration.darkMode ? 'wb_sunny' : 'brightness_3'}}</mat-icon>
+            <i *ngIf="!this.configuration.darkMode" class="material-icons {{sharedService.theme}}-icon">nights_stay</i>
+            <mat-icon *ngIf="this.configuration.darkMode" class="fullscreen-icon {{sharedService.theme}}-icon">wb_sunny</mat-icon>
         </div>
 
         <div class="flex-centered">
-            <button class="user-name-button" mat-icon-button color="primary" [matMenuTriggerFor]="userMenu">
+            <button class="user-name-button" mat-icon-button color="primary" [matMenuTriggerFor]="userMenu" style="box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%);">
                 <div class="user-name fw-500 {{sharedService.theme}}-user-circle">
                     AD
                 </div>
