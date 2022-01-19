@@ -14,15 +14,18 @@ import { CategoriesRoutingModule } from './categories-routing.module';
 import { MatSortModule } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
 import { SharedModule } from 'src/app/shared/shared.module';
+import {MatTabsModule} from '@angular/material/tabs';
+import { CategoriesTableComponent } from './categories-table/categories-table.component';
 
 
 @NgModule({
-  declarations: [CategoriesComponent, AddCategoryComponent, IconSelectComponent],
+  declarations: [CategoriesComponent, AddCategoryComponent, IconSelectComponent, CategoriesTableComponent],
   imports: [
     CommonModule,
     CategoriesRoutingModule,
     MatTableModule,
     MatSortModule,
+    MatTabsModule,
     MatPaginatorModule,
     MatIconModule,
     MatButtonModule,

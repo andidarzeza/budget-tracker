@@ -1,68 +1,32 @@
-<div class="table-container {{sharedService.theme}}-table">
-    <div class="titulli tab-option-container">
-        <div id="tab-underline">
+<div class="table-container {{sharedService.theme}}-table" style="position: relative;">
+    <mat-tab-group (selectedTabChange)="changeCategoriesType($event)">
+        <mat-tab label="Expense Categories"> 
+            <app-categories-table 
+                (onOpenAddEditForm)="openAddEditForm($event)"
+                (onOpenDeleteDialog)="openDeleteConfirmDialog($event)"
+                (sortEvent)="announceSortChange($event)" 
+                [dataSource]="dataSource">
+            </app-categories-table>
+        </mat-tab>
 
-        </div>
-        <div class="tab-option" [ngClass]="{'selected-tab': categoriesType==='spendings'}" (click)="changeCategoriesType('spendings')">
-            <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">exit_to_app</mat-icon>
-            <span class="title {{sharedService.theme}}-title">Expense Categories</span>
-        </div>
-        <div class="tab-option" [ngClass]="{'selected-tab': categoriesType==='incomings'}" (click)="changeCategoriesType('incomings')">
-            <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">transit_enterexit</mat-icon>
-            <span class="title {{sharedService.theme}}-title">Income Categories</span>
-        </div>
-    </div>
-
-    <div style="padding: 0 25px;" class="action-container {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">
+        <mat-tab label="Income Categories">
+            <app-categories-table 
+                (onOpenAddEditForm)="openAddEditForm($event)"
+                (onOpenDeleteDialog)="openDeleteConfirmDialog($event)"
+                (sortEvent)="announceSortChange($event)" 
+                [dataSource]="dataSource">
+            </app-categories-table>
+        </mat-tab>
+      </mat-tab-group>
+    
+      <div class="category-action-container action-container {{sharedService.theme}}-text" *ngIf="!sharedService.mobileView">
         <mat-icon (click)="query()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">refresh</mat-icon>
         <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-left: 10px">add</mat-icon>
         <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">search</mat-icon>
     </div>
-    
 </div>
 
-<div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
-    <table 
-        mat-table 
-        [dataSource]="dataSource" 
-        class="{{sharedService.theme}}-table" 
-        matSort 
-        (matSortChange)="announceSortChange($event)"
-        >
-    
-        <!-- Icon Column -->
-        <ng-container matColumnDef="icon">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Icon </th>
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> <mat-icon>{{element?.icon}}</mat-icon></td>
-        </ng-container>
-    
-        <!-- Category Column -->
-        <ng-container matColumnDef="category">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Category </th>
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.category}} </td>
-        </ng-container>
-    
-        <!-- Description Column -->
-        <ng-container matColumnDef="description">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Description </th>
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.description}} </td>
-        </ng-container>
 
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">Actions</th>
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text" style="padding: 0;">
-                <app-record-actions (openEditForm)="openAddEditForm(element)" (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></app-record-actions>
-            </td>
-        </ng-container>
-    
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-    <div *ngIf="dataSource.length == 0" class="no-data" [style.height.px]="sharedService.getHeight(60)">
-        No data to display!
-    </div>
-</div>
 
 <mat-paginator 
     [length]="totalItems" 

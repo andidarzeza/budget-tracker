@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { SpendingCategory } from '../models/SpendingCategory';
+import { Category } from '../models/Category';
 
 @Injectable({
   providedIn: 'root'
@@ -29,11 +29,11 @@ export class CategoriesService {
     return this.http.delete(`${serverAPIURL}/api/categories/${id}`, {observe: 'response'});
   }
 
-  save(category: SpendingCategory): Observable<any> {
+  save(category: Category): Observable<any> {
     return this.http.post(`${serverAPIURL}/api/categories/`, category, {observe: 'response'});
   }
 
-  update(category: SpendingCategory): Observable<any> {
+  update(category: Category): Observable<any> {
     return this.http.put(`${serverAPIURL}/api/categories/`, category, {observe: 'response'});
   }
 }

@@ -1,3 +1,4 @@
+
 tr {
     width: 100%; 
     display: table; 
@@ -15,12 +16,4 @@ table {
     table-layout: fixed;
     display: block;
     height: calc(100% - 65px); 
-}
-
-.category-action-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 25px;
-    z-index: 1;
 }

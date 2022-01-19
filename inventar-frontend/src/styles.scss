@@ -309,6 +309,13 @@ button.toast-close-button {
     opacity: 0.4;
 }
 
+.mat-tab-label {
+    padding: 37px 24px !important;
+}
+
+.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: var(--light) !important;
+}
 
 /* Responsive Design */
 

@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { Expense } from 'src/app/models/Expense';
-import { SpendingCategory } from 'src/app/models/SpendingCategory';
+import { Category } from 'src/app/models/Category';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
@@ -45,7 +45,7 @@ export class AddSpendingComponent implements OnInit, OnDestroy {
     return this.formGroup.controls['moneySpent'];
   }
 
-  public categories: SpendingCategory[] = [];
+  public categories: Category[] = [];
 
   ngOnInit(): void {
     this.getCategories();

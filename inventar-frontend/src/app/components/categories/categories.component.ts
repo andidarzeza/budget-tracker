@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { SpendingCategory } from 'src/app/models/SpendingCategory';
+import { Category } from 'src/app/models/Category';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -13,13 +13,14 @@ import { Sort } from '@angular/material/sort';
 import { DialogService } from 'src/app/services/dialog.service';
 import { filter } from 'rxjs/operators';
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-categories',
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<SpendingCategory> {
+export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<Category> {
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   public page: number = 0;
   public size: number = PAGE_SIZE;
@@ -28,7 +29,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<S
   public categoriesType: string = 'spendings';
   public theme: string = 'light';
   public displayedColumns: string[] = ['icon', 'category', 'description', 'actions'];
-  public dataSource: SpendingCategory[] = [];
+  public dataSource: Category[] = [];
   public defaultSort: string = "createdTime,desc";
   public sort: string = this.defaultSort;
   private categoriesSubscription: Subscription = null;
@@ -61,7 +62,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<S
     });
   }
 
-  openAddEditForm(spendingCategory?: SpendingCategory): void {
+  openAddEditForm(spendingCategory?: Category): void {
     this.dialog.openDialog(AddCategoryComponent, {spendingCategory, categoriesType: this.categoriesType})
       .afterClosed()
       .pipe(filter((update)=>update))
@@ -83,23 +84,18 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<S
     });
   }
 
-  changeCategoriesType(value: string): void {
-    const underline = document.getElementById("tab-underline");
-    const shiftValue = this.getShiftValue();
-    if(value === 'spendings') {
-      underline.style.transform = "translateX(0)";
-    } else {
-      underline.style.transform = `translateX(${shiftValue}px)`;
+  changeCategoriesType(event: MatTabChangeEvent): void {
+    console.log(event);
+    switch(event.index) {
+      case 0:
+        this.categoriesType = 'spendings';
+        break;
+      case 1:
+        this.categoriesType = 'incomings';
+        break;
     }
-    this.categoriesType = value;
     this.page = 0;
     this.query();
-  }
-
-  private getShiftValue(): number {
-    if(window.innerWidth <= 475) return 160;
-    else if(window.innerWidth <=680) return 210;
-    return 260;
   }
 
   announceSortChange(sort: Sort): void {

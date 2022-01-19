@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { Income } from 'src/app/models/Income';
-import { SpendingCategory } from 'src/app/models/SpendingCategory';
+import { Category } from 'src/app/models/Category';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -56,7 +56,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
     return this.income != null && this.income != undefined;
   }
 
-  public categories: SpendingCategory[] = [];
+  public categories: Category[] = [];
 
   ngOnInit(): void {
     this.getCategories();

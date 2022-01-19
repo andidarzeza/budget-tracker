@@ -1,5 +1,5 @@
 
-export interface SpendingCategory {
+export interface Category {
     id: string;
     icon: string;
     category: string;
