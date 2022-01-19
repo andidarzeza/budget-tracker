@@ -16,7 +16,7 @@
         <div class="flex-centered">
             <button class="user-name-button" mat-icon-button color="primary" [matMenuTriggerFor]="userMenu">
                 <div class="user-name fw-500 {{sharedService.theme}}-user-circle">
-                    AD
+                    {{authenticationService?.currentUserValue?.firstName[0]}}{{authenticationService?.currentUserValue?.lastName[0]}}
                 </div>
             </button>
             <div [matMenuTriggerFor]="userMenu" class="pointer arrow-down-container">
@@ -24,7 +24,7 @@
             </div>
             
             <mat-menu xPosition="before" class="{{sharedService.theme}}-user-menu user-menu" #userMenu="matMenu">
-                <button mat-menu-item>Logged in as Andi Darzeza</button>
+                <button mat-menu-item>Logged in as {{authenticationService?.currentUserValue?.firstName}} {{authenticationService?.currentUserValue?.lastName}}</button>
                 <mat-divider style="width: 100%;"></mat-divider>
                 <button mat-menu-item [matMenuTriggerFor]="themes"><mat-icon>color_lens</mat-icon> Themes</button>
                 <mat-divider style="width: 100%;"></mat-divider>

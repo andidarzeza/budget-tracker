@@ -16,18 +16,20 @@ export class SharedService {
   themeSubscribable = this.dataSource.asObservable();
 
   constructor() { 
-    this.mobileView = window.innerWidth < 600;
+    this.mobileView = window.innerWidth <= 600;
     this.listenForResizeEvent();
   }
 
   private listenForResizeEvent(): void {
     window.addEventListener('resize', (event: any) => {
-      this.mobileView = event.target.innerWidth < 600;
+      this.mobileView = event.target.innerWidth <= 600;
     });
   }
 
   getHeight(difference: number): number {
     difference = this.mobileView ? (difference - 40) : 0;
+    if(window.innerHeight <= 600) difference = difference - 40;
+    if(window.innerHeight <= 400) difference = difference - 40;
     return window.innerHeight - 275 - difference;
   }
 

@@ -484,7 +484,7 @@ button.toast-close-button {
 }
 
 .mat-menu-panel.user-menu{
-    width: 200px;
+    width: 250px;
 }
 
 .mat-menu-panel{
@@ -562,4 +562,18 @@ th {
         width: fit-content !important;
         transform: translateX(-50%) !important;
      }
+}
+
+
+
+@media only screen and (max-height: 600px) { 
+    .table-container {
+        margin-top: 10px
+    }
+}
+
+@media only screen and (max-height: 400px) { 
+    tr.mat-header-row {
+        height: 50px !important;
+    }
 }

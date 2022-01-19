@@ -50,7 +50,9 @@ public class UserServiceImpl implements UserService {
             User user = new User(
                     request.getUsername(),
                     passwordEncoder.encode(request.getPassword()),
-                    Role.USER
+                    Role.USER,
+                    request.getFirstName(),
+                    request.getLastName()
             );
             repository.save(user);
             accountService.save(new Account(null, user.getUsername(), 0.0));
@@ -75,7 +77,7 @@ public class UserServiceImpl implements UserService {
                             EntityType.USER
                     )
             );
-            return new ResponseEntity(new LoginResponse(userRequest.getUsername(), jwt), HttpStatus.OK);
+            return new ResponseEntity(new LoginResponse(userOptional.get().getUsername(), jwt, userOptional.get().getFirstName(), userOptional.get().getLastName()), HttpStatus.OK);
         } else {
             return new ResponseEntity(new ResponseMessage("Authentication Failed"), HttpStatus.FORBIDDEN);
         }

@@ -28,12 +28,9 @@ export class SideBarService {
   private closeSideBar(): void {
     const sideBar: HTMLElement = document.getElementById('sidebar');
     const shadow: HTMLElement = document.getElementById('shadow');
-    const toggle: HTMLElement = document.getElementById('toggle-id');
     if(this.sharedService.mobileView) sideBar.style.width = '0px';
     else sideBar.style.width = '76px';
     shadow.style.opacity = "0";
     shadow.style.pointerEvents = "none";
-    toggle.style.left = '50%';
-    toggle.style.transform =  'translateX(-50%)';
   }
 }

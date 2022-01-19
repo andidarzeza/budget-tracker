@@ -30,3 +30,14 @@
     }
     
 }
+
+@media only screen and (max-height: 600px) { 
+    .title {
+        margin-left: 5px;
+    }
+
+    .title-container {
+        padding: 15px 15px;
+        font-size: 20px;
+    }
+}

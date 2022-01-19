@@ -48,7 +48,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
     }, 1000);
 
     this.setInitialTheme();
-
     this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
       this.configuration = configuration;
       this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
