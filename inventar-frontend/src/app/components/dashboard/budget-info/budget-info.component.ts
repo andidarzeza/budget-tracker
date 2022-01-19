@@ -104,11 +104,8 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   }
 
   public onDateSelected(date: Date): void {
-    console.log(date);
-    
     this.dateFrom = date;
     this.dateTo = new Date(this.dateFrom.getFullYear(), this.dateFrom.getMonth() + 1)
-    // this.showDatePicker = false;
     this.emitSelectedDate();
   }
 
@@ -118,7 +115,6 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   }
 
   public offClickHandler(event:any) {
-    // const elem = document.getElementsByTagName("mat-calendar") as any;
     console.log(event.target);
     
     const selectedDateElem = document.getElementById("selectedDateId");

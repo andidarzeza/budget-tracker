@@ -12,7 +12,6 @@ import { SideBarService } from 'src/app/services/side-bar.service';
   styleUrls: ['./nav-bar.component.css']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
-  fullScreenMode = false;
   interval = null;
   currentDate = new Date();
   configuration: IConfiguration;

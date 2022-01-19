@@ -1,6 +1,6 @@
 <mat-toolbar class="toolbar {{sharedService.theme}}" *ngIf="authenticationService.currentUserValue">
     <span>
-        <button *ngIf="sharedService.mobileView" class="menu-item" mat-icon-button (click)="sidebarService.toggleSideBar()">
+        <button *ngIf="sharedService.mobileView" class="menu-item" mat-icon-button (click)="sidebarService.toggleSideBar()" style="margin-left: 18px;">
             <mat-icon class="{{sharedService.theme}}-icon">
                 menu
             </mat-icon>
@@ -14,16 +14,12 @@
         </div>
 
         <div class="flex-centered">
-            <button class="user-name-button" mat-icon-button color="primary" [matMenuTriggerFor]="userMenu" style="box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%);">
+            <button class="user-name-button" mat-icon-button color="primary" [matMenuTriggerFor]="userMenu">
                 <div class="user-name fw-500 {{sharedService.theme}}-user-circle">
                     AD
                 </div>
             </button>
-            <div [matMenuTriggerFor]="userMenu" class="pointer" style="height: 40px;
-                width: fit-content;
-                display: flex;
-                justify-content: center;
-                align-items: center;">
+            <div [matMenuTriggerFor]="userMenu" class="pointer arrow-down-container">
                 <mat-icon class="menu-item {{sharedService.theme}}-icon" style="margin-right: 0;">keyboard_arrow_down</mat-icon>
             </div>
             
@@ -49,7 +45,7 @@
               </mat-menu>
             
         </div>
-        <mat-divider [vertical]="true" style="width: 1px;height: 50px;margin: 0 11px;background-color: rgba(241, 245, 249, 0.12);"></mat-divider>
+        <mat-divider [vertical]="true" class="vertical-divider"></mat-divider>
         <div *ngIf="!sharedService.mobileView" class="menu-item" style="margin-right: 0;">
             <div class="current-date-container">
                 <span class="current-date fw-800">{{currentDate | date: 'h:mm:ss'}}</span>

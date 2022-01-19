@@ -78,3 +78,9 @@
     transition: transform ease 200ms;
     transform: translate(-50%, 5px);
 }
+
+@media all and (max-width: 599px) {
+    .logo-container {
+        height: 56px;
+    }   
+}
