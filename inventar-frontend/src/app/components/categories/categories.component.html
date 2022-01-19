@@ -1,6 +1,10 @@
 <div class="table-container {{sharedService.theme}}-table" style="position: relative;">
     <mat-tab-group (selectedTabChange)="changeCategoriesType($event)">
-        <mat-tab label="Expense Categories"> 
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">exit_to_app</mat-icon>
+                Expense Categories
+            </ng-template>
             <app-categories-table 
                 (onOpenAddEditForm)="openAddEditForm($event)"
                 (onOpenDeleteDialog)="openDeleteConfirmDialog($event)"
@@ -9,7 +13,11 @@
             </app-categories-table>
         </mat-tab>
 
-        <mat-tab label="Income Categories">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">transit_enterexit</mat-icon>
+                Income Categories
+            </ng-template>
             <app-categories-table 
                 (onOpenAddEditForm)="openAddEditForm($event)"
                 (onOpenDeleteDialog)="openDeleteConfirmDialog($event)"

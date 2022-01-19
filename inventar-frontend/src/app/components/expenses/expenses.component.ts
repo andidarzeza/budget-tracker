@@ -72,6 +72,11 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
       .subscribe(() => this.query());
   }
 
+  onMouseEnter(temp: any): void {
+    console.log(temp);
+    
+  }
+
 
   openDeleteConfirmDialog(id: string): void {
     this.dialog.openDialog(ConfirmComponent)
