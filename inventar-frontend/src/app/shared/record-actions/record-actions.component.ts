@@ -10,7 +10,7 @@ export class RecordActionsComponent {
 
   @Output() openEditForm: EventEmitter<any> = new EventEmitter();
   @Output() openDeleteDialog: EventEmitter<any> = new EventEmitter();
-
+  @Output() openViewDrawer: EventEmitter<any> = new EventEmitter();
   constructor(public sharedService: SharedService) { }
 
   emitDeleteAction(): void {
@@ -19,6 +19,10 @@ export class RecordActionsComponent {
 
   emitEditAction(): void {
     this.openEditForm.emit();
+  }
+
+  emitViewAction(): void {
+    this.openViewDrawer.emit();
   }
 
 }

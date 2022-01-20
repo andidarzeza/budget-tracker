@@ -488,7 +488,7 @@ button.toast-close-button {
 }
 
 .mat-menu-panel{
-    min-width: 70px !important;
+    min-width: 62px !important;
     max-width: unset !important;
     max-height: unset !important;
     // background: inherit !important;
@@ -508,6 +508,10 @@ button.toast-close-button {
     bottom: 0;
     width:95%;
     margin: auto; 
+}
+
+.mat-drawer-container {
+    height: calc(100% - 64px);
 }
 
 th, td {

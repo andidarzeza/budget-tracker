@@ -9,6 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {MatDividerModule} from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 
@@ -17,6 +18,7 @@ import { MatMenuModule } from '@angular/material/menu';
   imports: [
     CommonModule,
     MatIconModule,
+    MatProgressBarModule,
     MatButtonModule,
     AppRoutingModule,
     MatToolbarModule,

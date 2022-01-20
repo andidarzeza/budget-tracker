@@ -1,5 +1,4 @@
 .incomes-title {
-    font-size: 1.1rem;
     padding: 10px 5px;
     padding-top: 0;
 }
@@ -7,18 +6,29 @@
 .total-incomes {
     font-size: 1.1rem;
     width: fit-content;
+    font-family: 'Lato', sans-serif;
 }
 
 .total-incomes-container {
     padding: 10px 0px;
     padding-left: 5px;
-    font-size: 1.1rem;
 }
 
 .total-incomes-description {
     padding: 13px 0px;
     font-size: 16px;
     padding-bottom: 0;
+    /* font-family: 'Lato', sans-serif; */
+}
+
+.daily-chart {
+    width: calc(100% - 67px);
+    margin: auto;
+    margin-top: 10px;
+}
+
+.dashboard-card {
+    width: calc(50% - 37px);
 }
 
 .category-chart {
@@ -159,15 +169,6 @@
 }
 
 @media only screen and (max-width: 1250px) {
-    .avg-card-cnt {
-        width: 35%;
-        flex-direction: column;
-    }
-
-    .chart-card-cnt {
-        width: calc(65% - 6px);
-    }
-
     .average-income {
         margin-bottom: 15px;
     }
@@ -203,44 +204,31 @@
 }
 
 @media only screen and (max-width: 1150px) {
-    .average-cards {
-        width: 91%;
-        padding-bottom: calc(29% + 42px);
+
+    .total-incomes, .total-incomes-description {
+        font-size: 0.9rem;
     }
+
 }
 
 @media only screen and (max-width: 1100px) {
-    .average-cards {
-        padding-bottom: calc(28% + 44px);
+    .total-incomes, .total-incomes-description {
+        font-size: 0.9rem;
     }
 }
 
-@media only screen and (max-width: 1050px) {
-    .avg-card-cnt {
-        flex-direction: unset;
-        width: 100%;
-    }
+@media only screen and (max-width: 1060px) {
+   .cards-container {
+       flex-direction: column;
+   }
+   .avg-card-cnt {
+       width: calc(100% - 5px);
+       margin-bottom: 10px;
+   }
 
-    .category-container {
-        flex-direction: column;
-    }
-
-    .right-margin {
-        margin-right: 10px;
-    }
-
-    .bottom-margin{
-        margin-bottom: 0;
-    }
-
-    .chart-card-cnt {
-        width: calc(100%);
-        margin-top: 10px;
-    }
-
-    .average-cards {
-        padding-bottom: calc(19% + 43px);
-    }
+   .daily-chart {
+       margin-top: 0px;
+   }
 }
 
 @media only screen and (max-width: 800px) {
@@ -257,47 +245,24 @@
     }
 }
 
+@media only screen and (max-width: 510px) {
 
-
-@media only screen and (max-width: 700px) {
+    .cards-container {
+        width: calc(100% - 35px);
+    }
     .avg-card-cnt {
+        width: 100%;
+        margin-bottom: 0px;
         flex-direction: column;
     }
-
-    .average-cards {
-        width: 94%;
-        padding-bottom: calc(20% + 43px);
+ 
+    .daily-chart {
+        margin-top: 0px;
     }
 
-    .bottom-margin {
+    .dashboard-card {
+        width: calc(100% - 32px);
         margin-bottom: 10px;
-    }
-
-    .right-margin{
-        margin-right: 0;
     }
 }
 
-@media only screen and (max-width: 500px) {
-    .chart-card-cnt {
-        flex-direction: column;
-    }
-
-    .average-cards {
-        width: 92%;
-        padding-bottom: calc(30% + 43px);
-    }
-
-    .chart-card {
-        width: 92%;
-        padding-bottom: calc(80% + 43px);
-    }
-
-    .card-bottom-margin {
-        margin-bottom: 10px;
-    }
-
-    .category-container {
-        margin-left: 16px;
-    }
-}
