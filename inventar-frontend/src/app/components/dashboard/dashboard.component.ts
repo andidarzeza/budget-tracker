@@ -145,7 +145,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.category_chart.destroy();
     }
     this.category_chart = this.chartUtil.createChart("category-chart", {
-      type: 'doughnut',
+      type: 'pie',
       labels,
       showGridLines: false,
       datasets: [{
@@ -164,7 +164,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.incomes_chart.destroy();
     }
     this.incomes_chart = this.chartUtil.createChart("incomes-chart", {
-      type: 'doughnut',
+      type: 'pie',
       labels,
       showGridLines: false,
       datasets: [{

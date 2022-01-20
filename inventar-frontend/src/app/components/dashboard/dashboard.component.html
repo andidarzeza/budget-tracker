@@ -1,65 +1,87 @@
 
 <app-budget-info (dateSelected)="onDateSelected($event)"></app-budget-info>
 
-<div #categoryContainer class="category-container">
+<div #categoryContainer class="cards-container">
     <div class="avg-card-cnt">
-        <mat-card class="bottom-margin right-margin average-cards {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card">
-            <div class="chart-title {{sharedService.theme}}-title" style="left: 10px;transform: none;">
-                Average daily income
-            </div>  
-            <div class="cnt">
-                <div class="average-income">
-                    <span class="{{sharedService.theme}}-title card-label">
-                        <span>
-                            {{dailyIncomeAverage | number:'1.2-2':'en-US'}} ALL
-                        </span>
-                        <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
-                            <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
-                        </span>
-                        <span *ngIf="increaseInIncome<0" class="percentage-badge percentage-down">
-                            <span>&darr;</span>{{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
-                        </span>
-                        <span *ngIf="increaseInIncome==0" class="percentage-badge">
-                           {{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
-                        </span>
-                    </span>
-                    <div class="income-description {{sharedService.theme}}-title">
-                        Average daily income so far.
-                    </div>
+
+        <mat-card style="width: calc(50% - 37px);" class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card">
+            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+                Incomes
+            </div>
+            <div class="total-incomes-container">
+                <div class="total-incomes {{sharedService.theme}}-title">
+                    {{totalIncome | number:'1.2-2':'en-US'}} ALL
+                </div>
+                <div class="total-incomes-description {{sharedService.theme}}-title">
+                    Total Income so far.
                 </div>
             </div>
         </mat-card>
-    
-        <mat-card class="average-cards {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card">
-            <div class="chart-title {{sharedService.theme}}-title" style="left: 10px;transform: none;">
-                Average daily expenses
-            </div>  
-            <div class="cnt">
-                <div class="average-income">
-                    <span class="{{sharedService.theme}}-title card-label">
-                        <span>
-                            {{amountSpentAverage | number:'1.2-2':'en-US'}} ALL
-                        </span>
-                        <span *ngIf="increaseInExpense>0" class="percentage-badge percentage-down">
-                            <span>↑</span>{{increaseInExpense | number:'1.2-2':'en-US'}}%
-                        </span>
-                        <span *ngIf="increaseInExpense<0" class="percentage-badge percentage-up">
-                            <span>&darr;</span>{{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
-                        </span>
-                        <span *ngIf="increaseInExpense==0" class="percentage-badge">
-                            {{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
-                         </span>
+
+        <mat-card style="width: calc(50% - 37px);" class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card">
+            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+                Average daily income
+            </div>
+            <div class="total-incomes-container">
+                <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
+                    {{dailyIncomeAverage | number:'1.2-2':'en-US'}} ALL
+                    <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
+                        <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
                     </span>
-                    <div class="income-description {{sharedService.theme}}-title">
-                        Average daily expenses so far.
-                    </div>
+                    <span *ngIf="increaseInIncome<0" class="percentage-badge percentage-down">
+                        <span>&darr;</span>{{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
+                    </span>
+                    <span *ngIf="increaseInIncome==0" class="percentage-badge">
+                       {{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
+                    </span>
+                </div>
+                <div class="total-incomes-description {{sharedService.theme}}-title">
+                    Average daily income so far.
                 </div>
             </div>
         </mat-card>
     </div>
 
     <div class="chart-card-cnt">
-        <mat-card class="card-bottom-margin right-margin chart-card {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card" style="position: relative;">
+        <mat-card style="width: calc(50% - 37px);" class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card">
+            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+                Expenses
+            </div>
+            <div class="total-incomes-container">
+                <div class="total-incomes {{sharedService.theme}}-title">
+                    {{totalSpendings | number:'1.2-2':'en-US'}} ALL
+                </div>
+                <div class="total-incomes-description {{sharedService.theme}}-title">
+                    Total Expenses so far.
+                </div>
+            </div>
+        </mat-card>
+
+        <mat-card style="width: calc(50% - 37px);" class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card">
+            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+                Average daily expenses
+            </div>
+            <div class="total-incomes-container">
+                <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
+                    {{amountSpentAverage | number:'1.2-2':'en-US'}} ALL
+                    <span *ngIf="increaseInExpense>0" class="percentage-badge percentage-down">
+                        <span>↑</span>{{increaseInExpense | number:'1.2-2':'en-US'}}%
+                    </span>
+                    <span *ngIf="increaseInExpense<0" class="percentage-badge percentage-up">
+                        <span>&darr;</span>{{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
+                    </span>
+                    <span *ngIf="increaseInExpense==0" class="percentage-badge">
+                       {{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
+                    </span>
+                </div>
+                <div class="total-incomes-description {{sharedService.theme}}-title">
+                    Average daily expenses so far.
+                </div>
+            </div>
+        </mat-card>
+
+
+        <!-- <mat-card class="card-bottom-margin right-margin chart-card {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card" style="position: relative;">
             <div class="chart-title {{sharedService.theme}}-title" style="left: 10px;transform: none;">
                 Income - {{totalIncome | number:'1.0':'en-US'}} ALL
             </div>
@@ -81,15 +103,25 @@
                 </span>
             </div>
             <canvas id="category-chart" style="position: absolute;top:50%;left:50%;transform:translate(-50%, -50%);max-height: calc(100% - 70px);max-width:80%;margin-top: 20px;"></canvas>
-        </mat-card>
+        </mat-card> -->
     </div>
-
-
-    
 </div>
+<div class="category-chart-container">
 
-<mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card" style="width: calc(100% - 60px);margin: auto;margin-top: 10px;height: 350px">
-    <canvas id="daily-chart" style="width: 100%;height: 100%;max-height: 100%;min-height: 100%;"></canvas>
+    <!-- <mat-card class="category-chart {{sharedService.theme}}-dashboard-card">
+        <canvas id="incomes-chart" style="max-height: calc(100% - 70px);"></canvas>
+    </mat-card>
+
+    <mat-card class="category-chart {{sharedService.theme}}-dashboard-card">
+        <canvas id="category-chart" style="max-height: calc(100% - 70px);"></canvas>
+    </mat-card> -->
+<div>
+
+</div>
+     
+</div>
+<mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card" style="width: calc(100% - 60px);margin: auto;margin-top: 10px">
+    <canvas id="daily-chart" style="max-height: 300px;"></canvas>
 </mat-card>
 
 <app-floating-menu [floatingMenu]="floatingMenu"></app-floating-menu>

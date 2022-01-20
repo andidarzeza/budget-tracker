@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { SharedService } from 'src/app/services/shared.service';
 import { FloatingMenuConfig } from './FloatingMenuConfig';
 
 @Component({
@@ -10,7 +11,9 @@ export class FloatingMenuComponent implements OnInit {
 
   @Input() public floatingMenu: FloatingMenuConfig;
 
-  constructor() { }
+  constructor(
+    public sharedService: SharedService
+  ) { }
 
   ngOnInit(): void {
   }
