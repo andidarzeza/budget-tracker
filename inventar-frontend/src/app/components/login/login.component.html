@@ -10,9 +10,9 @@
         <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label class="{{sharedService.theme}}-text">Password</mat-label>
             <input #passwordInput type="password" autocomplete="off" matInput formControlName="password" style="width: calc(100% - 30px)">
-            <div class="show-hide-password" (click)="togglePasswordVisibility(passwordInput, iconSlash)">
-                <div #iconSlash class="icon-slash"></div>
-                <mat-icon>remove_red_eye</mat-icon>
+            <div class="show-hide-password" (click)="togglePasswordVisibility(passwordInput)">
+                <mat-icon *ngIf="!showPassword">remove_red_eye</mat-icon>
+                <mat-icon *ngIf="showPassword">visibility_off</mat-icon>
             </div>
             <mat-error *ngIf="password.errors?.required">This field is required.</mat-error>
         </mat-form-field>

@@ -24,11 +24,11 @@
             </div>
             
             <mat-menu xPosition="before" class="{{sharedService.theme}}-user-menu user-menu" #userMenu="matMenu">
-                <button mat-menu-item>Logged in as {{authenticationService?.currentUserValue?.firstName}} {{authenticationService?.currentUserValue?.lastName}}</button>
+                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item>Logged in as {{authenticationService?.currentUserValue?.firstName}} {{authenticationService?.currentUserValue?.lastName}}</button>
                 <mat-divider style="width: 100%;"></mat-divider>
-                <button mat-menu-item [matMenuTriggerFor]="themes"><mat-icon>color_lens</mat-icon> Themes</button>
+                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item [matMenuTriggerFor]="themes"><mat-icon class="{{sharedService.theme}}-icon">color_lens</mat-icon> Themes</button>
                 <mat-divider style="width: 100%;"></mat-divider>
-                <button (click)="logout()" mat-menu-item> <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>Logout</button>
+                <button class="{{sharedService.theme}}-user-menu-button" (click)="logout()" mat-menu-item> <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>Logout</button>
             </mat-menu>
 
             <mat-menu #themes="matMenu">

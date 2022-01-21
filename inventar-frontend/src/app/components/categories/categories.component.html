@@ -3,7 +3,9 @@
         <mat-tab>
             <ng-template mat-tab-label>
                 <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">exit_to_app</mat-icon>
-                Expense Categories
+                <span class="{{sharedService.theme}}-text fw-300">
+                    Expense Categories
+                </span>
             </ng-template>
             <app-categories-table 
                 (onOpenAddEditForm)="openAddEditForm($event)"
@@ -16,7 +18,9 @@
         <mat-tab>
             <ng-template mat-tab-label>
                 <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">transit_enterexit</mat-icon>
-                Income Categories
+                <span class="{{sharedService.theme}}-text fw-300">
+                    Income Categories
+                </span>
             </ng-template>
             <app-categories-table 
                 (onOpenAddEditForm)="openAddEditForm($event)"

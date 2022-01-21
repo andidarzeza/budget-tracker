@@ -16,11 +16,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSortModule } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
 import { SharedModule } from 'src/app/shared/shared.module';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import { ExpenseDetailComponent } from './expense-detail/expense-detail.component';
+import { MatDividerModule } from '@angular/material/divider';
 
 
 
 @NgModule({
-  declarations: [ExpensesComponent, AddSpendingComponent],
+  declarations: [ExpensesComponent, AddSpendingComponent, ExpenseDetailComponent],
   imports: [
     CommonModule,
     ExpensesRoutingModule,
@@ -30,9 +33,11 @@ import { SharedModule } from 'src/app/shared/shared.module';
     MatSortModule,
     SharedModule,
     MatPaginatorModule,
+    MatSidenavModule,
     MatButtonModule,
     MatSelectModule,
     MatOptionModule,
+    MatDividerModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,

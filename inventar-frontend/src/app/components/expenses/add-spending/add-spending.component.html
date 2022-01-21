@@ -11,27 +11,31 @@
         <mat-error *ngIf="name.errors?.required">This field is required.</mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" style="width: 100%;">
-        <mat-label class="{{sharedService.theme}}-text">Description</mat-label>
-        <input type="text" autocomplete="off" matInput formControlName="description">
-        <mat-error *ngIf="description.errors?.required">This field is required.</mat-error>
-    </mat-form-field>
+    <div style="width: 100%; display: flex;justify-content: space-between;align-items: center;">
+        <mat-form-field appearance="outline" style="width: calc(40% - 5px);">
+            <mat-label class="{{sharedService.theme}}-text">Money Spent</mat-label>
+            <input type="number" autocomplete="off" matInput formControlName="moneySpent">
+            <!-- <span matPrefix>$&nbsp;</span> -->
+            <mat-error *ngIf="moneySpent.errors?.required">This field is required.</mat-error>
+        </mat-form-field>
+    
+        <mat-form-field appearance="outline" style="width: calc(60% - 5px);" class="{{sharedService.theme}}-select">
+            <mat-label class="{{sharedService.theme}}-text">Expense Category</mat-label>
+            <mat-select formControlName="categoryID" class="{{sharedService.theme}}-select">
+              <mat-option class="{{sharedService.theme}}-text {{sharedService.theme}}-option {{sharedService.theme}}-body" *ngFor="let category of categories" [value]="category.id">
+                {{category?.category}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="category.errors?.required">This field is required.</mat-error>
+          </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline" style="width: 100%;">
-        <mat-label class="{{sharedService.theme}}-text">Money Spent</mat-label>
-        <input type="number" autocomplete="off" matInput formControlName="moneySpent">
-        <mat-error *ngIf="moneySpent.errors?.required">This field is required.</mat-error>
-    </mat-form-field>
+    
 
-    <mat-form-field style="width: 100%;" class="{{sharedService.theme}}-select">
-        <mat-label class="{{sharedService.theme}}-text">Category</mat-label>
-        <mat-select formControlName="categoryID" class="{{sharedService.theme}}-select">
-          <mat-option class="{{sharedService.theme}}-text {{sharedService.theme}}-option {{sharedService.theme}}-body" *ngFor="let category of categories" [value]="category.id">
-            {{category?.category}}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="category.errors?.required">This field is required.</mat-error>
-      </mat-form-field>
+      <mat-form-field style="width: 100%;" appearance="outline">
+        <mat-label class="{{sharedService.theme}}-text">Note</mat-label>
+        <textarea style="max-height: 100px;" matInput formControlName="description" placeholder="Write a note..."></textarea>
+    </mat-form-field>
 </form>
 
 

@@ -45,6 +45,8 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/dashboard']);
     }
   }
+
+  showPassword: boolean = false;
   
   loginGroup: FormGroup = this.formBuilder.group({
     username: ['', Validators.required],
@@ -83,13 +85,12 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  togglePasswordVisibility(passwordInput: HTMLInputElement, iconSlash: HTMLElement): void {
+  togglePasswordVisibility(passwordInput: HTMLInputElement): void {
     if(passwordInput.type == "text") {
       passwordInput.type = "password";
-      iconSlash.style.opacity = "1";
     } else {
       passwordInput.type = "text";
-      iconSlash.style.opacity = "0";
     }
+    this.showPassword = !this.showPassword;
   }
 }

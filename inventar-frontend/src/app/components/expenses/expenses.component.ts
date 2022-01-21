@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Expense } from 'src/app/models/Expense';
 import { SharedService } from 'src/app/services/shared.service';
@@ -14,6 +14,7 @@ import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput'
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { filter } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-expenses',
@@ -21,6 +22,7 @@ import { DialogService } from 'src/app/services/dialog.service';
   styleUrls: ['./expenses.component.css']
 })
 export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Expense> {
+  @ViewChild('drawer') drawer: MatSidenav;
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   public page: number = 0;
   public size: number = PAGE_SIZE;
@@ -32,6 +34,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   public expenses: Expense[] = [];
   private deleteSubscription: Subscription = null;
   private expenseSubscription: Subscription = null;
+  public expenseViewId = "";
   public tableActionInput: TableActionInput = {
     pageName: "Expenses",
     icon: 'attach_money'
@@ -75,6 +78,12 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   onMouseEnter(temp: any): void {
     console.log(temp);
     
+  }
+
+  viewExpenseDetails(id: string): void {
+    console.log(id);
+    this.expenseViewId = id;
+    this.drawer.toggle();
   }
 
 

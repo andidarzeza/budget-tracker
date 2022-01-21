@@ -1,0 +1,85 @@
+<div class="header">
+    <span class="{{sharedService.theme}}-text header-title">
+        {{expense?.name | titlecase}}
+    </span>
+    <div class="actions">
+        <button mat-icon-button class="close-button" (click)="closeDrawer()">
+            <mat-icon class="{{sharedService.theme}}-icon">
+                close
+            </mat-icon>
+        </button>
+    </div>
+</div>
+
+<div class="expense-date-container">
+    <span class="expense-view-title fw-400">
+        Time
+    </span>
+</div>
+
+<div class="expense-date-container">
+   <span>
+       Created Time
+   </span>
+   <span class="{{sharedService.theme}}-text expense-date">
+    {{ expense?.createdTime | date:'dd/MM/yyyy - HH:mm'}}
+   </span>
+   
+</div>
+
+<div class="expense-date-container">
+    <span>
+        Last Updated
+    </span>
+    <span class="{{sharedService.theme}}-text expense-date">
+     {{ expense?.lastModifiedDate | date:'dd/MM/yyyy - HH:mm'}}
+    </span>
+    
+ </div>
+
+ <div class="expense-date-container">
+    <span class="expense-view-title fw-400">
+        Info
+
+    </span>
+</div>
+
+<div class="expense-date-container">
+    <span>
+        Expense Name
+    </span>
+    <span class="{{sharedService.theme}}-text expense-date">
+     {{ expense?.name | titlecase}}
+    </span>
+    
+ </div>
+ 
+ <div class="expense-date-container">
+     <span>
+         Expense
+     </span>
+     <span class="{{sharedService.theme}}-text expense-date">
+      {{ expense?.moneySpent | number:'1.0':'en-US'}} ALL
+     </span>
+</div>
+
+<div class="expense-date-container">
+    <span class="expense-view-title fw-400">
+        Category
+    </span>
+</div>
+<div class="expense-date-container {{sharedService.theme}}-text">
+    <span>
+        Category
+    </span>
+    {{ expense?.categoryID}}
+</div>
+<div class="expense-date-container">
+    <span class="expense-view-title fw-400">
+        Notes
+    </span>
+</div>
+
+<div class="expense-date-container {{sharedService.theme}}-text">
+    {{ (expense?.description) ? expense?.description : 'No note recorded'}}
+</div>

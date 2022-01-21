@@ -68,7 +68,11 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity findOne(String id) {
-        return null;
+        Optional<Spending> optionalSpending = expenseRepository.findById(id);
+        if(optionalSpending.isPresent()) {
+            return ResponseEntity.ok(optionalSpending.get());
+        }
+        return new ResponseEntity(new ResponseMessage("No Expense Found."), HttpStatus.NOT_FOUND);
     }
 
     @Override

@@ -20,3 +20,7 @@ table {
 .mat-column-actions {
     width: 15%;
 }
+
+.example-sidenav {
+    width: 700px;
+}

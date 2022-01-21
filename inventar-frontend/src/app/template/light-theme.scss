@@ -51,7 +51,7 @@
 }
 
 .light-book-tb-container {
-    width: 95%;
+    width: calc(100% - 80px);
     height: 700px;
     background-color: white;
     overflow: auto;
@@ -84,4 +84,8 @@
 
 .light-floating-button {
     background-color: var(--light) !important;
+}
+
+.light-user-menu-button {
+    
 }

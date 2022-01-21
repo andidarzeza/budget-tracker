@@ -1,0 +1,40 @@
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 20px 5px 0px;
+}
+
+.header-title {
+    font-size: 22px;
+    padding: 25px 0px 20px 20px;
+}
+
+.expense-date {
+    font-size: 17px;
+    padding-left: 5px;
+}
+
+.clock-icon {
+    /* width: 26px !important;
+    height: 26px !important;
+    font-size: 26px !important; */
+}
+
+.expense-date-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 10px 15px;
+}
+
+.expense-view-title {
+    font-size: 22px;
+}

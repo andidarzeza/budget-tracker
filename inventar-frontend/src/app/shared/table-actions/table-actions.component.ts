@@ -19,7 +19,6 @@ export class TableActionsComponent {
   refresh(): void {
     this.onRefresh.emit();
   }
-
   openDialog(): void {
     this.onOpenDialog.emit();
   }

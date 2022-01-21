@@ -52,7 +52,7 @@
 }
 
 .dark-book-tb-container {
-    width: 95%;
+    width: calc(100% - 80px);
     height: 700px;
     background-color: var(--dark);
     overflow: auto;
@@ -129,4 +129,9 @@
 
 .dark-floating-button {
     background-color: #f6af06 !important;
+}
+
+
+.dark-user-menu-button {
+    color: #9F9F9F;   
 }
