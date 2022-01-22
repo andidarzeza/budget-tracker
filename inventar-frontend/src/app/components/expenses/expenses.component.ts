@@ -23,6 +23,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 })
 export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Expense> {
   @ViewChild('drawer') drawer: MatSidenav;
+  isSidenavOpened: boolean = false;
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   public page: number = 0;
   public size: number = PAGE_SIZE;
@@ -81,8 +82,13 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   viewExpenseDetails(id: string): void {
+    this.isSidenavOpened = true;
     this.expenseViewId = id;
     this.drawer.toggle();
+  }
+
+  onSidenavClose(): void {
+    this.isSidenavOpened = false;
   }
 
   openDeleteConfirmDialog(id: string): void {

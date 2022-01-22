@@ -17,6 +17,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { IncomeDetailsComponent } from './income-details/income-details.component';
+import { MatDividerModule } from '@angular/material/divider';
 
 
 
@@ -33,6 +34,7 @@ import { IncomeDetailsComponent } from './income-details/income-details.componen
     MatIconModule,
     MatDialogModule,
     MatSidenavModule,
+    MatDividerModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,

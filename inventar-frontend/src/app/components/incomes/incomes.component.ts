@@ -23,6 +23,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 })
 export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Income> {
   @ViewChild('drawer') drawer: MatSidenav;
+  isSidenavOpened: boolean = false;
   public incomeViewId = "";
   public incomes: Income[] = [];
   public totalItems: number = 0;
@@ -76,8 +77,13 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   }
 
   viewDetails(id: string): void {
+    this.isSidenavOpened = true;
     this.incomeViewId = id;
     this.drawer.toggle();
+  }
+
+  onSidenavClose(): void {
+    this.isSidenavOpened = false;
   }
 
   openDeleteConfirmDialog(id: string): void {

@@ -9,7 +9,7 @@ import { SpendingService } from 'src/app/services/spending.service';
   templateUrl: './expense-detail.component.html',
   styleUrls: ['./expense-detail.component.css']
 })
-export class ExpenseDetailComponent implements OnChanges, OnDestroy {
+export class ExpenseDetailComponent implements OnInit, OnChanges, OnDestroy {
   
   @Input() expenseViewId: string;
   @Output() onCloseAction: EventEmitter<any> = new EventEmitter<any>();
@@ -20,9 +20,13 @@ export class ExpenseDetailComponent implements OnChanges, OnDestroy {
     private expenseService: SpendingService,
     public sharedService: SharedService
   ) {}
+  
+  ngOnInit(): void {
+    this.getExpense();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(!changes?.expenseViewId.firstChange) {      
+    if(!changes?.expenseViewId.firstChange) {
       this.getExpense();
     }
   }
@@ -39,6 +43,8 @@ export class ExpenseDetailComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    console.log("eee");
+    
     this.expenseViewId = "";
     this.expense = null;
     this.expenseSubscription?.unsubscribe();

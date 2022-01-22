@@ -1,7 +1,6 @@
 <mat-drawer-container class="example-container {{sharedService.theme}}-body" autosize>
-    <mat-drawer #drawer class="example-sidenav {{sharedService.theme}}-table" mode="over" position="end">
-        <!-- <app-expense-detail (onCloseAction)="drawer.toggle()" [expenseViewId]="expenseViewId"></app-expense-detail> -->
-        <app-income-details (onCloseAction)="drawer.toggle()" [incomeViewId]="incomeViewId"></app-income-details>
+    <mat-drawer #drawer class="example-sidenav {{sharedService.theme}}-table" mode="over" position="end" (closed)="onSidenavClose()">
+        <app-income-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [incomeViewId]="incomeViewId"></app-income-details>
     </mat-drawer>
 
   
