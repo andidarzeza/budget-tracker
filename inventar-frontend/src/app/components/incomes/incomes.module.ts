@@ -15,12 +15,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSortModule } from '@angular/material/sort';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { IncomeDetailsComponent } from './income-details/income-details.component';
 
 
 
 @NgModule({
   declarations: [
-    IncomesComponent, AddIncomingComponent
+    IncomesComponent, AddIncomingComponent, IncomeDetailsComponent
   ],
   imports: [
     CommonModule,
@@ -30,6 +32,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatSortModule,
     MatIconModule,
     MatDialogModule,
+    MatSidenavModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,

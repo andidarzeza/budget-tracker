@@ -18,4 +18,14 @@ export class DialogService {
       ...CREATE_DIALOG_CONFIGURATION
     });
   }
+
+  openConfirmDialog(component: ComponentType<any>): MatDialogRef<any> {
+    const configuration = {
+      disableClose: CREATE_DIALOG_CONFIGURATION.disableClose,
+    };
+    return this.dialog.open(component, {
+      panelClass: this.sharedService.theme + '-class',
+      ...configuration
+    });
+  }
 }

@@ -2,6 +2,7 @@ package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.models.Incoming;
 import com.adprod.inventar.models.ResponseMessage;
+import com.adprod.inventar.models.Spending;
 import com.adprod.inventar.models.SpendingCategory;
 import com.adprod.inventar.models.enums.EntityAction;
 import com.adprod.inventar.models.enums.EntityType;
@@ -72,7 +73,11 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public ResponseEntity findOne(String id) {
-        return null;
+        Optional<Incoming> optionalIncoming = incomeRepository.findById(id);
+        if(optionalIncoming.isPresent()) {
+            return ResponseEntity.ok(optionalIncoming.get());
+        }
+        return new ResponseEntity(new ResponseMessage("No Income Found."), HttpStatus.NOT_FOUND);
     }
 
     @Override

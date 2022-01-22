@@ -70,7 +70,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   }
 
   openDeleteConfirmDialog(id: string): void {
-    this.dialog.openDialog(ConfirmComponent)
+    this.dialog.openConfirmDialog(ConfirmComponent)
       .afterClosed()
       .pipe(filter((update)=>update))
       .subscribe(() => this.delete(id));

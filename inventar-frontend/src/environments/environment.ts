@@ -10,7 +10,10 @@ export const environment = {
 // export const serverAPIURL = 'http://192.168.1.9:8081';
 
 // WORK NETWORK
-export const serverAPIURL = 'http://192.168.255.238:8081';
+// export const serverAPIURL = 'http://192.168.255.238:8081';
+
+// BAR HI NETWORK
+export const serverAPIURL = 'http://192.168.254.215:8081';
 
 // BAR NETWORK
 // export const serverAPIURL = 'http://192.168.100.66:8081';

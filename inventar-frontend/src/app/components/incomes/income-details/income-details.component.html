@@ -1,6 +1,6 @@
 <div class="header">
     <span class="{{sharedService.theme}}-text header-title">
-        {{expense?.name | titlecase}}
+        {{income?.name | titlecase}}
     </span>
     <div class="actions">
         <button mat-icon-button class="close-button" (click)="closeDrawer()">
@@ -22,7 +22,7 @@
        Created Time
    </span>
    <span class="{{sharedService.theme}}-text expense-date">
-    {{ expense?.createdTime | date:'dd/MM/yyyy - HH:mm'}}
+    {{ income?.createdTime | date:'dd/MM/yyyy - HH:mm'}}
    </span>
    
 </div>
@@ -32,7 +32,7 @@
         Last Updated
     </span>
     <span class="{{sharedService.theme}}-text expense-date">
-     {{ expense?.lastModifiedDate | date:'dd/MM/yyyy - HH:mm'}}
+     {{ income?.lastModifiedDate | date:'dd/MM/yyyy - HH:mm'}}
     </span>
  </div>
 
@@ -46,19 +46,19 @@
 
 <div class="expense-date-container">
     <span class="{{sharedService.theme}}-text">
-        Expense Name
+        Income Name
     </span>
     <span class="{{sharedService.theme}}-text expense-date">
-     {{ expense?.name | titlecase}}
+     {{ income?.name | titlecase}}
     </span>
  </div>
  
  <div class="expense-date-container">
      <span class="{{sharedService.theme}}-text">
-         Expense
+         Income
      </span>
      <span class="{{sharedService.theme}}-text expense-date">
-      {{ expense?.moneySpent | number:'1.0':'en-US'}} ALL
+      {{ income?.incoming | number:'1.0':'en-US'}} ALL
      </span>
 </div>
 <mat-divider></mat-divider>
@@ -71,7 +71,7 @@
     <span>
         Category
     </span>
-    {{ expense?.categoryID}}
+    {{ income?.categoryID}}
 </div>
 <mat-divider></mat-divider>
 <div class="title-container">
@@ -81,5 +81,7 @@
 </div>
 
 <div class="expense-date-container {{sharedService.theme}}-text">
-    {{ (expense?.description) ? expense?.description : 'No note recorded'}}
+    {{ (income?.description) ? income?.description : 'No note recorded'}}
 </div>
+
+{{income | json}}

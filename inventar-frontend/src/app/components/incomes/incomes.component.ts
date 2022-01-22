@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Income } from 'src/app/models/Income';
 import { IncomingsService } from 'src/app/services/incomings.service';
@@ -14,6 +14,7 @@ import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput'
 import { DialogService } from 'src/app/services/dialog.service';
 import { filter } from 'rxjs/operators';
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-incomes',
@@ -21,6 +22,8 @@ import { EntityOperation } from 'src/app/models/core/EntityOperation';
   styleUrls: ['./incomes.component.css']
 })
 export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Income> {
+  @ViewChild('drawer') drawer: MatSidenav;
+  public incomeViewId = "";
   public incomes: Income[] = [];
   public totalItems: number = 0;
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
@@ -72,8 +75,13 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
       .subscribe(() => this.query());
   }
 
+  viewDetails(id: string): void {
+    this.incomeViewId = id;
+    this.drawer.toggle();
+  }
+
   openDeleteConfirmDialog(id: string): void {
-    this.dialog.openDialog(ConfirmComponent)
+    this.dialog.openConfirmDialog(ConfirmComponent)
       .afterClosed()
       .pipe(filter((update)=>update))
       .subscribe(() => this.delete(id));

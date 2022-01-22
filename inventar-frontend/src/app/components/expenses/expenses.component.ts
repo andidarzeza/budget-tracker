@@ -81,14 +81,12 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   viewExpenseDetails(id: string): void {
-    console.log(id);
     this.expenseViewId = id;
     this.drawer.toggle();
   }
 
-
   openDeleteConfirmDialog(id: string): void {
-    this.dialog.openDialog(ConfirmComponent)
+    this.dialog.openConfirmDialog(ConfirmComponent)
       .afterClosed()
       .pipe(filter((update)=>update))
       .subscribe(() => this.delete(id));
