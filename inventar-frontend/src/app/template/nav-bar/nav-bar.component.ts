@@ -26,13 +26,22 @@ export class NavBarComponent implements OnInit, OnDestroy {
       color: '#e91e63'
     },
     {
-      name: 'Amber',
+      name: 'Purple',
       color: '#673ab7'
     },
     {
       name: 'Indigo Pink',
       color: '#3f51b5'
+    },
+    {
+      name: "Amber",
+      color: '#feb204'
+    },
+    {
+      name: "Deep Amber",
+      color: '#ff8503'
     }
+
   ]
 
   constructor(

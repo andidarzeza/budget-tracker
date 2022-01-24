@@ -79,7 +79,7 @@
 }
 
 .dark-icon {
-    color: #f6af06 !important;
+    color: var(--light) !important;
 }
 
 .dark-card {
@@ -119,7 +119,8 @@
 }
 
 .dark-user-circle {
-    background-color: #f6af06;
+    background-color: var(--light);
+    // background-color: #f6af06;
     color: white;
 }
 
@@ -130,7 +131,7 @@
 
 
 .dark-floating-button {
-    background-color: #f6af06 !important;
+    background-color: var(--light) !important;
 }
 
 
@@ -144,5 +145,5 @@
 }
 
 .dark-user-menu-button::after {
-    color: #f6af06 !important;
+    color: var(--light) !important;
 }
