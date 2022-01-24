@@ -318,6 +318,11 @@ button.toast-close-button {
     background-color: var(--light) !important;
 }
 
+.example-sidenav {
+    width: 40%;
+}
+
+
 /* Responsive Design */
 
 @media all and (max-width: 240px) {
@@ -555,6 +560,11 @@ th {
     .table-container {
         margin-top: 20px;
     }
+
+    .example-sidenav {
+        width: 100%;
+    }
+    
 }
 
 @media only screen and (max-width: 990px) { 
@@ -570,7 +580,10 @@ th {
         left: 50% !important;
         width: fit-content !important;
         transform: translateX(-50%) !important;
-     }
+     }   
+    //  .example-sidenav {
+    //     width: 60%;
+    // }
 }
 
 
@@ -579,10 +592,17 @@ th {
     .table-container {
         margin-top: 10px
     }
+    // .example-sidenav {
+    //     width: 70%;
+    // }
 }
 
 @media only screen and (max-height: 400px) { 
     tr.mat-header-row {
         height: 50px !important;
+    }
+
+    .example-sidenav {
+        width: 100%;
     }
 }

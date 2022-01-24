@@ -55,7 +55,7 @@
     width: calc(100% - 80px);
     height: 700px;
     background-color: var(--dark);
-    overflow: auto;
+    overflow: hidden;
     margin: auto;
     box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
 }
@@ -123,9 +123,11 @@
     color: white;
 }
 
-.mat-menu-panel.dark-user-menu{
+.mat-menu-panel.dark-user-menu, .mat-menu-panel.dark-themes-menu{
     background: #111619;
 }
+
+
 
 .dark-floating-button {
     background-color: #f6af06 !important;
@@ -134,4 +136,13 @@
 
 .dark-user-menu-button {
     color: #9F9F9F;   
+}
+
+.dark-user-menu-button:hover {
+    background: #00000018 !important;
+    color: #c9c9c9;
+}
+
+.dark-user-menu-button::after {
+    color: #f6af06 !important;
 }

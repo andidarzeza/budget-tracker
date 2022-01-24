@@ -79,10 +79,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   changeThemeColor(color: string): void {
-    const r: any = document.querySelector(':root');
-    if(r) {
-      r.style.setProperty('--light', color);
-      localStorage.setItem("themeColor", color);
-    }
+    const root: any = document.documentElement;
+    root.style.setProperty('--light', color);
+    localStorage.setItem("themeColor", color);
   }
 }

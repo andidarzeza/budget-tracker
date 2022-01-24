@@ -31,11 +31,11 @@
                 <button class="{{sharedService.theme}}-user-menu-button" (click)="logout()" mat-menu-item> <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>Logout</button>
             </mat-menu>
 
-            <mat-menu #themes="matMenu">
+            <mat-menu class="{{sharedService.theme}}-themes-menu" #themes="matMenu">
                 <button 
                     *ngFor="let theme of themesArray"
                     mat-menu-item 
-                    class="flex-centered" 
+                    class="flex-centered {{sharedService.theme}}-user-menu-button" 
                     style="justify-content: inherit;" 
                     (click)="changeThemeColor(theme.color)">
                         <div class="round" [style.background-color]="theme.color"></div> 
