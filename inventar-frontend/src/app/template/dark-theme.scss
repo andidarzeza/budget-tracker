@@ -147,3 +147,23 @@
 .dark-user-menu-button::after {
     color: var(--light) !important;
 }
+
+.dark-custom-calendar {
+    .mat-calendar-body-cell-content, .mat-calendar-body-label, .mat-calendar-table-header {
+        color: #9F9F9F !important;
+    }
+
+    .mat-calendar-arrow {
+        border-top-color: var(--light)
+    }
+    
+    .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+        border-color: var(--light);
+    }
+
+    .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected), .cdk-keyboard-focused .mat-calendar-body-active>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected), .cdk-program-focused .mat-calendar-body-active>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+        background-color: #00000018 !important;
+        color: #c9c9c9 !important;
+    }
+    
+} 

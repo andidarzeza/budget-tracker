@@ -18,7 +18,7 @@
         <mat-calendar 
             (selectedChange)="onDateSelected($event)"    
             [@datePickerAnimation] 
-            class="custom-calendar {{sharedService.theme}}-body" 
+            class="{{sharedService.theme}}-custom-calendar custom-calendar {{sharedService.theme}}-body" 
             *ngIf="showDatePicker"></mat-calendar>
     </span>
 
