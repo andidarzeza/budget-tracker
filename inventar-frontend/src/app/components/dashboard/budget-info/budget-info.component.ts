@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { Account } from 'src/app/models/Account';
 import { AccountService } from 'src/app/services/account.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { MONTHS } from 'src/environments/environment';
 
 @Component({
   selector: 'app-budget-info',

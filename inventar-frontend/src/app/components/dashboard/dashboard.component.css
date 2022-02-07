@@ -35,17 +35,13 @@
     width: calc(50% - 37px);
 }
 
-.category-chart-container {
-    width: calc(100% - 35px);
-    /* height: 50px; */
-    margin: auto;
-    margin-top: 10px;
-    /* border: 1px solid red; */
+.category-card-container {
+    max-width: calc(100%);
+    overflow: hidden;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    padding: 15px 11px;
+    margin: 0px auto;
 }
-
 
 .cards-container {
     width: calc(100% - 35px);
@@ -53,55 +49,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.category-data {
-    width: calc(25% - 40px);
-    height:0;
-    padding-bottom: calc(20% + 50px) ;
-}
-
-
-.chart-title {
-    font-size: 23px;
-    position: absolute;
-    left: 50%;
-    font-family: sans-serif;
-    transform: translateX(-50%);
-    width: fit-content;
-    font-family: 'Lato', sans-serif;
-}
-
-.card-label {
-    font-size: 45px;
-    position: relative;
-    font-family: 'Source Sans Pro', sans-serif;
-}
-
-.average-income {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 50px;
-}
-
-.income-description {
-    font-size: 24px;
-    margin-top: 34px;
-}
-
-.cnt {
-    width: 100%;
-    height: calc(100% - 50px);
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: space-evenly;
 }
 
 .percentage-badge {
@@ -121,11 +68,6 @@
     color: #ff6347;
 }
 
-.average-cards {
-    width: calc(50% - 35px);
-    padding-bottom: calc(40% + 50px);
-}
-
 .chart-card {
     width: calc(50% - 35px);
     padding-bottom: calc(40% + 50px);
@@ -137,68 +79,21 @@
   justify-content: space-between;
 }
 
-
-.chart-card-cnt {
-    width: calc(50% - 6px);
-    display: flex;
-    justify-content: space-between;
+.category-card {
+    min-width: calc(25% - 44px);
+    margin: 0 6px;
 }
 
-
-.no-data-message {
-    margin-top: -40px;
-    text-align: center;
-}
 
 @media only screen and (max-width: 1500px) {
-    .card-label {
-        font-size: 35px;
-    }
-
-    .income-description {
-        font-size: 20px;
-        margin-top: 15px;
-    }
-
-    .chart-title {
-        font-size: 21px;
-    }
     .percentage-badge {
         font-size: 14px;
     }
 }
 
 @media only screen and (max-width: 1250px) {
-    .average-income {
-        margin-bottom: 15px;
-    }
-
     .bottom-margin {
         margin-bottom: 7px;
-    }
-    
-    .average-cards {
-        width: 92%;
-        padding-bottom: calc(29% + 45px);
-    }
-
-    .card-label {
-        font-size: 32px;
-    }
-
-    .income-description {
-        font-size: 18px;
-    }
-
-    .chart-title {
-        font-size: 20px;
-    }
-}
-
-
-@media only screen and (max-width: 1200px) {
-    .average-cards {
-        padding-bottom: calc(29% + 43px);
     }
 
 }
@@ -229,20 +124,6 @@
    .daily-chart {
        margin-top: 0px;
    }
-}
-
-@media only screen and (max-width: 800px) {
-    .card-label {
-        font-size: 30px;
-    }
-
-    .income-description {
-        font-size: 19px;
-    }
-
-    .chart-title {
-        font-size: 20px;
-    }
 }
 
 @media only screen and (max-width: 510px) {

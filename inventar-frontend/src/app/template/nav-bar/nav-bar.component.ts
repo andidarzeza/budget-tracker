@@ -5,6 +5,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-nav-bar',
@@ -15,6 +16,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   interval = null;
   currentDate = new Date();
   configuration: IConfiguration;
+  public EXPERIMENTAL_MODE = environment.experimentalMode;
 
   public themesArray: Theme[] = [
     {

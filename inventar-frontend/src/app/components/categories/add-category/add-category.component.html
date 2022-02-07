@@ -5,13 +5,13 @@
     </div>
 </div>
 <form [formGroup]="categoryGroup">
-    <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: 100%;">
         <mat-label class="{{sharedService.theme}}-text">Category</mat-label>
         <input type="text" autocomplete="off" matInput formControlName="category">
         <mat-error *ngIf="category.errors?.required">This field is required.</mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: 100%;">
         <mat-label class="{{sharedService.theme}}-text">Description</mat-label>
         <input type="text" autocomplete="off" matInput formControlName="description">
         <mat-error *ngIf="description.errors?.required">This field is required.</mat-error>

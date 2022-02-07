@@ -9,6 +9,8 @@ import { Subscription } from 'rxjs';
 import { FloatingMenuConfig } from 'src/app/shared/floating-menu/FloatingMenuConfig';
 import { ExportService } from 'src/app/services/export.service';
 import { DailyExpenseDTO, DashboardDTO, ExpenseInfoDTO, IncomeInfoDTO } from 'src/app/models/DashboardModels';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,6 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   chart: Chart = null; 
   category_chart: Chart = null;
   incomes_chart: Chart = null;
+  expenseCategoriesData: ExpenseInfoDTO[] = [];
   public floatingMenu: FloatingMenuConfig = {
     position: "above",
     buttons: [
@@ -49,7 +52,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public dashboardService: DashboardService,
     public chartUtil: ChartUtils,
     public sharedService: SharedService,
-    public exportService: ExportService
+    public exportService: ExportService,
+    private toasterService: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -79,12 +83,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.totalSpendings = dashboardData.expenses;
       this.amountSpentAverage = dashboardData.averageDailyExpenses;
       this.dailyIncomeAverage = dashboardData.averageDailyIncome;
-      
+      this.expenseCategoriesData = dashboardData.expensesInfo;
 
       this.createDailyChart(
         dailyExpensesLabels, 
         this.getDailyExpensesData(dailyExpensesLabels, dashboardData.dailyExpenses)
       );
+      console.log(dashboardData.expensesInfo);
       
       this.createCategoryChart(
         dashboardData.expensesInfo.map((expenseInfo: ExpenseInfoDTO) => expenseInfo._id),
@@ -96,6 +101,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         dashboardData.incomesInfo.map((incomeInfo: IncomeInfoDTO) => incomeInfo.total),
       );
 
+    }, (error: any) => {
+      this.sharedService.checkLoadingSpinner();
+      this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION)
     });
   }
 

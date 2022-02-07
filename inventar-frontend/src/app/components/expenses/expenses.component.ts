@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Expense } from 'src/app/models/Expense';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
-import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddSpendingComponent } from './add-spending/add-spending.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subscription } from 'rxjs';
@@ -41,6 +41,8 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     icon: 'attach_money'
   };
 
+  public EXPERIMENTAL_MODE = environment.experimentalMode;
+
   constructor(
     public sharedService: SharedService,
     private spendingService: SpendingService,
@@ -57,6 +59,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     this.size = event?.pageSize;
     this.page = event?.pageIndex;
     this.query();
+    this.sharedService.scrollTableToTop();
   }
 
   query(): void {
@@ -116,5 +119,15 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   ngOnDestroy(): void {
     this.expenseSubscription?.unsubscribe();
     this.deleteSubscription?.unsubscribe();
+  }
+
+  public getExpenseDate(date: any): string {
+    console.log(date);
+    
+    const now = new Date();
+    if(now.getTime() - new Date(date).getTime() < 24 * 60 * 60 * 1000) {
+      return 'a day ago';
+    }
+    return date.getTime(date).toString();
   }
 }

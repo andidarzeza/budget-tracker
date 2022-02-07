@@ -82,7 +82,31 @@
 
     </div>
 </div>
-<div class="category-chart-container">
+
+<div class="category-card-container">
+    
+    <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card category-card" *ngFor="let categoryData of expenseCategoriesData">
+        <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+            {{categoryData._id}}
+        </div>
+        <div class="total-incomes-container">
+            <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
+                {{categoryData.total | number:'1.2-2':'en-US'}} ALL
+                <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
+                    <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
+                </span>
+                <span *ngIf="increaseInIncome<0" class="percentage-badge percentage-down">
+                    <span>&darr;</span>{{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
+                </span>
+                <span *ngIf="increaseInIncome==0" class="percentage-badge">
+                   {{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
+                </span>
+            </div>
+            <div class="total-incomes-description {{sharedService.theme}}-title">
+                Money spent so far.
+            </div>
+        </div>
+    </mat-card>
 
 <div>
 

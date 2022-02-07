@@ -50,6 +50,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
     this.size = event?.pageSize;
     this.page = event?.pageIndex;
     this.query();
+    this.sharedService.scrollTableToTop();
   }
 
   query(): void {

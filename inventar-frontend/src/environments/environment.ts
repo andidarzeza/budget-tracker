@@ -3,20 +3,21 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  experimentalMode: false
 };
 
 // HOME NETWORK
-export const serverAPIURL = 'http://192.168.1.9:8081';
+// export const serverAPIURL = 'http://192.168.1.9:8081';
 
 // WORK NETWORK
-// export const serverAPIURL = 'http://192.168.255.238:8081';
+export const serverAPIURL = 'http://192.168.255.238:8081';
 
 // BAR HI NETWORK
 // export const serverAPIURL = 'http://192.168.254.215:8081';
 
 // BAR NETWORK
-// export const serverAPIURL = 'http://192.168.100.66:8081';
+// export const serverAPIURL = 'http://192.168.100.206:8081';
 
 // LOCALHOST
 // export const serverAPIURL = 'http://localhost:8081';

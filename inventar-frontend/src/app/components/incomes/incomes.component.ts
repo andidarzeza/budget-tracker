@@ -57,6 +57,7 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
     this.size = event?.pageSize;
     this.page = event?.pageIndex;
     this.query();
+    this.sharedService.scrollTableToTop();
   }
 
   query(): void {

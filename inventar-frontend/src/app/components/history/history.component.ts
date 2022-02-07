@@ -47,6 +47,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
     this.size = event?.pageSize;
     this.page = event?.pageIndex;
     this.query();
+    this.sharedService.scrollTableToTop();
   }
 
   query(): void {

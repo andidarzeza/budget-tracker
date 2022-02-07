@@ -14,11 +14,12 @@ import { TableActionsComponent } from './table-actions/table-actions.component';
 import { DialogService } from '../services/dialog.service';
 import { AddSpendingComponent } from '../components/expenses/add-spending/add-spending.component';
 import { RecordActionsComponent } from './record-actions/record-actions.component';
+import { CustomDatePipe } from '../pipes/custom-date.pipe';
 
 
 
 @NgModule({
-  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, TableActionsComponent, RecordActionsComponent],
+  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, CustomDatePipe, TableActionsComponent, RecordActionsComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -33,6 +34,7 @@ import { RecordActionsComponent } from './record-actions/record-actions.componen
     ConfirmComponent,
     FloatingMenuComponent,
     AbsoluteValuePipe,
+    CustomDatePipe,
     TableActionsComponent,
     RecordActionsComponent
   ],

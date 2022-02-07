@@ -20,7 +20,7 @@ public class JwtManager {
     }
     public static String username = "";
     private final String SECRET_KEY = "secret";
-    private final Integer jwtRenewTime = 1000 * 60 * 60 * 3;
+    private final Integer jwtRenewTime = 1000 * 60 * 60 * 24;
 
     public String createToken(User user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
