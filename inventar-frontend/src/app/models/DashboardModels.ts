@@ -12,6 +12,7 @@ export interface DashboardDTO {
 
 export interface ExpenseInfoDTO {
 	_id: string;
+	icon: string;
 	total: number;
 }
 

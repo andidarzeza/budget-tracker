@@ -11,5 +11,6 @@ import lombok.Setter;
 @Getter
 public class ExpenseInfoDTO {
     private String _id;
+    private String icon;
     private Double total;
 }

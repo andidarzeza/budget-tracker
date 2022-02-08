@@ -86,8 +86,11 @@
 <div class="category-card-container">
     
     <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card category-card" *ngFor="let categoryData of expenseCategoriesData">
-        <div class="incomes-title fw-500 {{sharedService.theme}}-title">
-            {{categoryData._id}}
+        <div class="incomes-title fw-500 {{sharedService.theme}}-title flex align-center">
+            <mat-icon>{{categoryData.icon}}</mat-icon> 
+            <span class="ml-1">
+                {{categoryData._id}}
+            </span>
         </div>
         <div class="total-incomes-container">
             <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">

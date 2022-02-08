@@ -39,7 +39,7 @@ public class ExpensesInfoAggregation {
             String id = result.get_id();
             Optional<SpendingCategory> category = categoryRepository.findById(id);
             if(category.isPresent()) {
-                response.add(new ExpenseInfoDTO(category.get().getCategory(), result.getTotal()));
+                response.add(new ExpenseInfoDTO(category.get().getCategory(), category.get().getIcon(), result.getTotal()));
             }
         });
         Collections.sort(response, Comparator.comparing(ExpenseInfoDTO::getTotal));
