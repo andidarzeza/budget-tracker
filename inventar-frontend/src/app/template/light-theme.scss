@@ -51,7 +51,7 @@
 }
 
 .light-book-tb-container {
-    width: calc(100% - 80px);
+    width: var(--table-width);
     height: 700px;
     background-color: white;
     overflow: auto;

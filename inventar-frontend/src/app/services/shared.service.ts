@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Chart } from 'chart.js';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -9,7 +10,7 @@ export class SharedService {
   private dataSource = new BehaviorSubject<string>("");
   public theme: string = 'dark';
   public stillLoading: boolean = false;
-  private darkMode: boolean = true;
+  public darkMode: boolean = true;
   public isSpinnerEnabled: boolean = true;
   public mobileView: boolean = false;
   private totalRequests: number = 0;
@@ -64,6 +65,14 @@ export class SharedService {
     if(element.length > 0) {
       element[0].scrollTo({top: 0, behavior: 'smooth'});
     }
+  }
+
+  public changeColor(chart: Chart, backgroundColor: string, borderColor: string): void {
+    let chartObj = chart as any;
+    chartObj.data.datasets[0].backgroundColor = [backgroundColor];
+    chartObj.data.datasets[0].borderColor = [borderColor];
+    chartObj.data.datasets[0].pointBackgroundColor = [borderColor];    
+    chart.update();
   }
   
 }

@@ -5,6 +5,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { ThemeService } from 'src/app/services/theme.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -21,27 +22,27 @@ export class NavBarComponent implements OnInit, OnDestroy {
   public themesArray: Theme[] = [
     {
       name: 'Default',
-      color: '#00695c'
+      color: 'rgba(0, 105, 92, 1)'
     },
     {
       name: 'Pink & Blue-grey',
-      color: '#e91e63'
+      color: 'rgba(233, 30, 99, 1)'
     },
     {
       name: 'Purple',
-      color: '#673ab7'
+      color: 'rgba(103, 58, 183, 1)'
     },
     {
       name: 'Indigo Pink',
-      color: '#3f51b5'
+      color: 'rgba(63, 81, 181, 1)'
     },
     {
       name: "Amber",
-      color: '#feb204'
+      color: 'rgba(254, 178, 4, 1)'
     },
     {
       name: "Deep Amber",
-      color: '#ff8503'
+      color: 'rgba(255, 133, 3, 1)'
     }
 
   ]
@@ -50,7 +51,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
     public sharedService: SharedService,
     public authenticationService: AuthenticationService,
     public sidebarService: SideBarService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private themeService: ThemeService
   ) { 
   }
   ngOnInit(): void {
@@ -61,6 +63,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.setInitialTheme();
     this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
       this.configuration = configuration;
+      this.sharedService.darkMode = configuration.darkMode;
       this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
     });
   }
@@ -81,7 +84,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   toggleDarkMode(): void {
-    this.configuration.darkMode = !this.configuration.darkMode;
+    this.configuration.darkMode = !this.sharedService.darkMode;
     this.sharedService.activateLoadingSpinner();
     this.configurationService.updateConfiguration(this.configuration).subscribe(() => {
       this.sharedService.changeTheme(this.configuration.darkMode);
@@ -90,8 +93,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   changeThemeColor(color: string): void {
-    const root: any = document.documentElement;
+    const root: HTMLElement = document.documentElement;
     root.style.setProperty('--light', color);
     localStorage.setItem("themeColor", color);
+    this.themeService.next(color);
   }
 }

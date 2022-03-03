@@ -3,6 +3,7 @@ tr {
     display: table; 
     table-layout: fixed;
 }
+
 .mat-column-message {
     width: 30%;
 }

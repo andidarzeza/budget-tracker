@@ -11,6 +11,7 @@ import { ExportService } from 'src/app/services/export.service';
 import { DailyExpenseDTO, DashboardDTO, ExpenseInfoDTO, IncomeInfoDTO } from 'src/app/models/DashboardModels';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
+import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -53,11 +54,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public chartUtil: ChartUtils,
     public sharedService: SharedService,
     public exportService: ExportService,
-    private toasterService: ToastrService
+    private toasterService: ToastrService,
+    private themeService: ThemeService
   ) {}
 
   ngOnInit(): void {
     Chart.register(...registerables);
+    this.listenForColorChange();
+  }
+
+  private listenForColorChange(): void {
+    this.themeService.colorChange.subscribe((color: string) => {
+      const borderColor = color.substring(0, color.length - 2)+ '0.5)';
+      this.sharedService.changeColor(this.chart, borderColor, color);
+    });
   }
 
   // fires only from onDateSelected function below
@@ -140,9 +150,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       datasets: [{
         label: 'Money Spent',
         data,
+        fill: true,
         tension: 0.2,
-        backgroundColor: ['#ff6347'],
-        borderColor: ['#ff6347'],
+        backgroundColor: ['rgb(103, 58, 183, 0.4)'],
+        borderColor: ['rgb(103, 58, 183)'],
+        pointBackgroundColor : 'rgb(103, 58, 183)',
         borderWidth: 1
       }]
     });

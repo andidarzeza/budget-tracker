@@ -17,13 +17,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: calc(100% - 52px);
+    width: var(--table-width);
     margin: auto;
     margin-top: 5px;
 }
 
 .button-container {
-    width: calc(100% - 30px);
+    width: var(--table-width);
     margin: auto;
     display: flex;
     justify-content: space-between;

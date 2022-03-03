@@ -13,8 +13,8 @@
     <div class="menu-container">
 
         <div *ngIf="!sharedService.mobileView" class="menu-item pointer" (click)="toggleDarkMode()">
-            <i *ngIf="!this.configuration?.darkMode" style="font-size: 30px;" class="material-icons {{sharedService.theme}}-icon">nights_stay</i>
-            <mat-icon *ngIf="this.configuration?.darkMode" class="fullscreen-icon {{sharedService.theme}}-icon">wb_sunny</mat-icon>
+            <i *ngIf="!this.sharedService?.darkMode" style="font-size: 30px;" class="material-icons {{sharedService.theme}}-icon">nights_stay</i>
+            <mat-icon *ngIf="this.sharedService?.darkMode" class="fullscreen-icon {{sharedService.theme}}-icon">wb_sunny</mat-icon>
         </div>
 
         <div class="flex-centered">
