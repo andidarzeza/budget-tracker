@@ -65,9 +65,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private listenForColorChange(): void {
     this.themeService.colorChange.subscribe((color: string) => {
-      const borderColor = color.substring(0, color.length - 2)+ '0.5)';
-      this.sharedService.changeColor(this.chart, borderColor, color);
+      this.sharedService.changeColor(this.chart, this.getChartBackgroundColor(color), color);
     });
+  }
+
+  private getChartBackgroundColor(color: string): string {
+    return color.substring(0, color.length - 2)+ '0.5)';
   }
 
   // fires only from onDateSelected function below
@@ -99,17 +102,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         dailyExpensesLabels, 
         this.getDailyExpensesData(dailyExpensesLabels, dashboardData.dailyExpenses)
       );
-      console.log(dashboardData.expensesInfo);
-      
-      this.createCategoryChart(
-        dashboardData.expensesInfo.map((expenseInfo: ExpenseInfoDTO) => expenseInfo._id),
-        dashboardData.expensesInfo.map((expenseInfo: ExpenseInfoDTO) => expenseInfo.total),
-      );
-
-      this.createIncomesChart(
-        dashboardData.incomesInfo.map((incomeInfo: IncomeInfoDTO) => incomeInfo._id),
-        dashboardData.incomesInfo.map((incomeInfo: IncomeInfoDTO) => incomeInfo.total),
-      );
 
     }, (error: any) => {
       this.sharedService.checkLoadingSpinner();
@@ -139,6 +131,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if(this.chart) {
       this.chart.destroy();
     }
+    const color = localStorage.getItem("themeColor");
+    const chartBackgoundColor = this.getChartBackgroundColor(color);
     this.chart = this.chartUtil.createChart("daily-chart", {
       type: 'line',
       colors: ['#ff6347'],
@@ -152,51 +146,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
         data,
         fill: true,
         tension: 0.2,
-        backgroundColor: ['rgb(103, 58, 183, 0.4)'],
-        borderColor: ['rgb(103, 58, 183)'],
-        pointBackgroundColor : 'rgb(103, 58, 183)',
+        backgroundColor: [chartBackgoundColor],
+        borderColor: [color],
+        pointBackgroundColor : color,
         borderWidth: 1
       }]
     });
   }
 
-  private createCategoryChart(labels: string[], data: number[]): void {
-    if(this.category_chart) {
-      this.category_chart.destroy();
-    }
-    this.category_chart = this.chartUtil.createChart("category-chart", {
-      type: 'pie',
-      labels,
-      showGridLines: false,
-      datasets: [{
-        label: 'Categories',
-        data,
-        tension: 0.2,
-        backgroundColor: labels.map(label => strToColor(label)),
-        borderColor: labels.map(label => strToColor(label)),
-        borderWidth: 1
-      }]
-    });
-  }
-
-  private createIncomesChart(labels: string[], data: number[]): void {
-    if(this.incomes_chart) {
-      this.incomes_chart.destroy();
-    }
-    this.incomes_chart = this.chartUtil.createChart("incomes-chart", {
-      type: 'pie',
-      labels,
-      showGridLines: false,
-      datasets: [{
-        label: 'Incomes',
-        data,
-        tension: 0.2,
-        backgroundColor: labels.map(label => strToColor(label)),
-        borderColor: labels.map(label => strToColor(label)),
-        borderWidth: 1
-      }]
-    });
-  }
 
   getDailyExpensesData(dailyExpensesLabels: string[], dailyExpenses: DailyExpenseDTO[]): number[] {
     let response = [];
