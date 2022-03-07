@@ -18,6 +18,7 @@
         <mat-calendar 
             (selectedChange)="onDateSelected($event)"    
             [@datePickerAnimation] 
+            [startAt]="dateFrom"
             class="{{sharedService.theme}}-custom-calendar custom-calendar {{sharedService.theme}}-body" 
             *ngIf="showDatePicker"></mat-calendar>
     </span>

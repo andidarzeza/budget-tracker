@@ -544,6 +544,10 @@ th {
     animation: pulse 2s cubic-bezier(.4,0,.6,1) 3;
 }
 
+.mat-table thead, .mat-table tbody, .mat-table tfoot, mat-header-row, mat-row, mat-footer-row, [mat-header-row], [mat-row], [mat-footer-row], .mat-table-sticky {
+    background: unset !important;
+}
+
 
   
 @keyframes pulse{50%{opacity:.5}}
