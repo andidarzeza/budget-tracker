@@ -1,35 +1,47 @@
+<div class="login-container">
+    <div class="logo-container">
+        <img src="../../../assets/images/login.png" alt="login">
+    </div>
+    <div class="form-container">
+        <div class="login-card">
+            <form [formGroup]="loginGroup" autocomplete="off">
+                <mat-form-field appearance="outline" style="width: 100%;">
+                    <mat-label class="{{sharedService.theme}}-text">Username</mat-label>
+                    <input type="text" autocomplete="off" matInput formControlName="username">
+                    <mat-error *ngIf="username.errors?.required">This field is required.</mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline" style="width: 100%;">
+                    <mat-label class="{{sharedService.theme}}-text">Password</mat-label>
+                    <input #passwordInput type="password" autocomplete="off" matInput formControlName="password" style="width: calc(100% - 30px)">
+                    <div class="show-hide-password" (click)="togglePasswordVisibility(passwordInput)">
+                        <mat-icon *ngIf="!showPassword">remove_red_eye</mat-icon>
+                        <mat-icon *ngIf="showPassword">visibility_off</mat-icon>
+                    </div>
+                    <mat-error *ngIf="password.errors?.required">This field is required.</mat-error>
+                </mat-form-field>
 
-<mat-card class="login-card {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card">
-    <form [formGroup]="loginGroup" autocomplete="off">
-        <mat-form-field appearance="outline" style="width: 100%;">
-            <mat-label class="{{sharedService.theme}}-text">Username</mat-label>
-            <input type="text" autocomplete="off" matInput formControlName="username">
-            <mat-error *ngIf="username.errors?.required">This field is required.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" style="width: 100%;">
-            <mat-label class="{{sharedService.theme}}-text">Password</mat-label>
-            <input #passwordInput type="password" autocomplete="off" matInput formControlName="password" style="width: calc(100% - 30px)">
-            <div class="show-hide-password" (click)="togglePasswordVisibility(passwordInput)">
-                <mat-icon *ngIf="!showPassword">remove_red_eye</mat-icon>
-                <mat-icon *ngIf="showPassword">visibility_off</mat-icon>
-            </div>
-            <mat-error *ngIf="password.errors?.required">This field is required.</mat-error>
-        </mat-form-field>
-
-        <div class="actions">
-            <span>
-            </span>
-            <button mat-raised-button color="primary" class="{{sharedService.theme}}-login-button" (click)="login()">
-                Login
-            </button>
+                <div class="remember-me">
+                    <mat-checkbox class="login-checkbox">Remember me</mat-checkbox>
+                    <span class="forgot-password">
+                        Forgot password?
+                    </span>
+                </div>
+        
+                <div class="actions">
+                    <span>
+                    </span>
+                    <button mat-raised-button color="primary" class="{{sharedService.theme}}-login-button" (click)="login()">
+                        Login
+                    </button>
+                </div>
+                <div class="caps-lock" appCapsLock>
+                    <span style="display: block;height: 10px;width: 10px;background: rgb(255,130,67);border-radius: 50%;
+                    margin-top: 6px;margin-right: 3px;">
+                    </span> Caps lock is on.
+                </div>
+            </form>
+        
         </div>
-        <div class="caps-lock" appCapsLock>
-            <span style="display: block;height: 10px;width: 10px;background: rgb(255,130,67);border-radius: 50%;
-            margin-top: 6px;margin-right: 3px;">
-<!-- rgb(255,165,0) -->
-            </span> Caps lock is on.
-        </div>
-    </form>
-
-</mat-card>        
+    </div>
+</div>        

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { IConfiguration } from './models/IConfiguration';
 import { AuthenticationService } from './services/authentication.service';
 import { ConfigurationService } from './services/configuration.service';
+import { ExchangeService } from './services/exchange.service';
 import { SharedService } from './services/shared.service';
 import { SideBarService } from './services/side-bar.service';
 
@@ -42,12 +43,19 @@ export class AppComponent implements OnInit {
     public authenticationService: AuthenticationService,
     public sharedService: SharedService,
     private configurationService: ConfigurationService, 
-    public sideBarService: SideBarService
+    public sideBarService: SideBarService,
+    private exchangeService: ExchangeService
   ) {
 
   }
 
-  ngOnInit(): void {   
+  ngOnInit(): void {
+
+    const request = this.exchangeService.getExchangeRates();
+    request.onload = () => {
+      const response = request.response;
+      console.log(response);
+    }
     this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
       this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
     });

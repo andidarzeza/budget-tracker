@@ -41,12 +41,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public ResponseEntity getConfiguration(String user) {
         if(Objects.isNull(user)) {
-            return ResponseEntity.ok(new Configuration(null, true, true, null));
+            return ResponseEntity.ok(new Configuration(null, false, true, null));
         }
         Optional<Configuration> configurationOptional = configurationRepository.findByUser(user);
         if(configurationOptional.isPresent()) {
             return ResponseEntity.ok(configurationOptional.get());
         }
-        return ResponseEntity.ok(new Configuration(null, true, true, null));
+        return ResponseEntity.ok(new Configuration(null, false, true, null));
     }
 }

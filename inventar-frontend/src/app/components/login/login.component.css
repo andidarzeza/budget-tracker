@@ -1,9 +1,53 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.logo-container {
+    width: 55%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-container > img {
+    width: 100%;
+    height: 100%;
+}
+
+.form-container {
+    width: 45%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background: #f7f7f7;
+}
+
+.remember-me {
+    padding-bottom: 17px;
+    padding-left: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #525252;
+}
+
+.forgot-password {
+    cursor: pointer;
+    font-weight: 400;
+}
+
 .login-card {
-    position: absolute;
-    width: 30rem;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    /* width: calc(100% - 220px); */
+}
+
+button {
+    
+    background: rgba(103, 58, 183, 1) !important;
 }
 
 .actions {
@@ -14,13 +58,14 @@
 }
 
 .actions > button {
-    width: 100px;
-    height: 40px;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
 }
 
 input {
-    color: #9F9F9F;
-    font-size: 16px;
+    color: #525252;
+    font-size: 14px;
 }
 
 .caps-lock {
@@ -57,8 +102,23 @@ input {
     transition: opacity 200ms;
 }
 
+@media only screen and (max-width: 1000px) {
+
+    .login-card {
+        width: 50%;
+    }
+
+    .logo-container {
+        display: none;
+    }
+
+    .form-container {
+        width: 100%;
+    }
+}
+
 @media only screen and (max-width: 500px) {
     .login-card {
-        width: 20rem;
+        width: calc(100% - 50px);
     }
 }
