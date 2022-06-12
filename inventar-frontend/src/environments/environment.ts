@@ -8,10 +8,10 @@ export const environment = {
 };
 
 // HOME NETWORK
-// export const serverAPIURL = 'http://192.168.1.9:9000';
+export const serverAPIURL = 'http://192.168.1.9:9000';
 
 // WORK NETWORK
-export const serverAPIURL = 'http://192.168.255.238:9000';
+// export const serverAPIURL = 'http://192.168.255.238:9000';
 
 // BAR HI NETWORK
 // export const serverAPIURL = 'http://192.168.254.215:9000';
@@ -22,8 +22,6 @@ export const serverAPIURL = 'http://192.168.255.238:9000';
 // LOCALHOST
 // export const serverAPIURL = 'http://localhost:9000';
 
-export const MONTHS_ABR = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-export const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 export const TOASTER_CONFIGURATION = {
   timeOut: 7000, 
   positionClass: 'toast-bottom-right'

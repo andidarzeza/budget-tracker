@@ -43,8 +43,6 @@ export class ExpenseDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log("eee");
-    
     this.expenseViewId = "";
     this.expense = null;
     this.expenseSubscription?.unsubscribe();

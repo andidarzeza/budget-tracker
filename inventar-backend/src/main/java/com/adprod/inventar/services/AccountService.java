@@ -4,8 +4,8 @@ import com.adprod.inventar.models.Account;
 import org.springframework.http.ResponseEntity;
 
 public interface AccountService {
-    ResponseEntity find(String username);
+    ResponseEntity find();
     Account save(Account account);
-    boolean removeFromBalance(Double amount, String username);
-    boolean addToBalance(Double amount, String username);
+    void removeFromBalance(Double amount);
+    void addToBalance(Double amount);
 }

@@ -24,7 +24,7 @@ public class IncomeResource {
 
     @GetMapping("/{id}")
     public ResponseEntity findOne(@PathVariable String id){
-        return incomeService.findOne(id);
+        return ResponseEntity.ok(incomeService.findOne(id));
     }
 
     @DeleteMapping("/{id}")

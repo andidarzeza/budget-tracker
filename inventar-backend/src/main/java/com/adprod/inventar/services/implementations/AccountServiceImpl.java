@@ -1,57 +1,46 @@
 package com.adprod.inventar.services.implementations;
 
+import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
 import com.adprod.inventar.repositories.AccountRepository;
 import com.adprod.inventar.services.AccountService;
-import org.springframework.http.HttpStatus;
+import com.adprod.inventar.services.SecurityContextService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
+
 
 @Service
+@AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
-    private final AccountRepository accountRepository;
 
-    public AccountServiceImpl(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
+    private final AccountRepository accountRepository;
+    private final SecurityContextService securityContextService;
+    private final BalanceManager balanceManager;
 
     @Override
-    public ResponseEntity find(String username) {
-        Optional<Account> accountOptional = accountRepository.findByUsername(username);
-        if(accountOptional.isPresent()) {
-            return ResponseEntity.ok(accountOptional.get());
-        }
-        return new ResponseEntity(new ResponseMessage("No Account found for given id"), HttpStatus.NOT_FOUND);
+    public ResponseEntity find() {
+        return ResponseEntity.ok(
+                accountRepository
+                .findByUsername(securityContextService.username())
+                .orElseThrow(
+                        () -> new NotFoundException("An error occurred, account was not found")
+                )
+        );
     }
 
     @Override
     public Account save(Account account) {
-        accountRepository.save(account);
-        return account;
+        return accountRepository.save(account);
     }
 
     @Override
-    public boolean removeFromBalance(Double amount, String username) {
-        Optional<Account> accountOptional = accountRepository.findByUsername(username);
-        if(accountOptional.isPresent()) {
-            Account account = accountOptional.get();
-            account.setBalance(account.getBalance() - amount);
-            accountRepository.save(account);
-            return true;
-        }
-        return false;
+    public void removeFromBalance(Double amount) {
+        balanceManager.balance().remove(amount);
     }
 
     @Override
-    public boolean addToBalance(Double amount, String username) {
-        Optional<Account> accountOptional = accountRepository.findByUsername(username);
-        if(accountOptional.isPresent()) {
-            Account account = accountOptional.get();
-            account.setBalance(account.getBalance() + amount);
-            accountRepository.save(account);
-            return true;
-        }
-        return false;
+    public void addToBalance(Double amount) {
+        balanceManager.balance().add(amount);
     }
 }

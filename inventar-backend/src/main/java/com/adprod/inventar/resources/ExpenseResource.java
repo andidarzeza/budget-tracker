@@ -24,7 +24,7 @@ public class ExpenseResource {
 
     @GetMapping("/{id}")
     public ResponseEntity findOne(@PathVariable String id){
-        return expenseService.findOne(id);
+        return ResponseEntity.ok(expenseService.findOne(id));
     }
 
     @DeleteMapping("/{id}")

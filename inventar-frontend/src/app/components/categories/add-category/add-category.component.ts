@@ -13,7 +13,6 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   styleUrls: ['./add-category.component.css']
 })
 export class AddCategoryComponent implements OnInit, OnDestroy {
-  buttonText = "Shto Anetar";
   private mode = '';
   private id = '';
   savingEntity = false;
@@ -42,7 +41,6 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
     if(this.data.spendingCategory) {
       this.mode = 'edit';
       this.id = this.data.spendingCategory.id;
-      this.buttonText = 'Perditeso Anetar';
       this.categoryGroup.patchValue(this.data.spendingCategory);
     }else{
       this.mode = 'add';

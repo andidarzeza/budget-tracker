@@ -16,7 +16,6 @@ public class AccountResource {
 
     @GetMapping
     public ResponseEntity getAccount(){
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        return accountService.find(user);
+        return accountService.find();
     }
 }

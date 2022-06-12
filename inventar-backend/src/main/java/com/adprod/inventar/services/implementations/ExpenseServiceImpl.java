@@ -1,5 +1,6 @@
 package com.adprod.inventar.services.implementations;
 
+import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
 import com.adprod.inventar.models.enums.EntityAction;
 import com.adprod.inventar.models.enums.EntityType;
@@ -10,12 +11,10 @@ import com.adprod.inventar.repositories.ExpenseRepository;
 import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.ExpenseService;
+import com.adprod.inventar.services.SecurityContextService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,13 +27,16 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
     private final HistoryService historyService;
+    private final SecurityContextService securityContextService;
     private final EntityType entityType = EntityType.EXPENSE;
 
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository, CategoryRepository categoryRepository, AccountService accountService, HistoryService historyService) {
+
+    public ExpenseServiceImpl(ExpenseRepository expenseRepository, CategoryRepository categoryRepository, AccountService accountService, HistoryService historyService, SecurityContextService securityContextService) {
         this.expenseRepository = expenseRepository;
         this.categoryRepository = categoryRepository;
         this.accountService = accountService;
         this.historyService = historyService;
+        this.securityContextService = securityContextService;
     }
 
     @Override
@@ -57,55 +59,39 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity save(Spending spending) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(this.accountService.removeFromBalance(spending.getMoneySpent(), authentication.getName())) {
-            expenseRepository.save(spending);
-            historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
-            return ResponseEntity.ok(spending);
-        }
-        return new ResponseEntity(new ResponseMessage("INTERNAL SERVER ERROR"), HttpStatus.INTERNAL_SERVER_ERROR);
+        this.accountService.removeFromBalance(spending.getMoneySpent());
+        expenseRepository.save(spending);
+        historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
+        return ResponseEntity.ok(spending);
     }
 
     @Override
-    public ResponseEntity findOne(String id) {
-        Optional<Spending> optionalSpending = expenseRepository.findById(id);
-        if(optionalSpending.isPresent()) {
-            return ResponseEntity.ok(optionalSpending.get());
-        }
-        return new ResponseEntity(new ResponseMessage("No Expense Found."), HttpStatus.NOT_FOUND);
+    public Spending findOne(String id) {
+        return expenseRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new NotFoundException("Expense with id: " + id + " was not found.")
+                );
     }
 
     @Override
     public ResponseEntity delete(String id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<Spending> expenseOptional = expenseRepository.findById(id);
-        if(expenseOptional.isPresent()) {
-            if(this.accountService.addToBalance(expenseOptional.get().getMoneySpent(), authentication.getName())) {
-                expenseRepository.delete(expenseOptional.get());
-                historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
-                return ResponseEntity.ok(new ResponseMessage("Deleted"));
-            }
-            return new ResponseEntity(new ResponseMessage("Something went wrong, cannot proceed with request."), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity(new ResponseMessage("Not Found"), HttpStatus.NOT_FOUND);
+        Spending expense = findOne(id);
+        this.accountService.addToBalance(expense.getMoneySpent());
+        expenseRepository.delete(expense);
+        return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }
 
     @Override
     public ResponseEntity update(String id, Spending spending) {
-        Optional<Spending> expenseOptional = expenseRepository.findById(id);
-        if(expenseOptional.isPresent()) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            double removeAndAddAmount = expenseOptional.get().getMoneySpent() -spending.getMoneySpent();
-            if(this.accountService.addToBalance(removeAndAddAmount, authentication.getName())) {
-                spending.setId(id);
-                spending.setCreatedTime(expenseOptional.get().getCreatedTime());
-                spending.setLastModifiedDate(new Date());
-                expenseRepository.save(spending);
-                historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
-                return ResponseEntity.ok(spending);
-            }
-            return new ResponseEntity(new ResponseMessage("Something went wrong, cannot proceed with request."), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity(new ResponseMessage("No Expense to update was found."), HttpStatus.NOT_FOUND);
+        Spending expense = findOne(id);
+        double removeAndAddAmount = expense.getMoneySpent() - spending.getMoneySpent();
+        this.accountService.addToBalance(removeAndAddAmount);
+        spending.setId(id);
+        spending.setCreatedTime(expense.getCreatedTime());
+        spending.setLastModifiedDate(new Date());
+        expenseRepository.save(spending);
+        historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
+        return ResponseEntity.ok(spending);
     }
 }
