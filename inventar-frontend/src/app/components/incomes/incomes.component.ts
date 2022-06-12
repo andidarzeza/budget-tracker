@@ -32,8 +32,8 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   public size: number = PAGE_SIZE;
   private defaultSort: string = "createdTime,desc";
   private sort: string = this.defaultSort;
-  public displayedColumns: string[] = ['date', 'name', 'description', 'category', 'incoming', 'actions'];
-  public mobileColumns: string[] = ['name', 'category', 'incoming', 'actions'];
+  public displayedColumns: string[] = ['date', 'name', 'description', 'category', 'income', 'actions'];
+  public mobileColumns: string[] = ['name', 'category', 'income', 'actions'];
   private deleteSubscription: Subscription = null;
   private incomeSubscription: Subscription = null;
   public tableActionInput: TableActionInput = {

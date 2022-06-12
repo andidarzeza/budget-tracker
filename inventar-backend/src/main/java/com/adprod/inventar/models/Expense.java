@@ -7,11 +7,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 
-@Document
+@Document(collection = "spending")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Spending {
+public class Expense {
 
     @Id
     private String id;

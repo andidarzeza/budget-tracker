@@ -8,11 +8,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document
+@Document(collection = "incoming")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Incoming {
+public class Income {
 
     @Id
     private String id;
@@ -24,7 +24,7 @@ public class Incoming {
     private String categoryID;
     private String user;
 
-    public Incoming(String id, String name, Double incoming, String description, String categoryID, String user) {
+    public Income(String id, String name, Double incoming, String description, String categoryID, String user) {
         this.id = id;
         this.name = name;
         this.incoming = incoming;

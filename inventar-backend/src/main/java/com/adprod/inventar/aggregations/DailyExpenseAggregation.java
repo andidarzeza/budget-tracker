@@ -1,7 +1,7 @@
 package com.adprod.inventar.aggregations;
 
 import com.adprod.inventar.models.DailyExpenseDTO;
-import com.adprod.inventar.models.Spending;
+import com.adprod.inventar.models.Expense;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -34,7 +34,7 @@ public class DailyExpenseAggregation {
                         .andExpression("{$dateToString: { format: '%d-%m-%Y', date: '$createdTime'}}").as("date")
         );
         aggregationResult.add(Aggregation.group("$date").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("dailyExpense"));
-        TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
+        TypedAggregation<Expense> tempAgg = Aggregation.newAggregation(Expense.class, aggregationResult);
         List<DailyExpenseDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", DailyExpenseDTO.class).getMappedResults();
         return resultSR;
     }

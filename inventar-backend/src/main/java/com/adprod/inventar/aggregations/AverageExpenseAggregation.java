@@ -2,7 +2,7 @@ package com.adprod.inventar.aggregations;
 
 
 import com.adprod.inventar.models.ExpenseAggregationDTO;
-import com.adprod.inventar.models.Spending;
+import com.adprod.inventar.models.Expense;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -40,7 +40,7 @@ public class AverageExpenseAggregation {
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$user").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("expenses"));
-        TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
+        TypedAggregation<Expense> tempAgg = Aggregation.newAggregation(Expense.class, aggregationResult);
         List<ExpenseAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", ExpenseAggregationDTO.class).getMappedResults();
         return resultSR.size() > 0 ? resultSR.get(0).getExpenses() / daysInMonth : 0.0;
     }

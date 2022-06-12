@@ -40,10 +40,10 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public ResponseEntity getExpenses(Pageable pageable, String user) {
-        Page<Spending> page = this.expenseRepository.findAllByUser(pageable, user);
+    public ResponseEntity getExpenses(Pageable pageable) {
+        Page<Expense> page = this.expenseRepository.findAllByUser(pageable, securityContextService.username());
         SpendingWrapper spendingWrapper = new SpendingWrapper();
-        List<Spending> content = page.getContent();
+        List<Expense> content = page.getContent();
         List<SpendingDTO> response = new ArrayList<>();
         content.forEach(item -> {
             Optional<ExpenseCategory> data = categoryRepository.findById(item.getCategoryID());
@@ -58,15 +58,15 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public ResponseEntity save(Spending spending) {
-        this.accountService.removeFromBalance(spending.getMoneySpent());
-        expenseRepository.save(spending);
+    public ResponseEntity save(Expense expense) {
+        this.accountService.removeFromBalance(expense.getMoneySpent());
+        expenseRepository.save(expense);
         historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
-        return ResponseEntity.ok(spending);
+        return ResponseEntity.ok(expense);
     }
 
     @Override
-    public Spending findOne(String id) {
+    public Expense findOne(String id) {
         return expenseRepository
                 .findById(id)
                 .orElseThrow(
@@ -76,15 +76,15 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity delete(String id) {
-        Spending expense = findOne(id);
+        Expense expense = findOne(id);
         this.accountService.addToBalance(expense.getMoneySpent());
         expenseRepository.delete(expense);
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }
 
     @Override
-    public ResponseEntity update(String id, Spending spending) {
-        Spending expense = findOne(id);
+    public ResponseEntity update(String id, Expense spending) {
+        Expense expense = findOne(id);
         double removeAndAddAmount = expense.getMoneySpent() - spending.getMoneySpent();
         this.accountService.addToBalance(removeAndAddAmount);
         spending.setId(id);

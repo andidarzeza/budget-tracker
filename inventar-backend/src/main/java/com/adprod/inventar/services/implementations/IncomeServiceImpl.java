@@ -1,7 +1,7 @@
 package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
-import com.adprod.inventar.models.Incoming;
+import com.adprod.inventar.models.Income;
 import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.models.ExpenseCategory;
 import com.adprod.inventar.models.enums.EntityAction;
@@ -35,9 +35,9 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public ResponseEntity findAll(Pageable pageable, String user) {
-        Page<Incoming> page = this.incomeRepository.findAllByUser(pageable, user);
+        Page<Income> page = this.incomeRepository.findAllByUser(pageable, user);
         IncomingWrapper incomingWrapper = new IncomingWrapper();
-        List<Incoming> content = page.getContent();
+        List<Income> content = page.getContent();
         List<IncomingDTO> response = new ArrayList<>();
         content.forEach(item -> {
             Optional<ExpenseCategory> data = categoryRepository.findById(item.getCategoryID());
@@ -54,15 +54,15 @@ public class IncomeServiceImpl implements IncomeService {
     }
 
     @Override
-    public ResponseEntity save(Incoming incoming) {
-        this.accountService.addToBalance(incoming.getIncoming());
-        incomeRepository.save(incoming);
+    public ResponseEntity save(Income income) {
+        this.accountService.addToBalance(income.getIncoming());
+        incomeRepository.save(income);
         historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
-        return ResponseEntity.ok(incoming);
+        return ResponseEntity.ok(income);
     }
 
     @Override
-    public Incoming findOne(String id) {
+    public Income findOne(String id) {
         return incomeRepository
                 .findById(id)
                 .orElseThrow(() -> new NotFoundException("No Income Found with id: " + id));
@@ -70,7 +70,7 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public ResponseEntity delete(String id) {
-        Incoming income = findOne(id);
+        Income income = findOne(id);
         this.accountService.removeFromBalance(income.getIncoming());
         incomeRepository.delete(income);
         historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
@@ -78,8 +78,8 @@ public class IncomeServiceImpl implements IncomeService {
     }
 
     @Override
-    public ResponseEntity update(String id, Incoming income) {
-        Incoming incomeDB = findOne(id);
+    public ResponseEntity update(String id, Income income) {
+        Income incomeDB = findOne(id);
 
         double removeAndAddAmount =  income.getIncoming() - incomeDB.getIncoming();
         this.accountService.addToBalance(removeAndAddAmount);

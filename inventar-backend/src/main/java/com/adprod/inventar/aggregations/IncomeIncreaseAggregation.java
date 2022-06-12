@@ -1,9 +1,7 @@
 package com.adprod.inventar.aggregations;
 
-import com.adprod.inventar.models.ExpenseAggregationDTO;
 import com.adprod.inventar.models.IncomeAggregationDTO;
-import com.adprod.inventar.models.Incoming;
-import com.adprod.inventar.models.Spending;
+import com.adprod.inventar.models.Income;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -14,8 +12,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +32,7 @@ public class IncomeIncreaseAggregation {
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$user").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("income"));
-        TypedAggregation<Incoming> tempAgg = Aggregation.newAggregation(Incoming.class, aggregationResult);
+        TypedAggregation<Income> tempAgg = Aggregation.newAggregation(Income.class, aggregationResult);
         List<IncomeAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incoming", IncomeAggregationDTO.class).getMappedResults();
         Double incomeLastMonth = resultSR.size() > 0 ? resultSR.get(0).getIncome() : 0.0;
         Double averageLastMonth = this.calculateAverageForLastMonth(from, incomeLastMonth);

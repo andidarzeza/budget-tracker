@@ -1,9 +1,12 @@
 package com.adprod.inventar.services.implementations;
 
+import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.Configuration;
 import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.repositories.ConfigurationRepository;
 import com.adprod.inventar.services.ConfigurationService;
+import com.adprod.inventar.services.SecurityContextService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,25 +15,24 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ConfigurationServiceImpl implements ConfigurationService {
-    private final ConfigurationRepository configurationRepository;
 
-    public ConfigurationServiceImpl(ConfigurationRepository configurationRepository) {
-        this.configurationRepository = configurationRepository;
-    }
+    private final ConfigurationRepository configurationRepository;
+    private final SecurityContextService securityContextService;
 
     @Override
     public ResponseEntity update(Configuration configuration) {
-
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Configuration> configurationOptional = configurationRepository.findByUser(user);
-        if (configurationOptional.isPresent()) {
-            configuration.setId(configurationOptional.get().getId());
-            configuration.setUser(user);
-            configurationRepository.save(configuration);
-            return ResponseEntity.ok(configuration);
-        }
-        return new ResponseEntity(new ResponseMessage("No Configuration Found for user: " + user), HttpStatus.NOT_FOUND);
+        String user = securityContextService.username();
+        Configuration configurationDB = configurationRepository
+                .findByUser(user)
+                .orElseThrow(
+                        () -> new NotFoundException("Configuration for user: " + user + " was not found!")
+                );
+        configuration.setId(configurationDB.getId());
+        configuration.setUser(user);
+        configurationRepository.save(configuration);
+        return ResponseEntity.ok(configuration);
     }
 
     @Override
@@ -39,14 +41,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public ResponseEntity getConfiguration(String user) {
-        if(Objects.isNull(user)) {
-            return ResponseEntity.ok(new Configuration(null, false, true, null));
-        }
-        Optional<Configuration> configurationOptional = configurationRepository.findByUser(user);
-        if(configurationOptional.isPresent()) {
-            return ResponseEntity.ok(configurationOptional.get());
-        }
-        return ResponseEntity.ok(new Configuration(null, false, true, null));
+    public ResponseEntity getConfiguration() {
+        return ResponseEntity.ok(
+                configurationRepository
+                    .findByUser(securityContextService.username())
+                    .orElseGet(
+                        () -> new Configuration(null, false, true, null)
+                    )
+        );
     }
 }

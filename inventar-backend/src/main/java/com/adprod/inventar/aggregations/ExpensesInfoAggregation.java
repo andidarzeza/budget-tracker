@@ -2,7 +2,7 @@ package com.adprod.inventar.aggregations;
 
 
 import com.adprod.inventar.models.ExpenseInfoDTO;
-import com.adprod.inventar.models.Spending;
+import com.adprod.inventar.models.Expense;
 import com.adprod.inventar.models.ExpenseCategory;
 import com.adprod.inventar.repositories.CategoryRepository;
 import org.springframework.data.mongodb.MongoExpression;
@@ -32,7 +32,7 @@ public class ExpensesInfoAggregation {
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("total"));
-        TypedAggregation<Spending> tempAgg = Aggregation.newAggregation(Spending.class, aggregationResult);
+        TypedAggregation<Expense> tempAgg = Aggregation.newAggregation(Expense.class, aggregationResult);
         List<ExpenseInfoDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", ExpenseInfoDTO.class).getMappedResults();
         List<ExpenseInfoDTO> response = new ArrayList<>();
         resultSR.forEach(result -> {

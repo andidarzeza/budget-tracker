@@ -1,6 +1,6 @@
 package com.adprod.inventar.resources;
 
-import com.adprod.inventar.models.Incoming;
+import com.adprod.inventar.models.Income;
 import com.adprod.inventar.services.IncomeService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +33,14 @@ public class IncomeResource {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody Incoming income){
+    public ResponseEntity save(@RequestBody Income income){
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
         income.setUser(user);
         return incomeService.save(income);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity update(@RequestBody Incoming income, @PathVariable String id) {
+    public ResponseEntity update(@RequestBody Income income, @PathVariable String id) {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
         income.setUser(user);
         return incomeService.update(id, income);
