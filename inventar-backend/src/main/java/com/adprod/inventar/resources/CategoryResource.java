@@ -1,30 +1,28 @@
 package com.adprod.inventar.resources;
 
-import com.adprod.inventar.models.SpendingCategory;
+import com.adprod.inventar.models.ExpenseCategory;
 import com.adprod.inventar.services.CategoryService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryResource {
+
     private final CategoryService categoryService;
 
-    public CategoryResource(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
-    @GetMapping(value = "", produces = "application/json")
+    @GetMapping
     public ResponseEntity findAll(Pageable pageable, @RequestParam String categoryType){
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        return categoryService.findAll(pageable, categoryType, user);
+        return categoryService.findAll(pageable, categoryType);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity findOne(@PathVariable String id){
-        return categoryService.findOne(id);
+        return ResponseEntity.ok(categoryService.findOne(id));
     }
 
     @DeleteMapping("/{id}")
@@ -33,16 +31,12 @@ public class CategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody SpendingCategory spendingCategory){
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        spendingCategory.setUser(user);
-        return categoryService.save(spendingCategory);
+    public ResponseEntity save(@RequestBody ExpenseCategory expenseCategory){
+        return categoryService.save(expenseCategory);
     }
 
     @PutMapping
-    public ResponseEntity update(@RequestBody SpendingCategory spendingCategory) {
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        spendingCategory.setUser(user);
-        return categoryService.update(spendingCategory);
+    public ResponseEntity update(@RequestBody ExpenseCategory expenseCategory) {
+        return categoryService.update(expenseCategory);
     }
 }

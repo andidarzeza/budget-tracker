@@ -1,5 +1,6 @@
 package com.adprod.inventar.services.implementations;
 
+import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
 import com.adprod.inventar.models.enums.EntityAction;
 import com.adprod.inventar.models.enums.EntityType;
@@ -7,29 +8,28 @@ import com.adprod.inventar.models.wrappers.CategoryWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.services.CategoryService;
 import com.adprod.inventar.services.HistoryService;
+import com.adprod.inventar.services.SecurityContextService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
+
+    private final SecurityContextService securityContextService;
     private final CategoryRepository categoryRepository;
     private final HistoryService historyService;
     private final EntityType entityType = EntityType.CATEGORY;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, HistoryService historyService) {
-        this.categoryRepository = categoryRepository;
-        this.historyService = historyService;
-    }
-
     @Override
-    public ResponseEntity findAll(Pageable pageable, String categoryType, String user) {
-        Page<SpendingCategory> page = this.categoryRepository.findAllByCategoryTypeAndUser(pageable, categoryType, user);
+    public ResponseEntity findAll(Pageable pageable, String categoryType) {
+        Page<ExpenseCategory> page = this.categoryRepository.findAllByCategoryTypeAndUser(pageable, categoryType, securityContextService.username());
         CategoryWrapper categoryWrapper = new CategoryWrapper();
         categoryWrapper.setCategories(page.getContent());
         categoryWrapper.setCount(page.getTotalElements());
@@ -37,41 +37,37 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseEntity findOne(String id) {
-        Optional<SpendingCategory> categoryOptional = categoryRepository.findById(id);
-        if(categoryOptional.isPresent()) {
-            return ResponseEntity.ok(categoryOptional.get());
-        }
-        return new ResponseEntity(new ResponseMessage("No Category found for given id: " + id+ "."), HttpStatus.NOT_FOUND);
+    public ExpenseCategory findOne(String id) {
+        return categoryRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new NotFoundException("Expense Category with id: " + id + " was not found!")
+                );
     }
 
     @Override
     public ResponseEntity delete(String id) {
-        Optional<SpendingCategory> categoryOptional = categoryRepository.findById(id);
-        if(categoryOptional.isPresent()) {
-            categoryRepository.delete(categoryOptional.get());
-            historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
-            return ResponseEntity.ok(new ResponseMessage("Category with id: " + id + " was deleted successfully."));
-        }
-        return new ResponseEntity(new ResponseMessage("No Category found for given id: " + id+ "."), HttpStatus.NOT_FOUND);
+        ExpenseCategory category = findOne(id);
+        categoryRepository.delete(category);
+        historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
+        return ResponseEntity.ok(new ResponseMessage("Category with id: " + id + " was deleted successfully."));
     }
 
     @Override
-    public ResponseEntity save(SpendingCategory spendingCategory) {
-        categoryRepository.save(spendingCategory);
+    public ResponseEntity save(ExpenseCategory expenseCategory) {
+        expenseCategory.setUser(securityContextService.username());
+        categoryRepository.save(expenseCategory);
         historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
-        return ResponseEntity.ok(spendingCategory);
+        return ResponseEntity.ok(expenseCategory);
     }
 
     @Override
-    public ResponseEntity update(SpendingCategory spendingCategory) {
-        Optional<SpendingCategory> categoryOptional = categoryRepository.findById(spendingCategory.getId());
-        if(categoryOptional.isPresent()) {
-            spendingCategory.setLastModifiedDate(new Date());
-            categoryRepository.save(spendingCategory);
-            historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
-            return ResponseEntity.ok(spendingCategory);
-        }
-        return new ResponseEntity(new ResponseMessage("No Category to update was found ."), HttpStatus.NOT_FOUND);
+    public ResponseEntity update(ExpenseCategory expenseCategory) {
+        expenseCategory.setUser(securityContextService.username());
+        ExpenseCategory category = findOne(expenseCategory.getId());
+        expenseCategory.setLastModifiedDate(LocalDateTime.now());
+        categoryRepository.save(expenseCategory);
+        historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
+        return ResponseEntity.ok(expenseCategory);
     }
 }

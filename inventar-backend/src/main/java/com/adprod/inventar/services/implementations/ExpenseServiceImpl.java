@@ -46,9 +46,9 @@ public class ExpenseServiceImpl implements ExpenseService {
         List<Spending> content = page.getContent();
         List<SpendingDTO> response = new ArrayList<>();
         content.forEach(item -> {
-            Optional<SpendingCategory> data = categoryRepository.findById(item.getCategoryID());
+            Optional<ExpenseCategory> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
-                SpendingCategory sc = data.get();
+                ExpenseCategory sc = data.get();
                 response.add(new SpendingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getMoneySpent(), item.getDescription()));
             }
         });

@@ -35,7 +35,7 @@ public class IncomesInfoAggregation {
         List<IncomeInfoDTO> response = new ArrayList<>();
         resultSR.forEach(result -> {
             String id = result.get_id();
-            Optional<SpendingCategory> category = categoryRepository.findById(id);
+            Optional<ExpenseCategory> category = categoryRepository.findById(id);
             if(category.isPresent()) {
                 response.add(new IncomeInfoDTO(category.get().getCategory(), result.getTotal()));
             }

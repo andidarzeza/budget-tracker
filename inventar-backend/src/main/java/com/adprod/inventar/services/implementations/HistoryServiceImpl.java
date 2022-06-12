@@ -2,14 +2,10 @@ package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.models.History;
 import com.adprod.inventar.models.ResponseMessage;
-import com.adprod.inventar.models.SpendingCategory;
 import com.adprod.inventar.models.enums.EntityAction;
 import com.adprod.inventar.models.enums.EntityType;
-import com.adprod.inventar.models.wrappers.CategoryWrapper;
 import com.adprod.inventar.models.wrappers.HistoryWrapper;
-import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.repositories.HistoryRepository;
-import com.adprod.inventar.services.CategoryService;
 import com.adprod.inventar.services.HistoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

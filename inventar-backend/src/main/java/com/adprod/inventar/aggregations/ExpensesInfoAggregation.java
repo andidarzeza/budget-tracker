@@ -3,7 +3,7 @@ package com.adprod.inventar.aggregations;
 
 import com.adprod.inventar.models.ExpenseInfoDTO;
 import com.adprod.inventar.models.Spending;
-import com.adprod.inventar.models.SpendingCategory;
+import com.adprod.inventar.models.ExpenseCategory;
 import com.adprod.inventar.repositories.CategoryRepository;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,7 +37,7 @@ public class ExpensesInfoAggregation {
         List<ExpenseInfoDTO> response = new ArrayList<>();
         resultSR.forEach(result -> {
             String id = result.get_id();
-            Optional<SpendingCategory> category = categoryRepository.findById(id);
+            Optional<ExpenseCategory> category = categoryRepository.findById(id);
             if(category.isPresent()) {
                 response.add(new ExpenseInfoDTO(category.get().getCategory(), category.get().getIcon(), result.getTotal()));
             }

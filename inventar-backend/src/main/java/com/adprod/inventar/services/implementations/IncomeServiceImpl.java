@@ -3,7 +3,7 @@ package com.adprod.inventar.services.implementations;
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.Incoming;
 import com.adprod.inventar.models.ResponseMessage;
-import com.adprod.inventar.models.SpendingCategory;
+import com.adprod.inventar.models.ExpenseCategory;
 import com.adprod.inventar.models.enums.EntityAction;
 import com.adprod.inventar.models.enums.EntityType;
 import com.adprod.inventar.models.wrappers.IncomingDTO;
@@ -40,9 +40,9 @@ public class IncomeServiceImpl implements IncomeService {
         List<Incoming> content = page.getContent();
         List<IncomingDTO> response = new ArrayList<>();
         content.forEach(item -> {
-            Optional<SpendingCategory> data = categoryRepository.findById(item.getCategoryID());
+            Optional<ExpenseCategory> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
-                SpendingCategory sc = data.get();
+                ExpenseCategory sc = data.get();
                 response.add(new IncomingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
             } else {
                 response.add(new IncomingDTO(item.getId(), "No Category Found", "0", item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
