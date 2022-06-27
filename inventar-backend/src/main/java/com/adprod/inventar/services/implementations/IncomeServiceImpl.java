@@ -4,8 +4,8 @@ import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.Income;
 import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.models.ExpenseCategory;
-import com.adprod.inventar.models.enums.EntityAction;
-import com.adprod.inventar.models.enums.EntityType;
+import static com.adprod.inventar.models.enums.EntityAction.*;
+import static com.adprod.inventar.models.enums.EntityType.INCOME;
 import com.adprod.inventar.models.wrappers.IncomingDTO;
 import com.adprod.inventar.models.wrappers.IncomingWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
@@ -31,11 +31,10 @@ public class IncomeServiceImpl implements IncomeService {
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
     private final HistoryService historyService;
-    private final EntityType entityType = EntityType.INCOME;
 
     @Override
     public ResponseEntity findAll(Pageable pageable, String user) {
-        Page<Income> page = this.incomeRepository.findAllByUser(pageable, user);
+        Page<Income> page = incomeRepository.findAllByUser(pageable, user);
         IncomingWrapper incomingWrapper = new IncomingWrapper();
         List<Income> content = page.getContent();
         List<IncomingDTO> response = new ArrayList<>();
@@ -55,9 +54,9 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public ResponseEntity save(Income income) {
-        this.accountService.addToBalance(income.getIncoming());
+        accountService.addToBalance(income.getIncoming());
         incomeRepository.save(income);
-        historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
+        historyService.save(historyService.from(CREATE, INCOME));
         return ResponseEntity.ok(income);
     }
 
@@ -73,7 +72,7 @@ public class IncomeServiceImpl implements IncomeService {
         Income income = findOne(id);
         this.accountService.removeFromBalance(income.getIncoming());
         incomeRepository.delete(income);
-        historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
+        historyService.save(historyService.from(DELETE, INCOME));
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }
 
@@ -87,7 +86,7 @@ public class IncomeServiceImpl implements IncomeService {
         income.setCreatedTime(incomeDB.getCreatedTime());
         income.setLastModifiedDate(new Date());
         incomeRepository.save(income);
-        historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
+        historyService.save(historyService.from(UPDATE, INCOME));
         return ResponseEntity.ok(income);
 
     }

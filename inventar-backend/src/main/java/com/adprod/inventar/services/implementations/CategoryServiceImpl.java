@@ -12,11 +12,9 @@ import com.adprod.inventar.services.SecurityContextService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -64,7 +62,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ResponseEntity update(ExpenseCategory expenseCategory) {
         expenseCategory.setUser(securityContextService.username());
-        ExpenseCategory category = findOne(expenseCategory.getId());
         expenseCategory.setLastModifiedDate(LocalDateTime.now());
         categoryRepository.save(expenseCategory);
         historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));

@@ -2,19 +2,19 @@ package com.adprod.inventar.resources;
 
 import com.adprod.inventar.models.Expense;
 import com.adprod.inventar.services.ExpenseService;
+import com.adprod.inventar.services.SecurityContextService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/spending")
 public class ExpenseResource {
-    private final ExpenseService expenseService;
 
-    public ExpenseResource(ExpenseService expenseService) {
-        this.expenseService = expenseService;
-    }
+    private final ExpenseService expenseService;
+    private final SecurityContextService securityContextService;
 
     @GetMapping
     public ResponseEntity findAll(Pageable pageable){
@@ -33,15 +33,13 @@ public class ExpenseResource {
 
     @PostMapping
     public ResponseEntity save(@RequestBody Expense expense){
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        expense.setUser(user);
+        expense.setUser(securityContextService.username());
         return expenseService.save(expense);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity update(@RequestBody Expense expense, @PathVariable String id) {
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        expense.setUser(user);
+        expense.setUser(securityContextService.username());
         return expenseService.update(id, expense);
     }
 }

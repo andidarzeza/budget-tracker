@@ -25,7 +25,9 @@ public class JwtManager {
     public String createToken(User user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("Role", user.getRole());
-        return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtRenewTime))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }

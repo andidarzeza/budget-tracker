@@ -1,5 +1,7 @@
 package com.adprod.inventar.security;
 
+import com.adprod.inventar.security.interfaces.ITokenValidator;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,16 +19,13 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Qualifier("myUserDetailsService")
     private final UserDetailsService userDetailsService;
     private final JwtManager jwtManager;
-
-    public WebSecurityConfig(JwtManager jwtManager, UserDetailsService userDetailsService) {
-        this.jwtManager = jwtManager;
-        this.userDetailsService = userDetailsService;
-    }
+    private final ITokenValidator iTokenValidator;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -43,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .apply(new TokenFilterConfig(jwtManager))
+                .apply(new TokenFilterConfig(jwtManager, iTokenValidator))
                 .and()
 //                .csrf()
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())

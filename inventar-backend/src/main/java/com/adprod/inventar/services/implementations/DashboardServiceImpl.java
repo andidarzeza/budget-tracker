@@ -3,12 +3,14 @@ package com.adprod.inventar.services.implementations;
 import com.adprod.inventar.aggregations.*;
 import com.adprod.inventar.models.*;
 import com.adprod.inventar.services.DashboardService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 
 @Service
+@AllArgsConstructor
 public class DashboardServiceImpl implements DashboardService {
 
     private final DailyExpenseAggregation dailyExpenseAggregation;
@@ -19,18 +21,6 @@ public class DashboardServiceImpl implements DashboardService {
     private final IncomeAggregation incomeAggregation;
     private final IncomeIncreaseAggregation incomeIncreaseAggregation;
     private final ExpenseIncreaseAggregation expenseIncreaseAggregation;
-
-    public DashboardServiceImpl(DailyExpenseAggregation dailyExpenseAggregation, AverageIncomeAggregation averageIncomeAggregation, AverageExpenseAggregation averageExpenseAggregation, ExpensesInfoAggregation expensesInfoAggregation, IncomesInfoAggregation incomesInfoAggregation, IncomeAggregation incomeAggregation, IncomeIncreaseAggregation incomeIncreaseAggregation, ExpenseIncreaseAggregation expenseIncreaseAggregation) {
-        this.dailyExpenseAggregation = dailyExpenseAggregation;
-        this.averageIncomeAggregation = averageIncomeAggregation;
-        this.averageExpenseAggregation = averageExpenseAggregation;
-        this.expensesInfoAggregation = expensesInfoAggregation;
-        this.incomesInfoAggregation = incomesInfoAggregation;
-        this.incomeAggregation = incomeAggregation;
-        this.incomeIncreaseAggregation = incomeIncreaseAggregation;
-        this.expenseIncreaseAggregation = expenseIncreaseAggregation;
-    }
-
 
     @Override
     public ResponseEntity<DashboardDTO> getDashboardData(Instant from, Instant to) {

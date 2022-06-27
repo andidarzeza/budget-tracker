@@ -24,7 +24,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
     name: ['', Validators.required],
     description: [''],
     categoryID: ['', Validators.required],
-    income: ['', Validators.required]
+    incoming: ['', Validators.required]
   });  
   constructor(
     @Inject(MAT_DIALOG_DATA) public income: Income,
@@ -49,7 +49,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
   }
 
   get incomeValue() {
-    return this.formGroup.controls['income'];
+    return this.formGroup.controls['incoming'];
   }
 
   get editMode() {

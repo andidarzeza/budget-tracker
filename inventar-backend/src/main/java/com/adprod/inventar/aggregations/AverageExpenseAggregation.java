@@ -3,6 +3,7 @@ package com.adprod.inventar.aggregations;
 
 import com.adprod.inventar.models.ExpenseAggregationDTO;
 import com.adprod.inventar.models.Expense;
+import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -19,13 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class AverageExpenseAggregation {
 
     private final MongoTemplate mongoTemplate;
-
-    public AverageExpenseAggregation(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
 
     public Double getAverageDailyExpense(String user, Instant from, Instant to) {
         LocalDateTime currentDate = LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());

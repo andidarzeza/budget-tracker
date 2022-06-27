@@ -1,24 +1,24 @@
 package com.adprod.inventar.resources;
 
 import com.adprod.inventar.services.HistoryService;
+import com.adprod.inventar.services.SecurityContextService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/history")
 public class HistoryResource {
+
     private final HistoryService historyService;
+    private final SecurityContextService securityContextService;
 
-    public HistoryResource(HistoryService historyService) {
-        this.historyService = historyService;
-    }
-
-    @GetMapping(value = "", produces = "application/json")
+    @GetMapping
     public ResponseEntity findAll(Pageable pageable){
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        return historyService.findAll(pageable, user);
+        return historyService.findAll(pageable, securityContextService.username());
     }
 
     @GetMapping("/{id}")

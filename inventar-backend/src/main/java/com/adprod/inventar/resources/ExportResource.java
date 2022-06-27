@@ -2,6 +2,7 @@ package com.adprod.inventar.resources;
 
 import com.adprod.inventar.services.ExportService;
 import com.lowagie.text.DocumentException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +17,16 @@ import java.time.Instant;
 import java.util.Date;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/export")
 public class ExportResource {
-    private final ExportService exportService;
 
-    public ExportResource(ExportService exportService) {
-        this.exportService = exportService;
-    }
+    private final ExportService exportService;
+    private final SimpleDateFormat dateFormatter;
 
     @GetMapping("/pdf/dashboard")
     public void exportToPDF(HttpServletResponse response, @RequestParam Instant from, @RequestParam Instant to) throws DocumentException, IOException {
         response.setContentType("application/pdf");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=users_" + currentDateTime + ".pdf";

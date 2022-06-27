@@ -4,38 +4,38 @@ import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.Account;
 import com.adprod.inventar.repositories.AccountRepository;
 import com.adprod.inventar.services.SecurityContextService;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 @Service
 @Getter
+@AllArgsConstructor
 public class BalanceManager {
 
     private final AccountRepository accountRepository;
     private final SecurityContextService securityContextService;
 
-    private Account account;
-
-    public BalanceManager(AccountRepository accountRepository, SecurityContextService securityContextService) {
-        this.accountRepository = accountRepository;
-        this.securityContextService = securityContextService;
+    protected BalanceManager balance() {
+        return this;
     }
 
-    protected BalanceManager balance() {
-        this.account = accountRepository
+    private Account getAccount() {
+        return accountRepository
                 .findByUsername(securityContextService.username())
                 .orElseThrow(
                         () -> new NotFoundException("An error occurred, account was not found!")
                 );
-        return this;
     }
 
     protected void add(Double amount) {
+        Account account = getAccount();
         account.setBalance(account.getBalance() + amount);
         accountRepository.save(account);
     }
 
     protected void remove(Double amount) {
+        Account account = getAccount();
         account.setBalance(account.getBalance() - amount);
         accountRepository.save(account);
     }

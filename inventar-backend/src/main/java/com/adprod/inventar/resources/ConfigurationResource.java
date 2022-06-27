@@ -16,11 +16,11 @@ public class ConfigurationResource {
 
     @GetMapping
     public ResponseEntity getConfiguration() {
-        return this.configurationService.getConfiguration();
+        return configurationService.getConfiguration();
     }
 
     @PutMapping
     public ResponseEntity update(@RequestBody Configuration configuration) {
-        return this.configurationService.update(configuration);
+        return configurationService.update(configuration);
     }
 }

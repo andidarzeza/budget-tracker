@@ -1,17 +1,16 @@
 package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.models.*;
-import com.adprod.inventar.models.enums.EntityAction;
-import com.adprod.inventar.models.enums.EntityType;
+import static com.adprod.inventar.models.enums.EntityAction.*;
+import static com.adprod.inventar.models.enums.EntityType.*;
 import com.adprod.inventar.models.enums.Role;
-import com.adprod.inventar.repositories.AccountRepository;
-import com.adprod.inventar.repositories.ConfigurationRepository;
 import com.adprod.inventar.repositories.UserRepository;
 import com.adprod.inventar.security.JwtManager;
 import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.ConfigurationService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +21,7 @@ import java.util.Optional;
 
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
@@ -31,17 +31,6 @@ public class UserServiceImpl implements UserService {
     private final ConfigurationService configurationService;
     private final AccountService accountService;
     private final HistoryService historyService;
-    private final EntityType entityType = EntityType.USER;
-
-    public UserServiceImpl(UserRepository repository, JwtManager jwtManager, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, ConfigurationService configurationService, AccountService accountService, HistoryService historyService) {
-        this.repository = repository;
-        this.jwtManager = jwtManager;
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = bCryptPasswordEncoder;
-        this.configurationService = configurationService;
-        this.accountService = accountService;
-        this.historyService = historyService;
-    }
 
     @Override
     public ResponseEntity register(UserRequest request) {
@@ -57,7 +46,7 @@ public class UserServiceImpl implements UserService {
             repository.save(user);
             accountService.save(new Account(null, user.getUsername(), 0.0));
             configurationService.save(new Configuration(null, false, true, user.getUsername()));
-            historyService.save(historyService.from(EntityAction.REGISTRATION, this.entityType));
+            historyService.save(historyService.from(REGISTRATION, USER));
             return new ResponseEntity(new ResponseMessage("Registration Successful"), HttpStatus.OK);
         }
         return new ResponseEntity(new ResponseMessage("Username already in use"), HttpStatus.CONFLICT);
@@ -71,10 +60,10 @@ public class UserServiceImpl implements UserService {
             final String jwt = jwtManager.createToken(userOptional.get());
             historyService.save(
                     new History(
-                            EntityAction.AUTHENTICATION,
+                            AUTHENTICATION,
                             userRequest.getUsername(),
                             "User " + userRequest.getUsername() + " has logged in.",
-                            EntityType.USER
+                            USER
                     )
             );
             return new ResponseEntity(new LoginResponse(userOptional.get().getUsername(), jwt, userOptional.get().getFirstName(), userOptional.get().getLastName()), HttpStatus.OK);

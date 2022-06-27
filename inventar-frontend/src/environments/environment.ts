@@ -10,6 +10,9 @@ export const environment = {
 // HOME NETWORK
 export const serverAPIURL = 'http://192.168.1.9:9000';
 
+// TT NETWORK
+// export const serverAPIURL = 'http://192.168.1.9:9000';
+
 // WORK NETWORK
 // export const serverAPIURL = 'http://192.168.255.238:9000';
 

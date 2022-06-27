@@ -3,7 +3,7 @@ package com.adprod.inventar.services.implementations;
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
 import com.adprod.inventar.models.enums.EntityAction;
-import com.adprod.inventar.models.enums.EntityType;
+import static com.adprod.inventar.models.enums.EntityType.EXPENSE;
 import com.adprod.inventar.models.wrappers.SpendingDTO;
 import com.adprod.inventar.models.wrappers.SpendingWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
@@ -12,6 +12,7 @@ import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.ExpenseService;
 import com.adprod.inventar.services.SecurityContextService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,26 +23,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
     private final HistoryService historyService;
     private final SecurityContextService securityContextService;
-    private final EntityType entityType = EntityType.EXPENSE;
-
-
-    public ExpenseServiceImpl(ExpenseRepository expenseRepository, CategoryRepository categoryRepository, AccountService accountService, HistoryService historyService, SecurityContextService securityContextService) {
-        this.expenseRepository = expenseRepository;
-        this.categoryRepository = categoryRepository;
-        this.accountService = accountService;
-        this.historyService = historyService;
-        this.securityContextService = securityContextService;
-    }
 
     @Override
     public ResponseEntity getExpenses(Pageable pageable) {
-        Page<Expense> page = this.expenseRepository.findAllByUser(pageable, securityContextService.username());
+        Page<Expense> page = expenseRepository.findAllByUser(pageable, securityContextService.username());
         SpendingWrapper spendingWrapper = new SpendingWrapper();
         List<Expense> content = page.getContent();
         List<SpendingDTO> response = new ArrayList<>();
@@ -59,9 +51,9 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity save(Expense expense) {
-        this.accountService.removeFromBalance(expense.getMoneySpent());
+        accountService.removeFromBalance(expense.getMoneySpent());
         expenseRepository.save(expense);
-        historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
+        historyService.save(historyService.from(EntityAction.CREATE, EXPENSE));
         return ResponseEntity.ok(expense);
     }
 
@@ -77,7 +69,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ResponseEntity delete(String id) {
         Expense expense = findOne(id);
-        this.accountService.addToBalance(expense.getMoneySpent());
+        accountService.addToBalance(expense.getMoneySpent());
         expenseRepository.delete(expense);
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }
@@ -86,12 +78,12 @@ public class ExpenseServiceImpl implements ExpenseService {
     public ResponseEntity update(String id, Expense spending) {
         Expense expense = findOne(id);
         double removeAndAddAmount = expense.getMoneySpent() - spending.getMoneySpent();
-        this.accountService.addToBalance(removeAndAddAmount);
+        accountService.addToBalance(removeAndAddAmount);
         spending.setId(id);
         spending.setCreatedTime(expense.getCreatedTime());
         spending.setLastModifiedDate(new Date());
         expenseRepository.save(spending);
-        historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
+        historyService.save(historyService.from(EntityAction.UPDATE, EXPENSE));
         return ResponseEntity.ok(spending);
     }
 }
