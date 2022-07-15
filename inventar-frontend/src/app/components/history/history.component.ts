@@ -57,6 +57,9 @@ export class HistoryComponent implements OnInit, OnDestroy {
       this.historyList = res?.body.historyList;
       this.totalItems = res?.body.count;
       this.sharedService.checkLoadingSpinner();     
+    },
+    () => {
+      this.sharedService.checkLoadingSpinner();
     });
   }
 

@@ -4,14 +4,14 @@ import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
 import { DateUtil, Day, Month, Year } from 'src/app/utils/DateUtil';
 import { SharedService } from 'src/app/services/shared.service';
-import { strToColor } from 'src/app/utils/ColorUtil';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { FloatingMenuConfig } from 'src/app/shared/floating-menu/FloatingMenuConfig';
 import { ExportService } from 'src/app/services/export.service';
-import { DailyExpenseDTO, DashboardDTO, ExpenseInfoDTO, IncomeInfoDTO } from 'src/app/models/DashboardModels';
+import { DailyExpenseDTO, DashboardDTO } from 'src/app/models/DashboardModels';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { ThemeService } from 'src/app/services/theme.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,17 +22,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectedDate = new Date();
   dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
-  increaseInIncome: number = 0;
-  increaseInExpense: number = 0;
-  totalSpendings: number = 0;
-  totalIncome: number = 0;
-  amountSpentAverage: number = 0;
-  dailyIncomeAverage: number = 0;
-  dashboardSubscription: Subscription = null;
+  private _subject = new Subject();
   chart: Chart = null; 
   category_chart: Chart = null;
   incomes_chart: Chart = null;
-  expenseCategoriesData: ExpenseInfoDTO[] = [];
   public floatingMenu: FloatingMenuConfig = {
     position: "above",
     buttons: [
@@ -48,6 +41,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     ]
   };
+
+  dashboardData: DashboardDTO;
 
   constructor(
     public dashboardService: DashboardService,
@@ -74,39 +69,62 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   // fires only from onDateSelected function below
-  private getDashboardData(dateFrom: Date): void {
-    this.dashboardSubscription?.unsubscribe();
-
-    const currentYear = this.dateUtil.fromYear(dateFrom.getFullYear());
-    const currentMonth = currentYear.getMonthByValue(dateFrom.getMonth());
-    const days = currentMonth.getDaysOfMonth();
+  private getDashboardData(): void {
+    const currentYear: Year = this.dateUtil.fromYear(this.selectedDate.getFullYear());
+    const currentMonth: Month = currentYear.getMonthByValue(this.selectedDate.getMonth());
+    const days: Day[] = currentMonth.getDaysOfMonth();
 
     let dailyExpensesLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
     
     this.sharedService.activateLoadingSpinner();
 
-    this.dashboardSubscription = this.dashboardService.getDashboardData(
+    
+    this.dashboardService.getDashboardData(
       new Date(currentYear.getYear(), currentMonth.getMonth()),
       new Date(currentYear.getYear(), currentMonth.getMonth()+1)
-    ).subscribe((dashboardData: DashboardDTO) => {
+    )
+    .pipe(takeUntil(this._subject))
+    .subscribe((dashboardData: DashboardDTO) => {
       this.sharedService.checkLoadingSpinner();
-      this.increaseInExpense = dashboardData.increaseInExpense;
-      this.increaseInIncome = dashboardData.increaseInIncome;
-      this.totalIncome = dashboardData.incomes;
-      this.totalSpendings = dashboardData.expenses;
-      this.amountSpentAverage = dashboardData.averageDailyExpenses;
-      this.dailyIncomeAverage = dashboardData.averageDailyIncome;
-      this.expenseCategoriesData = dashboardData.expensesInfo;
+      this.dashboardData = dashboardData;
 
       this.createDailyChart(
         dailyExpensesLabels, 
         this.getDailyExpensesData(dailyExpensesLabels, dashboardData.dailyExpenses)
       );
 
-    }, (error: any) => {
+    }, () => {
       this.sharedService.checkLoadingSpinner();
-      this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION)
+      this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION);
     });
+  }
+
+  public get increaseInExpense() {
+    return this.dashboardData?.increaseInExpense ?? 0;
+  }
+
+  public get increaseInIncome() {
+    return this.dashboardData?.increaseInIncome ?? 0;
+  }
+
+  public get totalIncome() {
+    return this.dashboardData?.incomes ?? 0;
+  }
+
+  public get totalSpendings() {
+    return this.dashboardData?.expenses ?? 0;
+  }
+
+  public get amountSpentAverage() {
+    return this.dashboardData?.averageDailyExpenses ?? 0;
+  }
+
+  public get dailyIncomeAverage() {
+    return this.dashboardData?.averageDailyIncome ?? 0;
+  }
+
+  public get expenseCategoriesData() {
+    return this.dashboardData?.expensesInfo ?? [];
   }
 
   private exportToPDF(pdfDocument: Blob): void {
@@ -156,30 +174,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
   getDailyExpensesData(dailyExpensesLabels: string[], dailyExpenses: DailyExpenseDTO[]): number[] {
-    let response = [];
-    dailyExpensesLabels.forEach((label: string) => {
-      const filtered: DailyExpenseDTO[] = dailyExpenses.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);
-      if(filtered.length !== 0) {
-        response.push(filtered[0].dailyExpense);
-      } else {
-        response.push(0);
-      }
-    });
-    return response;
+    return dailyExpensesLabels
+      .map((label: string) => {
+        const filtered: DailyExpenseDTO[] = dailyExpenses.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);
+        return filtered.length !== 0 ? filtered[0].dailyExpense : 0;
+      });
   }
 
   calculateHeight(templateReference: HTMLElement): string {
     let clientHeight = templateReference.clientHeight;
-    clientHeight +=126
+    clientHeight += 126;
     return `calc(100% - ${clientHeight}px)`;
   }
 
   onDateSelected(event: any): void {
     this.selectedDate = event.dateFrom;
-    this.getDashboardData(event.dateFrom);
+    this.getDashboardData();
   }
 
   ngOnDestroy(): void {
-    this.dashboardSubscription?.unsubscribe();
+    this._subject.next();
+    this._subject.complete();
   }
 }

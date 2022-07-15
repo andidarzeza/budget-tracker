@@ -89,6 +89,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.configurationService.updateConfiguration(this.configuration).subscribe(() => {
       this.sharedService.changeTheme(this.configuration.darkMode);
       this.sharedService.checkLoadingSpinner();
+    },
+    () => {
+      this.sharedService.checkLoadingSpinner();
     });
   }
 

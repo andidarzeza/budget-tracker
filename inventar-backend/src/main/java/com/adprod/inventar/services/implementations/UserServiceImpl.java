@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
             accountService.save(new Account(null, user.getUsername(), 0.0));
             configurationService.save(new Configuration(null, false, true, user.getUsername()));
             historyService.save(historyService.from(REGISTRATION, USER));
-            return new ResponseEntity(new ResponseMessage("Registration Successful"), HttpStatus.OK);
+            return ResponseEntity.ok(new ResponseMessage("Registration Successful"));
         }
         return new ResponseEntity(new ResponseMessage("Username already in use"), HttpStatus.CONFLICT);
     }

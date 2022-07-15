@@ -67,6 +67,9 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
       this.incomes = res?.body.incomes;
       this.totalItems = res?.body.count;
       this.sharedService.checkLoadingSpinner();     
+    },
+    () => {
+      this.sharedService.checkLoadingSpinner();
     });
   }
 

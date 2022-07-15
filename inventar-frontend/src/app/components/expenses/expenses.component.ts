@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Expense } from 'src/app/models/Expense';
 import { SharedService } from 'src/app/services/shared.service';
@@ -7,12 +7,12 @@ import { SpendingService } from 'src/app/services/spending.service';
 import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddSpendingComponent } from './add-spending/add-spending.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatSidenav } from '@angular/material/sidenav';
 
@@ -33,13 +33,14 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   public displayedColumns: string[] = ['createdTime', 'name', 'description', 'category', 'moneySpent', 'actions'];
   public mobileColumns: string[] = ['name', 'category', 'moneySpent', 'actions'];
   public expenses: Expense[] = [];
-  private deleteSubscription: Subscription = null;
-  private expenseSubscription: Subscription = null;
+
   public expenseViewId = "";
   public tableActionInput: TableActionInput = {
     pageName: "Expenses",
     icon: 'attach_money'
   };
+
+  private _subject = new Subject();
 
   public EXPERIMENTAL_MODE = environment.experimentalMode;
 
@@ -64,18 +65,23 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
 
   query(): void {
     this.sharedService.activateLoadingSpinner();
-    this.expenseSubscription?.unsubscribe();
-    this.expenseSubscription = this.spendingService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
-      this.expenses = res?.body.expenses;
-      this.totalItems = res?.body.count;
-      this.sharedService.checkLoadingSpinner();     
-    });
+    this.spendingService
+      .findAll(this.page, this.size, this.sort)
+      .pipe(takeUntil(this._subject))
+      .subscribe((res: HttpResponse<any>) => {
+        this.expenses = res?.body.expenses;
+        this.totalItems = res?.body.count;
+        this.sharedService.checkLoadingSpinner();     
+      },
+      () => {
+        this.sharedService.checkLoadingSpinner();
+      });
   }
 
   openAddEditForm(expense?: Expense): void {
     this.dialog.openDialog(AddSpendingComponent, expense)
       .afterClosed()
-      .pipe(filter((update)=>update))
+      .pipe(takeUntil(this._subject), filter((update)=>update))
       .subscribe(() => this.query());
   }
 
@@ -97,18 +103,23 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   openDeleteConfirmDialog(id: string): void {
     this.dialog.openConfirmDialog(ConfirmComponent)
       .afterClosed()
-      .pipe(filter((update)=>update))
+      .pipe(takeUntil(this._subject), filter((update)=>update))
       .subscribe(() => this.delete(id));
   }
 
   delete(id: string): void {
     this.sharedService.activateLoadingSpinner();
-    this.deleteSubscription?.unsubscribe();
-    this.deleteSubscription = this.spendingService.delete(id).subscribe(() => {
-      this.sharedService.checkLoadingSpinner();
-      this.query();
-      this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
-    });
+    this.spendingService
+      .delete(id)
+      .pipe(takeUntil(this._subject)) 
+      .subscribe(() => {
+        this.sharedService.checkLoadingSpinner();
+        this.query();
+        this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
+      },
+      () => {
+        this.sharedService.checkLoadingSpinner();
+      });
   }
 
   announceSortChange(sort: Sort): void {
@@ -117,13 +128,11 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   ngOnDestroy(): void {
-    this.expenseSubscription?.unsubscribe();
-    this.deleteSubscription?.unsubscribe();
+    this._subject.next();
+    this._subject.complete();
   }
 
-  public getExpenseDate(date: any): string {
-    console.log(date);
-    
+  public getExpenseDate(date: any): string {    
     const now = new Date();
     if(now.getTime() - new Date(date).getTime() < 24 * 60 * 60 * 1000) {
       return 'a day ago';

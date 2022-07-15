@@ -3,6 +3,7 @@ package com.adprod.inventar.security;
 import com.adprod.inventar.models.User;
 import com.adprod.inventar.services.implementations.MyUserDetailsService;
 import io.jsonwebtoken.*;
+import static com.adprod.inventar.models.utils.Time.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,7 @@ public class JwtManager {
     }
     public static String username = "";
     private final String SECRET_KEY = "secret";
-    private final Integer jwtRenewTime = 1000 * 60 * 60 * 24;
+    private final Integer jwtRenewTime = DAY;
 
     public String createToken(User user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
