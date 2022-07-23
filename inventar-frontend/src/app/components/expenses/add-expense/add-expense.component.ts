@@ -11,17 +11,17 @@ import { SpendingService } from 'src/app/services/spending.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-add-spending',
-  templateUrl: './add-spending.component.html',
-  styleUrls: ['./add-spending.component.css']
+  selector: 'app-add-expense',
+  templateUrl: './add-expense.component.html',
+  styleUrls: ['./add-expense.component.css']
 })
-export class AddSpendingComponent implements OnInit, OnDestroy {
+export class AddExpenseComponent implements OnInit, OnDestroy {
   private mode = 'add';
   public savingEntity = false;
   private categoriesSubscription: Subscription = null;
   private saveSubscription: Subscription = null;
   private updateSubscription: Subscription = null;
-  constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public expense: Expense, public dialogRef: MatDialogRef<AddSpendingComponent>, private formBuilder: FormBuilder, private spendingService: SpendingService, private categoryService: CategoriesService) {}
+  constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public expense: Expense, public dialogRef: MatDialogRef<AddExpenseComponent>, private formBuilder: FormBuilder, private spendingService: SpendingService, private categoryService: CategoriesService) {}
   formGroup: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
     description: [''],

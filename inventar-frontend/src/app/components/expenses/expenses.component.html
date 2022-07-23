@@ -1,81 +1,84 @@
 <mat-drawer-container class="example-container {{sharedService.theme}}-body" autosize>
-    <mat-drawer #drawer class="example-sidenav {{sharedService.theme}}-table" mode="over" position="end"
-    (closed)="onSidenavClose()">
-        <app-expense-detail *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [expenseViewId]="expenseViewId"></app-expense-detail>
+    <mat-drawer #drawer class="sidenav {{sharedService.theme}}-table" mode="over" position="end"
+        (closed)="onSidenavClose()">
+        <app-expense-detail *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [expenseViewId]="expenseViewId">
+        </app-expense-detail>
     </mat-drawer>
 
-  
-<app-table-actions
-    [tableActionInput]="tableActionInput"
-    (onOpenDialog)="openAddEditForm()"
-    (onRefresh)="query()"></app-table-actions>
 
-<div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
-    <table 
-        mat-table 
-        [dataSource]="expenses"
-        class="mat-elevation-z8 {{sharedService.theme}}-table"
-        style="box-shadow: none;"
-        matSort
-        #table
-        (matSortChange)="announceSortChange($event)"
-        >
-        <!-- Created Time Column -->
-        <ng-container matColumnDef="createdTime">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Date </th>
-            <!-- <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.createdTime | date:'dd/MM/yyyy - HH:mm'}}</td> -->
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.createdTime | customDate}}</td>
-        </ng-container>
+    <app-table-actions [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="query()">
+    </app-table-actions>
 
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Name </th>
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.name}}</td>
-        </ng-container>
-    
-        <!-- Description Column -->
-        <ng-container matColumnDef="description">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Description </th>
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.description? element?.description : '-'}} </td>
-        </ng-container>
+    <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
+        <table mat-table [dataSource]="expenses" class="mat-elevation-z8 {{sharedService.theme}}-table"
+            style="box-shadow: none;" matSort #table (matSortChange)="announceSortChange($event)">
+            <!-- Created Time Column -->
+            <ng-container matColumnDef="createdTime">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef
+                    class="centered-text {{sharedService.theme}}-text"> Date </th>
+                <!-- <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">{{element?.createdTime | date:'dd/MM/yyyy - HH:mm'}}</td> -->
+                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
+                    {{element?.createdTime | customDate}}</td>
+            </ng-container>
 
-        <!-- Expenses Column -->
-        <ng-container matColumnDef="moneySpent">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Expense </th>
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.moneySpent | number:'1.0':'en-US'}} ALL</td>
-        </ng-container>
-    
-        <!-- Category Column -->
-        <ng-container matColumnDef="category">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef class="centered-text {{sharedService.theme}}-text"> Category </th>
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"> {{element?.category}} </td>
-        </ng-container>
-    
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">
-                <span>Actions</span>
-            </th>
-            <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text" style="padding: 0;">
-                <app-record-actions (openViewDrawer)="viewExpenseDetails(element?.id)" (openEditForm)="openAddEditForm(element)" (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></app-record-actions>
-            </td>
-        </ng-container>
-    
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-    <div *ngIf="expenses.length == 0 && !sharedService.stillLoading" class="no-data" [style.height.px]="sharedService.getHeight(60)">
-        No data to display!
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef
+                    class="centered-text {{sharedService.theme}}-text"> Name </th>
+                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
+                    {{element?.name}}</td>
+            </ng-container>
+
+            <!-- Description Column -->
+            <ng-container matColumnDef="description">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef
+                    class="centered-text {{sharedService.theme}}-text"> Description </th>
+                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
+                    {{element?.description? element?.description : '-'}} </td>
+            </ng-container>
+
+            <!-- Expenses Column -->
+            <ng-container matColumnDef="moneySpent">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef
+                    class="centered-text {{sharedService.theme}}-text"> Expense </th>
+                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
+                    {{element?.moneySpent | number:'1.0':'en-US'}} ALL</td>
+            </ng-container>
+
+            <!-- Category Column -->
+            <ng-container matColumnDef="category">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef
+                    class="centered-text {{sharedService.theme}}-text"> Category </th>
+                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
+                    {{element?.category}} </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">
+                    <span>Actions</span>
+                </th>
+                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"
+                    style="padding: 0;">
+                    <app-record-actions (openViewDrawer)="viewExpenseDetails(element?.id)"
+                        (openEditForm)="openAddEditForm(element)"
+                        (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></app-record-actions>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <div *ngIf="expenses.length == 0 && !sharedService.stillLoading" class="no-data"
+            [style.height.px]="sharedService.getHeight(60)">
+            No data to display!
+        </div>
     </div>
-</div>
 
 
-<mat-paginator 
-    [length]="totalItems"
-    [pageSize]="size"
-    [pageSizeOptions]="pageSizeOptions"
-    (page)="paginatorEvent($event)"
-    class="table-paginator {{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text">
-</mat-paginator>
+    <mat-paginator [length]="totalItems" [pageSize]="size" [pageSizeOptions]="pageSizeOptions"
+        (page)="paginatorEvent($event)"
+        class="table-paginator {{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text">
+    </mat-paginator>
 
 </mat-drawer-container>

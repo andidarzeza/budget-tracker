@@ -1,4 +1,4 @@
-package com.adprod.inventar.configuration;
+package com.adprod.inventar.providers;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

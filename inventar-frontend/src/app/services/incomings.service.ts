@@ -19,7 +19,7 @@ export class IncomingsService {
   }
 
   findOne(id: string): Observable<any> {
-    return this.http.get(`${serverAPIURL}/api/incomes/${id}`, {observe: 'response'});
+    return this.http.get(`${serverAPIURL}/api/incomes/${id}`);
   }
 
   save(income: Income): Observable<any> {

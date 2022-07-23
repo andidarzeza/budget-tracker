@@ -12,7 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AbsoluteValuePipe } from '../pipes/absolute-value.pipe';
 import { TableActionsComponent } from './table-actions/table-actions.component';
 import { DialogService } from '../services/dialog.service';
-import { AddSpendingComponent } from '../components/expenses/add-spending/add-spending.component';
+import { AddExpenseComponent } from '../components/expenses/add-expense/add-expense.component';
 import { RecordActionsComponent } from './record-actions/record-actions.component';
 import { CustomDatePipe } from '../pipes/custom-date.pipe';
 
@@ -38,11 +38,7 @@ import { CustomDatePipe } from '../pipes/custom-date.pipe';
     TableActionsComponent,
     RecordActionsComponent
   ],
-  providers: [
-    DialogService
-  ],
-  entryComponents: [
-    AddSpendingComponent
-  ]
+  providers: [DialogService],
+  entryComponents: [AddExpenseComponent]
 })
 export class SharedModule { }

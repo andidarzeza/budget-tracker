@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { mergeMap, takeUntil } from 'rxjs/operators';
+import { Category } from 'src/app/models/Category';
 import { Income } from 'src/app/models/Income';
+import { CategoriesService } from 'src/app/services/categories.service';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
 
@@ -13,12 +16,14 @@ export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() incomeViewId: string;
   @Output() onCloseAction: EventEmitter<any> = new EventEmitter<any>();
-  incomeSubscription: Subscription;
-  income: Income;
+  private income: Income;
+  private incomeCategory: Category
+  private _subject = new Subject();
   
   constructor(
     private incomeService: IncomingsService,
-    public sharedService: SharedService
+    public sharedService: SharedService,
+    private categoryService: CategoriesService
   ) {}
 
   ngOnInit(): void {
@@ -32,10 +37,15 @@ export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getIncome(): void {
-    this.incomeSubscription?.unsubscribe();
-    this.incomeSubscription = this.incomeService.findOne(this.incomeViewId).subscribe((response: any) => {
-      this.income = response.body;
-    });
+    this.incomeService
+      .findOne(this.incomeViewId)
+      .pipe(
+        takeUntil(this._subject),
+        mergeMap((incomeRespone: Income) => {          
+          this.income = incomeRespone;
+          return this.categoryService.findOne(this.income.categoryID);
+        }))
+      .subscribe((category: Category) => this.incomeCategory = category);
   }
 
   closeDrawer(): void {
@@ -45,6 +55,35 @@ export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.incomeViewId = "";
     this.income = null;
-    this.incomeSubscription?.unsubscribe();
+    this._subject.next();
+    this._subject.complete();
+  }
+
+  get incomeName() {
+    return this.income?.name ?? "-";
+  }
+
+  get incomeCreatedTime() {
+    return this.income?.createdTime;
+  }
+
+  get incomeLastModifiedDate() {
+    return this.income?.lastModifiedDate;
+  }
+
+  get incomes() {
+    return this.income?.incoming ?? 0;
+  }
+
+  get category() {
+    return this.incomeCategory?.category ?? "-";
+  }
+
+  get incomeDescription() {
+    return this.income?.description ?? "-";
+  }
+
+  get categoryIcon() {
+    return this.incomeCategory?.icon;
   }
 }

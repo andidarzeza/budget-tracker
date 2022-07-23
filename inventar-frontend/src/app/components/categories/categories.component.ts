@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Category } from 'src/app/models/Category';
 import { CategoriesService } from 'src/app/services/categories.service';
@@ -14,6 +14,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-categories',
@@ -21,6 +22,12 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
   styleUrls: ['./categories.component.css']
 })
 export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<Category> {
+
+  isSidenavOpened: boolean = false;
+  @ViewChild('drawer') drawer: MatSidenav;
+  categoryId: string;
+
+
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   public page: number = 0;
   public size: number = PAGE_SIZE;
@@ -65,6 +72,16 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
       () => {
         this.sharedService.checkLoadingSpinner();
       });
+  }
+
+  onSidenavClose(): void {
+    this.isSidenavOpened = false;
+  }
+
+  viewCategoryDetails(id: string): void {
+    this.categoryId = id;
+    this.isSidenavOpened = true;
+    this.drawer.toggle();
   }
 
   openAddEditForm(spendingCategory?: Category): void {

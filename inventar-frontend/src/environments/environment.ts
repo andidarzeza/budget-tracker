@@ -11,7 +11,7 @@ export const environment = {
 // export const serverAPIURL = 'http://192.168.1.9:9000';
 
 // TT NETWORK
-export const serverAPIURL = 'http://192.168.1.9:9000';
+// export const serverAPIURL = 'http://192.168.1.9:9000';
 
 // WORK NETWORK
 // export const serverAPIURL = 'http://192.168.255.238:9000';
@@ -23,7 +23,7 @@ export const serverAPIURL = 'http://192.168.1.9:9000';
 // export const serverAPIURL = 'http://192.168.100.206:9000';
 
 // LOCALHOST
-// export const serverAPIURL = 'http://localhost:9000';
+export const serverAPIURL = 'http://localhost:9000';
 
 export const TOASTER_CONFIGURATION = {
   timeOut: 7000, 

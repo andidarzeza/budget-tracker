@@ -5,7 +5,6 @@ import com.adprod.inventar.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
@@ -16,7 +15,7 @@ public class CategoryResource {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity findAll(Pageable pageable, @RequestParam String categoryType){
+    public ResponseEntity findAll(Pageable pageable, @RequestParam String categoryType) {
         return categoryService.findAll(pageable, categoryType);
     }
 
@@ -31,7 +30,7 @@ public class CategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody ExpenseCategory expenseCategory){
+    public ResponseEntity save(@RequestBody ExpenseCategory expenseCategory) {
         return categoryService.save(expenseCategory);
     }
 

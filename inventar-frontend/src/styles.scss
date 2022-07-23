@@ -319,7 +319,7 @@ button.toast-close-button {
     background-color: var(--light) !important;
 }
 
-.example-sidenav {
+.sidenav {
     width: 50%;
 }
 
@@ -565,7 +565,7 @@ th {
         margin-top: 20px;
     }
 
-    .example-sidenav {
+    .sidenav {
         width: 100%;
     }
     
@@ -584,10 +584,7 @@ th {
         left: 50% !important;
         width: fit-content !important;
         transform: translateX(-50%) !important;
-     }   
-    //  .example-sidenav {
-    //     width: 60%;
-    // }
+     }
 }
 
 
@@ -596,9 +593,6 @@ th {
     .table-container {
         margin-top: 10px
     }
-    // .example-sidenav {
-    //     width: 70%;
-    // }
 }
 
 @media only screen and (max-height: 400px) { 
@@ -606,7 +600,7 @@ th {
         height: 50px !important;
     }
 
-    .example-sidenav {
+    .sidenav {
         width: 100%;
     }
 }

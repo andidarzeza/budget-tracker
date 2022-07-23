@@ -1,6 +1,6 @@
 <div class="header">
     <span class="{{sharedService.theme}}-text header-title">
-        {{incomeName | titlecase}}
+        {{name | titlecase}}
     </span>
     <div class="actions">
         <button mat-icon-button class="close-button" (click)="closeDrawer()">
@@ -22,7 +22,7 @@
         Created Time
     </span>
     <span class="{{sharedService.theme}}-text expense-date">
-        {{ incomeCreatedTime | date:'dd/MM/yyyy - HH:mm'}}
+        {{ createdTime | date:'dd/MM/yyyy - HH:mm'}}
     </span>
 
 </div>
@@ -32,7 +32,7 @@
         Last Updated
     </span>
     <span class="{{sharedService.theme}}-text expense-date">
-        {{ incomeLastModifiedDate | date:'dd/MM/yyyy - HH:mm'}}
+        {{ lastModifiedDate | date:'dd/MM/yyyy - HH:mm'}}
     </span>
 </div>
 
@@ -46,37 +46,24 @@
 
 <div class="expense-date-container">
     <span class="{{sharedService.theme}}-text">
-        Income Name
+        Category Name
     </span>
     <span class="{{sharedService.theme}}-text expense-date">
-        {{ incomeName | titlecase}}
+        {{ name | titlecase}}
     </span>
 </div>
 
 <div class="expense-date-container">
     <span class="{{sharedService.theme}}-text">
-        Income
-    </span>
-    <span class="{{sharedService.theme}}-text expense-date">
-        {{ incomes | number:'1.0':'en-US'}} ALL
-    </span>
-</div>
-<mat-divider></mat-divider>
-<div class="title-container">
-    <span class="expense-view-title fw-400 {{sharedService.theme}}-text">
-        Category
+        Category Icon
     </span>
     <mat-icon style="margin-top: -1px;margin-left: 5px;">
         {{categoryIcon}}
     </mat-icon>
 </div>
-<div class="expense-date-container {{sharedService.theme}}-text">
-    <span>
-        Category
-    </span>
-    {{ category}}
-</div>
+
 <mat-divider></mat-divider>
+
 <div class="title-container">
     <span class="expense-view-title fw-400 {{sharedService.theme}}-text">
         Notes
@@ -84,7 +71,5 @@
 </div>
 
 <div class="expense-date-container {{sharedService.theme}}-text">
-    {{ (incomeDescription) ? incomeDescription : 'No note recorded'}}
+    {{description}}
 </div>
-
-<!-- {{income | json}} -->

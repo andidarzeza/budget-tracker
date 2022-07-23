@@ -3,6 +3,7 @@ package com.adprod.inventar.aggregations;
 
 import com.adprod.inventar.models.IncomeAggregationDTO;
 import com.adprod.inventar.models.Income;
+import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -20,13 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class AverageIncomeAggregation {
 
     private final MongoTemplate mongoTemplate;
-
-    public AverageIncomeAggregation(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
 
     public Double getAverageDailyIncome(String user, Instant from, Instant to) {
         LocalDateTime ldt = LocalDateTime.ofInstant(from, ZoneId.systemDefault());

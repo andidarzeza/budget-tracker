@@ -1,5 +1,5 @@
 <mat-drawer-container class="example-container {{sharedService.theme}}-body" autosize>
-    <mat-drawer #drawer class="example-sidenav {{sharedService.theme}}-table" mode="over" position="end" (closed)="onSidenavClose()">
+    <mat-drawer #drawer class="sidenav {{sharedService.theme}}-table" mode="over" position="end" (closed)="onSidenavClose()">
         <app-income-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [incomeViewId]="incomeViewId"></app-income-details>
     </mat-drawer>
 

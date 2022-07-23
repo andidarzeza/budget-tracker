@@ -4,7 +4,6 @@ import com.adprod.inventar.services.DashboardService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.Instant;
 
 @AllArgsConstructor

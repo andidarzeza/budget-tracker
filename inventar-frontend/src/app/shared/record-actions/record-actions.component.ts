@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -11,6 +11,10 @@ export class RecordActionsComponent {
   @Output() openEditForm: EventEmitter<any> = new EventEmitter();
   @Output() openDeleteDialog: EventEmitter<any> = new EventEmitter();
   @Output() openViewDrawer: EventEmitter<any> = new EventEmitter();
+
+  @Input() displayEditAction = true;
+  @Input() displayDeleteAction = true;
+  
   constructor(public sharedService: SharedService) { }
 
   emitDeleteAction(): void {

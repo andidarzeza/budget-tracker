@@ -1,3 +1,11 @@
+<mat-drawer-container class="example-container {{sharedService.theme}}-body" autosize>
+    <mat-drawer #drawer class="sidenav {{sharedService.theme}}-table" mode="over" position="end"
+        (closed)="onSidenavClose()">
+        <app-category-detail *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [categoryId]="categoryId">
+        </app-category-detail>
+    </mat-drawer>
+
+
 <div class="table-container {{sharedService.theme}}-table" style="position: relative;">
     <mat-tab-group (selectedTabChange)="changeCategoriesType($event)">
         <mat-tab>
@@ -10,6 +18,7 @@
             <app-categories-table 
                 (onOpenAddEditForm)="openAddEditForm($event)"
                 (onOpenDeleteDialog)="openDeleteConfirmDialog($event)"
+                (onViewCategoryDetails)="viewCategoryDetails($event)"
                 (sortEvent)="announceSortChange($event)" 
                 [dataSource]="dataSource">
             </app-categories-table>
@@ -25,6 +34,7 @@
             <app-categories-table 
                 (onOpenAddEditForm)="openAddEditForm($event)"
                 (onOpenDeleteDialog)="openDeleteConfirmDialog($event)"
+                (onViewCategoryDetails)="viewCategoryDetails($event)"
                 (sortEvent)="announceSortChange($event)" 
                 [dataSource]="dataSource">
             </app-categories-table>
@@ -47,3 +57,6 @@
     [pageSizeOptions]="pageSizeOptions" 
     (page)="paginatorEvent($event)">
 </mat-paginator>
+
+
+</mat-drawer-container>

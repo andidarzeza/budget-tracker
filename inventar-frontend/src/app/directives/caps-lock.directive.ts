@@ -6,36 +6,21 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 export class CapsLockDirective {
   private capsLockOn = false;
   constructor(private el: ElementRef) {
-    
+
   }
 
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent): void {
-    if(event?.key && event.code) {
-      if(event.code.startsWith("Key") && !event.shiftKey) {
-        if (event?.key === event?.key?.toUpperCase()) {
-          this.capsLockOn = true;
-          localStorage.setItem("capsLock", "true");
-          this.el.nativeElement.style.height = "20px"
-        } else {
-          this.capsLockOn = false;
-          localStorage.setItem("capsLock", "false");
-          this.el.nativeElement.style.height = "0px"
-        }
-      }
 
+    if (event?.code?.startsWith("Key") && !event?.shiftKey) {
+      this.capsLockOn = event?.key === event?.key?.toUpperCase();
+      this.el.nativeElement.style.height = this.capsLockOn ? "20px" : "0";
+      localStorage.setItem("capsLock", String(this.capsLockOn));
     }
-    if(event.code === "CapsLock") {     
-      if(event.getModifierState("CapsLock")) {
-        this.capsLockOn = false;
-      } else {
-        this.capsLockOn = true;
-      }
-       
-      if(this.capsLockOn)
-        this.el.nativeElement.style.height = "20px"
-      else
-        this.el.nativeElement.style.height = "0"
+
+    if (event?.code === "CapsLock") {
+      this.capsLockOn = !event.getModifierState("CapsLock");
+      this.el.nativeElement.style.height = this.capsLockOn ? "20px" : "0";
     }
   }
 

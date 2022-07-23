@@ -6,7 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
-import { AddSpendingComponent } from './add-spending/add-spending.component';
+import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -23,7 +23,7 @@ import { MatDividerModule } from '@angular/material/divider';
 
 
 @NgModule({
-  declarations: [ExpensesComponent, AddSpendingComponent, ExpenseDetailComponent],
+  declarations: [ExpensesComponent, AddExpenseComponent, ExpenseDetailComponent],
   imports: [
     CommonModule,
     ExpensesRoutingModule,
@@ -36,7 +36,6 @@ import { MatDividerModule } from '@angular/material/divider';
     MatSidenavModule,
     MatButtonModule,
     MatSelectModule,
-    MatOptionModule,
     MatDividerModule,
     ReactiveFormsModule,
     MatFormFieldModule,

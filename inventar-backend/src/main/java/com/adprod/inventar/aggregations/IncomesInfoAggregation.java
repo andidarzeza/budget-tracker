@@ -3,6 +3,7 @@ package com.adprod.inventar.aggregations;
 
 import com.adprod.inventar.models.*;
 import com.adprod.inventar.repositories.CategoryRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -15,14 +16,10 @@ import java.time.Instant;
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class IncomesInfoAggregation {
     private final MongoTemplate mongoTemplate;
     private final CategoryRepository categoryRepository;
-
-    public IncomesInfoAggregation(MongoTemplate mongoTemplate, CategoryRepository categoryRepository) {
-        this.mongoTemplate = mongoTemplate;
-        this.categoryRepository = categoryRepository;
-    }
 
     public List<IncomeInfoDTO> getIncomesInfo(String user, Instant from, Instant to) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();

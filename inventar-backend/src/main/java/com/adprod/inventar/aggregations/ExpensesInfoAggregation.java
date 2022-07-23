@@ -5,6 +5,7 @@ import com.adprod.inventar.models.ExpenseInfoDTO;
 import com.adprod.inventar.models.Expense;
 import com.adprod.inventar.models.ExpenseCategory;
 import com.adprod.inventar.repositories.CategoryRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -17,14 +18,10 @@ import java.time.Instant;
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class ExpensesInfoAggregation {
     private final MongoTemplate mongoTemplate;
     private final CategoryRepository categoryRepository;
-
-    public ExpensesInfoAggregation(MongoTemplate mongoTemplate, CategoryRepository categoryRepository) {
-        this.mongoTemplate = mongoTemplate;
-        this.categoryRepository = categoryRepository;
-    }
 
     public List<ExpenseInfoDTO> getExpensesInfo(String user, Instant from, Instant to) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();

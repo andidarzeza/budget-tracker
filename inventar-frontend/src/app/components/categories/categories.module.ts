@@ -16,6 +16,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { SharedModule } from 'src/app/shared/shared.module';
 import {MatTabsModule} from '@angular/material/tabs';
 import { CategoriesTableComponent } from './categories-table/categories-table.component';
+import { CategoryDetailModule } from './category-detail/category-detail.module';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { CategoriesTableComponent } from './categories-table/categories-table.co
     MatTableModule,
     MatSortModule,
     MatTabsModule,
+    MatSidenavModule,
     MatPaginatorModule,
+    CategoryDetailModule,
     MatIconModule,
     MatButtonModule,
     ReactiveFormsModule,

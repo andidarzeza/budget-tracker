@@ -21,8 +21,8 @@ export class CategoriesService {
     });
   }
 
-  findOne(id: string): Observable<any> {
-    return this.http.get(`${serverAPIURL}/api/categories/${id}`, {observe: 'response'});
+  findOne(id: string): Observable<Category> {
+    return this.http.get<Category>(`${serverAPIURL}/api/categories/${id}`);
   }
 
   delete(id: string): Observable<any> {

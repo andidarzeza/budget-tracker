@@ -43,10 +43,6 @@
     font-weight: 400;
 }
 
-.login-card {
-    /* width: calc(100% - 220px); */
-}
-
 button {
     
     background: rgba(103, 58, 183, 1) !important;
@@ -78,7 +74,8 @@ input {
     font-family: 'Source Sans Pro', sans-serif;
     overflow: hidden;
     height: 0;
-    transition: height 200ms ease
+    transition: height 200ms ease;
+    margin-top: 5px;
 }
 
 .show-hide-password {

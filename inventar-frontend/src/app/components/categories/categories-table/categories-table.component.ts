@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Sort } from '@angular/material/sort';
 import { Category } from 'src/app/models/Category';
 import { SharedService } from 'src/app/services/shared.service';
@@ -13,6 +14,7 @@ export class CategoriesTableComponent implements OnInit {
   @Output() sortEvent: EventEmitter<Sort> = new EventEmitter();
   @Output() onOpenAddEditForm: EventEmitter<Category> = new EventEmitter();
   @Output() onOpenDeleteDialog: EventEmitter<string> = new EventEmitter();
+  @Output() onViewCategoryDetails: EventEmitter<string> = new EventEmitter();
   public displayedColumns: string[] = ['icon', 'category', 'description', 'actions'];
   constructor(
     public sharedService: SharedService
@@ -31,6 +33,10 @@ export class CategoriesTableComponent implements OnInit {
 
   openDeleteConfirmDialog(id: string): void {
     this.onOpenDeleteDialog.emit(id);
+  }
+
+  viewCategoryDetails(id: string): void {
+    this.onViewCategoryDetails.emit(id);
   }
 
 }

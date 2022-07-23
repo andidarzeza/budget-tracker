@@ -2,6 +2,7 @@ package com.adprod.inventar.aggregations;
 
 import com.adprod.inventar.models.DailyExpenseDTO;
 import com.adprod.inventar.models.Expense;
+import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -16,12 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class DailyExpenseAggregation {
     private final MongoTemplate mongoTemplate;
-
-    public DailyExpenseAggregation(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
 
     public List<DailyExpenseDTO> getDailyExpenses(String user, Instant from, Instant to) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();

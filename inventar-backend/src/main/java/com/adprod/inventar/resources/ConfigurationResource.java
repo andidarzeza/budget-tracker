@@ -4,7 +4,6 @@ import com.adprod.inventar.models.Configuration;
 import com.adprod.inventar.services.ConfigurationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor

@@ -2,10 +2,10 @@
     <button mat-icon-button color="primary" (click)="emitViewAction()">
         <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-view-button">open_in_new</mat-icon>
     </button>
-    <button mat-icon-button (click)="emitEditAction()">
+    <button *ngIf="displayEditAction" mat-icon-button (click)="emitEditAction()">
         <mat-icon>edit</mat-icon>
     </button>
-    <button mat-icon-button color="warn" (click)="emitDeleteAction()">
+    <button *ngIf="displayDeleteAction" mat-icon-button color="warn" (click)="emitDeleteAction()">
         <mat-icon>delete</mat-icon>
     </button>
 </div>

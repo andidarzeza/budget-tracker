@@ -5,9 +5,9 @@ import { Expense } from 'src/app/models/Expense';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
 import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
-import { AddSpendingComponent } from './add-spending/add-spending.component';
+import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
@@ -79,7 +79,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   openAddEditForm(expense?: Expense): void {
-    this.dialog.openDialog(AddSpendingComponent, expense)
+    this.dialog.openDialog(AddExpenseComponent, expense)
       .afterClosed()
       .pipe(takeUntil(this._subject), filter((update)=>update))
       .subscribe(() => this.query());
