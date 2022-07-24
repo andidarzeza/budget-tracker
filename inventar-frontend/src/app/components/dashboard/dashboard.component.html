@@ -1,124 +1,91 @@
+<div class="px-2">
+    <app-budget-info (dateSelected)="onDateSelected($event)"></app-budget-info>
 
-<app-budget-info (dateSelected)="onDateSelected($event)"></app-budget-info>
+    <div #categoryContainer class="cards-container">
+        <div class="avg-card-cnt">
+            <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
+                <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+                    Expenses
+                </div>
+                <div class="total-incomes-container">
+                    <div class="total-incomes {{sharedService.theme}}-title">
+                        {{totalSpendings | number:'1.2-2':'en-US'}} ALL
+                    </div>
+                    <div class="total-incomes-description {{sharedService.theme}}-title">
+                        Total Expenses so far.
+                    </div>
+                </div>
+            </mat-card>
 
-<div #categoryContainer class="cards-container">
-    <div class="avg-card-cnt">
-        <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
-            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
-                Expenses
-            </div>
-            <div class="total-incomes-container">
-                <div class="total-incomes {{sharedService.theme}}-title">
-                    {{totalSpendings | number:'1.2-2':'en-US'}} ALL
+            <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
+                <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+                    Average daily expenses
                 </div>
-                <div class="total-incomes-description {{sharedService.theme}}-title">
-                    Total Expenses so far.
+                <div class="total-incomes-container">
+                    <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
+                        {{amountSpentAverage | number:'1.2-2':'en-US'}} ALL
+                        <span *ngIf="increaseInExpense>0" class="percentage-badge percentage-down">
+                            <span>↑</span>{{increaseInExpense | number:'1.2-2':'en-US'}}%
+                        </span>
+                        <span *ngIf="increaseInExpense<0" class="percentage-badge percentage-up">
+                            <span>&darr;</span>{{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
+                        </span>
+                        <span *ngIf="increaseInExpense==0" class="percentage-badge">
+                            {{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
+                        </span>
+                    </div>
+                    <div class="total-incomes-description {{sharedService.theme}}-title">
+                        Average daily expenses so far.
+                    </div>
                 </div>
-            </div>
-        </mat-card>
+            </mat-card>
+        </div>
 
-        <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
-            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
-                Average daily expenses
-            </div>
-            <div class="total-incomes-container">
-                <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
-                    {{amountSpentAverage | number:'1.2-2':'en-US'}} ALL
-                    <span *ngIf="increaseInExpense>0" class="percentage-badge percentage-down">
-                        <span>↑</span>{{increaseInExpense | number:'1.2-2':'en-US'}}%
-                    </span>
-                    <span *ngIf="increaseInExpense<0" class="percentage-badge percentage-up">
-                        <span>&darr;</span>{{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
-                    </span>
-                    <span *ngIf="increaseInExpense==0" class="percentage-badge">
-                       {{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
-                    </span>
+        <div class="avg-card-cnt">
+
+            <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
+                <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+                    Incomes
                 </div>
-                <div class="total-incomes-description {{sharedService.theme}}-title">
-                    Average daily expenses so far.
+                <div class="total-incomes-container">
+                    <div class="total-incomes {{sharedService.theme}}-title">
+                        {{totalIncome | number:'1.2-2':'en-US'}} ALL
+                    </div>
+                    <div class="total-incomes-description {{sharedService.theme}}-title">
+                        Total Income so far.
+                    </div>
                 </div>
-            </div>
-        </mat-card>
+            </mat-card>
+
+            <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
+                <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+                    Average daily income
+                </div>
+                <div class="total-incomes-container">
+                    <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
+                        {{dailyIncomeAverage | number:'1.2-2':'en-US'}} ALL
+                        <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
+                            <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
+                        </span>
+                        <span *ngIf="increaseInIncome<0" class="percentage-badge percentage-down">
+                            <span>&darr;</span>{{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
+                        </span>
+                        <span *ngIf="increaseInIncome==0" class="percentage-badge">
+                            {{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
+                        </span>
+                    </div>
+                    <div class="total-incomes-description {{sharedService.theme}}-title">
+                        Average daily income so far.
+                    </div>
+                </div>
+            </mat-card>
+
+        </div>
     </div>
 
-    <div class="avg-card-cnt">
+    <expenses-chart [dailyExpensesLabels]="dailyExpensesLabels" [dailyExpenses]="dailyExpenses"></expenses-chart>
 
-        <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
-            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
-                Incomes
-            </div>
-            <div class="total-incomes-container">
-                <div class="total-incomes {{sharedService.theme}}-title">
-                    {{totalIncome | number:'1.2-2':'en-US'}} ALL
-                </div>
-                <div class="total-incomes-description {{sharedService.theme}}-title">
-                    Total Income so far.
-                </div>
-            </div>
-        </mat-card>
+    <expense-categories [expenseCategoriesData]="expenseCategoriesData"></expense-categories>
 
-        <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
-            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
-                Average daily income
-            </div>
-            <div class="total-incomes-container">
-                <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
-                    {{dailyIncomeAverage | number:'1.2-2':'en-US'}} ALL
-                    <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
-                        <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
-                    </span>
-                    <span *ngIf="increaseInIncome<0" class="percentage-badge percentage-down">
-                        <span>&darr;</span>{{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
-                    </span>
-                    <span *ngIf="increaseInIncome==0" class="percentage-badge">
-                       {{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
-                    </span>
-                </div>
-                <div class="total-incomes-description {{sharedService.theme}}-title">
-                    Average daily income so far.
-                </div>
-            </div>
-        </mat-card>
-
-    </div>
+    <app-floating-menu [floatingMenu]="floatingMenu"></app-floating-menu>
 </div>
-
-<div class="category-card-container">
-    
-    <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card category-card" *ngFor="let categoryData of expenseCategoriesData">
-        <div class="incomes-title fw-500 {{sharedService.theme}}-title flex align-center">
-            <mat-icon>{{categoryData.icon}}</mat-icon> 
-            <span class="ml-1">
-                {{categoryData._id}}
-            </span>
-        </div>
-        <div class="total-incomes-container">
-            <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
-                {{categoryData.total | number:'1.2-2':'en-US'}} ALL
-                <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
-                    <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
-                </span>
-                <span *ngIf="increaseInIncome<0" class="percentage-badge percentage-down">
-                    <span>&darr;</span>{{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
-                </span>
-                <span *ngIf="increaseInIncome==0" class="percentage-badge">
-                   {{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
-                </span>
-            </div>
-            <div class="total-incomes-description {{sharedService.theme}}-title">
-                Money spent so far.
-            </div>
-        </div>
-    </mat-card>
-
-<div>
-
-</div>
-     
-</div>
-
-<mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card daily-chart">
-    <canvas id="daily-chart" style="max-height: 300px;"></canvas>
-</mat-card>
-
-<app-floating-menu [floatingMenu]="floatingMenu"></app-floating-menu>

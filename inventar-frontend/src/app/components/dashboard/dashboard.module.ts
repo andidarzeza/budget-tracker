@@ -7,11 +7,13 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { DashboardRoutingModule } from './dashboard-routing.module';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedModule } from 'src/app/shared/shared.module';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { ExpenseCategoriesModule } from './expense-categories/expense-categories.module';
+import { ExpensesChartModule } from './expenses-chart/expenses-chart.module';
 
 @NgModule({
   declarations: [
@@ -20,6 +22,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   imports: [
     CommonModule,
     DashboardRoutingModule,
+    ExpenseCategoriesModule,
     MatCardModule,
     MatDatepickerModule,
     MatFormFieldModule,
@@ -28,6 +31,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatButtonModule,
     MatMenuModule,
     MatTooltipModule,
+    ExpensesChartModule,
     SharedModule
   ]
 })

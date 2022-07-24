@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Chart, registerables } from 'chart.js';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
 import { DateUtil, Day, Month, Year } from 'src/app/utils/DateUtil';
@@ -23,9 +22,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
   private _subject = new Subject();
-  chart: Chart = null; 
-  category_chart: Chart = null;
-  incomes_chart: Chart = null;
   public floatingMenu: FloatingMenuConfig = {
     position: "above",
     buttons: [
@@ -43,30 +39,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   };
 
   dashboardData: DashboardDTO;
+  dailyExpensesLabels: string[] = [];
 
   constructor(
     public dashboardService: DashboardService,
     public chartUtil: ChartUtils,
     public sharedService: SharedService,
     public exportService: ExportService,
-    private toasterService: ToastrService,
-    private themeService: ThemeService
+    private toasterService: ToastrService
   ) {}
 
   ngOnInit(): void {
-    Chart.register(...registerables);
-    this.listenForColorChange();
+    
   }
 
-  private listenForColorChange(): void {
-    this.themeService.colorChange.subscribe((color: string) => {
-      this.sharedService.changeColor(this.chart, this.getChartBackgroundColor(color), color);
-    });
-  }
-
-  private getChartBackgroundColor(color: string): string {
-    return color.substring(0, color.length - 2)+ '0.5)';
-  }
 
   // fires only from onDateSelected function below
   private getDashboardData(): void {
@@ -74,7 +60,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const currentMonth: Month = currentYear.getMonthByValue(this.selectedDate.getMonth());
     const days: Day[] = currentMonth.getDaysOfMonth();
 
-    let dailyExpensesLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
+    this.dailyExpensesLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
     
     this.sharedService.activateLoadingSpinner();
 
@@ -87,12 +73,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     .subscribe((dashboardData: DashboardDTO) => {
       this.sharedService.checkLoadingSpinner();
       this.dashboardData = dashboardData;
-
-      this.createDailyChart(
-        dailyExpensesLabels, 
-        this.getDailyExpensesData(dailyExpensesLabels, dashboardData.dailyExpenses)
-      );
-
     }, () => {
       this.sharedService.checkLoadingSpinner();
       this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION);
@@ -127,6 +107,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.dashboardData?.expensesInfo ?? [];
   }
 
+  get dailyExpenses() {
+    return this.dashboardData?.dailyExpenses;
+  }
+
   private exportToPDF(pdfDocument: Blob): void {
     const fileURL = URL.createObjectURL(pdfDocument);
     const a = document.createElement('a');
@@ -145,41 +129,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  private createDailyChart(labels: string[], data: number[]): void {
-    if(this.chart) {
-      this.chart.destroy();
-    }
-    const color = localStorage.getItem("themeColor");
-    const chartBackgoundColor = this.getChartBackgroundColor(color);
-    this.chart = this.chartUtil.createChart("daily-chart", {
-      type: 'line',
-      colors: ['#ff6347'],
-      labels: labels.map(label => {
-        const array = label.split("-");
-        return array[0] + "/" + array[1] + "/" + array[2].slice(-2);
-      }),
-      showGridLines: true,
-      datasets: [{
-        label: 'Money Spent',
-        data,
-        fill: true,
-        tension: 0.2,
-        backgroundColor: [chartBackgoundColor],
-        borderColor: [color],
-        pointBackgroundColor : color,
-        borderWidth: 1
-      }]
-    });
-  }
-
-
-  getDailyExpensesData(dailyExpensesLabels: string[], dailyExpenses: DailyExpenseDTO[]): number[] {
-    return dailyExpensesLabels
-      .map((label: string) => {
-        const filtered: DailyExpenseDTO[] = dailyExpenses.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);
-        return filtered.length !== 0 ? filtered[0].dailyExpense : 0;
-      });
-  }
 
   calculateHeight(templateReference: HTMLElement): string {
     let clientHeight = templateReference.clientHeight;

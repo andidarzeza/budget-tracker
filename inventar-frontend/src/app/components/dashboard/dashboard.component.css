@@ -3,6 +3,10 @@
     padding-top: 0;
 }
 
+.px-2 {
+    padding: 0 10px;
+}
+
 .total-incomes {
     font-size: 1.1rem;
     width: fit-content;
@@ -18,12 +22,6 @@
     padding: 13px 0px;
     font-size: 16px;
     padding-bottom: 0;
-}
-
-.daily-chart {
-    width: calc(100% - 67px);
-    margin: auto;
-    margin-top: 10px;
 }
 
 .dashboard-card {
@@ -43,7 +41,7 @@
 }
 
 .cards-container {
-    width: calc(100% - 35px);
+    width: calc(100%);
     margin: auto;
     display: flex;
     align-items: center;
