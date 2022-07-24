@@ -10,14 +10,14 @@ export class HistoryService {
   constructor(private http: HttpClient) { }
 
   findAll(page: any, size: any, sort: any): Observable<any> {
-    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort);
+    const params: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort);
     return this.http.get(`${serverAPIURL}/api/history`, {
-      params: options,
+      params,
       observe: 'response'
     });
   }
 
   findOne(id: string): Observable<any> {
-    return this.http.get(`${serverAPIURL}/api/history/${id}`, {observe: 'response'});
+    return this.http.get(`${serverAPIURL}/api/history/${id}`);
   }
 }

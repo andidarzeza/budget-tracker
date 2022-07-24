@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public interface HistoryService {
+    
     ResponseEntity findAll(Pageable pageable, @RequestParam String user);
     ResponseEntity findOne(@PathVariable String id);
     History from(EntityAction action, EntityType entity);

@@ -1,0 +1,75 @@
+<div class="header">
+    <span class="{{sharedService.theme}}-text header-title">
+        {{entity | titlecase}}
+    </span>
+    <div class="actions">
+        <button mat-icon-button class="close-button" (click)="closeDrawer()">
+            <mat-icon class="{{sharedService.theme}}-icon">
+                close
+            </mat-icon>
+        </button>
+    </div>
+</div>
+
+<div class="title-container">
+    <span class="expense-view-title fw-400 {{sharedService.theme}}-text">
+        Time
+    </span>
+</div>
+
+<div class="expense-date-container">
+    <span class="{{sharedService.theme}}-text">
+        Created Time
+    </span>
+    <span class="{{sharedService.theme}}-text expense-date">
+        {{ createdTime | date:'dd/MM/yyyy - HH:mm'}}
+    </span>
+
+</div>
+
+<div class="expense-date-container">
+    <span class="{{sharedService.theme}}-text">
+        Last Updated
+    </span>
+    <span class="{{sharedService.theme}}-text expense-date">
+        {{ lastModifiedDate | date:'dd/MM/yyyy - HH:mm'}}
+    </span>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="title-container">
+    <span class="expense-view-title fw-400 {{sharedService.theme}}-text">
+        Info
+    </span>
+</div>
+
+<div class="expense-date-container">
+    <span class="{{sharedService.theme}}-text">
+        Action
+    </span>
+    <span class="{{sharedService.theme}}-text expense-date">
+        {{ action | titlecase}}
+    </span>
+</div>
+
+<div class="expense-date-container">
+    <span class="{{sharedService.theme}}-text">
+        User
+    </span>
+    <span class="{{sharedService.theme}}-text expense-date">
+        {{user}}
+    </span>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="title-container">
+    <span class="expense-view-title fw-400 {{sharedService.theme}}-text">
+        Notes
+    </span>
+</div>
+
+<div class="expense-date-container {{sharedService.theme}}-text">
+    {{ message }}
+</div>

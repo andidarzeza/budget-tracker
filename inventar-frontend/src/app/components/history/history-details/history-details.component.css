@@ -1,0 +1,44 @@
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 20px 5px 0px;
+}
+
+.header-title {
+    font-size: 22px;
+    padding: 25px 0px 20px 20px;
+}
+
+.expense-date {
+    font-size: 17px;
+    padding-left: 5px;
+}
+
+.expense-date-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.title-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 20px 20px;
+}
+
+.expense-view-title {
+    font-size: 24px;
+}

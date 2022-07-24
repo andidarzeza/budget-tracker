@@ -15,6 +15,8 @@ import { HistoryComponent } from './history.component';
 import { MatSortModule } from '@angular/material/sort';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatMenuModule } from '@angular/material/menu';
+import { HistoryDetailsModule } from './history-details/history-details.module';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 
 @NgModule({
@@ -29,6 +31,8 @@ import { MatMenuModule } from '@angular/material/menu';
     SharedModule,
     MatPaginatorModule,
     MatButtonModule,
+    HistoryDetailsModule,
+    MatSidenavModule,
     MatSelectModule,
     MatOptionModule,
     ReactiveFormsModule,

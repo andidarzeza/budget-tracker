@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from 'src/environments/environment';
 import { Subscription } from 'rxjs';
@@ -7,6 +7,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { HistoryService } from 'src/app/services/history.service';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-history',
@@ -25,6 +26,9 @@ export class HistoryComponent implements OnInit, OnDestroy {
   public mobileColumns: string[] = ['entity', 'message', 'user', 'actions'];
   public historyList: History[] = [];
   private historySubscription: Subscription = null;
+  public historyId: string;
+  isSidenavOpened: boolean = false;
+  @ViewChild('drawer') drawer: MatSidenav;
   public tableActionInput: TableActionInput = {
     pageName: "History",
     icon: 'history',
@@ -66,6 +70,16 @@ export class HistoryComponent implements OnInit, OnDestroy {
   announceSortChange(sort: Sort): void {
     this.sort = sort.direction ? `${sort.active},${sort.direction}` : this.defaultSort;
     this.query();
+  }
+
+  onSidenavClose(): void {
+    this.isSidenavOpened = false;
+  }
+
+  viewHistoryDetails(id: string): void {
+    this.historyId = id;
+    this.isSidenavOpened = true;
+    this.drawer.toggle();
   }
 
   ngOnDestroy(): void {
