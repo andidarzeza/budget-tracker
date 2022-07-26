@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { CommunicationService } from './services/communication.service';
 
 
 @Component({
@@ -19,7 +20,9 @@ export class DynamicDropdownComponent {
 
   matSelectFormControl: FormControl = new FormControl();
 
-  constructor() { }
+  constructor(
+    private communicationService: CommunicationService
+  ) { }
 
   selectAll(): void {
     this.allSelected = !this.allSelected;
@@ -31,6 +34,10 @@ export class DynamicDropdownComponent {
     const index = this.selectedItems.indexOf(item);
     index >  -1 ? this.selectedItems.splice(index, 1) : this.selectedItems.push(item);
     this.allSelected = this.selectedItems.length === this.data.length;
+  }
+
+  edit(item: string): void {
+    this.communicationService.edit(item);
   }
 
   onCreateFunction(item: string): void {
