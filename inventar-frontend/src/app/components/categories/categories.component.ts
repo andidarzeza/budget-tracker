@@ -14,7 +14,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Category } from 'src/app/models/models';
+import { Category, CategoryType } from 'src/app/models/models';
 
 @Component({
   selector: 'app-categories',
@@ -33,7 +33,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   public size: number = PAGE_SIZE;
   public totalItems: number = 0;
   public totalRequests: number = 0;
-  public categoriesType: string = 'spendings';
+  public categoriesType: CategoryType = CategoryType.EXPENSE;
   public theme: string = 'light';
   public displayedColumns: string[] = ['icon', 'category', 'description', 'actions'];
   public dataSource: Category[] = [];
@@ -113,10 +113,10 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   changeCategoriesType(event: MatTabChangeEvent): void {
     switch(event.index) {
       case 0:
-        this.categoriesType = 'spendings';
+        this.categoriesType = CategoryType.EXPENSE;
         break;
       case 1:
-        this.categoriesType = 'incomings';
+        this.categoriesType = CategoryType.INCOME;
         break;
     }
     this.page = 0;

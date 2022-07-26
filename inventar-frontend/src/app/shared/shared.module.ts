@@ -15,11 +15,12 @@ import { DialogService } from '../services/dialog.service';
 import { AddExpenseComponent } from '../components/expenses/add-expense/add-expense.component';
 import { RecordActionsComponent } from './record-actions/record-actions.component';
 import { CustomDatePipe } from '../pipes/custom-date.pipe';
+import { IconSelectComponent } from './icon-select/icon-select.component';
 
 
 
 @NgModule({
-  declarations: [ConfirmComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, CustomDatePipe, TableActionsComponent, RecordActionsComponent],
+  declarations: [ConfirmComponent, IconSelectComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, CustomDatePipe, TableActionsComponent, RecordActionsComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -36,7 +37,8 @@ import { CustomDatePipe } from '../pipes/custom-date.pipe';
     AbsoluteValuePipe,
     CustomDatePipe,
     TableActionsComponent,
-    RecordActionsComponent
+    RecordActionsComponent,
+    IconSelectComponent
   ],
   providers: [DialogService],
   entryComponents: [AddExpenseComponent]

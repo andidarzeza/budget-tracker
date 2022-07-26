@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { Category, Income } from 'src/app/models/models';
+import { Category, CategoryType, Income } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -63,7 +63,7 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
 
   private getCategories(): void {
     this.categoriesSubscription?.unsubscribe();
-    this.categoriesSubscription = this.categoryService.findAll(0, 100, "incomings").subscribe((response: any) => {
+    this.categoriesSubscription = this.categoryService.findAll(0, 100, CategoryType.INCOME).subscribe((response: any) => {
       this.categories = response.body.categories;
       if(this.editMode) {
         this.formGroup.patchValue(this.income);

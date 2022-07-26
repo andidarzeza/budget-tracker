@@ -4,7 +4,6 @@ import { CategoriesComponent } from './categories.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
-import { AddCategoryComponent } from './add-category/add-category.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -18,10 +17,11 @@ import {MatTabsModule} from '@angular/material/tabs';
 import { CategoriesTableComponent } from './categories-table/categories-table.component';
 import { CategoryDetailModule } from './category-detail/category-detail.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { AddCategoryModule } from './add-category/add-category.module';
 
 
 @NgModule({
-  declarations: [CategoriesComponent, AddCategoryComponent, IconSelectComponent, CategoriesTableComponent],
+  declarations: [CategoriesComponent, CategoriesTableComponent],
   imports: [
     CommonModule,
     CategoriesRoutingModule,
@@ -33,11 +33,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     CategoryDetailModule,
     MatIconModule,
     MatButtonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
     MatMenuModule,
+    AddCategoryModule,
     SharedModule
   ]
 })

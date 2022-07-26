@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SettingsRoutingModule } from './settings-routing.module';
+import { DynamicDropdownModule } from './dynamic-dropdown/dynamic-dropdown.module';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { SettingsRoutingModule } from './settings-routing.module';
     SettingsRoutingModule,
     MatIconModule,
     MatCardModule,
+    DynamicDropdownModule,
     MatSlideToggleModule
   ]
 })

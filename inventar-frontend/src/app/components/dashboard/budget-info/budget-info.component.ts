@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Account } from 'src/app/models/Account';
+import { Account } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { SharedService } from 'src/app/services/shared.service';
 

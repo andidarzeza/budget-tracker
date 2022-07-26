@@ -114,3 +114,7 @@ export interface Theme {
     name: string;
     color: string;
 }
+
+export enum CategoryType {
+    EXPENSE="EXPENSE", INCOME="INCOME"
+}

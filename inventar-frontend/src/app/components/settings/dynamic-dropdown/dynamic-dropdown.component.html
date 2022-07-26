@@ -1,0 +1,17 @@
+<mat-form-field [appearance]="appearance" style="width: 100%;">
+    <mat-label>{{inputLabel}}</mat-label>
+    <mat-select multiple>
+
+        <div style="max-height: 185px;overflow-y: auto;">
+            <!-- Used Only to display the angular dropdown -->
+            <mat-option style="display: none;"></mat-option>
+            <custom-option (onSelect)="selectAll()" [checked]="allSelected" [displayActions]="false" [item]="'All'"></custom-option>
+            <custom-option (onSelect)="onSelect($event)" *ngFor="let item of data" [item]="item"></custom-option>
+        </div>
+
+        <create-new-option></create-new-option>
+    </mat-select>
+</mat-form-field>
+
+
+{{selectedItems | json}}

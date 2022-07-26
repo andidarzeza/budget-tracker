@@ -1,0 +1,20 @@
+<div class="h-42px flex position-relative">
+    <div matRipple class="pl-16px flex w-full h-full cursor-pointer items-center" (click)="select()">
+        <mat-checkbox (click)="$event.preventDefault()" color="primary" class="mr-8px" [checked]="checked"></mat-checkbox>
+        <span>{{item}}</span>
+    </div>
+
+    <button *ngIf="displayActions" mat-icon-button [matMenuTriggerFor]="menu" class="position-absolute right-0">
+        <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+            <mat-icon>edit</mat-icon>
+            <span>Edit</span>
+        </button>
+        <button mat-menu-item>
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+        </button>
+    </mat-menu>
+</div>

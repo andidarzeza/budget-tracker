@@ -8,7 +8,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { Category, Expense } from 'src/app/models/models';
+import { Category, CategoryType, Expense } from 'src/app/models/models';
 
 @Component({
   selector: 'app-add-expense',
@@ -45,7 +45,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
 
   private getCategories(): void {
     this.categoryService
-      .findAll(0, 1000, "EXPENSE")
+      .findAll(0, 1000, CategoryType.EXPENSE)
       .pipe(
         takeUntil(this._subject),
         map((response: any) => this.categories = response.body.categories),

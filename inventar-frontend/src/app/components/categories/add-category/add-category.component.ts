@@ -2,7 +2,8 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -13,17 +14,78 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   styleUrls: ['./add-category.component.css']
 })
 export class AddCategoryComponent implements OnInit, OnDestroy {
-  private mode = '';
-  private id = '';
+  
+  private _subject = new Subject();
   savingEntity = false;
-  private updateSubscription: Subscription = null;
-  private saveSubscription: Subscription = null;
-  constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<AddCategoryComponent>, private formBuilder: FormBuilder, private categoriesService: CategoriesService) {}
+  
+  constructor(
+    public sharedService: SharedService,
+    private toaster: ToastrService,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<AddCategoryComponent>,
+    private formBuilder: FormBuilder,
+    private categoriesService: CategoriesService
+  ) {}
+  
   categoryGroup: FormGroup = this.formBuilder.group({
-    category: ['', Validators.required],
-    description: ['', Validators.required],
-    icon: [null, Validators.required]
+    category:     ['', Validators.required],
+    description:  ['', Validators.required],
+    icon:         ['', Validators.required]
   });
+
+  ngOnInit(): void {
+    if(this.editMode) {
+      this.categoryGroup.patchValue(this.data.spendingCategory);
+    }
+  }
+
+  add(): void {
+    if(this.categoryGroup.valid && !this.savingEntity){
+      if(this.editMode) {
+        this.data.spendingCategory.category = this.category.value;
+        this.data.spendingCategory.description = this.description.value;
+        this.data.spendingCategory.icon = this.icon.value;
+        const payload = this.data.spendingCategory;
+        payload['categoryType'] = this.data.categoriesType;
+        this.savingEntity = true;
+        this.categoriesService
+          .update(payload)
+          .pipe(takeUntil(this._subject))  
+          .subscribe(() => this.onSaveSuccess("Category Updated with Success"));
+      } else if(!this.savingEntity){
+        const payload = this.categoryGroup.value;
+        payload['categoryType'] = this.data.categoriesType;
+        this.savingEntity = true;
+        this.categoriesService
+          .save(payload)
+          .pipe(takeUntil(this._subject))
+          .subscribe(() => this.onSaveSuccess("A new Category has been inserted"));
+      }
+    }
+  }
+
+  onSaveSuccess(message: string): void {
+    this.closeDialog(true);  
+    this.savingEntity = false;
+    this.toaster.success(message, "Success", TOASTER_CONFIGURATION);
+  }
+
+  closeDialog(update: boolean): void {
+    this.dialogRef.close(update);
+  }
+
+  onIconSelect(icon: string): void {
+    this.icon.setValue(icon);
+  }
+  
+  ngOnDestroy(): void {
+    this._subject.next();
+    this._subject.complete();
+  }
+
+  get editMode() {
+    return this.data?.spendingCategory !== undefined;
+  }
 
   get category(){
     return this.categoryGroup.controls['category'];
@@ -35,63 +97,5 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
 
   get icon(){
     return this.categoryGroup.controls['icon'];
-  }
-
-  ngOnInit(): void {
-    if(this.data.spendingCategory) {
-      this.mode = 'edit';
-      this.id = this.data.spendingCategory.id;
-      this.categoryGroup.patchValue(this.data.spendingCategory);
-    }else{
-      this.mode = 'add';
-    }
-  }
-
-  add(): void {
-    if(this.categoryGroup.valid && !this.savingEntity){
-      if(this.mode === 'edit') {
-        this.data.spendingCategory.category = this.category.value;
-        this.data.spendingCategory.description = this.description.value;
-        this.data.spendingCategory.icon = this.icon.value;
-        const payload = this.data.spendingCategory;
-        payload['categoryType'] = this.data.categoriesType;
-        this.unsubscribe(this.updateSubscription);
-        this.savingEntity = true;
-        this.updateSubscription = this.categoriesService.update(payload).subscribe(() => {
-          this.closeDialog(true); 
-          this.savingEntity = false; 
-          this.toaster.success("Category Updated with Success", "Success", TOASTER_CONFIGURATION);
-        });
-      } else if(!this.savingEntity){
-        const payload = this.categoryGroup.value;
-        payload['categoryType'] = this.data.categoriesType;
-        this.unsubscribe(this.saveSubscription);
-        this.savingEntity = true;
-        this.saveSubscription = this.categoriesService.save(payload).subscribe((res:any) => {
-          this.closeDialog(true);  
-          this.savingEntity = false;
-          this.toaster.success("A new Category has been inserted", "Success", TOASTER_CONFIGURATION);    
-        });
-      }
-    }
-  }
-
-  closeDialog(update: any): void {
-    this.dialogRef.close(update);
-  }
-
-  onIconSelect(icon: string): void {
-    this.icon.setValue(icon);
-  }
-
-  private unsubscribe(subscription: Subscription): void {
-    if(subscription) {
-      subscription.unsubscribe();
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe(this.saveSubscription);
-    this.unsubscribe(this.updateSubscription);
   }
 }

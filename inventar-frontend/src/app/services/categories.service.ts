@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { Category } from '../models/models';
+import { Category, CategoryType } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +10,8 @@ import { Category } from '../models/models';
 export class CategoriesService {
   constructor(private http: HttpClient) { }
 
-  findAll(page: any, size: any, categoryType: string, sort?: string): Observable<any> {
-    let options: HttpParams = new HttpParams().append("page", page).append("size", size).append("categoryType", categoryType);
+  findAll(page: any, size: any, categoryType: CategoryType, sort?: string): Observable<any> {
+    let options: HttpParams = new HttpParams().append("page", page).append("size", size).append("categoryType", categoryType.toString());
     if(sort) {
       options = options.append("sort", sort);
     }
