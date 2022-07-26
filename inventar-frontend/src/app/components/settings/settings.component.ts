@@ -49,6 +49,17 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.data.push(item);
   }
 
+  onDeleteFunction(item: string): void {
+    const index = this.data.indexOf(item);
+    if(index >-1) {
+      this.data.splice(index, 1);
+    }
+  }
+
+  onSelectionFunction(items: string[]): void {
+    console.log(items);
+  }
+
   setAnimationLoading(): void {
     this.spinnerSubscription?.unsubscribe();
     this.configuration.animationMode = !this.sharedService.isSpinnerEnabled;

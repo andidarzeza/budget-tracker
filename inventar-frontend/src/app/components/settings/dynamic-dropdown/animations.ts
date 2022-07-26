@@ -14,6 +14,20 @@ export const inAnimation = trigger(
     ]
 );
 
+// export const outAnimation = trigger(
+//     'outAnimation', 
+//     [
+//       transition(
+//         ':leave', 
+//         [
+//           style({ height: 100, opacity: 1 }),
+//           animate('250ms ease-out', 
+//                   style({height: 0, opacity: 0 }))
+//         ]
+//       )
+//     ]
+// );
+
 export const inOutAnimation = trigger(
     'inOutAnimation', 
     [

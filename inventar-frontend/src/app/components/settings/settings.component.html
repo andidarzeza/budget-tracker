@@ -17,5 +17,5 @@
 </mat-card>
 
 <div style="margin-top: 50px;margin-left: 50px;width: 500px;">
-    <dynamic-dropdown [data]="data" (onCreate)="onCreateFunction($event)" ></dynamic-dropdown>
+    <dynamic-dropdown [data]="data" (onSelection)="onSelectionFunction($event)" (onCreate)="onCreateFunction($event)" (onDelete)="onDeleteFunction($event)"></dynamic-dropdown>
 </div>
