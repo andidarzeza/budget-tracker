@@ -2,13 +2,13 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
-import { Expense } from 'src/app/models/Expense';
-import { Category } from 'src/app/models/Category';
+import { Subject } from 'rxjs';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { filter, map, takeUntil } from 'rxjs/operators';
+import { Category, Expense } from 'src/app/models/models';
 
 @Component({
   selector: 'app-add-expense',
@@ -16,34 +16,26 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   styleUrls: ['./add-expense.component.css']
 })
 export class AddExpenseComponent implements OnInit, OnDestroy {
-  private mode = 'add';
+
   public savingEntity = false;
-  private categoriesSubscription: Subscription = null;
-  private saveSubscription: Subscription = null;
-  private updateSubscription: Subscription = null;
-  constructor(public sharedService: SharedService, private toaster: ToastrService, @Inject(MAT_DIALOG_DATA) public expense: Expense, public dialogRef: MatDialogRef<AddExpenseComponent>, private formBuilder: FormBuilder, private spendingService: SpendingService, private categoryService: CategoriesService) {}
+  private _subject = new Subject();
+  
+  constructor(
+    public sharedService: SharedService,
+    private toaster: ToastrService,
+    @Inject(MAT_DIALOG_DATA) public expense: Expense,
+    public dialogRef: MatDialogRef<AddExpenseComponent>,
+    private formBuilder: FormBuilder,
+    private spendingService: SpendingService,
+    private categoryService: CategoriesService
+  ) {}
+  
   formGroup: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
     description: [''],
     categoryID: ['', Validators.required],
     moneySpent: ['', Validators.required]
   });
-
-  get name(){
-    return this.formGroup.controls['name'];
-  }
-
-  get description(){
-    return this.formGroup.controls['description'];
-  }
-
-  get category(){
-    return this.formGroup.controls['categoryID'];
-  }
-
-  get moneySpent() {
-    return this.formGroup.controls['moneySpent'];
-  }
 
   public categories: Category[] = [];
 
@@ -52,51 +44,53 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
   }
 
   private getCategories(): void {
-    this.unsubscribe(this.categoriesSubscription);
-    this.categoriesSubscription = this.categoryService.findAll(0, 100, "spendings").subscribe((response: any) => {
-      this.categories = response.body.categories;
-      if(this.expense) {
-        this.mode = 'edit';
-        this.formGroup.patchValue(this.expense);
-      }
-    })
+    this.categoryService
+      .findAll(0, 1000, "EXPENSE")
+      .pipe(
+        takeUntil(this._subject),
+        map((response: any) => this.categories = response.body.categories),
+        filter(()=>this.editMode),
+        map(() => this.formGroup.patchValue(this.expense))
+      )
+      .subscribe();
   }
 
-  add(): void {
-    if(this.formGroup.valid && !this.savingEntity){
-      if(this.mode === 'edit') {
-        this.savingEntity = true;
-        this.unsubscribe(this.updateSubscription);
-        this.updateSubscription = this.spendingService.update(this.expense.id, this.formGroup.value).subscribe(() => {
-          this.closeDialog(true);
-          this.savingEntity = false;
-          this.toaster.success("Expense updated successfully", "Success", TOASTER_CONFIGURATION);
-        });
-      } else if(!this.savingEntity) {
-        this.unsubscribe(this.saveSubscription);
-        this.savingEntity = true;
-        this.saveSubscription = this.spendingService.save(this.formGroup.value).subscribe(() => {
-          this.closeDialog(true);  
-          this.savingEntity = false;
-          this.toaster.success("A new Expense has been inserted", "Success", TOASTER_CONFIGURATION);    
-        });
-      }
-    }
-  }
-
-  closeDialog(update: any): void {
+  public closeDialog(update: boolean): void {
     this.dialogRef.close(update);
   }
-
-  private unsubscribe(subscription: Subscription): void {
-    if(subscription) {
-      subscription.unsubscribe();
+  
+  add(): void {
+    if(this.formGroup.valid && !this.savingEntity){
+      if(this.editMode) {
+        this.savingEntity = true;
+        this.spendingService
+          .update(this.expense.id, this.formGroup.value)
+          .pipe(takeUntil(this._subject))
+          .subscribe(() => {
+            this.closeDialog(true);
+            this.savingEntity = false;
+            this.toaster.success("Expense updated successfully", "Success", TOASTER_CONFIGURATION);
+          });
+      } else if(!this.savingEntity) {
+        this.savingEntity = true;
+        this.spendingService
+          .save(this.formGroup.value)
+          .pipe(takeUntil(this._subject))
+          .subscribe(() => {
+            this.closeDialog(true);  
+            this.savingEntity = false;
+            this.toaster.success("A new Expense has been inserted", "Success", TOASTER_CONFIGURATION);    
+          });
+      }
     }
+  }
+
+  get editMode() {
+    return this.expense !== undefined;
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe(this.categoriesSubscription);
-    this.unsubscribe(this.updateSubscription);
-    this.unsubscribe(this.saveSubscription);
+    this._subject.next();
+    this._subject.complete();
   }
 }

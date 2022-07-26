@@ -1,7 +1,6 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { Expense } from 'src/app/models/Expense';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
 import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -15,6 +14,7 @@ import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { filter, takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatSidenav } from '@angular/material/sidenav';
+import { Expense } from 'src/app/models/models';
 
 @Component({
   selector: 'app-expenses',

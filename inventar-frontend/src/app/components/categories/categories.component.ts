@@ -1,7 +1,6 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { Category } from 'src/app/models/Category';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -15,6 +14,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatSidenav } from '@angular/material/sidenav';
+import { Category } from 'src/app/models/models';
 
 @Component({
   selector: 'app-categories',

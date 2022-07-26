@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { DashboardDTO } from '../models/DashboardModels';
+import { DashboardDTO } from '../models/models';
 
 @Injectable({
   providedIn: 'root'

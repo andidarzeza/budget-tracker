@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Sort } from '@angular/material/sort';
-import { Category } from 'src/app/models/Category';
+import { Category } from 'src/app/models/models';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({

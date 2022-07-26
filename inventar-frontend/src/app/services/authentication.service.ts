@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { serverAPIURL } from 'src/environments/environment';
-import { User } from '../models/User';
+import { User } from '../models/models';
 import { SharedService } from './shared.service';
 
 @Injectable({

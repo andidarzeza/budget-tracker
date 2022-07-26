@@ -1,7 +1,6 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { IConfiguration } from 'src/app/models/IConfiguration';
+import { IConfiguration } from 'src/app/models/models';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 

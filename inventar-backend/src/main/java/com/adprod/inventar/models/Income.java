@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document(collection = "incoming")
+@Document(collection = "incomes")
 @NoArgsConstructor
 @Getter
 @Setter

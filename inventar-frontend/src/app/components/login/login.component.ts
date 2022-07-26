@@ -5,10 +5,10 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
 import { mergeMap } from 'rxjs/operators';
 import { ConfigurationService } from 'src/app/services/configuration.service';
-import { IConfiguration } from 'src/app/models/IConfiguration';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ToastrService, TOAST_CONFIG } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { IConfiguration } from 'src/app/models/models';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',

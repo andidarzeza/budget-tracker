@@ -3,7 +3,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { Chart, registerables } from 'chart.js';
 import { ChartUtils } from 'src/app/utils/chart';
 import { ThemeService } from 'src/app/services/theme.service';
-import { DailyExpenseDTO } from 'src/app/models/DashboardModels';
+import { DailyExpenseDTO } from 'src/app/models/models';
 
 @Component({
   selector: 'expenses-chart',
@@ -22,7 +22,6 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     this.createDailyChart();
   }
 
@@ -68,7 +67,7 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
     return color.substring(0, color.length - 2) + '0.5)';
   }
 
-  getDailyExpensesData(): number[] {
+  private getDailyExpensesData(): number[] {
     return this.dailyExpensesLabels?.map((label: string) => {
         const filtered: DailyExpenseDTO[] = this.dailyExpenses?.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);
         return filtered.length !== 0 ? filtered[0].dailyExpense : 0;

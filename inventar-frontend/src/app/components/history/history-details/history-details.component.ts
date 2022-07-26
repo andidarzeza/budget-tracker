@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { History } from 'src/app/models/History';
+import { History } from 'src/app/models/models';
 import { HistoryService } from 'src/app/services/history.service';
 import { SharedService } from 'src/app/services/shared.service';
 

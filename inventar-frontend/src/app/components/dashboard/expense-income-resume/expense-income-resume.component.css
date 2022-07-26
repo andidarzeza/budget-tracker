@@ -1,0 +1,105 @@
+.incomes-title {
+    padding: 10px 5px;
+    padding-top: 0;
+}
+
+.total-incomes {
+    font-size: 1.1rem;
+    width: fit-content;
+    font-family: 'Lato', sans-serif;
+}
+
+.total-incomes-container {
+    padding: 10px 0px;
+    padding-left: 5px;
+}
+
+.total-incomes-description {
+    padding: 13px 0px;
+    font-size: 16px;
+    padding-bottom: 0;
+}
+
+.dashboard-card {
+    width: calc(50% - 37px);
+}
+
+.cards-container {
+    width: calc(100%);
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.percentage-badge {
+    font-size: 13px;
+    position: absolute;
+    right: 0;
+    transform: translate(100%, -50%);
+    top: 0;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.percentage-up {
+    color: rgb(14, 167, 14);
+}
+
+.percentage-down {
+    color: #ff6347;
+}
+
+.avg-card-cnt {
+  width: calc(50% - 5px);
+  display: flex;
+  justify-content: space-between;
+}
+
+
+@media only screen and (max-width: 1500px) {
+    .percentage-badge {
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 1150px) {
+
+    .total-incomes, .total-incomes-description {
+        font-size: 0.9rem;
+    }
+
+}
+
+@media only screen and (max-width: 1100px) {
+    .total-incomes, .total-incomes-description {
+        font-size: 0.9rem;
+    }
+}
+
+@media only screen and (max-width: 1060px) {
+   .cards-container {
+       flex-direction: column;
+   }
+   .avg-card-cnt {
+       width: calc(100% - 5px);
+       margin-bottom: 10px;
+   }
+}
+
+@media only screen and (max-width: 510px) {
+
+    .cards-container {
+        width: calc(100% - 35px);
+    }
+    .avg-card-cnt {
+        width: 100%;
+        margin-bottom: 0px;
+        flex-direction: column;
+    }
+
+    .dashboard-card {
+        width: calc(100% - 32px);
+        margin-bottom: 10px;
+    }
+}
+

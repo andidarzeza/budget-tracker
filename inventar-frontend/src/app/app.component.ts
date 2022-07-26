@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { IConfiguration } from './models/IConfiguration';
+import { IConfiguration } from './models/models';
 import { AuthenticationService } from './services/authentication.service';
 import { ConfigurationService } from './services/configuration.service';
 import { ExchangeService } from './services/exchange.service';

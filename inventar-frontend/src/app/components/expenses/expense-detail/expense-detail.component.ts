@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
-import { Category } from 'src/app/models/Category';
-import { Expense } from 'src/app/models/Expense';
+import { Category, Expense } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';

@@ -2,6 +2,7 @@ package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
+import com.adprod.inventar.models.enums.CategoryType;
 import com.adprod.inventar.models.enums.EntityAction;
 import com.adprod.inventar.models.enums.EntityType;
 import com.adprod.inventar.models.wrappers.CategoryWrapper;
@@ -26,8 +27,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final EntityType entityType = EntityType.CATEGORY;
 
     @Override
-    public ResponseEntity findAll(Pageable pageable, String categoryType) {
-        Page<ExpenseCategory> page = this.categoryRepository.findAllByCategoryTypeAndUser(pageable, categoryType, securityContextService.username());
+    public ResponseEntity findAll(Pageable pageable, CategoryType categoryType) {
+        Page<ExpenseCategory> page = this.categoryRepository.findAllByCategoryTypeAndUser(pageable, categoryType.toString(), securityContextService.username());
         CategoryWrapper categoryWrapper = new CategoryWrapper();
         categoryWrapper.setCategories(page.getContent());
         categoryWrapper.setCount(page.getTotalElements());

@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Theme } from 'src/app/models/core/Theme';
-import { IConfiguration } from 'src/app/models/IConfiguration';
+import { IConfiguration, Theme } from 'src/app/models/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';

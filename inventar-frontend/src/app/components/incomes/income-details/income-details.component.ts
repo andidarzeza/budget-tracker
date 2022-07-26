@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
-import { Category } from 'src/app/models/Category';
-import { Income } from 'src/app/models/Income';
+import { Category, Income } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -17,7 +16,7 @@ export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
   @Input() incomeViewId: string;
   @Output() onCloseAction: EventEmitter<any> = new EventEmitter<any>();
   private income: Income;
-  private incomeCategory: Category
+  private incomeCategory: Category;
   private _subject = new Subject();
   
   constructor(
