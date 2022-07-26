@@ -1,8 +1,9 @@
 <mat-form-field [appearance]="appearance" class="w-full">
     <mat-label>{{inputLabel}}</mat-label>
     <mat-select [formControl]="matSelectFormControl" multiple panelClass="custom-dropdown">
-        <!-- delete modal -->
-        <delete-confirmation [selectedItem]="selectedItemToDelete" (onCancel)="cancelDeleteOperation()" (onDelete)="delete($event)" *ngIf="showDeleteModal"></delete-confirmation>
+        <delete-confirmation [selectedItem]="selectedItemToDelete" (onCancel)="cancelDeleteOperation()"
+            (onDelete)="delete($event)" *ngIf="showDeleteModal"></delete-confirmation>
+
         <mat-select-trigger>
             {{getSelectTrigger()}}
         </mat-select-trigger>
@@ -38,6 +39,3 @@
         <create-new-option (onCreate)="onCreateFunction($event)" [appearance]="appearance"></create-new-option>
     </mat-select>
 </mat-form-field>
-
-
-{{selectedItems |json}}
