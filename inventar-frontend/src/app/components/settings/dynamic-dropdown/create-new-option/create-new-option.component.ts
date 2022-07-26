@@ -1,27 +1,13 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { inAnimation } from '../animations';
 import { CommunicationService } from '../services/communication.service';
 
 @Component({
   selector: 'create-new-option',
   templateUrl: './create-new-option.component.html',
   styleUrls: ['./create-new-option.component.css'],
-  animations: [
-    trigger(
-      'inOutAnimation', 
-      [
-        transition(
-          ':enter', 
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out', 
-                    style({opacity: 1 }))
-          ]
-        )
-      ]
-    )
-  ]
+  animations: [inAnimation]
 })
 export class CreateNewOptionComponent implements OnInit{
   @Input() appearance: string; 
@@ -33,10 +19,10 @@ export class CreateNewOptionComponent implements OnInit{
     private formBuilder: FormBuilder,
     private communicationService: CommunicationService
   ) { }
+  
   ngOnInit(): void {
     this.communicationService.editObservable.subscribe((item: string) => {
       this.editMode = true;
-      console.log(item);
       this.item.setValue(item);
     });
   }

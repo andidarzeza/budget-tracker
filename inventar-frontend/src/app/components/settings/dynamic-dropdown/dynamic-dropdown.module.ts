@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRippleModule } from '@angular/material/core';
+import { DeleteConfirmationModule } from './delete-confirmation/delete-confirmation.module';
 
 
 
@@ -23,7 +24,8 @@ import { MatRippleModule } from '@angular/material/core';
     MatMenuModule,
     MatButtonModule,
     CreateNewOptionModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    DeleteConfirmationModule
   ],
   exports: [DynamicDropdownComponent]
 })

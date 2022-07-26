@@ -9,16 +9,16 @@ import { CommunicationService } from './services/communication.service';
   styleUrls: ['./dynamic-dropdown.component.css']
 })
 export class DynamicDropdownComponent {
-  
   @Input() data: string[];
   @Input() inputLabel: string = "Lanes";
   @Input() appearance: string = "outline";
   @Output() onCreate = new EventEmitter<string>();
-
+  selectedItemToDelete: string;
   public selectedItems: string[] = [];
   public allSelected = false;
 
   matSelectFormControl: FormControl = new FormControl();
+  showDeleteModal: boolean = false;
 
   constructor(
     private communicationService: CommunicationService
@@ -38,6 +38,20 @@ export class DynamicDropdownComponent {
 
   edit(item: string): void {
     this.communicationService.edit(item);
+  }
+
+  openDeleteDialog(item: string): void {
+    this.selectedItemToDelete = item;
+    this.showDeleteModal = true;
+  }
+
+  delete(item: string): void {
+    console.log(item);
+    this.showDeleteModal = false;
+  }
+
+  cancelDeleteOperation(): void {
+    this.showDeleteModal = false;
   }
 
   onCreateFunction(item: string): void {

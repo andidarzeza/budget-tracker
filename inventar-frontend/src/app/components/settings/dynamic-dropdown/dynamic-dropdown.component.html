@@ -1,6 +1,8 @@
 <mat-form-field [appearance]="appearance" class="w-full">
     <mat-label>{{inputLabel}}</mat-label>
     <mat-select [formControl]="matSelectFormControl" multiple panelClass="custom-dropdown">
+        <!-- delete modal -->
+        <delete-confirmation [selectedItem]="selectedItemToDelete" (onCancel)="cancelDeleteOperation()" (onDelete)="delete($event)" *ngIf="showDeleteModal"></delete-confirmation>
         <mat-select-trigger>
             {{getSelectTrigger()}}
         </mat-select-trigger>
@@ -25,7 +27,7 @@
                         <mat-icon>edit</mat-icon>
                         <span>Edit</span>
                     </button>
-                    <button mat-menu-item>
+                    <button mat-menu-item (click)=openDeleteDialog(item)>
                         <mat-icon>delete</mat-icon>
                         <span>Delete</span>
                     </button>

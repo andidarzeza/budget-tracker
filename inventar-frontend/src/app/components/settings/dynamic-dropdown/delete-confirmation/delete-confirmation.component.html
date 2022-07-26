@@ -1,0 +1,18 @@
+<div class="shadow" [@inOutAnimation]>
+    <div class="dialog">
+        <div>Are you sure you want to delete the selected item: {{selectedItem}}?</div>
+        <div class="action-container">
+            <button mat-icon-button color="warn" (click)="delete()">
+                <mat-icon>
+                    check
+                </mat-icon>
+            </button>
+
+            <button mat-icon-button (click)="cancel()">
+                <mat-icon>
+                    close
+                </mat-icon>
+            </button>
+        </div>
+    </div>
+</div>  
