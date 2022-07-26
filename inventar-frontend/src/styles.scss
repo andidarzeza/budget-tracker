@@ -4,6 +4,8 @@
 @import '../../inventar-frontend/src/app/template/dark-theme.scss';
 @import '../../inventar-frontend/src/app/template/shared.scss';
 
+@import '../../inventar-frontend/src/app/components/settings/dynamic-dropdown/custom-dropdown.scss';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

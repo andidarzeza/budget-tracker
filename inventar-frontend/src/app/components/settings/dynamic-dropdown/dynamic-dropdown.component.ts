@@ -11,7 +11,7 @@ export class DynamicDropdownComponent {
   
   @Input() data: string[];
   @Input() inputLabel: string = "Lanes";
-  @Input() appearance: string = "fill";
+  @Input() appearance: string = "outline";
 
   public selectedItems: string[] = [];
 

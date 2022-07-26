@@ -5,7 +5,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CustomOptionModule } from './custom-option/custom-option.module';
-import { NewOptionModule } from './new-option/new-option.module';
+import { CreateNewOptionModule } from './create-new-option/create-new-option.module';
 
 
 
@@ -16,7 +16,7 @@ import { NewOptionModule } from './new-option/new-option.module';
     MatSelectModule,
     MatIconModule,
     MatButtonModule,
-    NewOptionModule,
+    CreateNewOptionModule,
     CustomOptionModule
   ],
   exports: [DynamicDropdownComponent]

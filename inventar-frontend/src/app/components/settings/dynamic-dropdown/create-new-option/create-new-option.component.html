@@ -1,0 +1,32 @@
+<div class="add-option-container">
+    <div *ngIf="createMode" style="width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;">
+        <mat-form-field class="my-form-field" style="width: calc(100% - 96px);" [appearance]="appearance">
+            <mat-label>Create new option</mat-label>
+            <input matInput>
+        </mat-form-field>
+
+        <div style="    display: flex;
+        align-items: center;">
+            <button mat-icon-button>
+                <mat-icon>
+                    check
+                </mat-icon>
+            </button>
+
+            <button mat-icon-button (click)="cancel()">
+                <mat-icon>
+                    close
+                </mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <button *ngIf="!createMode" mat-icon-button color="primary" (click)="create()">
+        <mat-icon>
+            add
+        </mat-icon>
+    </button>
+</div>
