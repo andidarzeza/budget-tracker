@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { CommunicationService } from './services/communication.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 
 @Component({
@@ -12,25 +12,36 @@ export class DynamicDropdownComponent {
   @Input() data: string[];
   @Input() inputLabel: string = "Lanes";
   @Input() appearance: string = "outline";
+  @Output() onCreate = new EventEmitter<string>();
 
   public selectedItems: string[] = [];
-
   public allSelected = false;
 
-  constructor(
-    private communicationService: CommunicationService
-  ) { }
+  matSelectFormControl: FormControl = new FormControl();
+
+  constructor() { }
 
   selectAll(): void {
     this.allSelected = !this.allSelected;
-    this.selectedItems = this.allSelected ? this.data.slice() : [];
-    this.communicationService.toggleSelectAll(this.allSelected);
+    this.selectedItems = this.allSelected ? this.data.slice() : [];    
+    this.matSelectFormControl.setValue(this.selectedItems);
   }
 
   onSelect(item: string): void {
     const index = this.selectedItems.indexOf(item);
     index >  -1 ? this.selectedItems.splice(index, 1) : this.selectedItems.push(item);
     this.allSelected = this.selectedItems.length === this.data.length;
+  }
+
+  onCreateFunction(item: string): void {
+    this.onCreate.emit(item);
+  }
+
+  getSelectTrigger(): string {
+    if(this.selectedItems.length == 1) {
+      return this.selectedItems[0];
+    }
+    return `${this.selectedItems[0]}  (+${this.selectedItems.length - 1} more)`;
   }
 
 }

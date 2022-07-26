@@ -14,7 +14,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private configurationSubscription: Subscription = null;
   private updateConfigurationSubscription: Subscription = null;
   private spinnerSubscription: Subscription = null;
-  
+  data=['tt', 'test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12', 'test13', 'test14'];
   constructor(
     public sharedService: SharedService, 
     private configurationService: ConfigurationService
@@ -43,6 +43,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
     () => {
       this.sharedService.checkLoadingSpinner();
     });
+  }
+
+  onCreateFunction(item: string): void {
+    this.data.push(item);
   }
 
   setAnimationLoading(): void {

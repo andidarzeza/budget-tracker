@@ -4,8 +4,11 @@ import { DynamicDropdownComponent } from './dynamic-dropdown.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { CustomOptionModule } from './custom-option/custom-option.module';
 import { CreateNewOptionModule } from './create-new-option/create-new-option.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRippleModule } from '@angular/material/core';
 
 
 
@@ -13,11 +16,14 @@ import { CreateNewOptionModule } from './create-new-option/create-new-option.mod
   declarations: [DynamicDropdownComponent],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MatSelectModule,
+    MatRippleModule,
     MatIconModule,
+    MatMenuModule,
     MatButtonModule,
     CreateNewOptionModule,
-    CustomOptionModule
+    MatCheckboxModule
   ],
   exports: [DynamicDropdownComponent]
 })

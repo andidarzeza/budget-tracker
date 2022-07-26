@@ -1,0 +1,12 @@
+.option-container {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.all-checkbox {
+    cursor:pointer;
+    height: 42px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+}

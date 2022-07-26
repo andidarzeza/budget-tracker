@@ -1,17 +1,38 @@
-<mat-form-field [appearance]="appearance" style="width: 100%;">
+<mat-form-field [appearance]="appearance" class="w-full">
     <mat-label>{{inputLabel}}</mat-label>
-    <mat-select multiple panelClass="custom-dropdown">
+    <mat-select [formControl]="matSelectFormControl" multiple panelClass="custom-dropdown">
+        <mat-select-trigger>
+            {{getSelectTrigger()}}
+        </mat-select-trigger>
+        <div class="option-container">
+            <div matRipple class="all-checkbox" (click)="selectAll()">
+                <mat-checkbox [checked]="allSelected" [color]="'primary'" (click)="$event.preventDefault()"
+                    [indeterminate]="selectedItems.length > 0 && selectedItems.length != data.length">
+                    All
+                </mat-checkbox>
+            </div>
+            <div class="h-42px flex position-relative" *ngFor="let item of data">
+                <mat-option class="pl-16px flex w-full h-full cursor-pointer items-center" (click)="onSelect(item)"
+                    [value]="item">
+                    {{item}}
+                </mat-option>
 
-        <div style="max-height: 185px;overflow-y: auto;">
-            <!-- Used Only to display the angular dropdown -->
-            <mat-option style="display: none;"></mat-option>
-            <custom-option (onSelect)="selectAll()" [checked]="allSelected" [displayActions]="false" [item]="'All'"></custom-option>
-            <custom-option (onSelect)="onSelect($event)" *ngFor="let item of data" [item]="item"></custom-option>
+                <button mat-icon-button [matMenuTriggerFor]="menu" class="position-absolute right-0">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item>
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit</span>
+                    </button>
+                    <button mat-menu-item>
+                        <mat-icon>delete</mat-icon>
+                        <span>Delete</span>
+                    </button>
+                </mat-menu>
+            </div>
         </div>
 
-        <create-new-option  [appearance]="appearance"></create-new-option>
+        <create-new-option (onCreate)="onCreateFunction($event)" [appearance]="appearance"></create-new-option>
     </mat-select>
 </mat-form-field>
-
-
-{{selectedItems | json}}
