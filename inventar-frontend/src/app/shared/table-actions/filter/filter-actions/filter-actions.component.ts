@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'filter-actions',
@@ -10,7 +11,9 @@ export class FilterActionsComponent {
   @Output() public onReset = new EventEmitter(); 
   @Output() public onSearch = new EventEmitter();
 
-  constructor() { }
+  constructor(
+    public sharedService: SharedService
+  ) { }
 
   reset(): void {
     this.onReset.emit();

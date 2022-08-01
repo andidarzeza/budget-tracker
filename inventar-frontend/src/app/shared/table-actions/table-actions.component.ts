@@ -11,18 +11,18 @@ import { TableActionInput } from './TableActionInput';
   styleUrls: ['./table-actions.component.css'],
   animations: [
     trigger(
-      'inAnimation', 
+      'inAnimation',
       [
         transition(
-          ':enter', 
+          ':enter',
           [
             style({ opacity: 0 }),
-            animate('200ms ease-out', 
-                    style({opacity: 1 }))
+            animate('200ms ease-out',
+              style({ opacity: 1 }))
           ]
         )
       ]
-  )
+    )
   ]
 })
 export class TableActionsComponent {
@@ -68,26 +68,30 @@ export class TableActionsComponent {
 
   @HostListener('window:click', ['$event'])
   keyEvent(event: any): void {
+
+
     const elem = document.getElementById(this.containerId);
     const option = document.getElementsByTagName("mat-option");
     let close = true;
-    if(option.length !== 0) {
-      for(let i = 0;i<option.length;i++) {
+    if (option.length !== 0) {
+      for (let i = 0; i < option.length; i++) {
         const opt = option[i];
-        if(opt?.contains(event.target)) {
+        if (opt?.contains(event.target)) {
           close = false;
           break;
         }
-        
+
       }
-      
     }
-         console.log(close);
-         
-      if(!elem?.contains(event.target) && event.target.id !== this.searchIconId && close) {
-        
-        this.showSearchInput = false;
-      }
-    
+    const t = document.getElementsByClassName("cdk-overlay-transparent-backdrop");
+    if (t.length > 0) {
+      close = false;
+    }
+
+    if (!elem?.contains(event.target) && event.target.id !== this.searchIconId && close) {
+
+      this.showSearchInput = false;
+    }
+
   }
 }

@@ -1,6 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { SharedService } from 'src/app/services/shared.service';
 import { FilterOptions } from './filter.models';
 
 @Component({
@@ -15,7 +16,8 @@ export class FilterComponent implements OnInit {
   public formGroup: FormGroup = this.formBuilder.group({});
 
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    public sharedService: SharedService
   ) { }
 
   ngOnInit(): void {

@@ -120,9 +120,8 @@
 }
 
 .dark-user-circle {
-    background-color: var(--light);
-    // background-color: #f6af06;
-    color: white;
+    background-color: var(--light) !important;
+    color: white !important;
 }
 
 .mat-menu-panel.dark-user-menu, .mat-menu-panel.dark-themes-menu{
