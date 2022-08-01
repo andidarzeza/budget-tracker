@@ -4,8 +4,10 @@ import com.adprod.inventar.models.Expense;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Map;
+
 public interface ExpenseService {
-    ResponseEntity getExpenses(Pageable pageable);
+    ResponseEntity getExpenses(Pageable pageable, Map<String, String> params);
     ResponseEntity save(Expense expense);
     Expense findOne(String id);
     ResponseEntity delete(String id);

@@ -12,15 +12,17 @@ import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.ExpenseService;
 import com.adprod.inventar.services.SecurityContextService;
+import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -32,8 +34,26 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final SecurityContextService securityContextService;
 
     @Override
-    public ResponseEntity getExpenses(Pageable pageable) {
-        Page<Expense> page = expenseRepository.findAllByUser(pageable, securityContextService.username());
+    public ResponseEntity getExpenses(Pageable pageable, Map<String, String> params) {
+        String name = params.get("name");
+        String description = params.get("description");
+        Double expense = Double.parseDouble(Objects.nonNull(params.get("expense")) ? params.get("expense") : "-1");
+        String category = params.get("category");
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if(Objects.nonNull(name)){
+            booleanBuilder = booleanBuilder.and(QExpense.expense.name.contains(name));
+        }
+        if(Objects.nonNull(description)) {
+            booleanBuilder = booleanBuilder.and(QExpense.expense.description.contains(description));
+        }
+        if(expense > 0) {
+            booleanBuilder = booleanBuilder.and(QExpense.expense.moneySpent.eq(expense));
+        }
+        if(Objects.nonNull(category)) {
+            booleanBuilder = booleanBuilder.and(QExpense.expense.categoryID.eq(category));
+        }
+        Page<Expense> page = expenseRepository.findAll(booleanBuilder, pageable);
+
         SpendingWrapper spendingWrapper = new SpendingWrapper();
         List<Expense> content = page.getContent();
         List<SpendingDTO> response = new ArrayList<>();

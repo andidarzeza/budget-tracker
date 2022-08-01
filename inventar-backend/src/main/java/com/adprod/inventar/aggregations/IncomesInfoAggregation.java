@@ -28,7 +28,7 @@ public class IncomesInfoAggregation {
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("total"));
         TypedAggregation<Income> tempAgg = Aggregation.newAggregation(Income.class, aggregationResult);
-        List<IncomeInfoDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incoming", IncomeInfoDTO.class).getMappedResults();
+        List<IncomeInfoDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incomes", IncomeInfoDTO.class).getMappedResults();
         List<IncomeInfoDTO> response = new ArrayList<>();
         resultSR.forEach(result -> {
             String id = result.get_id();

@@ -1,0 +1,34 @@
+<div style="width: 100%;">
+
+
+    <filter-header></filter-header>
+
+    <mat-divider></mat-divider>
+
+    <form [formGroup]="formGroup" style="width: calc(100% - 250px);padding: 10px;display: grid;grid-template-columns: auto auto auto auto;grid-gap: 10px;">
+        <ng-container *ngFor="let filterOption of filterOptions">
+            <div [ngSwitch]="filterOption.type" style="width: 100%;">
+                <mat-form-field *ngSwitchCase="'text'" class="my-form-field" [appearance]="'outline'">
+                    <mat-label>{{filterOption.label}}</mat-label>
+                    <input formControlName="{{filterOption.field}}" matInput>
+                </mat-form-field>
+
+                <mat-form-field *ngSwitchCase="'number'" class="my-form-field" [appearance]="'outline'">
+                    <mat-label>{{filterOption.label}}</mat-label>
+                    <input formControlName="{{filterOption.field}}" type="number" matInput>
+                </mat-form-field>
+
+                <mat-form-field *ngSwitchCase="'select'" class="my-form-field" [appearance]="'outline'">
+                    <mat-label>{{filterOption.label}}</mat-label>
+                    <mat-select formControlName="{{filterOption.field}}">
+                      <mat-option *ngFor="let option of filterOption?.matSelectOptions?.options" [value]="option[filterOption?.matSelectOptions.valueBy]">
+                        {{option[filterOption?.matSelectOptions.displayBy]}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+        </ng-container>
+    </form>
+
+    <filter-actions (onReset)="reset()" (onSearch)="search()" class="filter-actions"></filter-actions>
+</div>

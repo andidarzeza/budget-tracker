@@ -10,10 +10,11 @@ import { Expense } from '../models/models';
 export class SpendingService {
   constructor(private http: HttpClient) { }
 
-  findAll(page: any, size: any, sort: any): Observable<any> {
-    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort);
+  findAll(page: any, size: any, sort: any, params?: HttpParams): Observable<any> {
+    params = params ?? new HttpParams();
+    params = params.append("page", page).append("size", size).append("sort", sort);
     return this.http.get(`${serverAPIURL}/api/spending`, {
-      params: options,
+      params,
       observe: 'response'
     });
   }

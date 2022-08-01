@@ -1,0 +1,10 @@
+.my-form-field {
+    width: 100%;
+}
+
+.filter-actions {
+    padding: 20px 0px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}

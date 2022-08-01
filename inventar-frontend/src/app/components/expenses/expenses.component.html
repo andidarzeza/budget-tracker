@@ -6,7 +6,7 @@
     </mat-drawer>
 
 
-    <app-table-actions [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="query()">
+    <app-table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="query()" (onSearch)="onSearch($event)" (onReset)="reset()">
     </app-table-actions>
 
     <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">

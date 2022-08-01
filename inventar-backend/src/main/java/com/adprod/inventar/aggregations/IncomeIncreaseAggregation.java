@@ -31,7 +31,7 @@ public class IncomeIncreaseAggregation {
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$user").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("income"));
         TypedAggregation<Income> tempAgg = Aggregation.newAggregation(Income.class, aggregationResult);
-        List<IncomeAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incoming", IncomeAggregationDTO.class).getMappedResults();
+        List<IncomeAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incomes", IncomeAggregationDTO.class).getMappedResults();
         Double incomeLastMonth = resultSR.size() > 0 ? resultSR.get(0).getIncome() : 0.0;
         Double averageLastMonth = this.calculateAverageForLastMonth(from, incomeLastMonth);
         return this.calculatePercentage(averageLastMonth, currentIncome);

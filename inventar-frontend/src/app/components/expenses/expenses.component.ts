@@ -1,4 +1,4 @@
-import { HttpResponse } from '@angular/common/http';
+import { HttpParams, HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
@@ -14,7 +14,9 @@ import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { filter, takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Expense } from 'src/app/models/models';
+import { Category, CategoryType, Expense } from 'src/app/models/models';
+import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
+import { CategoriesService } from 'src/app/services/categories.service';
 
 @Component({
   selector: 'app-expenses',
@@ -33,12 +35,36 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   public displayedColumns: string[] = ['createdTime', 'name', 'description', 'category', 'moneySpent', 'actions'];
   public mobileColumns: string[] = ['name', 'category', 'moneySpent', 'actions'];
   public expenses: Expense[] = [];
-
+  private previousFilters: HttpParams;
   public expenseViewId = "";
   public tableActionInput: TableActionInput = {
     pageName: "Expenses",
     icon: 'attach_money'
   };
+
+  filterOptions: FilterOptions[] = [
+    {
+      field: "name",
+      label: "Name",
+      type: "text"
+    },
+    {
+      field: "description",
+      label: "Description",
+      type: "text"
+    },
+    {
+      field: "category",
+      label: "Category",
+      type: "select",
+      matSelectOptions: undefined
+    },
+    {
+      field: "expense",
+      label: "Expense",
+      type: "number"
+    }
+  ]
 
   private _subject = new Subject();
 
@@ -48,11 +74,20 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     public sharedService: SharedService,
     private spendingService: SpendingService,
     public dialog: DialogService,
+    private categoryService: CategoriesService,
     private toaster: ToastrService
   ) {}
 
   ngOnInit(): void {
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
+    this.categoryService.findAll(0, 9999, CategoryType.EXPENSE).subscribe(res => {
+      console.log(res.body.categories);
+      this.filterOptions[2].matSelectOptions = {
+          options: res.body.categories,
+          displayBy: "category",
+          valueBy: "id"
+      };
+    })
     this.query();
   }
 
@@ -66,7 +101,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.spendingService
-      .findAll(this.page, this.size, this.sort)
+      .findAll(this.page, this.size, this.sort, this.previousFilters)
       .pipe(takeUntil(this._subject))
       .subscribe((res: HttpResponse<any>) => {
         this.expenses = res?.body.expenses;
@@ -87,7 +122,17 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
 
   onMouseEnter(temp: any): void {
     console.log(temp);
-    
+  }
+
+  onSearch(payload: any): void {
+    this.previousFilters = payload.params;
+    this.page = 0;
+    this.query();
+  }
+
+  reset(): void {
+    this.previousFilters = null;
+    this.query();
   }
 
   viewExpenseDetails(id: string): void {

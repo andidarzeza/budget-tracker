@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmComponent } from './confirm/confirm.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +16,8 @@ import { AddExpenseComponent } from '../components/expenses/add-expense/add-expe
 import { RecordActionsComponent } from './record-actions/record-actions.component';
 import { CustomDatePipe } from '../pipes/custom-date.pipe';
 import { IconSelectComponent } from './icon-select/icon-select.component';
+import { MatInputModule } from '@angular/material/input';
+import { FilterModule } from './table-actions/filter/filter.module';
 
 
 
@@ -27,7 +29,10 @@ import { IconSelectComponent } from './icon-select/icon-select.component';
     MatButtonModule,
     MatDialogModule,
     MatMenuModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    FilterModule
   ],
   exports: [
     CommonModule,

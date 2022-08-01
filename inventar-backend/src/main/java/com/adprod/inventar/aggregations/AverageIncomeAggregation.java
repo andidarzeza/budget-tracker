@@ -36,7 +36,7 @@ public class AverageIncomeAggregation {
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
         aggregationResult.add(Aggregation.group("$user").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("income"));
         TypedAggregation<Income> tempAgg = Aggregation.newAggregation(Income.class, aggregationResult);
-        List<IncomeAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incoming", IncomeAggregationDTO.class).getMappedResults();
+        List<IncomeAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incomes", IncomeAggregationDTO.class).getMappedResults();
         return resultSR.size() > 0 ? resultSR.get(0).getIncome() / daysInMonth : 0.0;
     }
 }
