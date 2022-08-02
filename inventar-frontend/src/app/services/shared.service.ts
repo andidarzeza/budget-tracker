@@ -28,9 +28,11 @@ export class SharedService {
   }
 
   getHeight(difference: number): number {
-    difference = this.mobileView ? (difference - 40) : 0;
+    difference = this.mobileView ? (difference - 40) : difference - 0;
     if(window.innerHeight <= 600) difference = difference - 40;
     if(window.innerHeight <= 400) difference = difference - 40;
+    console.log(difference);
+    
     return window.innerHeight - 275 - difference;
   }
 

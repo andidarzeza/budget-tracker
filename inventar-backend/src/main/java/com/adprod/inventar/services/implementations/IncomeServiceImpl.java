@@ -1,9 +1,8 @@
 package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
-import com.adprod.inventar.models.Income;
-import com.adprod.inventar.models.ResponseMessage;
-import com.adprod.inventar.models.ExpenseCategory;
+import com.adprod.inventar.models.*;
+
 import static com.adprod.inventar.models.enums.EntityAction.*;
 import static com.adprod.inventar.models.enums.EntityType.INCOME;
 import com.adprod.inventar.models.wrappers.IncomingDTO;
@@ -13,15 +12,15 @@ import com.adprod.inventar.repositories.IncomeRepository;
 import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.IncomeService;
+import com.adprod.inventar.services.SecurityContextService;
+import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -31,10 +30,31 @@ public class IncomeServiceImpl implements IncomeService {
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
     private final HistoryService historyService;
+    private final SecurityContextService securityContextService;
 
     @Override
-    public ResponseEntity findAll(Pageable pageable, String user) {
-        Page<Income> page = incomeRepository.findAllByUser(pageable, user);
+    public ResponseEntity findAll(Pageable pageable, Map<String, String> params) {
+
+        String name = params.get("name");
+        String description = params.get("description");
+        Double income = Double.parseDouble(Objects.nonNull(params.get("income")) ? params.get("income") : "-1");
+        String category = params.get("category");
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder = booleanBuilder.and(QIncome.income.user.eq(securityContextService.username()));
+        if(Objects.nonNull(name)){
+            booleanBuilder = booleanBuilder.and(QIncome.income.name.containsIgnoreCase(name));
+        }
+        if(Objects.nonNull(description)) {
+            booleanBuilder = booleanBuilder.and(QIncome.income.description.containsIgnoreCase(description));
+        }
+        if(income > 0) {
+            booleanBuilder = booleanBuilder.and(QIncome.income.incoming.eq(income));
+        }
+        if(Objects.nonNull(category)) {
+            booleanBuilder = booleanBuilder.and(QIncome.income.categoryID.eq(category));
+        }
+
+        Page<Income> page = incomeRepository.findAll(booleanBuilder, pageable);
         IncomingWrapper incomingWrapper = new IncomingWrapper();
         List<Income> content = page.getContent();
         List<IncomingDTO> response = new ArrayList<>();
@@ -54,6 +74,7 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public ResponseEntity save(Income income) {
+        income.setUser(securityContextService.username());
         accountService.addToBalance(income.getIncoming());
         incomeRepository.save(income);
         historyService.save(historyService.from(CREATE, INCOME));
@@ -78,8 +99,8 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public ResponseEntity update(String id, Income income) {
+        income.setUser(securityContextService.username());
         Income incomeDB = findOne(id);
-
         double removeAndAddAmount =  income.getIncoming() - incomeDB.getIncoming();
         this.accountService.addToBalance(removeAndAddAmount);
         income.setId(id);

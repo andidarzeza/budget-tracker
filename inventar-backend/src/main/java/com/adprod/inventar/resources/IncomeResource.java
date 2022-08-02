@@ -8,17 +8,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/incomes")
 public class IncomeResource {
 
     private final IncomeService incomeService;
-    private final SecurityContextService securityContextService;
 
     @GetMapping
-    public ResponseEntity findAll(Pageable pageable){
-        return incomeService.findAll(pageable, securityContextService.username());
+    public ResponseEntity findAll(Pageable pageable, @RequestParam Map<String, String> params){
+        return incomeService.findAll(pageable, params);
     }
 
     @GetMapping("/{id}")
@@ -33,13 +34,11 @@ public class IncomeResource {
 
     @PostMapping
     public ResponseEntity save(@RequestBody Income income){
-        income.setUser(securityContextService.username());
         return incomeService.save(income);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity update(@RequestBody Income income, @PathVariable String id) {
-        income.setUser(securityContextService.username());
         return incomeService.update(id, income);
     }
 }

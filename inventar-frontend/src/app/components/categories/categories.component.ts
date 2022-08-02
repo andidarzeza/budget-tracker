@@ -1,4 +1,4 @@
-import { HttpResponse } from '@angular/common/http';
+import { HttpParams, HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { CategoriesService } from 'src/app/services/categories.service';
@@ -15,6 +15,8 @@ import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Category, CategoryType } from 'src/app/models/models';
+import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
+import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
 
 @Component({
   selector: 'app-categories',
@@ -26,7 +28,19 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   isSidenavOpened: boolean = false;
   @ViewChild('drawer') drawer: MatSidenav;
   categoryId: string;
-
+  previousFilters: HttpParams;
+  filterOptions: FilterOptions[] = [
+    {
+      field: "category",
+      label: "Category",
+      type: "text"
+    },
+    {
+      field: "description",
+      label: "Description",
+      type: "text"
+    }
+  ];
 
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   public page: number = 0;
@@ -40,6 +54,10 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   public defaultSort: string = "createdTime,desc";
   public sort: string = this.defaultSort;
   private _subject = new Subject();
+  public tableActionInput: TableActionInput = {
+    pageName: "Categories",
+    icon: 'attach_money'
+  };
 
   constructor(
     public sharedService: SharedService,
@@ -62,7 +80,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.categoriesService
-      .findAll(this.page, this.size, this.categoriesType, this.sort)
+      .findAll(this.page, this.size, this.categoriesType, this.sort, this.previousFilters)
       .pipe(takeUntil(this._subject))
       .subscribe((res: HttpResponse<any>) => {
         this.dataSource = res?.body.categories;
@@ -90,6 +108,17 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
       .afterClosed()
       .pipe(takeUntil(this._subject), filter((update)=>update))
       .subscribe(() => this.query());
+  }
+
+  onSearch(payload: any): void {
+    this.previousFilters = payload.params;
+    this.page = 0;
+    this.query();
+  }
+
+  reset(): void {
+    this.previousFilters = null;
+    this.query();
   }
 
   openDeleteConfirmDialog(id: string): void {

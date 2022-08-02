@@ -3,7 +3,9 @@
         <history-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [historyId]="historyId"></history-details>
     </mat-drawer>
 
-    <app-table-actions [tableActionInput]="tableActionInput" (onRefresh)="query()"></app-table-actions>
+    <app-table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" 
+        (onRefresh)="query()" 
+        (onSearch)="onSearch($event)" (onReset)="reset()"></app-table-actions>
 
     <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
         <table *ngIf="historyList.length != 0" mat-table matSort [dataSource]="historyList"
@@ -60,9 +62,9 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-        <div *ngIf="historyList.length == 0 && !sharedService.stillLoading" class="no-data">
-            No data to display!
-        </div>
+
+
+    <table-message [total]="historyList.length"></table-message>
     </div>
 
 

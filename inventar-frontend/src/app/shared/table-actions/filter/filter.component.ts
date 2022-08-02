@@ -1,6 +1,6 @@
 import { HttpParams } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 import { FilterOptions } from './filter.models';
 
@@ -27,6 +27,7 @@ export class FilterComponent implements OnInit {
   }
 
   reset(): void {
+    this.formGroup.reset();
     this.onReset.emit();
   }
 

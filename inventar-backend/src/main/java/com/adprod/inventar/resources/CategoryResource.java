@@ -1,12 +1,13 @@
 package com.adprod.inventar.resources;
 
 import com.adprod.inventar.models.ExpenseCategory;
-import com.adprod.inventar.models.enums.CategoryType;
 import com.adprod.inventar.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -16,8 +17,8 @@ public class CategoryResource {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity findAll(Pageable pageable, @RequestParam CategoryType categoryType) {
-        return categoryService.findAll(pageable, categoryType);
+    public ResponseEntity findAll(Pageable pageable, @RequestParam Map<String, String> params) {
+        return categoryService.findAll(pageable, params);
     }
 
     @GetMapping("/{id}")

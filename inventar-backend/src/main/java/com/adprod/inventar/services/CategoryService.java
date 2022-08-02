@@ -5,8 +5,10 @@ import com.adprod.inventar.models.enums.CategoryType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Map;
+
 public interface CategoryService {
-    ResponseEntity findAll(Pageable pageable, CategoryType categoryType);
+    ResponseEntity findAll(Pageable pageable, Map<String, String> params);
     ExpenseCategory findOne(String id);
     ResponseEntity delete(String id);
     ResponseEntity save(ExpenseCategory expenseCategory);

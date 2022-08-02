@@ -5,9 +5,10 @@
 
 
 <app-table-actions
+    [filterOptions]="filterOptions"
     [tableActionInput]="tableActionInput"
-    (onOpenDialog)="openAddEditForm()"
-    (onRefresh)="query()"
+    (onOpenDialog)="openAddEditForm()" (onRefresh)="query()" 
+    (onSearch)="onSearch($event)" (onReset)="reset()"
 ></app-table-actions>
 
 
@@ -61,9 +62,8 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    <div *ngIf="incomes.length == 0 && !sharedService.stillLoading" class="no-data" [style.height.px]="sharedService.getHeight(60)">
-        No data to display!
-    </div>
+    
+    <table-message [total]="incomes.length"></table-message>
 </div>
 
 

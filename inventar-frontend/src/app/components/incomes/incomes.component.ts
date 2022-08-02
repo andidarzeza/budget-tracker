@@ -1,4 +1,4 @@
-import { HttpResponse } from '@angular/common/http';
+import { HttpParams, HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { IncomingsService } from 'src/app/services/incomings.service';
@@ -6,15 +6,17 @@ import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddIncomingComponent } from './add-incoming/add-incoming.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Income } from 'src/app/models/models';
+import { CategoryType, Income } from 'src/app/models/models';
+import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
+import { CategoriesService } from 'src/app/services/categories.service';
 
 @Component({
   selector: 'app-incomes',
@@ -34,22 +36,57 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   private sort: string = this.defaultSort;
   public displayedColumns: string[] = ['date', 'name', 'description', 'category', 'income', 'actions'];
   public mobileColumns: string[] = ['name', 'category', 'income', 'actions'];
-  private deleteSubscription: Subscription = null;
-  private incomeSubscription: Subscription = null;
+
+  private _subject = new Subject();
+
+  private previousFilters: HttpParams;
   public tableActionInput: TableActionInput = {
     pageName: "Incomes",
     icon: 'transit_enterexit'
   };
 
+  filterOptions: FilterOptions[] = [
+    {
+      field: "name",
+      label: "Name",
+      type: "text"
+    },
+    {
+      field: "description",
+      label: "Description",
+      type: "text"
+    },
+    {
+      field: "category",
+      label: "Category",
+      type: "select",
+      matSelectOptions: undefined
+    },
+    {
+      field: "income",
+      label: "Income",
+      type: "number"
+    }
+  ];
+
   constructor(
     public sharedService: SharedService,
     private incomingsService: IncomingsService,
     public dialog: DialogService,
-    private toaster: ToastrService
+    private toaster: ToastrService,
+    private categoryService: CategoriesService
   ) {}
 
   ngOnInit(): void {
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
+    this.categoryService.findAll(0, 9999, CategoryType.INCOME).subscribe(res => {
+      console.log(res.body.categories);
+      this.filterOptions[2].matSelectOptions = {
+          options: res.body.categories,
+          displayBy: "category",
+          valueBy: "id"
+      };
+    });
     this.query();
   }
 
@@ -62,15 +99,17 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
 
   query(): void {
     this.sharedService.activateLoadingSpinner();
-    this.incomeSubscription?.unsubscribe();
-    this.incomeSubscription = this.incomingsService.findAll(this.page, this.size, this.sort).subscribe((res: HttpResponse<any>) => {
-      this.incomes = res?.body.incomes;
-      this.totalItems = res?.body.count;
-      this.sharedService.checkLoadingSpinner();     
-    },
-    () => {
-      this.sharedService.checkLoadingSpinner();
-    });
+    this.incomingsService
+      .findAll(this.page, this.size, this.sort, this.previousFilters)
+      .pipe(takeUntil(this._subject))
+      .subscribe((res: HttpResponse<any>) => {
+        this.incomes = res?.body.incomes;
+        this.totalItems = res?.body.count;
+        this.sharedService.checkLoadingSpinner();     
+      },
+      () => {
+        this.sharedService.checkLoadingSpinner();
+      });
   }
 
   openAddEditForm(income?: Income): void {
@@ -98,11 +137,13 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   }
   
   delete(id: string): void {
-    this.deleteSubscription?.unsubscribe();
-    this.deleteSubscription = this.incomingsService.delete(id).subscribe(() => {
-      this.query();
-      this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
-    });
+    this.incomingsService
+      .delete(id)
+      .pipe(takeUntil(this._subject))
+      .subscribe(() => {
+        this.query();
+        this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
+      });
   }
 
   announceSortChange(sort: Sort): void {
@@ -110,8 +151,19 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
     this.query();
   }
 
+  onSearch(payload: any): void {
+    this.previousFilters = payload.params;
+    this.page = 0;
+    this.query();
+  }
+
+  reset(): void {
+    this.previousFilters = null;
+    this.query();
+  }
+
   ngOnDestroy(): void {
-    this.incomeSubscription?.unsubscribe();
-    this.deleteSubscription?.unsubscribe();
+    this._subject.next();
+    this._subject.complete();
   }
 }

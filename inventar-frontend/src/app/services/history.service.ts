@@ -9,8 +9,8 @@ import { serverAPIURL } from 'src/environments/environment';
 export class HistoryService {
   constructor(private http: HttpClient) { }
 
-  findAll(page: any, size: any, sort: any): Observable<any> {
-    const params: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort);
+  findAll(page: any, size: any, sort: any, params: HttpParams): Observable<any> {
+    params = params ?? new HttpParams().append("page", page).append("size", size).append("sort", sort);
     return this.http.get(`${serverAPIURL}/api/history`, {
       params,
       observe: 'response'

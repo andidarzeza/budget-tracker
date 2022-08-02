@@ -6,7 +6,10 @@
     </mat-drawer>
 
 
-    <app-table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="query()" (onSearch)="onSearch($event)" (onReset)="reset()">
+    <app-table-actions 
+        [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" 
+        (onOpenDialog)="openAddEditForm()" (onRefresh)="query()" 
+        (onSearch)="onSearch($event)" (onReset)="reset()">
     </app-table-actions>
 
     <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
@@ -69,10 +72,9 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-        <div *ngIf="expenses.length == 0 && !sharedService.stillLoading" class="no-data"
-            [style.height.px]="sharedService.getHeight(60)">
-            No data to display!
-        </div>
+
+
+        <table-message [total]="expenses.length"></table-message>
     </div>
 
 

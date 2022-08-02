@@ -16,7 +16,6 @@ import java.util.Map;
 public class ExpenseResource {
 
     private final ExpenseService expenseService;
-    private final SecurityContextService securityContextService;
 
     @GetMapping
     public ResponseEntity findAll(Pageable pageable, @RequestParam Map<String, String> params){
@@ -35,13 +34,11 @@ public class ExpenseResource {
 
     @PostMapping
     public ResponseEntity save(@RequestBody Expense expense){
-        expense.setUser(securityContextService.username());
         return expenseService.save(expense);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity update(@RequestBody Expense expense, @PathVariable String id) {
-        expense.setUser(securityContextService.username());
         return expenseService.update(id, expense);
     }
 }

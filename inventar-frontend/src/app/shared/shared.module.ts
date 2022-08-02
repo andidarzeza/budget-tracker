@@ -18,6 +18,7 @@ import { CustomDatePipe } from '../pipes/custom-date.pipe';
 import { IconSelectComponent } from './icon-select/icon-select.component';
 import { MatInputModule } from '@angular/material/input';
 import { FilterModule } from './table-actions/filter/filter.module';
+import { TableMessageModule } from './table-message/table-message.module';
 
 
 
@@ -26,6 +27,7 @@ import { FilterModule } from './table-actions/filter/filter.module';
   imports: [
     CommonModule,
     MatIconModule,
+    TableMessageModule,
     MatButtonModule,
     MatDialogModule,
     MatMenuModule,
@@ -37,6 +39,7 @@ import { FilterModule } from './table-actions/filter/filter.module';
   exports: [
     CommonModule,
     FormsModule,
+    TableMessageModule,
     ConfirmComponent,
     FloatingMenuComponent,
     AbsoluteValuePipe,

@@ -1,5 +1,6 @@
 package com.adprod.inventar.models;
 
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Setter
 @Getter
+@QueryEntity
 public class ExpenseCategory {
     @Id
     private String id;

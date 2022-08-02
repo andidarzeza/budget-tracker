@@ -64,7 +64,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
       label: "Expense",
       type: "number"
     }
-  ]
+  ];
 
   private _subject = new Subject();
 
@@ -87,7 +87,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
           displayBy: "category",
           valueBy: "id"
       };
-    })
+    });
     this.query();
   }
 

@@ -10,10 +10,10 @@ import { Income } from '../models/models';
 export class IncomingsService {
   constructor(private http: HttpClient) { }
 
-  findAll(page: any, size: any, sort: any): Observable<any> {
-    const options: HttpParams = new HttpParams().append("page", page).append("size", size).append("sort", sort);
+  findAll(page: any, size: any, sort: any, params: HttpParams): Observable<any> {
+    params  = params ?? new HttpParams().append("page", page).append("size", size).append("sort", sort);
     return this.http.get(`${serverAPIURL}/api/incomes`, {
-      params: options,
+      params,
       observe: 'response'
     });
   }

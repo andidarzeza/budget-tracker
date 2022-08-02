@@ -81,12 +81,22 @@ export enum EntityAction {
     EXPORT = "export"
 }
 
+export const ENTITY_ACTIONS = [
+    EntityAction.CREATE, EntityAction.DELETE, EntityAction.UPDATE,EntityAction.AUTHENTICATION,
+    EntityAction.REGISTRATION, EntityAction.EXPORT
+];
+
 export enum EntityType {
     INCOME = "income",
     EXPENSE = "expense",
     CATEGORY = "category",
     DASHBOARD = "dashboard"
 }
+
+export const ENTITIES = [
+    EntityType.INCOME, EntityType.EXPENSE,
+    EntityType.CATEGORY, EntityType.DASHBOARD
+]
 
 export interface IConfiguration {
     darkMode: boolean,

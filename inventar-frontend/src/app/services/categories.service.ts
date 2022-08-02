@@ -10,13 +10,13 @@ import { Category, CategoryType } from '../models/models';
 export class CategoriesService {
   constructor(private http: HttpClient) { }
 
-  findAll(page: any, size: any, categoryType: CategoryType, sort?: string): Observable<any> {
-    let options: HttpParams = new HttpParams().append("page", page).append("size", size).append("categoryType", categoryType.toString());
+  findAll(page: any, size: any, categoryType: CategoryType, sort?: string, params?: HttpParams): Observable<any> {
+    params =  (params ?? new HttpParams().append("page", page).append("size", size)).append("categoryType", categoryType.toString());
     if(sort) {
-      options = options.append("sort", sort);
+      params = params.append("sort", sort);
     }
     return this.http.get(`${serverAPIURL}/api/categories`, {
-      params: options,
+      params,
       observe: 'response'
     });
   }

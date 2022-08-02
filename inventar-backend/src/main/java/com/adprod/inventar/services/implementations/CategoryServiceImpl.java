@@ -10,12 +10,15 @@ import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.services.CategoryService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.SecurityContextService;
+import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -27,8 +30,19 @@ public class CategoryServiceImpl implements CategoryService {
     private final EntityType entityType = EntityType.CATEGORY;
 
     @Override
-    public ResponseEntity findAll(Pageable pageable, CategoryType categoryType) {
-        Page<ExpenseCategory> page = this.categoryRepository.findAllByCategoryTypeAndUser(pageable, categoryType.toString(), securityContextService.username());
+    public ResponseEntity findAll(Pageable pageable, Map<String, String> params) {
+        String category = params.get("category");
+        String description = params.get("description");
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder = booleanBuilder.and(QExpenseCategory.expenseCategory.user.eq(securityContextService.username()));
+        booleanBuilder = booleanBuilder.and(QExpenseCategory.expenseCategory.categoryType.eq(params.get("categoryType")));
+        if(Objects.nonNull(description)) {
+            booleanBuilder = booleanBuilder.and(QExpenseCategory.expenseCategory.description.containsIgnoreCase(description));
+        }
+        if(Objects.nonNull(category)) {
+            booleanBuilder = booleanBuilder.and(QExpenseCategory.expenseCategory.category.containsIgnoreCase(category));
+        }
+        Page<ExpenseCategory> page = this.categoryRepository.findAll(booleanBuilder, pageable);
         CategoryWrapper categoryWrapper = new CategoryWrapper();
         categoryWrapper.setCategories(page.getContent());
         categoryWrapper.setCount(page.getTotalElements());

@@ -1,5 +1,5 @@
 <div class="{{sharedService.theme}}-book-tb-container" style="width: 100%;"
-    [style.height.px]="sharedService.getHeight(0)">
+    [style.height.px]="sharedService.getHeight(74)">
     <table mat-table [dataSource]="dataSource" class="{{sharedService.theme}}-table" matSort
         (matSortChange)="announceSortChange($event)">
 
@@ -43,7 +43,6 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    <div *ngIf="dataSource.length == 0" class="no-data" [style.height.px]="sharedService.getHeight(60)">
-        No data to display!
-    </div>
+
+    <table-message [total]="dataSource.length"></table-message>
 </div>

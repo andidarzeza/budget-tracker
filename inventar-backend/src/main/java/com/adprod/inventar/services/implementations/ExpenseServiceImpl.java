@@ -16,12 +16,8 @@ import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -40,11 +36,12 @@ public class ExpenseServiceImpl implements ExpenseService {
         Double expense = Double.parseDouble(Objects.nonNull(params.get("expense")) ? params.get("expense") : "-1");
         String category = params.get("category");
         BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder = booleanBuilder.and(QExpense.expense.user.eq(securityContextService.username()));
         if(Objects.nonNull(name)){
-            booleanBuilder = booleanBuilder.and(QExpense.expense.name.contains(name));
+            booleanBuilder = booleanBuilder.and(QExpense.expense.name.containsIgnoreCase(name));
         }
         if(Objects.nonNull(description)) {
-            booleanBuilder = booleanBuilder.and(QExpense.expense.description.contains(description));
+            booleanBuilder = booleanBuilder.and(QExpense.expense.description.containsIgnoreCase(description));
         }
         if(expense > 0) {
             booleanBuilder = booleanBuilder.and(QExpense.expense.moneySpent.eq(expense));
@@ -71,6 +68,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity save(Expense expense) {
+        expense.setUser(securityContextService.username());
         accountService.removeFromBalance(expense.getMoneySpent());
         expenseRepository.save(expense);
         historyService.save(historyService.from(EntityAction.CREATE, EXPENSE));
@@ -96,6 +94,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity update(String id, Expense spending) {
+        spending.setUser(securityContextService.username());
         Expense expense = findOne(id);
         double removeAndAddAmount = expense.getMoneySpent() - spending.getMoneySpent();
         accountService.addToBalance(removeAndAddAmount);
