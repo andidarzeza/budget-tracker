@@ -124,6 +124,11 @@
     color: white !important;
 }
 
+.dark-search-button {
+    background-color: var(--light) !important;
+    color: white !important;
+}
+
 .mat-menu-panel.dark-user-menu, .mat-menu-panel.dark-themes-menu{
     background: #111619;
 }
