@@ -26,6 +26,10 @@ export class FilterComponent implements OnInit {
     })
   }
 
+  onEnter(): void {
+    this.search();
+  }
+
   reset(): void {
     this.formGroup.reset();
     this.onReset.emit();

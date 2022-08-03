@@ -8,12 +8,12 @@
     <form [formGroup]="formGroup" style="width: calc(100% - 250px);padding: 10px;display: grid;grid-template-columns: auto auto auto auto;grid-gap: 10px;">
         <ng-container *ngFor="let filterOption of filterOptions">
             <div [ngSwitch]="filterOption.type" style="width: 100%;">
-                <mat-form-field class="{{sharedService.theme}}-text" *ngSwitchCase="'text'" class="my-form-field" [appearance]="'outline'">
+                <mat-form-field (keydown.enter)="onEnter()" class="{{sharedService.theme}}-text" *ngSwitchCase="'text'" class="my-form-field" [appearance]="'outline'">
                     <mat-label class="{{sharedService.theme}}-text">{{filterOption.label}}</mat-label>
                     <input formControlName="{{filterOption.field}}" matInput>
                 </mat-form-field>
 
-                <mat-form-field class="{{sharedService.theme}}-text" *ngSwitchCase="'number'" class="my-form-field" [appearance]="'outline'">
+                <mat-form-field (keydown.enter)="onEnter()" class="{{sharedService.theme}}-text" *ngSwitchCase="'number'" class="my-form-field" [appearance]="'outline'">
                     <mat-label class="{{sharedService.theme}}-text">{{filterOption.label}}</mat-label>
                     <input formControlName="{{filterOption.field}}" type="number" matInput>
                 </mat-form-field>

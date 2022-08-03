@@ -1,10 +1,4 @@
-.container {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    margin-top: -15px;
-    margin-left: 15px;
-}
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -22,3 +16,5 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+

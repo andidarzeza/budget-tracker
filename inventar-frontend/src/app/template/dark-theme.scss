@@ -101,7 +101,7 @@
 }
 
 .dark-add-entity {
-    background: #ff6347 !important;
+    background: var(--light) !important;
     color: white !important;
 }
 
@@ -111,6 +111,10 @@
 
 .dark-login-button {
     background-color: #111619 !important;
+    color: #9F9F9F !important;
+}
+
+.dark-close-icon {
     color: #9F9F9F !important;
 }
 

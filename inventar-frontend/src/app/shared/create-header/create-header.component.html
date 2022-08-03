@@ -1,0 +1,13 @@
+<div class="container">
+    <span class="header">
+        <mat-icon class="header-icon">{{icon}}</mat-icon>
+        <span class="header-title">
+            {{editMode ? "Update " + entity : "Create new " + entity}}
+        </span>
+    </span>
+    <div class="actions">
+        <button mat-icon-button (click)="closeDialog(false)">
+            <mat-icon class="{{sharedService.theme}}-icon">close</mat-icon>
+        </button>
+    </div>
+</div>

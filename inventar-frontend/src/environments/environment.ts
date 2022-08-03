@@ -31,7 +31,7 @@ export const TOASTER_CONFIGURATION = {
 }
 
 export const CREATE_DIALOG_CONFIGURATION = {
-  width: '700px',
+  width: '800px',
   disableClose: true
 }
 

@@ -1,28 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AddCategoryComponent } from './add-category.component';
+import { AddExpenseComponent } from './add-expense.component';
 import { MatIconModule } from '@angular/material/icon';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { CreateHeaderModule } from 'src/app/shared/create-header/create-header.module';
 
 
 
 @NgModule({
-  declarations: [AddCategoryComponent],
+  declarations: [AddExpenseComponent],
   imports: [
     CommonModule,
     MatIconModule,
-    SharedModule,
-    MatButtonModule,
-    FormsModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
     CreateHeaderModule
   ]
 })
-export class AddCategoryModule { }
+export class AddExpenseModule { }

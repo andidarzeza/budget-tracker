@@ -8,7 +8,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SpendingService } from 'src/app/services/spending.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { Category, CategoryType, Expense } from 'src/app/models/models';
+import { Category, CategoryType, EntityType, Expense } from 'src/app/models/models';
 
 @Component({
   selector: 'app-add-expense',
@@ -19,6 +19,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
 
   public savingEntity = false;
   private _subject = new Subject();
+  public entity: EntityType = EntityType.EXPENSE;
   
   constructor(
     public sharedService: SharedService,

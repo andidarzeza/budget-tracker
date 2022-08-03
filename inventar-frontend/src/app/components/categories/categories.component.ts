@@ -56,7 +56,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   private _subject = new Subject();
   public tableActionInput: TableActionInput = {
     pageName: "Categories",
-    icon: 'attach_money'
+    icon: 'library_books'
   };
 
   constructor(

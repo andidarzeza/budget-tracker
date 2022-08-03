@@ -3,18 +3,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { Category, CategoryType, Income } from 'src/app/models/models';
+import { Category, CategoryType, EntityType, Income } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-add-incoming',
-  templateUrl: './add-incoming.component.html',
-  styleUrls: ['./add-incoming.component.css']
+  selector: 'app-add-income',
+  templateUrl: './add-income.component.html',
+  styleUrls: ['./add-income.component.css']
 })
-export class AddIncomingComponent implements OnInit, OnDestroy {
+export class AddIncomeComponent implements OnInit, OnDestroy {
   public savingEntity: boolean = false;
   private categoriesSubscription: Subscription = null;
   private updateSubscription: Subscription = null;
@@ -29,11 +29,14 @@ export class AddIncomingComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public income: Income,
     public sharedService: SharedService, 
     private toaster: ToastrService,  
-    private dialogRef: MatDialogRef<AddIncomingComponent>, 
+    private dialogRef: MatDialogRef<AddIncomeComponent>, 
     private formBuilder: FormBuilder, 
     private incomingsService: IncomingsService, 
     private categoryService: CategoriesService
   ) {}
+
+
+  public entity: EntityType = EntityType.INCOME;
 
   get name(){
     return this.formGroup.controls['name'];

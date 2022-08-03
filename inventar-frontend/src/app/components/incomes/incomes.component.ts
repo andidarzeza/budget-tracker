@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
-import { AddIncomingComponent } from './add-incoming/add-incoming.component';
+import { AddIncomeComponent } from './add-income/add-income.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subject } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
@@ -113,7 +113,7 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   }
 
   openAddEditForm(income?: Income): void {
-    this.dialog.openDialog(AddIncomingComponent, income)
+    this.dialog.openDialog(AddIncomeComponent, income)
       .afterClosed()
       .pipe(filter((update)=>update))
       .subscribe(() => this.query());

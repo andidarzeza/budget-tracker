@@ -1,9 +1,6 @@
-<div class="container">
-    <span></span>
-    <div class="actions">
-        <mat-icon class="pointer" class="{{sharedService.theme}}-icon" (click)="closeDialog(false)">close</mat-icon>
-    </div>
-</div>
+
+<create-header icon="transit_enterexit" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)"></create-header>
+
 <form [formGroup]="formGroup">
     <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: 100%;">
         <mat-label class="{{sharedService.theme}}-text">Name</mat-label>
@@ -21,7 +18,9 @@
         <mat-form-field appearance="outline" style="width: calc(60% - 5px);" class="{{sharedService.theme}}-select">
             <mat-label class="{{sharedService.theme}}-text">Income Category</mat-label>
             <mat-select formControlName="categoryID" class="{{sharedService.theme}}-select">
-                <mat-option class="{{sharedService.theme}}-text {{sharedService.theme}}-option {{sharedService.theme}}-body" *ngFor="let category of categories" [value]="category.id">
+                <mat-option
+                    class="{{sharedService.theme}}-text {{sharedService.theme}}-option {{sharedService.theme}}-body"
+                    *ngFor="let category of categories" [value]="category.id">
                     {{category?.category}}
                 </mat-option>
             </mat-select>
@@ -31,7 +30,8 @@
 
     <mat-form-field class="{{sharedService.theme}}-text" style="width: 100%;" appearance="outline">
         <mat-label class="{{sharedService.theme}}-text">Note</mat-label>
-        <textarea style="max-height: 100px;" matInput formControlName="description" placeholder="Write a note..."></textarea>
+        <textarea style="max-height: 200px;min-height: 100px;" matInput formControlName="description"
+            placeholder="Write a note..."></textarea>
     </mat-form-field>
 
 </form>
@@ -40,7 +40,8 @@
 <div class="actions">
     <span></span>
     <span>
-        <button mat-raised-button color="primary" class="{{sharedService.theme}}-add-entity" style="padding: 2px;" [disabled]="formGroup?.invalid" (click)="add()">
+        <button mat-raised-button color="primary" class="{{sharedService.theme}}-add-entity" style="padding: 2px;"
+            [disabled]="formGroup?.invalid" (click)="add()">
             <mat-icon>done</mat-icon>
         </button>
     </span>

@@ -5,7 +5,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { AddIncomingComponent } from './add-incoming/add-incoming.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -18,12 +17,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { IncomeDetailsComponent } from './income-details/income-details.component';
 import { MatDividerModule } from '@angular/material/divider';
+import { AddIncomeModule } from './add-income/add-income.module';
 
 
 
 @NgModule({
   declarations: [
-    IncomesComponent, AddIncomingComponent, IncomeDetailsComponent
+    IncomesComponent, IncomeDetailsComponent
   ],
   imports: [
     CommonModule,
@@ -41,6 +41,7 @@ import { MatDividerModule } from '@angular/material/divider';
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
+    AddIncomeModule,
     MatSelectModule,
     MatMenuModule
   ]

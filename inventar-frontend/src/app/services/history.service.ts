@@ -10,7 +10,7 @@ export class HistoryService {
   constructor(private http: HttpClient) { }
 
   findAll(page: any, size: any, sort: any, params: HttpParams): Observable<any> {
-    params = params ?? new HttpParams().append("page", page).append("size", size).append("sort", sort);
+    params = (params ?? new HttpParams()).append("page", page).append("size", size).append("sort", sort);
     return this.http.get(`${serverAPIURL}/api/history`, {
       params,
       observe: 'response'

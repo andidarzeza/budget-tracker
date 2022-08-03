@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { EntityType } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -17,6 +18,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
   
   private _subject = new Subject();
   savingEntity = false;
+  public entity: EntityType = EntityType.CATEGORY;
   
   constructor(
     public sharedService: SharedService,

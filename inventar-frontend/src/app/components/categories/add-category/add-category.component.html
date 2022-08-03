@@ -1,9 +1,6 @@
-<div class="container">
-    <span></span>
-    <div class="actions">
-        <mat-icon class="pointer" class="{{sharedService.theme}}-icon" (click)="closeDialog(false)">close</mat-icon>
-    </div>
-</div>
+<create-header icon="library_books" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)">
+</create-header>
+
 <form [formGroup]="categoryGroup">
     <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: 100%;">
         <mat-label class="{{sharedService.theme}}-text">Category</mat-label>

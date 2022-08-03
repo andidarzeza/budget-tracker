@@ -19,11 +19,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { ExpenseDetailComponent } from './expense-detail/expense-detail.component';
 import { MatDividerModule } from '@angular/material/divider';
+import { AddExpenseModule } from './add-expense/add-expense.module';
 
 
 
 @NgModule({
-  declarations: [ExpensesComponent, AddExpenseComponent, ExpenseDetailComponent],
+  declarations: [ExpensesComponent, ExpenseDetailComponent],
   imports: [
     CommonModule,
     ExpensesRoutingModule,
@@ -42,7 +43,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatInputModule,
     MatOptionModule,
     MatNativeDateModule,
-    MatMenuModule
+    MatMenuModule,
+    AddExpenseModule
   ]
 })
 export class ExpensesModule { }

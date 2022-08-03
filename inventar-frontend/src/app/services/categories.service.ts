@@ -11,7 +11,7 @@ export class CategoriesService {
   constructor(private http: HttpClient) { }
 
   findAll(page: any, size: any, categoryType: CategoryType, sort?: string, params?: HttpParams): Observable<any> {
-    params =  (params ?? new HttpParams().append("page", page).append("size", size)).append("categoryType", categoryType.toString());
+    params =  (params ?? new HttpParams()).append("page", page).append("size", size).append("categoryType", categoryType.toString());
     if(sort) {
       params = params.append("sort", sort);
     }
