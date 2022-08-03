@@ -79,15 +79,21 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
 
   ngOnInit(): void {
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
-    this.categoryService.findAll(0, 9999, CategoryType.INCOME).subscribe(res => {
-      console.log(res.body.categories);
-      this.filterOptions[2].matSelectOptions = {
+    this.getCategories();
+    this.query();
+  }
+
+  private getCategories(): void {
+    this.categoryService
+      .findAll(0, 9999, CategoryType.INCOME)
+      .pipe(takeUntil(this._subject))
+      .subscribe(res => 
+        this.filterOptions[2].matSelectOptions = {
           options: res.body.categories,
           displayBy: "category",
           valueBy: "id"
-      };
-    });
-    this.query();
+        }
+      );
   }
 
   paginatorEvent(event: PageEvent): void {
@@ -115,7 +121,7 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   openAddEditForm(income?: Income): void {
     this.dialog.openDialog(AddIncomeComponent, income)
       .afterClosed()
-      .pipe(filter((update)=>update))
+      .pipe(takeUntil(this._subject), filter((update)=>update))
       .subscribe(() => this.query());
   }
 
@@ -130,9 +136,10 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   }
 
   openDeleteConfirmDialog(id: string): void {
-    this.dialog.openConfirmDialog(ConfirmComponent)
+    this.dialog
+      .openConfirmDialog(ConfirmComponent)
       .afterClosed()
-      .pipe(filter((update)=>update))
+      .pipe(takeUntil(this._subject), filter((update)=>update))
       .subscribe(() => this.delete(id));
   }
   

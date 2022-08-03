@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { AddIncomeComponent } from './add-income.component';
-import { CreateHeaderModule } from 'src/app/shared/create-header/create-header.module';
+import { CreateFormModule } from 'src/app/shared/create-form/create-form.module';
 
 
 
@@ -17,11 +17,11 @@ import { CreateHeaderModule } from 'src/app/shared/create-header/create-header.m
   imports: [
     CommonModule,
     MatIconModule,
+    CreateFormModule,
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
-    MatSelectModule,
-    CreateHeaderModule
+    MatSelectModule
   ]
 })
 export class AddIncomeModule { }

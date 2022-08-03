@@ -20,6 +20,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
   public savingEntity = false;
   private _subject = new Subject();
   public entity: EntityType = EntityType.EXPENSE;
+  public categories: Category[] = [];
   
   constructor(
     public sharedService: SharedService,
@@ -38,7 +39,6 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     moneySpent: ['', Validators.required]
   });
 
-  public categories: Category[] = [];
 
   ngOnInit(): void {
     this.getCategories();

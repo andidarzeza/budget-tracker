@@ -1,0 +1,4 @@
+.create-footer-container {
+    display: flex;
+    justify-content: flex-end;
+}

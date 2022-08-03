@@ -2,7 +2,8 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Category, CategoryType, EntityType, Income } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { IncomingsService } from 'src/app/services/incomings.service';
@@ -16,15 +17,13 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 })
 export class AddIncomeComponent implements OnInit, OnDestroy {
   public savingEntity: boolean = false;
-  private categoriesSubscription: Subscription = null;
-  private updateSubscription: Subscription = null;
-  private saveSubscription: Subscription = null;
+  private _subject = new Subject();
   public formGroup: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
     description: [''],
     categoryID: ['', Validators.required],
     incoming: ['', Validators.required]
-  });  
+  });
   constructor(
     @Inject(MAT_DIALOG_DATA) public income: Income,
     public sharedService: SharedService, 
@@ -65,33 +64,31 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
   }
 
   private getCategories(): void {
-    this.categoriesSubscription?.unsubscribe();
-    this.categoriesSubscription = this.categoryService.findAll(0, 100, CategoryType.INCOME).subscribe((response: any) => {
-      this.categories = response.body.categories;
-      if(this.editMode) {
-        this.formGroup.patchValue(this.income);
-      }
+    this.categoryService
+      .findAll(0, 99999, CategoryType.INCOME)
+      .pipe(takeUntil(this._subject))
+      .subscribe((response: any) => {
+        this.categories = response.body.categories;
+        if(this.editMode) {
+          this.formGroup.patchValue(this.income);
+        }
     });
   }
 
   add(): void {
     if(this.formGroup.valid && !this.savingEntity){
       if(this.editMode) {
-        this.updateSubscription?.unsubscribe();
         this.savingEntity = true;
-        this.updateSubscription = this.incomingsService.update(this.income.id, this.formGroup.value).subscribe(() => {
-          this.closeDialog(true);  
-          this.savingEntity = false;
-          this.toaster.success("Income updated with success", "Success", TOASTER_CONFIGURATION);
-        });
+        this.incomingsService
+          .update(this.income.id, this.formGroup.value)
+          .pipe(takeUntil(this._subject))
+          .subscribe(() => this.onSaveSuccess("Income updated with success"));
       } else if(!this.savingEntity){
-        this.saveSubscription?.unsubscribe();
         this.savingEntity = true;
-        this.saveSubscription = this.incomingsService.save(this.formGroup.value).subscribe(() => {
-          this.closeDialog(true);
-          this.savingEntity = false;
-          this.toaster.success("A new Income has been inserted", "Success", TOASTER_CONFIGURATION);    
-        });
+        this.incomingsService
+          .save(this.formGroup.value)
+          .pipe(takeUntil(this._subject))
+          .subscribe(() => this.onSaveSuccess("A new Income has been inserted"));
       }
     }
   }
@@ -100,10 +97,15 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
     this.dialogRef.close(update);
   }
 
+  onSaveSuccess(message: string): void {
+    this.closeDialog(true);  
+    this.savingEntity = false;
+    this.toaster.success(message, "Success", TOASTER_CONFIGURATION);
+  }
+
   ngOnDestroy(): void {
-    this.saveSubscription?.unsubscribe();
-    this.updateSubscription?.unsubscribe();
-    this.categoriesSubscription?.unsubscribe();
+    this._subject.next();
+    this._subject.complete();
   }
 
 }

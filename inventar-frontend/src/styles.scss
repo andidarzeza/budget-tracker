@@ -537,6 +537,18 @@ button.toast-close-button {
     height: calc(100% - 64px);
 }
 
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
 th, td {
     overflow: hidden;
     width:auto;
