@@ -1,31 +1,61 @@
-import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Injectable, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ComponentType } from 'ngx-toastr';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { CREATE_DIALOG_CONFIGURATION } from 'src/environments/environment';
+import { ConfirmComponent } from '../shared/confirm/confirm.component';
 import { SharedService } from './shared.service';
+
+export interface ConfirmDialogHandler {
+  onSuccess: any;
+}
 
 @Injectable({
   providedIn: 'root'
 })
-export class DialogService {
+export class DialogService implements OnDestroy {
+
+  private _subject = new Subject();
 
   constructor(public dialog: MatDialog, private sharedService: SharedService) { }
 
-  openDialog(component: ComponentType<any>, data?: any): MatDialogRef<any> {
-    return this.dialog.open(component, {
+  ngOnDestroy(): void {
+    this._subject.next();
+    this._subject.complete();
+  }
+
+  openDialog(component: ComponentType<any>, data?: any): ConfirmDialogHandler {
+    const configuration = {
       data: data,
       panelClass: this.sharedService.theme + '-class',
       ...CREATE_DIALOG_CONFIGURATION
-    });
+    };
+
+    return {
+      onSuccess: (callable: any) => {
+        this.dialog.open(component, configuration)
+          .afterClosed()
+          .pipe(takeUntil(this._subject), filter((update) => update))
+          .subscribe(() => callable.call());
+      }
+    }
   }
 
-  openConfirmDialog(component: ComponentType<any>): MatDialogRef<any> {
+
+  openConfirmDialog(): ConfirmDialogHandler {
     const configuration = {
+      panelClass: this.sharedService.theme + '-class',
       disableClose: CREATE_DIALOG_CONFIGURATION.disableClose,
     };
-    return this.dialog.open(component, {
-      panelClass: this.sharedService.theme + '-class',
-      ...configuration
-    });
+
+    return {
+      onSuccess: (callable: any) => {
+        this.dialog.open(ConfirmComponent, configuration)
+          .afterClosed()
+          .pipe(takeUntil(this._subject), filter((update) => update))
+          .subscribe(() => callable.call());
+      }
+    }
   }
 }

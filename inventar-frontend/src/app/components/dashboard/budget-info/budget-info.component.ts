@@ -1,12 +1,13 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Account } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
-  selector: 'app-budget-info',
+  selector: 'budget-info',
   templateUrl: './budget-info.component.html',
   styleUrls: ['./budget-info.component.css'],
   animations: [
@@ -55,7 +56,7 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   }
 
   public account: Account;
-  private accountSubscription: Subscription = null;
+  private _subject = new Subject();
   public hideBalance: boolean = false;
   public hiddenBalance: string = '';
   public showDatePicker: boolean = false;
@@ -67,12 +68,15 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.hideBalance = (localStorage.getItem("hideBalance") === 'true');
     this.emitSelectedDate();
-    this.accountSubscription = this.accountService.getAccount().subscribe((response: any) => {
-      this.account = response.body;
-      if(this.hideBalance) {
-        this.generateHiddenBalanceValue();
-      }
-    });
+    this.accountService
+      .getAccount()
+      .pipe(takeUntil(this._subject))
+      .subscribe((response: any) => {
+        this.account = response.body;
+        if(this.hideBalance) {
+          this.generateHiddenBalanceValue();
+        }
+      });
   }
 
   switchDatePicker(): void {
@@ -109,13 +113,12 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this._subject.next();
+    this._subject.complete();
     document.removeEventListener('click', this.offClickHandler.bind(this), true); // bind on doc
-    this.accountSubscription?.unsubscribe();
   }
 
-  public offClickHandler(event:any) {
-    console.log(event.target);
-    
+  public offClickHandler(event:any) {    
     const selectedDateElem = document.getElementById("selectedDateId");
     if(selectedDateElem) {
       if(!selectedDateElem?.contains(event.target)) {

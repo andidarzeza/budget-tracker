@@ -1,7 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { IConfiguration, Theme } from 'src/app/models/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
+import { LocationService } from 'src/app/services/location.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -16,6 +19,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   interval = null;
   currentDate = new Date();
   configuration: IConfiguration;
+  private _subject = new Subject();
   public EXPERIMENTAL_MODE = environment.experimentalMode;
 
   public themesArray: Theme[] = [
@@ -51,20 +55,30 @@ export class NavBarComponent implements OnInit, OnDestroy {
     public authenticationService: AuthenticationService,
     public sidebarService: SideBarService,
     private configurationService: ConfigurationService,
-    private themeService: ThemeService
-  ) { 
+    private themeService: ThemeService,
+    private locationService: LocationService
+  ) {
   }
   ngOnInit(): void {
+
     this.interval = setInterval(() => {
       this.currentDate = new Date();
+      this.checkForTimelightAndDayLight();
     }, 1000);
 
     this.setInitialTheme();
-    this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
-      this.configuration = configuration;
-      this.sharedService.darkMode = configuration.darkMode;
-      this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
-    });
+    this.configurationService
+      .getConfiguration()
+      .pipe(takeUntil(this._subject))
+      .subscribe((configuration: IConfiguration) => {
+        this.configuration = configuration;
+        this.sharedService.darkMode = configuration.darkMode;
+        this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
+      });
+  }
+
+  private checkForTimelightAndDayLight(): void {
+
   }
 
   private setInitialTheme(): void {
@@ -73,6 +87,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this._subject.next();
+    this._subject.complete();
     if(this.interval) {
       clearInterval(this.interval);
     }
@@ -85,13 +101,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
   toggleDarkMode(): void {
     this.configuration.darkMode = !this.sharedService.darkMode;
     this.sharedService.activateLoadingSpinner();
-    this.configurationService.updateConfiguration(this.configuration).subscribe(() => {
-      this.sharedService.changeTheme(this.configuration.darkMode);
-      this.sharedService.checkLoadingSpinner();
-    },
-    () => {
-      this.sharedService.checkLoadingSpinner();
-    });
+    this.configurationService
+      .updateConfiguration(this.configuration)
+      .pipe(takeUntil(this._subject))
+      .subscribe(() => {
+        this.sharedService.changeTheme(this.configuration.darkMode);
+        this.sharedService.checkLoadingSpinner();
+      },
+      () => this.sharedService.checkLoadingSpinner());
   }
 
   changeThemeColor(color: string): void {

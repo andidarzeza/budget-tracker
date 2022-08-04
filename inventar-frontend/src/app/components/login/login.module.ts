@@ -7,18 +7,19 @@ import { MatCardModule } from '@angular/material/card';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { CapsLockDirective } from 'src/app/directives/caps-lock.directive';
 import { MatIconModule } from '@angular/material/icon';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { CapsLockModule } from 'src/app/directives/caps-lock/caps-lock.module';
 
 
 @NgModule({
-  declarations: [LoginComponent,  CapsLockDirective],
+  declarations: [LoginComponent],
   imports: [
     CommonModule,
     LoginRoutingModule,
     MatFormFieldModule,
     MatCardModule,
+    CapsLockModule,
     ReactiveFormsModule,
     MatInputModule,
     FormsModule,

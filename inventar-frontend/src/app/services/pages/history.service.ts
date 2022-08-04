@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ReadOnlyBaseService } from 'src/app/core/services/read-only-base.service';
 import { History } from 'src/app/models/models';
 import { serverAPIURL } from 'src/environments/environment';
-import { ReadOnlyBaseService } from '../base/read-only-base.service';
 
 @Injectable({
   providedIn: 'root'

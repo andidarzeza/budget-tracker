@@ -1,5 +1,5 @@
 <div class="px-2" style="max-height: 100%;overflow-y: auto;">
-    <app-budget-info (dateSelected)="onDateSelected($event)"></app-budget-info>
+    <budget-info (dateSelected)="onDateSelected($event)"></budget-info>
 
     <expense-income-resume [dashboardData]="dashboardData"></expense-income-resume>
     
@@ -7,5 +7,5 @@
 
     <expense-categories [expenseCategoriesData]="expenseCategoriesData"></expense-categories>
 
-    <app-floating-menu [floatingMenu]="floatingMenu"></app-floating-menu>
+    <floating-menu [floatingMenu]="floatingMenu"></floating-menu>
 </div>

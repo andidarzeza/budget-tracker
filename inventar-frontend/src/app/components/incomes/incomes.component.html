@@ -1,7 +1,7 @@
 <mat-drawer-container class="example-container {{sharedService.theme}}-body" autosize>
     <mat-drawer #drawer class="sidenav {{sharedService.theme}}-table" mode="over" position="end"
         (closed)="onSidenavClose()">
-        <app-income-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [incomeViewId]="incomeViewId">
+        <app-income-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [incomeViewId]="entityViewId">
         </app-income-details>
     </mat-drawer>
 
@@ -12,7 +12,7 @@
 
 
     <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
-        <table mat-table [dataSource]="incomes" class="mat-elevation-z8 {{sharedService.theme}}-table"
+        <table mat-table [dataSource]="data" class="mat-elevation-z8 {{sharedService.theme}}-table"
             style="box-shadow: none;" matSort (matSortChange)="announceSortChange($event)">
             <!-- Date Column -->
             <ng-container matColumnDef="date">
@@ -58,11 +58,11 @@
                 </td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: columns;"></tr>
         </table>
 
-        <table-message [total]="incomes.length"></table-message>
+        <table-message [total]="data?.length"></table-message>
     </div>
 
 

@@ -4,13 +4,11 @@ import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddCategoryComponent } from './add-category/add-category.component';
-import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subject } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { DialogService } from 'src/app/services/dialog.service';
 import { filter, takeUntil } from 'rxjs/operators';
-import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Category, CategoryType, ResponseWrapper } from 'src/app/models/models';
@@ -18,6 +16,7 @@ import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput'
 import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { EntityOperation } from 'src/app/core/EntityOperation';
 
 @Component({
   selector: 'app-categories',
@@ -106,9 +105,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   openAddEditForm(spendingCategory?: Category): void {
     this.dialog
       .openDialog(AddCategoryComponent, {spendingCategory, categoriesType: this.categoriesType})
-      .afterClosed()
-      .pipe(takeUntil(this._subject), filter((update)=>update))
-      .subscribe(() => this.query());
+      .onSuccess(() => this.query());
   }
 
   onSearch(payload: any): void {
@@ -124,10 +121,8 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
 
   openDeleteConfirmDialog(id: string): void {
     this.dialog
-      .openConfirmDialog(ConfirmComponent)
-      .afterClosed()
-      .pipe(takeUntil(this._subject), filter((update)=>update))
-      .subscribe(() => this.delete(id));
+    .openConfirmDialog()
+    .onSuccess(() => this.delete(id));
   }
 
   delete(id: string): void {

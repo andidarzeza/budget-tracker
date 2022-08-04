@@ -4,13 +4,11 @@ import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
 import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
-import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 import { Subject } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
-import { EntityOperation } from 'src/app/models/core/EntityOperation';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { CategoryType, Expense, ResponseWrapper } from 'src/app/models/models';
@@ -18,6 +16,7 @@ import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { EntityOperation } from 'src/app/core/EntityOperation';
 
 @Component({
   selector: 'app-expenses',
@@ -112,9 +111,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
 
   openAddEditForm(expense?: Expense): void {
     this.dialog.openDialog(AddExpenseComponent, expense)
-      .afterClosed()
-      .pipe(takeUntil(this._subject), filter((update)=>update))
-      .subscribe(() => this.query());
+    .onSuccess(() => this.query());
   }
 
   onMouseEnter(temp: any): void {
@@ -143,10 +140,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   openDeleteConfirmDialog(id: string): void {
-    this.dialog.openConfirmDialog(ConfirmComponent)
-      .afterClosed()
-      .pipe(takeUntil(this._subject), filter((update)=>update))
-      .subscribe(() => this.delete(id));
+    this.dialog.openConfirmDialog().onSuccess(() => this.delete(id));
   }
 
   delete(id: string): void {

@@ -3,7 +3,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { FloatingMenuConfig } from './FloatingMenuConfig';
 
 @Component({
-  selector: 'app-floating-menu',
+  selector: 'floating-menu',
   templateUrl: './floating-menu.component.html',
   styleUrls: ['./floating-menu.component.css']
 })
