@@ -1,6 +1,6 @@
 <div class="header">
     <span class="{{sharedService.theme}}-text header-title">
-        {{incomeName | titlecase}}
+        {{category | titlecase}}
     </span>
     <div class="actions">
         <button mat-icon-button class="close-button" (click)="closeDrawer()">
@@ -41,15 +41,6 @@
 <div class="title-container">
     <span class="expense-view-title fw-400 {{sharedService.theme}}-text">
         Info
-    </span>
-</div>
-
-<div class="expense-date-container">
-    <span class="{{sharedService.theme}}-text">
-        Income Name
-    </span>
-    <span class="{{sharedService.theme}}-text expense-date">
-        {{ incomeName | titlecase}}
     </span>
 </div>
 

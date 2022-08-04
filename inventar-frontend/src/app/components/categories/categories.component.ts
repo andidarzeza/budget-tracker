@@ -83,7 +83,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
       .findAll(this.page, this.size, this.categoriesType, this.sort, this.previousFilters)
       .pipe(takeUntil(this._subject))
       .subscribe((res: HttpResponse<any>) => {
-        this.dataSource = res?.body.categories;
+        this.dataSource = res?.body.data;
         this.totalItems = res?.body.count;
         this.sharedService.checkLoadingSpinner();     
       },

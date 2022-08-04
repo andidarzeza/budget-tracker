@@ -19,7 +19,6 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
   public savingEntity: boolean = false;
   private _subject = new Subject();
   public formGroup: FormGroup = this.formBuilder.group({
-    name: ['', Validators.required],
     description: [''],
     categoryID: ['', Validators.required],
     incoming: ['', Validators.required]
@@ -68,7 +67,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
       .findAll(0, 99999, CategoryType.INCOME)
       .pipe(takeUntil(this._subject))
       .subscribe((response: any) => {
-        this.categories = response.body.categories;
+        this.categories = response.body.data;
         if(this.editMode) {
           this.formGroup.patchValue(this.income);
         }

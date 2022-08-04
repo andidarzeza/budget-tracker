@@ -4,8 +4,8 @@ import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
 import com.adprod.inventar.models.enums.EntityAction;
 import static com.adprod.inventar.models.enums.EntityType.EXPENSE;
-import com.adprod.inventar.models.wrappers.SpendingDTO;
-import com.adprod.inventar.models.wrappers.SpendingWrapper;
+import com.adprod.inventar.models.wrappers.ExpenseDTO;
+import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.repositories.ExpenseRepository;
 import com.adprod.inventar.services.AccountService;
@@ -31,15 +31,11 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity getExpenses(Pageable pageable, Map<String, String> params) {
-        String name = params.get("name");
         String description = params.get("description");
         Double expense = Double.parseDouble(Objects.nonNull(params.get("expense")) ? params.get("expense") : "-1");
         String category = params.get("category");
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder = booleanBuilder.and(QExpense.expense.user.eq(securityContextService.username()));
-        if(Objects.nonNull(name)){
-            booleanBuilder = booleanBuilder.and(QExpense.expense.name.containsIgnoreCase(name));
-        }
         if(Objects.nonNull(description)) {
             booleanBuilder = booleanBuilder.and(QExpense.expense.description.containsIgnoreCase(description));
         }
@@ -51,17 +47,17 @@ public class ExpenseServiceImpl implements ExpenseService {
         }
         Page<Expense> page = expenseRepository.findAll(booleanBuilder, pageable);
 
-        SpendingWrapper spendingWrapper = new SpendingWrapper();
+        ResponseWrapper<ExpenseDTO> spendingWrapper = new ResponseWrapper();
         List<Expense> content = page.getContent();
-        List<SpendingDTO> response = new ArrayList<>();
+        List<ExpenseDTO> response = new ArrayList<>();
         content.forEach(item -> {
-            Optional<ExpenseCategory> data = categoryRepository.findById(item.getCategoryID());
+            Optional<Category> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
-                ExpenseCategory sc = data.get();
-                response.add(new SpendingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getMoneySpent(), item.getDescription()));
+                Category sc = data.get();
+                response.add(new ExpenseDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getMoneySpent(), item.getDescription()));
             }
         });
-        spendingWrapper.setExpenses(response);
+        spendingWrapper.setData(response);
         spendingWrapper.setCount(page.getTotalElements());
         return ResponseEntity.ok().body(spendingWrapper);
     }
@@ -76,17 +72,18 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Expense findOne(String id) {
-        return expenseRepository
+    public ResponseEntity findOne(String id) {
+        Expense expense = expenseRepository
                 .findById(id)
                 .orElseThrow(
                         () -> new NotFoundException("Expense with id: " + id + " was not found.")
                 );
+        return ResponseEntity.ok(expense);
     }
 
     @Override
     public ResponseEntity delete(String id) {
-        Expense expense = findOne(id);
+        Expense expense = (Expense) findOne(id).getBody();
         accountService.addToBalance(expense.getMoneySpent());
         expenseRepository.delete(expense);
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
@@ -95,7 +92,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ResponseEntity update(String id, Expense spending) {
         spending.setUser(securityContextService.username());
-        Expense expense = findOne(id);
+        Expense expense = (Expense) findOne(id).getBody();
         double removeAndAddAmount = expense.getMoneySpent() - spending.getMoneySpent();
         accountService.addToBalance(removeAndAddAmount);
         spending.setId(id);

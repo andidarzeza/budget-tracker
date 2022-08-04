@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class IncomingDTO {
+public class IncomeDTO {
     private String id;
     private String category;
     private String categoryID;
@@ -17,7 +17,7 @@ public class IncomingDTO {
     private Double incoming;
     private String description;
 
-    public IncomingDTO(String id, String category, String categoryID, Date createdTime, Date lastModifiedDate, String name, Double incoming, String description) {
+    public IncomeDTO(String id, String category, String categoryID, Date createdTime, Date lastModifiedDate, String name, Double incoming, String description) {
         this.id = id;
         this.category = category;
         this.categoryID = categoryID;

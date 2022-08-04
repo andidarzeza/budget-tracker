@@ -34,8 +34,8 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   public size: number = PAGE_SIZE;
   private defaultSort: string = "createdTime,desc";
   private sort: string = this.defaultSort;
-  public displayedColumns: string[] = ['date', 'name', 'description', 'category', 'income', 'actions'];
-  public mobileColumns: string[] = ['name', 'category', 'income', 'actions'];
+  public displayedColumns: string[] = ['date', 'category', 'description', 'income', 'actions'];
+  public mobileColumns: string[] = ['category', 'income', 'actions'];
 
   private _subject = new Subject();
 
@@ -47,20 +47,14 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
 
   filterOptions: FilterOptions[] = [
     {
-      field: "name",
-      label: "Name",
-      type: "text"
-    },
-    {
-      field: "description",
-      label: "Description",
-      type: "text"
-    },
-    {
       field: "category",
       label: "Category",
       type: "select",
       matSelectOptions: undefined
+    },{
+      field: "description",
+      label: "Description",
+      type: "text"
     },
     {
       field: "income",
@@ -87,12 +81,16 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
     this.categoryService
       .findAll(0, 9999, CategoryType.INCOME)
       .pipe(takeUntil(this._subject))
-      .subscribe(res => 
-        this.filterOptions[2].matSelectOptions = {
-          options: res.body.categories,
+      .subscribe(res => {
+        const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
+        const index = this.filterOptions.indexOf(item);
+        this.filterOptions[index].matSelectOptions = {
+          options: res.body.data,
           displayBy: "category",
           valueBy: "id"
         }
+      }
+        
       );
   }
 
@@ -109,7 +107,7 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
       .findAll(this.page, this.size, this.sort, this.previousFilters)
       .pipe(takeUntil(this._subject))
       .subscribe((res: HttpResponse<any>) => {
-        this.incomes = res?.body.incomes;
+        this.incomes = res?.body.data;
         this.totalItems = res?.body.count;
         this.sharedService.checkLoadingSpinner();     
       },

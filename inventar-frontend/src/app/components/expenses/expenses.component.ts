@@ -14,7 +14,7 @@ import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { filter, takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Category, CategoryType, Expense } from 'src/app/models/models';
+import { CategoryType, Expense } from 'src/app/models/models';
 import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
 import { CategoriesService } from 'src/app/services/categories.service';
 
@@ -32,8 +32,8 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   public totalItems: number = 0;
   public defaultSort: string = "createdTime,desc";
   public sort: string = this.defaultSort;
-  public displayedColumns: string[] = ['createdTime', 'name', 'description', 'category', 'moneySpent', 'actions'];
-  public mobileColumns: string[] = ['name', 'category', 'moneySpent', 'actions'];
+  public displayedColumns: string[] = ['createdTime', 'category', 'description', 'moneySpent', 'actions'];
+  public mobileColumns: string[] = ['category', 'moneySpent', 'actions'];
   public expenses: Expense[] = [];
   private previousFilters: HttpParams;
   public expenseViewId = "";
@@ -44,20 +44,15 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
 
   filterOptions: FilterOptions[] = [
     {
-      field: "name",
-      label: "Name",
-      type: "text"
+      field: "category",
+      label: "Category",
+      type: "select",
+      matSelectOptions: undefined
     },
     {
       field: "description",
       label: "Description",
       type: "text"
-    },
-    {
-      field: "category",
-      label: "Category",
-      type: "select",
-      matSelectOptions: undefined
     },
     {
       field: "expense",
@@ -81,9 +76,10 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   ngOnInit(): void {
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
     this.categoryService.findAll(0, 9999, CategoryType.EXPENSE).subscribe(res => {
-      console.log(res.body.categories);
-      this.filterOptions[2].matSelectOptions = {
-          options: res.body.categories,
+      const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
+      const index = this.filterOptions.indexOf(item);
+      this.filterOptions[index].matSelectOptions = {
+          options: res.body.data,
           displayBy: "category",
           valueBy: "id"
       };
@@ -104,7 +100,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
       .findAll(this.page, this.size, this.sort, this.previousFilters)
       .pipe(takeUntil(this._subject))
       .subscribe((res: HttpResponse<any>) => {
-        this.expenses = res?.body.expenses;
+        this.expenses = res?.body.data;
         this.totalItems = res?.body.count;
         this.sharedService.checkLoadingSpinner();     
       },

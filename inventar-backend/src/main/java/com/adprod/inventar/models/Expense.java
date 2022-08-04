@@ -19,7 +19,6 @@ public class Expense {
     private String id;
     private Date createdTime = new Date();
     private Date lastModifiedDate = this.createdTime;
-    private String name;
     private Double moneySpent;
     private String description;
     private String categoryID;

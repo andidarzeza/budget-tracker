@@ -1,18 +1,12 @@
 <create-form icon="attach_money" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()">
     <form [formGroup]="formGroup">
-        <mat-form-field appearance="outline" style="width: 100%;" class="{{sharedService.theme}}-text">
+        <!-- <mat-form-field appearance="outline" style="width: 100%;" class="{{sharedService.theme}}-text">
             <mat-label class="{{sharedService.theme}}-text">Name</mat-label>
             <input type="text" autocomplete="off" matInput formControlName="name">
             <mat-error>This field is required.</mat-error>
-        </mat-form-field>
+        </mat-form-field> -->
 
         <div style="width: 100%; display: flex;justify-content: space-between;align-items: center;">
-            <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: calc(40% - 5px);">
-                <mat-label class="{{sharedService.theme}}-text">Money Spent</mat-label>
-                <input type="number" autocomplete="off" matInput formControlName="moneySpent">
-                <mat-error>This field is required.</mat-error>
-            </mat-form-field>
-
             <mat-form-field appearance="outline" style="width: calc(60% - 5px);" class="{{sharedService.theme}}-select">
                 <mat-label class="{{sharedService.theme}}-text">Expense Category</mat-label>
                 <mat-select formControlName="categoryID" class="{{sharedService.theme}}-select">
@@ -22,6 +16,12 @@
                         {{category?.category}}
                     </mat-option>
                 </mat-select>
+                <mat-error>This field is required.</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: calc(40% - 5px);">
+                <mat-label class="{{sharedService.theme}}-text">Money Spent</mat-label>
+                <input type="number" autocomplete="off" matInput formControlName="moneySpent">
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
         </div>

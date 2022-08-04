@@ -10,12 +10,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Document(collection = "spendingCategory")
+@Document(collection = "category")
 @NoArgsConstructor
 @Setter
 @Getter
 @QueryEntity
-public class ExpenseCategory {
+public class Category {
     @Id
     private String id;
     private String icon;

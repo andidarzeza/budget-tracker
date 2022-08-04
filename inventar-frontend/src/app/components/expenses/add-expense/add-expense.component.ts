@@ -33,7 +33,6 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
   ) {}
   
   formGroup: FormGroup = this.formBuilder.group({
-    name: ['', Validators.required],
     description: [''],
     categoryID: ['', Validators.required],
     moneySpent: ['', Validators.required]
@@ -49,7 +48,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
       .findAll(0, 1000, CategoryType.EXPENSE)
       .pipe(
         takeUntil(this._subject),
-        map((response: any) => this.categories = response.body.categories),
+        map((response: any) => this.categories = response.body.data),
         filter(()=>this.editMode),
         map(() => this.formGroup.patchValue(this.expense))
       )

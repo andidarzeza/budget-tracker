@@ -2,12 +2,10 @@ package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.History;
-import com.adprod.inventar.models.QExpense;
 import com.adprod.inventar.models.QHistory;
-import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.models.enums.EntityAction;
 import com.adprod.inventar.models.enums.EntityType;
-import com.adprod.inventar.models.wrappers.HistoryWrapper;
+import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.HistoryRepository;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.SecurityContextService;
@@ -15,15 +13,11 @@ import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -49,8 +43,8 @@ public class HistoryServiceImpl implements HistoryService {
             booleanBuilder = booleanBuilder.and(QHistory.history.message.containsIgnoreCase(message));
         }
         Page<History> page = historyRepository.findAll(booleanBuilder, pageable);
-        HistoryWrapper historyWrapper = new HistoryWrapper();
-        historyWrapper.setHistoryList(page.getContent());
+        ResponseWrapper<History> historyWrapper = new ResponseWrapper();
+        historyWrapper.setData(page.getContent());
         historyWrapper.setCount(page.getTotalElements());
         return ResponseEntity.ok().body(historyWrapper);
     }

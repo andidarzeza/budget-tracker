@@ -5,8 +5,8 @@ import com.adprod.inventar.models.*;
 
 import static com.adprod.inventar.models.enums.EntityAction.*;
 import static com.adprod.inventar.models.enums.EntityType.INCOME;
-import com.adprod.inventar.models.wrappers.IncomingDTO;
-import com.adprod.inventar.models.wrappers.IncomingWrapper;
+import com.adprod.inventar.models.wrappers.IncomeDTO;
+import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.repositories.IncomeRepository;
 import com.adprod.inventar.services.AccountService;
@@ -35,15 +35,11 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public ResponseEntity findAll(Pageable pageable, Map<String, String> params) {
 
-        String name = params.get("name");
         String description = params.get("description");
         Double income = Double.parseDouble(Objects.nonNull(params.get("income")) ? params.get("income") : "-1");
         String category = params.get("category");
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder = booleanBuilder.and(QIncome.income.user.eq(securityContextService.username()));
-        if(Objects.nonNull(name)){
-            booleanBuilder = booleanBuilder.and(QIncome.income.name.containsIgnoreCase(name));
-        }
         if(Objects.nonNull(description)) {
             booleanBuilder = booleanBuilder.and(QIncome.income.description.containsIgnoreCase(description));
         }
@@ -55,21 +51,21 @@ public class IncomeServiceImpl implements IncomeService {
         }
 
         Page<Income> page = incomeRepository.findAll(booleanBuilder, pageable);
-        IncomingWrapper incomingWrapper = new IncomingWrapper();
+        ResponseWrapper<IncomeDTO> incomeWrapper = new ResponseWrapper();
         List<Income> content = page.getContent();
-        List<IncomingDTO> response = new ArrayList<>();
+        List<IncomeDTO> response = new ArrayList<>();
         content.forEach(item -> {
-            Optional<ExpenseCategory> data = categoryRepository.findById(item.getCategoryID());
+            Optional<Category> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
-                ExpenseCategory sc = data.get();
-                response.add(new IncomingDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
+                Category sc = data.get();
+                response.add(new IncomeDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
             } else {
-                response.add(new IncomingDTO(item.getId(), "No Category Found", "0", item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
+                response.add(new IncomeDTO(item.getId(), "No Category Found", "0", item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
             }
         });
-        incomingWrapper.setIncomes(response);
-        incomingWrapper.setCount(page.getTotalElements());
-        return ResponseEntity.ok().body(incomingWrapper);
+        incomeWrapper.setData(response);
+        incomeWrapper.setCount(page.getTotalElements());
+        return ResponseEntity.ok().body(incomeWrapper);
     }
 
     @Override

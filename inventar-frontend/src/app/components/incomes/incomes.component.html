@@ -22,14 +22,6 @@
                     {{element?.createdTime | customDate}}</td>
             </ng-container>
 
-            <!-- Name Column -->
-            <ng-container matColumnDef="name">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef
-                    class="centered-text {{sharedService.theme}}-text"> Name </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
-                    {{element?.name}}</td>
-            </ng-container>
-
             <!-- Description Column -->
             <ng-container matColumnDef="description">
                 <th mat-header-cell mat-sort-header *matHeaderCellDef

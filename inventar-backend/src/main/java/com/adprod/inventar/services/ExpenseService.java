@@ -9,7 +9,7 @@ import java.util.Map;
 public interface ExpenseService {
     ResponseEntity getExpenses(Pageable pageable, Map<String, String> params);
     ResponseEntity save(Expense expense);
-    Expense findOne(String id);
+    ResponseEntity findOne(String id);
     ResponseEntity delete(String id);
     ResponseEntity update(String id, Expense expense);
 }

@@ -58,10 +58,6 @@ export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
     this._subject.complete();
   }
 
-  get incomeName() {
-    return this.income?.name ?? "-";
-  }
-
   get incomeCreatedTime() {
     return this.income?.createdTime;
   }

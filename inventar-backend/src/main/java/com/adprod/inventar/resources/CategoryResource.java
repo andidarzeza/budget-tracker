@@ -1,6 +1,6 @@
 package com.adprod.inventar.resources;
 
-import com.adprod.inventar.models.ExpenseCategory;
+import com.adprod.inventar.models.Category;
 import com.adprod.inventar.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +23,7 @@ public class CategoryResource {
 
     @GetMapping("/{id}")
     public ResponseEntity findOne(@PathVariable String id){
-        return ResponseEntity.ok(categoryService.findOne(id));
+        return categoryService.findOne(id);
     }
 
     @DeleteMapping("/{id}")
@@ -32,12 +32,12 @@ public class CategoryResource {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody ExpenseCategory expenseCategory) {
-        return categoryService.save(expenseCategory);
+    public ResponseEntity save(@RequestBody Category category) {
+        return categoryService.save(category);
     }
 
     @PutMapping
-    public ResponseEntity update(@RequestBody ExpenseCategory expenseCategory) {
-        return categoryService.update(expenseCategory);
+    public ResponseEntity update(@RequestBody Category category) {
+        return categoryService.update(category);
     }
 }

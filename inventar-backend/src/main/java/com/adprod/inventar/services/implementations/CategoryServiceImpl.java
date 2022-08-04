@@ -2,10 +2,10 @@ package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
-import com.adprod.inventar.models.enums.CategoryType;
 import com.adprod.inventar.models.enums.EntityAction;
+import static com.adprod.inventar.models.enums.EntityType.*;
 import com.adprod.inventar.models.enums.EntityType;
-import com.adprod.inventar.models.wrappers.CategoryWrapper;
+import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.services.CategoryService;
 import com.adprod.inventar.services.HistoryService;
@@ -27,59 +27,59 @@ public class CategoryServiceImpl implements CategoryService {
     private final SecurityContextService securityContextService;
     private final CategoryRepository categoryRepository;
     private final HistoryService historyService;
-    private final EntityType entityType = EntityType.CATEGORY;
+    private final EntityType entityType = CATEGORY;
 
     @Override
     public ResponseEntity findAll(Pageable pageable, Map<String, String> params) {
         String category = params.get("category");
         String description = params.get("description");
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        booleanBuilder = booleanBuilder.and(QExpenseCategory.expenseCategory.user.eq(securityContextService.username()));
-        booleanBuilder = booleanBuilder.and(QExpenseCategory.expenseCategory.categoryType.eq(params.get("categoryType")));
+        booleanBuilder = booleanBuilder.and(QCategory.category1.user.eq(securityContextService.username()));
+        booleanBuilder = booleanBuilder.and(QCategory.category1.categoryType.eq(params.get("categoryType")));
         if(Objects.nonNull(description)) {
-            booleanBuilder = booleanBuilder.and(QExpenseCategory.expenseCategory.description.containsIgnoreCase(description));
+            booleanBuilder = booleanBuilder.and(QCategory.category1.description.containsIgnoreCase(description));
         }
         if(Objects.nonNull(category)) {
-            booleanBuilder = booleanBuilder.and(QExpenseCategory.expenseCategory.category.containsIgnoreCase(category));
+            booleanBuilder = booleanBuilder.and(QCategory.category1.category.containsIgnoreCase(category));
         }
-        Page<ExpenseCategory> page = this.categoryRepository.findAll(booleanBuilder, pageable);
-        CategoryWrapper categoryWrapper = new CategoryWrapper();
-        categoryWrapper.setCategories(page.getContent());
+        Page<Category> page = this.categoryRepository.findAll(booleanBuilder, pageable);
+        ResponseWrapper<Category> categoryWrapper = new ResponseWrapper();
+        categoryWrapper.setData(page.getContent());
         categoryWrapper.setCount(page.getTotalElements());
         return ResponseEntity.ok().body(categoryWrapper);
     }
 
     @Override
-    public ExpenseCategory findOne(String id) {
-        return categoryRepository
+    public ResponseEntity findOne(String id) {
+        Category category = categoryRepository
                 .findById(id)
                 .orElseThrow(
                         () -> new NotFoundException("Expense Category with id: " + id + " was not found!")
                 );
+        return ResponseEntity.ok(category);
     }
 
     @Override
     public ResponseEntity delete(String id) {
-        ExpenseCategory category = findOne(id);
-        categoryRepository.delete(category);
+        categoryRepository.deleteById(id);
         historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
         return ResponseEntity.ok(new ResponseMessage("Category with id: " + id + " was deleted successfully."));
     }
 
     @Override
-    public ResponseEntity save(ExpenseCategory expenseCategory) {
-        expenseCategory.setUser(securityContextService.username());
-        categoryRepository.save(expenseCategory);
+    public ResponseEntity save(Category category) {
+        category.setUser(securityContextService.username());
+        categoryRepository.save(category);
         historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
-        return ResponseEntity.ok(expenseCategory);
+        return ResponseEntity.ok(category);
     }
 
     @Override
-    public ResponseEntity update(ExpenseCategory expenseCategory) {
-        expenseCategory.setUser(securityContextService.username());
-        expenseCategory.setLastModifiedDate(LocalDateTime.now());
-        categoryRepository.save(expenseCategory);
+    public ResponseEntity update(Category category) {
+        category.setUser(securityContextService.username());
+        category.setLastModifiedDate(LocalDateTime.now());
+        categoryRepository.save(category);
         historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
-        return ResponseEntity.ok(expenseCategory);
+        return ResponseEntity.ok(category);
     }
 }

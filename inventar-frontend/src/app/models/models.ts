@@ -56,7 +56,6 @@ export interface Expense {
     createdTime: Date;
     lastModifiedDate: Date;
     moneySpent: number;
-    name: string;
     description: string;
     categoryID: string;
     user: string;
@@ -108,7 +107,6 @@ export interface Income {
     createdTime: Date;
     lastModifiedDate: Date;
     incoming: number;
-    name: string;
     description: string;
     categoryID: string;
 }

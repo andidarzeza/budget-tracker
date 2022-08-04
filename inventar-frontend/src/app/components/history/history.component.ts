@@ -110,7 +110,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
       .findAll(this.page, this.size, this.sort, this.previousFilters)
       .pipe(takeUntil(this._subject))
       .subscribe((res: HttpResponse<any>) => {
-        this.historyList = res?.body.historyList;
+        this.historyList = res?.body.data;
         this.totalItems = res?.body.count;
         this.sharedService.checkLoadingSpinner();
       },
