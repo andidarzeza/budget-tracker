@@ -11,5 +11,5 @@ public interface CategoryService {
     ResponseEntity findOne(String id);
     ResponseEntity delete(String id);
     ResponseEntity save(Category category);
-    ResponseEntity update(Category category);
+    ResponseEntity update(String id, Category category);
 }

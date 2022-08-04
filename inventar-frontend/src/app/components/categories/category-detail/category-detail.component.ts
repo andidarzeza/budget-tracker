@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Category } from 'src/app/models/models';
-import { CategoriesService } from 'src/app/services/categories.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({

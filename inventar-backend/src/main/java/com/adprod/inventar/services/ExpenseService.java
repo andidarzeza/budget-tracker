@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 
 public interface ExpenseService {
-    ResponseEntity getExpenses(Pageable pageable, Map<String, String> params);
+    ResponseEntity findAll(Pageable pageable, Map<String, String> params);
     ResponseEntity save(Expense expense);
     ResponseEntity findOne(String id);
     ResponseEntity delete(String id);

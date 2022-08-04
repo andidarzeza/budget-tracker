@@ -1,16 +1,17 @@
-import { HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from 'src/environments/environment';
 import { Subject } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
-import { HistoryService } from 'src/app/services/history.service';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 import { MatSidenav } from '@angular/material/sidenav';
 import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
 import { takeUntil } from 'rxjs/operators';
-import { ENTITIES, EntityAction, EntityType, ENTITY_ACTIONS } from 'src/app/models/models';
+import { ENTITIES, EntityAction, EntityType, ENTITY_ACTIONS, ResponseWrapper } from 'src/app/models/models';
+import { buildParams } from 'src/app/utils/param-bulder';
+import { HistoryService } from 'src/app/services/pages/history.service';
 
 @Component({
   selector: 'app-history',
@@ -107,11 +108,11 @@ export class HistoryComponent implements OnInit, OnDestroy {
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.historyService
-      .findAll(this.page, this.size, this.sort, this.previousFilters)
+      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters))
       .pipe(takeUntil(this._subject))
-      .subscribe((res: HttpResponse<any>) => {
-        this.historyList = res?.body.data;
-        this.totalItems = res?.body.count;
+      .subscribe((res: ResponseWrapper) => {
+        this.historyList = res?.data;
+        this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();
       },
         () => {

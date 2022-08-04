@@ -3,9 +3,10 @@
         <history-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [historyId]="historyId"></history-details>
     </mat-drawer>
 
-    <app-table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" 
-        (onRefresh)="query()" 
-        (onSearch)="onSearch($event)" (onReset)="reset()"></app-table-actions>
+    <table-actions 
+        [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" 
+        (onRefresh)="query()"  (onSearch)="onSearch($event)" (onReset)="reset()">
+    </table-actions>
 
     <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
         <table *ngIf="historyList.length != 0" mat-table matSort [dataSource]="historyList"

@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EntityType } from 'src/app/models/models';
-import { CategoriesService } from 'src/app/services/categories.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
@@ -51,7 +51,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         payload['categoryType'] = this.data.categoriesType;
         this.savingEntity = true;
         this.categoriesService
-          .update(payload)
+          .update(payload.id, payload)
           .pipe(takeUntil(this._subject))  
           .subscribe(() => this.onSaveSuccess("Category Updated with Success"));
       } else if(!this.savingEntity){

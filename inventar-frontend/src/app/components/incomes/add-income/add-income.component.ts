@@ -4,10 +4,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Category, CategoryType, EntityType, Income } from 'src/app/models/models';
-import { CategoriesService } from 'src/app/services/categories.service';
-import { IncomingsService } from 'src/app/services/incomings.service';
+import { Category, CategoryType, EntityType, Income, ResponseWrapper } from 'src/app/models/models';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { buildParams } from 'src/app/utils/param-bulder';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -29,7 +30,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
     private toaster: ToastrService,  
     private dialogRef: MatDialogRef<AddIncomeComponent>, 
     private formBuilder: FormBuilder, 
-    private incomingsService: IncomingsService, 
+    private incomeService: IncomeService, 
     private categoryService: CategoriesService
   ) {}
 
@@ -64,10 +65,10 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
 
   private getCategories(): void {
     this.categoryService
-      .findAll(0, 99999, CategoryType.INCOME)
+      .findAll(buildParams(0, 99999).append("categoryType", CategoryType.INCOME))
       .pipe(takeUntil(this._subject))
-      .subscribe((response: any) => {
-        this.categories = response.body.data;
+      .subscribe((response: ResponseWrapper) => {
+        this.categories = response.data;
         if(this.editMode) {
           this.formGroup.patchValue(this.income);
         }
@@ -78,13 +79,13 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
     if(this.formGroup.valid && !this.savingEntity){
       if(this.editMode) {
         this.savingEntity = true;
-        this.incomingsService
+        this.incomeService
           .update(this.income.id, this.formGroup.value)
           .pipe(takeUntil(this._subject))
           .subscribe(() => this.onSaveSuccess("Income updated with success"));
       } else if(!this.savingEntity){
         this.savingEntity = true;
-        this.incomingsService
+        this.incomeService
           .save(this.formGroup.value)
           .pipe(takeUntil(this._subject))
           .subscribe(() => this.onSaveSuccess("A new Income has been inserted"));

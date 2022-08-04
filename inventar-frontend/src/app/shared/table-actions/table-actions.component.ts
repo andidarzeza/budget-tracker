@@ -1,12 +1,11 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 import { FilterOptions } from './filter/filter.models';
 import { TableActionInput } from './TableActionInput';
 
 @Component({
-  selector: 'app-table-actions',
+  selector: 'table-actions',
   templateUrl: './table-actions.component.html',
   styleUrls: ['./table-actions.component.css'],
   animations: [

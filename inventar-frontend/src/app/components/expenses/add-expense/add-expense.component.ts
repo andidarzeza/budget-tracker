@@ -3,12 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
-import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { SpendingService } from 'src/app/services/spending.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { Category, CategoryType, EntityType, Expense } from 'src/app/models/models';
+import { Category, CategoryType, EntityType, Expense, ResponseWrapper } from 'src/app/models/models';
+import { buildParams } from 'src/app/utils/param-bulder';
+import { ExpenseService } from 'src/app/services/pages/expense.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
 
 @Component({
   selector: 'app-add-expense',
@@ -28,7 +29,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public expense: Expense,
     public dialogRef: MatDialogRef<AddExpenseComponent>,
     private formBuilder: FormBuilder,
-    private spendingService: SpendingService,
+    private expenseService: ExpenseService,
     private categoryService: CategoriesService
   ) {}
   
@@ -45,10 +46,10 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
 
   private getCategories(): void {
     this.categoryService
-      .findAll(0, 1000, CategoryType.EXPENSE)
+      .findAll(buildParams(0, 1000).append("categoryType", CategoryType.EXPENSE))
       .pipe(
         takeUntil(this._subject),
-        map((response: any) => this.categories = response.body.data),
+        map((response: ResponseWrapper) => this.categories = response.data),
         filter(()=>this.editMode),
         map(() => this.formGroup.patchValue(this.expense))
       )
@@ -63,7 +64,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     if(this.formGroup.valid && !this.savingEntity){
       if(this.editMode) {
         this.savingEntity = true;
-        this.spendingService
+        this.expenseService
           .update(this.expense.id, this.formGroup.value)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {
@@ -73,7 +74,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
           });
       } else if(!this.savingEntity) {
         this.savingEntity = true;
-        this.spendingService
+        this.expenseService
           .save(this.formGroup.value)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {

@@ -12,14 +12,14 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/spending")
+@RequestMapping("/api/expense")
 public class ExpenseResource {
 
     private final ExpenseService expenseService;
 
     @GetMapping
     public ResponseEntity findAll(Pageable pageable, @RequestParam Map<String, String> params){
-        return expenseService.getExpenses(pageable, params);
+        return expenseService.findAll(pageable, params);
     }
 
     @GetMapping("/{id}")
@@ -38,7 +38,7 @@ public class ExpenseResource {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity update(@RequestBody Expense expense, @PathVariable String id) {
+    public ResponseEntity update(@PathVariable String id, @RequestBody Expense expense) {
         return expenseService.update(id, expense);
     }
 }

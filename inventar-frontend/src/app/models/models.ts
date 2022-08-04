@@ -126,3 +126,8 @@ export interface Theme {
 export enum CategoryType {
     EXPENSE="EXPENSE", INCOME="INCOME"
 }
+
+export interface ResponseWrapper {
+    data: any[];
+    count: number;
+}

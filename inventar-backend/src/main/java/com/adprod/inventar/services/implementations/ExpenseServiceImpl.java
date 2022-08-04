@@ -30,7 +30,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final SecurityContextService securityContextService;
 
     @Override
-    public ResponseEntity getExpenses(Pageable pageable, Map<String, String> params) {
+    public ResponseEntity findAll(Pageable pageable, Map<String, String> params) {
         String description = params.get("description");
         Double expense = Double.parseDouble(Objects.nonNull(params.get("expense")) ? params.get("expense") : "-1");
         String category = params.get("category");

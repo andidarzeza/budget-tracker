@@ -20,11 +20,12 @@ import { MatInputModule } from '@angular/material/input';
 import { FilterModule } from './table-actions/filter/filter.module';
 import { TableMessageModule } from './table-message/table-message.module';
 import { ConfirmModule } from './confirm/confirm.module';
+import { TableActionsModule } from './table-actions/table-actions.module';
 
 
 
 @NgModule({
-  declarations: [IconSelectComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, CustomDatePipe, TableActionsComponent, RecordActionsComponent],
+  declarations: [IconSelectComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, CustomDatePipe, RecordActionsComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -35,6 +36,7 @@ import { ConfirmModule } from './confirm/confirm.module';
     MatTooltipModule,
     ReactiveFormsModule,
     MatInputModule,
+    TableActionsModule,
     ConfirmModule,
     FilterModule
   ],

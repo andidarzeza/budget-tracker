@@ -1,8 +1,7 @@
-import { HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
-import { SpendingService } from 'src/app/services/spending.service';
 import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { ConfirmComponent } from '../../shared/confirm/confirm.component';
@@ -14,9 +13,11 @@ import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { filter, takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import { CategoryType, Expense } from 'src/app/models/models';
+import { CategoryType, Expense, ResponseWrapper } from 'src/app/models/models';
 import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
-import { CategoriesService } from 'src/app/services/categories.service';
+import { buildParams } from 'src/app/utils/param-bulder';
+import { ExpenseService } from 'src/app/services/pages/expense.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
 
 @Component({
   selector: 'app-expenses',
@@ -67,7 +68,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
 
   constructor(
     public sharedService: SharedService,
-    private spendingService: SpendingService,
+    private expenseService: ExpenseService,
     public dialog: DialogService,
     private categoryService: CategoriesService,
     private toaster: ToastrService
@@ -75,11 +76,11 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
 
   ngOnInit(): void {
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
-    this.categoryService.findAll(0, 9999, CategoryType.EXPENSE).subscribe(res => {
+    this.categoryService.findAll(buildParams(0, 9999).append("categoryType", CategoryType.EXPENSE)).subscribe((res: ResponseWrapper) => {
       const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
       const index = this.filterOptions.indexOf(item);
       this.filterOptions[index].matSelectOptions = {
-          options: res.body.data,
+          options: res.data,
           displayBy: "category",
           valueBy: "id"
       };
@@ -96,12 +97,12 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
 
   query(): void {
     this.sharedService.activateLoadingSpinner();
-    this.spendingService
-      .findAll(this.page, this.size, this.sort, this.previousFilters)
+    this.expenseService
+      .findAll(buildParams( this.page, this.size, this.sort, this.previousFilters))
       .pipe(takeUntil(this._subject))
-      .subscribe((res: HttpResponse<any>) => {
-        this.expenses = res?.body.data;
-        this.totalItems = res?.body.count;
+      .subscribe((res: ResponseWrapper) => {
+        this.expenses = res?.data;
+        this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();     
       },
       () => {
@@ -150,7 +151,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
 
   delete(id: string): void {
     this.sharedService.activateLoadingSpinner();
-    this.spendingService
+    this.expenseService
       .delete(id)
       .pipe(takeUntil(this._subject)) 
       .subscribe(() => {

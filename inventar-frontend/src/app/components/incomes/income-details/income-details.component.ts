@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 import { Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
 import { Category, Income } from 'src/app/models/models';
-import { CategoriesService } from 'src/app/services/categories.service';
-import { IncomingsService } from 'src/app/services/incomings.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -20,7 +20,7 @@ export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
   private _subject = new Subject();
   
   constructor(
-    private incomeService: IncomingsService,
+    private incomeService: IncomeService,
     public sharedService: SharedService,
     private categoryService: CategoriesService
   ) {}

@@ -8,11 +8,14 @@ import { serverAPIURL } from 'src/environments/environment';
 })
 export class ExportService {
 
-  constructor(private http: HttpClient) { }
+  readonly API_URl: string = `${serverAPIURL}/api/export`;
+
+  constructor(private http: HttpClient) {
+  }
 
   exportDashboardPDF(from: Date, to: Date): Observable<Blob> {
     const params = new HttpParams().append("from", from.toISOString()).append("to", to.toISOString());
-    return this.http.get(`${serverAPIURL}/api/export/pdf/dashboard`, {responseType: 'blob', params});
+    return this.http.get(`${this.API_URl}/pdf/dashboard`, {responseType: 'blob', params});
   }
 
 }

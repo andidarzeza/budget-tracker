@@ -1,20 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Income } from 'src/app/models/models';
 import { serverAPIURL } from 'src/environments/environment';
+import { BaseService } from '../base/base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AccountService {
+export class IncomeService extends BaseService<Income> {
 
-  readonly API_URl: string = `${serverAPIURL}/api/account`;
+  readonly API_URl: string = `${serverAPIURL}/api/income`;
 
   constructor(public http: HttpClient) {
-    
-  }
-
-  getAccount(): Observable<any> {
-    return this.http.get(this.API_URl, {observe: 'response'});
+    super(http);
   }
 }

@@ -7,9 +7,9 @@
 
 
     <div class="table-container {{sharedService.theme}}-table" style="position: relative;display: flex;flex-direction: column;">
-        <app-table-actions class="category-table-actions" style="width: calc(100% + 50px);margin-top: -40px;" [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
+        <table-actions class="category-table-actions" style="width: calc(100% + 50px);margin-top: -40px;" [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
             (onOpenDialog)="openAddEditForm()" (onRefresh)="query()" (onSearch)="onSearch($event)" (onReset)="reset()">
-        </app-table-actions>
+        </table-actions>
         <mat-tab-group (selectedTabChange)="changeCategoriesType($event)">
             <mat-tab>
                 <ng-template mat-tab-label>
@@ -18,7 +18,8 @@
                         Expense Categories
                     </span>
                 </ng-template>
-                <app-categories-table (onOpenAddEditForm)="openAddEditForm($event)"
+                <app-categories-table 
+                    (onOpenAddEditForm)="openAddEditForm($event)"
                     (onOpenDeleteDialog)="openDeleteConfirmDialog($event)"
                     (onViewCategoryDetails)="viewCategoryDetails($event)" (sortEvent)="announceSortChange($event)"
                     [dataSource]="dataSource">
@@ -40,19 +41,6 @@
                 </app-categories-table>
             </mat-tab>
         </mat-tab-group>
-
-
-
-        <!-- <div class="category-action-container action-container {{sharedService.theme}}-text"
-            *ngIf="!sharedService.mobileView">
-            <mat-icon (click)="query()" class="pointer no-select {{sharedService.theme}}-icon"
-                style="float: right;margin-left: 10px">refresh</mat-icon>
-            <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon"
-                style="float: right;margin-left: 10px">add</mat-icon>
-            <mat-icon (click)="openAddEditForm()" class="pointer no-select {{sharedService.theme}}-icon"
-                style="float: right;">search</mat-icon>
-        </div> -->
-
     </div>
 
 

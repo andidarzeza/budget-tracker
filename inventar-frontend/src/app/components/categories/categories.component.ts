@@ -1,7 +1,6 @@
-import { HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { CategoriesService } from 'src/app/services/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddCategoryComponent } from './add-category/add-category.component';
@@ -14,9 +13,11 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Category, CategoryType } from 'src/app/models/models';
+import { Category, CategoryType, ResponseWrapper } from 'src/app/models/models';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
+import { buildParams } from 'src/app/utils/param-bulder';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
 
 @Component({
   selector: 'app-categories',
@@ -80,11 +81,11 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.categoriesService
-      .findAll(this.page, this.size, this.categoriesType, this.sort, this.previousFilters)
+      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType))
       .pipe(takeUntil(this._subject))
-      .subscribe((res: HttpResponse<any>) => {
-        this.dataSource = res?.body.data;
-        this.totalItems = res?.body.count;
+      .subscribe((res: ResponseWrapper) => {
+        this.dataSource = res?.data;
+        this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();     
       },
       () => {

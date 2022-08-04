@@ -75,9 +75,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseEntity update(Category category) {
+    public ResponseEntity update(String id, Category category) {
         category.setUser(securityContextService.username());
         category.setLastModifiedDate(LocalDateTime.now());
+        category.setId(id);
         categoryRepository.save(category);
         historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
         return ResponseEntity.ok(category);

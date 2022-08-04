@@ -2,9 +2,9 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 import { Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
 import { Category, Expense } from 'src/app/models/models';
-import { CategoriesService } from 'src/app/services/categories.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { SpendingService } from 'src/app/services/spending.service';
 
 @Component({
   selector: 'app-expense-detail',
@@ -21,7 +21,7 @@ export class ExpenseDetailComponent implements OnInit, OnChanges, OnDestroy {
   private _subject = new Subject();
   
   constructor(
-    private expenseService: SpendingService,
+    private expenseService: ExpenseService,
     public sharedService: SharedService,
     private categoryService: CategoriesService
   ) {}
@@ -41,8 +41,8 @@ export class ExpenseDetailComponent implements OnInit, OnChanges, OnDestroy {
       .findOne(this.expenseViewId)
       .pipe(
         takeUntil(this._subject),
-        mergeMap((expenseResponse: any) => {
-          this.expense = expenseResponse.body;
+        mergeMap((expense: Expense) => {
+          this.expense = expense;
           return this.categoryService.findOne(this.expense.categoryID);
         }))
         .subscribe((category: Category) => this.expenseCategory = category);

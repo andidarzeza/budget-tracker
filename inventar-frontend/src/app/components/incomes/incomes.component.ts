@@ -1,7 +1,6 @@
-import { HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { IncomingsService } from 'src/app/services/incomings.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddIncomeComponent } from './add-income/add-income.component';
@@ -14,9 +13,11 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { EntityOperation } from 'src/app/models/core/EntityOperation';
 import { MatSidenav } from '@angular/material/sidenav';
-import { CategoryType, Income } from 'src/app/models/models';
+import { CategoryType, Income, ResponseWrapper } from 'src/app/models/models';
 import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
-import { CategoriesService } from 'src/app/services/categories.service';
+import { buildParams } from 'src/app/utils/param-bulder';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { IncomeService } from 'src/app/services/pages/income.service';
 
 @Component({
   selector: 'app-incomes',
@@ -65,7 +66,7 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
 
   constructor(
     public sharedService: SharedService,
-    private incomingsService: IncomingsService,
+    private incomeService: IncomeService,
     public dialog: DialogService,
     private toaster: ToastrService,
     private categoryService: CategoriesService
@@ -79,13 +80,13 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
 
   private getCategories(): void {
     this.categoryService
-      .findAll(0, 9999, CategoryType.INCOME)
+      .findAll(buildParams(0, 9999).append("categoryType", CategoryType.INCOME))
       .pipe(takeUntil(this._subject))
-      .subscribe(res => {
+      .subscribe((res: ResponseWrapper) => {
         const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
         const index = this.filterOptions.indexOf(item);
         this.filterOptions[index].matSelectOptions = {
-          options: res.body.data,
+          options: res.data,
           displayBy: "category",
           valueBy: "id"
         }
@@ -103,12 +104,12 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
 
   query(): void {
     this.sharedService.activateLoadingSpinner();
-    this.incomingsService
-      .findAll(this.page, this.size, this.sort, this.previousFilters)
+    this.incomeService
+      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters))
       .pipe(takeUntil(this._subject))
-      .subscribe((res: HttpResponse<any>) => {
-        this.incomes = res?.body.data;
-        this.totalItems = res?.body.count;
+      .subscribe((res: ResponseWrapper) => {
+        this.incomes = res?.data;
+        this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();     
       },
       () => {
@@ -142,7 +143,7 @@ export class IncomesComponent implements OnInit, OnDestroy, EntityOperation<Inco
   }
   
   delete(id: string): void {
-    this.incomingsService
+    this.incomeService
       .delete(id)
       .pipe(takeUntil(this._subject))
       .subscribe(() => {

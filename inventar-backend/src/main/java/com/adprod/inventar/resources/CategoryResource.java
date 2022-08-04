@@ -36,8 +36,8 @@ public class CategoryResource {
         return categoryService.save(category);
     }
 
-    @PutMapping
-    public ResponseEntity update(@RequestBody Category category) {
-        return categoryService.update(category);
+    @PutMapping("/{id}")
+    public ResponseEntity update(@PathVariable String id, @RequestBody Category category) {
+        return categoryService.update(id, category);
     }
 }
