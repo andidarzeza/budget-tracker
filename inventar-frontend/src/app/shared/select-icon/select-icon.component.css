@@ -1,0 +1,48 @@
+.icon-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% + 48px);
+    height: calc(100% + 34px);
+    z-index: 1;
+    margin-left: -24px;
+    margin-top: -10px;
+    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+}
+
+.actions {
+    padding: 20px;
+}
+
+.icons {
+    overflow: auto;
+    display: grid;
+    grid-template-columns: 15% 15% 15% 15% 15% 15%;
+    row-gap: 10px;
+    justify-content: space-evenly;
+    max-height: calc(100% - 80px);
+}
+
+.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+    /* border: 1px solid white; */
+    cursor: pointer;
+    aspect-ratio: 1;
+}
+
+.selected-icon {
+    margin-right: 10px;
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    margin-top: -2px;
+}
+
+.icon > mat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 36px;
+}

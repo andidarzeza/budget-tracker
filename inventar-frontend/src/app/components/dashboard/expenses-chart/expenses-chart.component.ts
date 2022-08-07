@@ -70,7 +70,7 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
   private getDailyExpensesData(): number[] {
     return this.dailyExpensesLabels?.map((label: string) => {
         const filtered: DailyExpenseDTO[] = this.dailyExpenses?.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);
-        return filtered.length !== 0 ? filtered[0].dailyExpense : 0;
+        return filtered?.length !== 0 ? filtered[0].dailyExpense : 0;
       });
   }
 }

@@ -41,6 +41,13 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
     }
   }
 
+  test(): void {
+    console.log("test");
+    this.showIconSelect = true;
+  }
+
+  showIconSelect = false;
+
   add(): void {
     if(this.categoryGroup.valid && !this.savingEntity){
       if(this.editMode) {

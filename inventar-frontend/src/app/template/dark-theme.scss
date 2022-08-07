@@ -18,6 +18,11 @@
     color: #f6af06;    
 }
 
+.dark-not-found-button {
+    background-color: #1D2325;
+    color: #9F9F9F;
+}
+
 .dark-dashboard-card {
     // box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px !important;
 }
@@ -49,6 +54,7 @@
 .dark-class>mat-dialog-container {
     background: var(--dark);
     color: white;
+    overflow: hidden;
 }
 
 .dark-book-tb-container {

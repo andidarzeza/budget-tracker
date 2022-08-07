@@ -33,15 +33,12 @@ public class CategoryServiceImpl implements CategoryService {
     public ResponseEntity findAll(Pageable pageable, Map<String, String> params) {
         String category = params.get("category");
         String description = params.get("description");
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-        booleanBuilder = booleanBuilder.and(QCategory.category1.user.eq(securityContextService.username()));
-        booleanBuilder = booleanBuilder.and(QCategory.category1.categoryType.eq(params.get("categoryType")));
-        if(Objects.nonNull(description)) {
-            booleanBuilder = booleanBuilder.and(QCategory.category1.description.containsIgnoreCase(description));
-        }
-        if(Objects.nonNull(category)) {
-            booleanBuilder = booleanBuilder.and(QCategory.category1.category.containsIgnoreCase(category));
-        }
+        BooleanBuilder booleanBuilder = new BooleanBuilder()
+                .and(QCategory.category1.user.eq(securityContextService.username()))
+                .and(QCategory.category1.categoryType.eq(params.get("categoryType")))
+                .and(QCategory.category1.description.containsIgnoreCase(Objects.nonNull(description) ? description : ""))
+                .and(QCategory.category1.category.containsIgnoreCase(Objects.nonNull(category) ? category : ""));
+
         Page<Category> page = this.categoryRepository.findAll(booleanBuilder, pageable);
         ResponseWrapper<Category> categoryWrapper = new ResponseWrapper();
         categoryWrapper.setData(page.getContent());

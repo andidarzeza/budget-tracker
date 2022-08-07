@@ -4,7 +4,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
 import { SharedModule } from './shared/shared.module';
 import { CustomHttpInterceptorService } from './services/custom-http-interceptor.service';
@@ -20,11 +19,8 @@ import { BaseTemplateModule } from './template/base-template/base-template.modul
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    ReactiveFormsModule,
     BaseTemplateModule,
-    FormsModule,
     SharedModule,
-    MatDialogModule,
     ToastrModule.forRoot()
   ],
   providers: [{

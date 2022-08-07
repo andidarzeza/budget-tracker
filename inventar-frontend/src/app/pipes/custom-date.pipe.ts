@@ -16,7 +16,6 @@ export class CustomDatePipe implements PipeTransform {
     const now = new Date().getTime();
     const date = new Date(stringDate).getTime();
     const diff = now - date;
-    console.log(new Date(stringDate).getDate());
     
     if(diff < 10 * this.SECOND) return 'just now';
     else if(diff < 2 * this.MINUTE) return 'a minute ago';

@@ -1,17 +1,38 @@
-<create-form icon="library_books" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()">
+<create-form icon="library_books" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()" style="position: relative;
+width: 100%;
+height: 100%;
+display: block;">
     <form [formGroup]="categoryGroup">
-        <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: 100%;">
-            <mat-label class="{{sharedService.theme}}-text">Category</mat-label>
-            <input type="text" autocomplete="off" matInput formControlName="category">
-            <mat-error>This field is required.</mat-error>
-        </mat-form-field>
+        <div style="width: 100%;display: flex;justify-content: space-between;align-items: center;">
+            <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: 60%;">
+                <mat-label class="{{sharedService.theme}}-text">Category</mat-label>
+                <input type="text" autocomplete="off" matInput formControlName="category">
+                <mat-error>This field is required.</mat-error>
+            </mat-form-field>
+
+            <div style="width: 39%;">
+                <select-icon [inputPlaceHolder]="icon?.value" (onSelect)="onIconSelect($event)"></select-icon>
+            </div>
+
+            <!-- <mat-form-field  (click)="test()" class="{{sharedService.theme}}-text" appearance="outline" style="width: 39%;cursor: pointer;">
+                <mat-label class="{{sharedService.theme}}-text">Select Icon</mat-label>
+                <input style="cursor: pointer" readonly type="text" autocomplete="off" matInput>
+                <mat-error>This field is required.</mat-error>
+            </mat-form-field> -->
+
+            <!-- <app-icon-select style="width: 39%;display:block; margin-bottom: 1.34375em;" [selectedIcon]="icon.value"
+            (onIconSelect)="onIconSelect($event)"></app-icon-select> -->
+        </div>
+        
 
         <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: 100%;">
             <mat-label class="{{sharedService.theme}}-text">Description</mat-label>
             <input type="text" autocomplete="off" matInput formControlName="description">
             <mat-error>This field is required.</mat-error>
         </mat-form-field>
-        <app-icon-select style="display:block; margin-bottom: 1.34375em;" [selectedIcon]="icon.value"
-            (onIconSelect)="onIconSelect($event)"></app-icon-select>
+        
     </form>
+
 </create-form>
+
+

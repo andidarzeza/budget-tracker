@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'app-not-found',
@@ -8,7 +9,10 @@ import { Router } from '@angular/router';
 })
 export class NotFoundComponent implements OnInit {
 
-  constructor(private route: Router) { }
+  constructor(
+    private route: Router,
+    public sharedService: SharedService
+  ) { }
 
   ngOnInit(): void {
   }

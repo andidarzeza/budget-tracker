@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CreateFormModule } from 'src/app/shared/create-form/create-form.module';
+import { SelectIconModule } from 'src/app/shared/select-icon/select-icon.module';
 
 
 
@@ -17,6 +18,7 @@ import { CreateFormModule } from 'src/app/shared/create-form/create-form.module'
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    SelectIconModule,
     CreateFormModule
   ]
 })

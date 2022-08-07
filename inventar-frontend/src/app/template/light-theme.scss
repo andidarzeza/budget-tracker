@@ -14,6 +14,11 @@
     border: 2px solid var(--light);
 }
 
+.light-not-found-button {
+    background-color: var(--light);
+    color: white;
+}
+
 .light-icon-2{
     color: var(--light);
 }
@@ -54,6 +59,7 @@
 
 .light-class>mat-dialog-container {
     background: white;
+    overflow: hidden;
 }
 
 .light-book-tb-container {

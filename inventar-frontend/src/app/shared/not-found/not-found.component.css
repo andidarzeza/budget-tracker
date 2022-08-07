@@ -16,7 +16,11 @@ div {
     color: #9F9F9F;
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: calc(50% + 38px);
     transform: translate(-50%, -50%);
     font-family: 'Lato', sans-serif;
+}
+
+.text-center {
+    text-align: center;
 }

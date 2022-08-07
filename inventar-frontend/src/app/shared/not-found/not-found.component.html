@@ -1,4 +1,4 @@
-<div>
+<div class="text-center">
     <h1>404</h1>
     <h2>Page Not Found.</h2>
     <p>
@@ -6,7 +6,7 @@
         How you got here is a mystery. But you can click the button below
         to go back to the homepage.
     </p>
-    <button mat-button style="background-color: #1D2325;" (click)="navigate('dashboard')">
+    <button class="{{sharedService.theme + '-not-found-button'}}" mat-raised-button (click)="navigate('dashboard')">
         HOME
     </button>
 </div>
