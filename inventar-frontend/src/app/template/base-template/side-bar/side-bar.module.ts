@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -17,7 +18,8 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    AppRoutingModule,
+    RouterModule,
+    // AppRoutingModule,
     MatTooltipModule
   ],
   exports: [SideBarComponent]
