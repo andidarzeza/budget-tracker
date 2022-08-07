@@ -6,11 +6,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
-import { TemplateModule } from './template/template.module';
 import { SharedModule } from './shared/shared.module';
 import { CustomHttpInterceptorService } from './services/custom-http-interceptor.service';
 import {MatDialogModule} from '@angular/material/dialog';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { BaseTemplateModule } from './template/base-template/base-template.module';
 
 @NgModule({
   declarations: [
@@ -22,11 +21,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
+    BaseTemplateModule,
     FormsModule,
     SharedModule,
     MatDialogModule,
-    TemplateModule,
-    MatProgressBarModule,
     ToastrModule.forRoot()
   ],
   providers: [{

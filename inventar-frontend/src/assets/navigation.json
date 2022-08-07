@@ -1,0 +1,32 @@
+[
+    {
+        "icon": "dashboard",
+        "text": "Dashboard",
+        "link": "/dashboard"
+    },
+    {
+        "icon": "attach_money",
+        "text": "Expenses",
+        "link": "/expenses"
+    },
+    {
+        "icon": "transit_enterexit",
+        "text": "Incomes",
+        "link": "/incomes"
+    },
+    {
+        "icon": "library_books",
+        "text": "Categories",
+        "link": "/categories"
+    },
+    {
+        "icon": "history",
+        "text": "History",
+        "link": "/history"
+    },
+    {
+        "icon": "settings",
+        "text": "Settings",
+        "link": "/settings"
+    }
+]

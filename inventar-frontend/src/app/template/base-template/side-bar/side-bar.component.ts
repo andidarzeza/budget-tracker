@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { MenuItem } from '../base-template.models';
 
 @Component({
-  selector: 'app-side-bar',
+  selector: 'side-bar',
   templateUrl: './side-bar.component.html',
   styleUrls: ['./side-bar.component.css']
 })
@@ -15,42 +16,13 @@ export class SideBarComponent implements AfterViewInit {
     public authenticationService: AuthenticationService,
     public sideBarService: SideBarService
   ) { }
-  items = [
-    {
-      icon: 'dashboard',
-      text: 'Dashboard',
-      link: '/dashboard'
-    },{
-      icon: 'attach_money',
-      text: 'Expenses',
-      link: '/expenses'
-    },{
-      icon: 'transit_enterexit',
-      text: 'Incomes',
-      link: '/incomes'
-    },
-    {
-      icon: 'library_books',
-      text: 'Categories',
-      link: '/categories'
-    },
-    {
-      icon: 'history',
-      text: 'History',
-      link: '/history'
-    },
-    {
-      icon: 'settings',
-      text: 'Settings',
-      link: '/settings'
-    }
 
-  ];
+  @Input() navigation: MenuItem[];
 
   ngAfterViewInit(): void {
-    this.items.forEach((item: any) => {
+    this.navigation?.forEach((item: MenuItem) => {
       if(item.link === window.location.pathname) {
-        const index = this.items.indexOf(item);        
+        const index = this.navigation.indexOf(item);        
         this.animateSelectedOption(index);
       }
     });

@@ -15,7 +15,7 @@
         <div id="active-item"></div>
         <div 
             class="opened-menu-item pointer" 
-            *ngFor="let item of items;let i = index" 
+            *ngFor="let item of navigation;let i = index" 
             [routerLink]="[item.link]" 
             routerLinkActive="router-link-active"
             (click)="animateSelectedOption(i)"

@@ -11,7 +11,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-nav-bar',
+  selector: 'nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css']
 })

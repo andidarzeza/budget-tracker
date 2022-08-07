@@ -1,69 +1,39 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { IConfiguration } from './models/models';
 import { AuthenticationService } from './services/authentication.service';
 import { ConfigurationService } from './services/configuration.service';
-import { ExchangeService } from './services/exchange.service';
 import { SharedService } from './services/shared.service';
-import { SideBarService } from './services/side-bar.service';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  animations: [
-    trigger(
-      'inOutAnimation', 
-      [
-        transition(
-          ':enter', 
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out', 
-                    style({opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave', 
-          [
-            style({ opacity: 1 }),
-            animate('400ms ease-in', 
-                    style({ opacity: 0 }))
-          ]
-        )
-      ]
-    )
-  ]
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
-  title = 'inventar-front-end';
-  success = true;
-  error = false;
+export class AppComponent implements OnInit, OnDestroy {
+
+  private subject = new Subject();
+
   constructor(
     public authenticationService: AuthenticationService,
     public sharedService: SharedService,
-    private configurationService: ConfigurationService, 
-    public sideBarService: SideBarService,
-    private exchangeService: ExchangeService
-  ) {
-
-  }
+    private configurationService: ConfigurationService
+  ) {}
 
   ngOnInit(): void {
-
-    const request = this.exchangeService.getExchangeRates();
-    request.onload = () => {
-      const response = request.response;
-      console.log(response);
-    }
-    this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
-      this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
-    });
+    this.configurationService
+      .getConfiguration()
+      .pipe(takeUntil(this.subject))
+      .subscribe((configuration: IConfiguration) => this.sharedService.theme = configuration.darkMode? 'dark' : 'light');
     this.sharedService.listenForThemeChange();
   }
 
-  toggleSidebar(): void {
-    this.sideBarService.toggleSideBar();
+  ngOnDestroy(): void {
+    this.subject.next();
+    this.subject.complete();
   }
 
 }
