@@ -121,6 +121,7 @@ export interface User {
 export interface Theme {
     name: string;
     color: string;
+    shadowedColor: string;
 }
 
 export enum CategoryType {

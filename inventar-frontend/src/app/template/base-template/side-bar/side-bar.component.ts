@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { MenuItem } from '../base-template.models';
+import { MenuItem, SideBarMode } from '../base-template.models';
 
 @Component({
   selector: 'side-bar',
@@ -12,7 +12,7 @@ import { MenuItem } from '../base-template.models';
 export class SideBarComponent implements OnChanges {
   
   @Input() navigation: MenuItem[];
-
+  @Input() sideBarMode: SideBarMode;
   constructor(
     public sharedService: SharedService,
     public authenticationService: AuthenticationService,

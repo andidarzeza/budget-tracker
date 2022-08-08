@@ -12,25 +12,39 @@
 
 .actions {
     padding: 20px;
+    display: flex;
+    align-items: center;
 }
 
 .icons {
     overflow: auto;
     display: grid;
-    grid-template-columns: 15% 15% 15% 15% 15% 15%;
-    row-gap: 10px;
+    grid-template-columns: 106px 106px 106px 106px 106px 106px;
+    row-gap: 14px;
     justify-content: space-evenly;
-    max-height: calc(100% - 80px);
+    max-height: calc(100% - 110px);
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .icon {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
-    /* border: 1px solid white; */
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    transition: box-shadow 200ms;
     cursor: pointer;
     aspect-ratio: 1;
+    border-radius: 5px;
+    flex-direction: column;
+}
+
+.icon:hover {
+    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+}
+
+.icon > mat-icon {
+    transition: color 200ms;
 }
 
 .selected-icon {

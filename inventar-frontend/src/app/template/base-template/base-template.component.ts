@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { MenuItem } from './base-template.models';
+import { MenuItem, SideBarMode } from './base-template.models';
 
 
 @Component({
@@ -49,6 +49,7 @@ export class BaseTemplateComponent implements OnInit, OnDestroy {
   ) { }
 
   navigation: MenuItem[];
+  sideBarMode: SideBarMode = "over";
 
   ngOnInit(): void {
     this.getNavigationItems();

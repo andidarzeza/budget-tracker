@@ -25,27 +25,33 @@ export class NavBarComponent implements OnInit, OnDestroy {
   public themesArray: Theme[] = [
     {
       name: 'Default',
-      color: 'rgba(0, 105, 92, 1)'
+      color: 'rgba(0, 105, 92, 1)',
+      shadowedColor: 'rgba(0, 105, 92, 0.5)'
     },
     {
       name: 'Pink & Blue-grey',
-      color: 'rgba(233, 30, 99, 1)'
+      color: 'rgba(233, 30, 99, 1)',
+      shadowedColor: 'rgba(233, 30, 99, 0.5)'
     },
     {
       name: 'Purple',
-      color: 'rgba(103, 58, 183, 1)'
+      color: 'rgba(103, 58, 183, 1)',
+      shadowedColor: 'rgba(103, 58, 183, 0.5)'
     },
     {
       name: 'Indigo Pink',
-      color: 'rgba(63, 81, 181, 1)'
+      color: 'rgba(63, 81, 181, 1)',
+      shadowedColor: 'rgba(63, 81, 181, 0.5)'
     },
     {
       name: "Amber",
-      color: 'rgba(254, 178, 4, 1)'
+      color: 'rgba(254, 178, 4, 1)',
+      shadowedColor: 'rgba(254, 178, 4, 0.5)'
     },
     {
       name: "Deep Amber",
-      color: 'rgba(255, 133, 3, 1)'
+      color: 'rgba(255, 133, 3, 1)',
+      shadowedColor: 'rgba(255, 133, 3, 0.5)'
     }
 
   ]
@@ -55,8 +61,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     public authenticationService: AuthenticationService,
     public sidebarService: SideBarService,
     private configurationService: ConfigurationService,
-    private themeService: ThemeService,
-    private locationService: LocationService
+    private themeService: ThemeService
   ) {
   }
   ngOnInit(): void {
@@ -83,7 +88,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
   private setInitialTheme(): void {
     const theme: string = localStorage.getItem("themeColor");
-    if(theme) this.changeThemeColor(theme);
+    if(theme) this.changeThemeColor({color: theme} as Theme);
   }
 
   ngOnDestroy(): void {
@@ -111,10 +116,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
       () => this.sharedService.checkLoadingSpinner());
   }
 
-  changeThemeColor(color: string): void {
+  changeThemeColor(theme: Theme): void {
     const root: HTMLElement = document.documentElement;
-    root.style.setProperty('--light', color);
-    localStorage.setItem("themeColor", color);
-    this.themeService.next(color);
+    root.style.setProperty('--light', theme.color);
+    root.style.setProperty('--lightShadowed', theme.shadowedColor);
+    localStorage.setItem("themeColor", theme.color);
+    this.themeService.next(theme.color);
   }
 }

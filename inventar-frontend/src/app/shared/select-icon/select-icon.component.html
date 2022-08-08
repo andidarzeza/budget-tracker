@@ -14,22 +14,29 @@
     <mat-error>This field is required.</mat-error>
 </mat-form-field>
 
-<div *ngIf="showIconSelect" [@slideAnimation] class="icon-select {{sharedService.theme}} {{sharedService.theme}}-icon">
+<div *ngIf="showIconSelect" [@slideAnimation] class="icon-select {{sharedService.theme}}-table {{sharedService.theme}}-icon">
     <div class="actions">
         <button mat-icon-button (click)="close()">
             <mat-icon>
                 keyboard_arrow_left
             </mat-icon>
         </button>
+
+        <span (click)="close()" style="font-size: 16px;padding-top: 4px;cursor: pointer;">
+            Back
+        </span>
     </div>
 
-    <!-- <mat-divider></mat-divider> -->
+    <mat-divider></mat-divider>
 
     <div class="icons">
-        <div *ngFor="let icon of icons" class="icon {{sharedService.theme}}-body" (click)="select(icon)">
-            <mat-icon>
+        <div *ngFor="let icon of icons" [ngStyle]="{'background': inputPlaceHolder==icon ? 'var(--light)' : 'default' }" class="icon {{sharedService.theme}}-body" (click)="select(icon)">
+            <mat-icon [ngStyle]="{'color': inputPlaceHolder==icon ? 'white' : 'var(--light)' }">
                 {{icon}}
             </mat-icon>
+            <span style="margin-top: 5px;" class="{{sharedService.theme}}-title" [ngStyle]="{'color': inputPlaceHolder==icon ? 'white' : 'default' }">
+                {{icon}}
+            </span>
         </div>
     </div>
 </div>

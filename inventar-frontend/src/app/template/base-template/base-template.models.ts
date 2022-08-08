@@ -3,3 +3,5 @@ export interface MenuItem {
     text: string,
     link: string
 }
+
+export type SideBarMode = "over" | "side";

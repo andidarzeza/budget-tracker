@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ConfirmComponent } from './confirm/confirm.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -15,7 +14,6 @@ import { DialogService } from '../services/dialog.service';
 import { AddExpenseComponent } from '../components/expenses/add-expense/add-expense.component';
 import { RecordActionsComponent } from './record-actions/record-actions.component';
 import { CustomDatePipe } from '../pipes/custom-date.pipe';
-import { IconSelectComponent } from './icon-select/icon-select.component';
 import { MatInputModule } from '@angular/material/input';
 import { FilterModule } from './table-actions/filter/filter.module';
 import { TableMessageModule } from './table-message/table-message.module';
@@ -25,7 +23,7 @@ import { TableActionsModule } from './table-actions/table-actions.module';
 
 
 @NgModule({
-  declarations: [IconSelectComponent, NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, CustomDatePipe, RecordActionsComponent],
+  declarations: [NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, CustomDatePipe, RecordActionsComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -48,8 +46,7 @@ import { TableActionsModule } from './table-actions/table-actions.module';
     AbsoluteValuePipe,
     CustomDatePipe,
     TableActionsComponent,
-    RecordActionsComponent,
-    IconSelectComponent
+    RecordActionsComponent
   ],
   providers: [DialogService],
   entryComponents: [AddExpenseComponent]
