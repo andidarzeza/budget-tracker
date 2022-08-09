@@ -7,6 +7,7 @@ import { NotFoundComponent } from './shared/not-found/not-found.component';
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path: 'login', loadChildren: () => import('./components/login/login.module').then(m => m.LoginModule)},
+  {path: 'register', loadChildren: () => import('./components/register/register.module').then(m => m.RegisterModule)},
   {path: 'dashboard', loadChildren: () => import('./components/dashboard/dashboard.module').then(m => m.DashboardModule), canActivate : [AuthGuardService]},
   {path: 'expenses', loadChildren: () => import('./components/expenses/expenses.module').then(m => m.ExpensesModule), canActivate : [AuthGuardService]},
   {path: 'incomes', loadChildren: () => import('./components/incomes/incomes.module').then(m => m.IncomesModule), canActivate : [AuthGuardService]},

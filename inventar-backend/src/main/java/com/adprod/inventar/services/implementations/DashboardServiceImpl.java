@@ -31,7 +31,7 @@ public class DashboardServiceImpl implements DashboardService {
         dashboardDTO.setExpensesInfo(expensesInfoAggregation.getExpensesInfo(from, to));
         dashboardDTO.setIncomesInfo(incomesInfoAggregation.getIncomesInfo(from, to));
         dashboardDTO.setIncomes(incomeAggregation.getIncomes(from, to));
-        dashboardDTO.setExpenses(dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get());
+        dashboardDTO.setExpenses(dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).orElse(0.0));
         dashboardDTO.setIncreaseInExpense(expenseIncreaseAggregation.getExpenseIncreaseValue(from, to, dashboardDTO.getAverageDailyExpenses(), range));
         dashboardDTO.setIncreaseInIncome(incomeIncreaseAggregation.getIncomeIncreaseValue(from, to, dashboardDTO.getAverageDailyIncome()));
         return ResponseEntity.ok(dashboardDTO);

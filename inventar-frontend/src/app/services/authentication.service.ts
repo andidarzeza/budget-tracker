@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { serverAPIURL } from 'src/environments/environment';
-import { User } from '../models/models';
+import { User, UserRequest } from '../models/models';
 import { SharedService } from './shared.service';
 
 @Injectable({
@@ -31,6 +31,10 @@ export class AuthenticationService {
               this.currentUserSubject.next(user);
               return user;
           }));
+  }
+
+  register(payload: UserRequest): Observable<any> {
+    return this.http.post(`${serverAPIURL}/api/user/register`, payload);
   }
 
   logout() {

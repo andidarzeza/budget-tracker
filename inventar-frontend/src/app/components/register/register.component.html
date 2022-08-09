@@ -1,0 +1,50 @@
+<div class="register-container">
+    <div class="form-container">
+        <div class="register-card">
+            <form [formGroup]="registerGroup" autocomplete="off">
+
+                <div class="flex" style="justify-content: space-between;">
+                    <mat-form-field appearance="outline" style="width: 48%;">
+                        <mat-label class="{{sharedService.theme}}-text">First Name</mat-label>
+                        <input type="text" autocomplete="off" matInput formControlName="firstName">
+                        <mat-error>This field is required.</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" style="width: 48%;">
+                        <mat-label class="{{sharedService.theme}}-text">Last Name</mat-label>
+                        <input type="text" autocomplete="off" matInput formControlName="lastName">
+                        <mat-error>This field is required.</mat-error>
+                    </mat-form-field>    
+                </div>
+
+                <mat-form-field appearance="outline" style="width: 100%;">
+                    <mat-label class="{{sharedService.theme}}-text">Username</mat-label>
+                    <input type="text" autocomplete="off" matInput formControlName="username">
+                    <mat-error>This field is required.</mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline" style="width: 100%;">
+                    <mat-label class="{{sharedService.theme}}-text">Password</mat-label>
+                    <input #passwordInput type="password" autocomplete="off" matInput formControlName="password" style="width: calc(100% - 30px)">
+                    <div class="show-hide-password" (click)="togglePasswordVisibility(passwordInput)">
+                        <mat-icon *ngIf="!showPassword">remove_red_eye</mat-icon>
+                        <mat-icon *ngIf="showPassword">visibility_off</mat-icon>
+                    </div>
+                    <mat-error>This field is required.</mat-error>
+                </mat-form-field>
+
+                <div class="actions">
+                    <button mat-raised-button color="primary" class="{{sharedService.theme}}-login-button" (click)="login()">
+                        Register
+                    </button>
+                </div>
+                <div class="caps-lock" appCapsLock>
+                    <span style="display: block;height: 10px;width: 10px;background: rgb(255,130,67);border-radius: 50%;
+                    margin-top: 6px;margin-right: 3px;">
+                    </span> Caps lock is on.
+                </div>
+            </form>
+        
+        </div>
+    </div>
+</div>        

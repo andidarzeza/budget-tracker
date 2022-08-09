@@ -133,4 +133,11 @@ export interface ResponseWrapper {
     count: number;
 }
 
+export interface UserRequest {
+    username: string,
+    password: string,
+    firstName: string,
+    lastName: string
+}
+
 export type RangeType = "Monthly" | "Yearly";
