@@ -40,8 +40,15 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
       type: 'line',
       colors: ['#ff6347'],
       labels: this.dailyExpensesLabels?.map(label => {
+        
         const array = label.split("-");
-        return array[0] + "/" + array[1] + "/" + array[2].slice(-2);
+        if (array.length == 3) {
+          return array[0] + "/" + array[1] + "/" + array[2].slice(-2);
+        } else {
+          return array[0] + "/" + array[1].slice(-2);
+        }
+
+
       }),
       showGridLines: true,
       datasets: [{
@@ -69,8 +76,9 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
 
   private getDailyExpensesData(): number[] {
     return this.dailyExpensesLabels?.map((label: string) => {
-        const filtered: DailyExpenseDTO[] = this.dailyExpenses?.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);
+      const filtered: DailyExpenseDTO[] = this.dailyExpenses?.filter((dailyExpenseDTO: DailyExpenseDTO) => dailyExpenseDTO._id === label);
         return filtered?.length !== 0 ? filtered[0].dailyExpense : 0;
-      });
+
+    });
   }
 }

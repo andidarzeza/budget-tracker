@@ -14,7 +14,7 @@ public class DashboardResource {
     private final DashboardService dashboardService;
 
     @GetMapping
-    public ResponseEntity getDashboardData(@RequestParam Instant from, @RequestParam Instant to){
-        return dashboardService.getDashboardData(from, to);
+    public ResponseEntity getDashboardData(@RequestParam Instant from, @RequestParam Instant to, @RequestParam String range){
+        return dashboardService.getDashboardData(from, to, range);
     }
 }

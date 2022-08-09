@@ -132,3 +132,5 @@ export interface ResponseWrapper {
     data: any[];
     count: number;
 }
+
+export type RangeType = "Monthly" | "Yearly";

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { DashboardDTO } from '../models/models';
+import { DashboardDTO, RangeType } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +15,12 @@ export class DashboardService {
     
   }
 
-  getDashboardData(from: Date, to: Date): Observable<DashboardDTO> {
-    const httpParams = new HttpParams()
+  getDashboardData(from: Date, to: Date, range: RangeType): Observable<DashboardDTO> {
+    const params = new HttpParams()
       .append("from", from.toISOString())
-      .append("to", to.toISOString());
-    return this.http.get<DashboardDTO>(this.API_URl, {observe: 'body', params: httpParams});
+      .append("to", to.toISOString())
+      .append("range", range);
+    return this.http.get<DashboardDTO>(this.API_URl, {params});
   }
 
 }

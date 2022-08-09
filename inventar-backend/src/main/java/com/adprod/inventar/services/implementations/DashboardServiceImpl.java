@@ -23,18 +23,17 @@ public class DashboardServiceImpl implements DashboardService {
     private final ExpenseIncreaseAggregation expenseIncreaseAggregation;
 
     @Override
-    public ResponseEntity<DashboardDTO> getDashboardData(Instant from, Instant to) {
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+    public ResponseEntity<DashboardDTO> getDashboardData(Instant from, Instant to, String range) {
         DashboardDTO dashboardDTO = new DashboardDTO();
-        dashboardDTO.setDailyExpenses(dailyExpenseAggregation.getDailyExpenses(user, from, to));
-        dashboardDTO.setAverageDailyIncome(averageIncomeAggregation.getAverageDailyIncome(user, from, to));
-        dashboardDTO.setAverageDailyExpenses(averageExpenseAggregation.getAverageDailyExpense(user, from, to));
-        dashboardDTO.setExpensesInfo(expensesInfoAggregation.getExpensesInfo(user, from, to));
-        dashboardDTO.setIncomesInfo(incomesInfoAggregation.getIncomesInfo(user, from, to));
-        dashboardDTO.setIncomes(incomeAggregation.getIncomes(user, from, to));
+        dashboardDTO.setDailyExpenses(dailyExpenseAggregation.getDailyExpenses(from, to, range));
+        dashboardDTO.setAverageDailyIncome(averageIncomeAggregation.getAverageDailyIncome(from, to, range));
+        dashboardDTO.setAverageDailyExpenses(averageExpenseAggregation.getAverageDailyExpense(from, to, range));
+        dashboardDTO.setExpensesInfo(expensesInfoAggregation.getExpensesInfo(from, to));
+        dashboardDTO.setIncomesInfo(incomesInfoAggregation.getIncomesInfo(from, to));
+        dashboardDTO.setIncomes(incomeAggregation.getIncomes(from, to));
         dashboardDTO.setExpenses(dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get());
-        dashboardDTO.setIncreaseInExpense(expenseIncreaseAggregation.getExpenseIncreaseValue(user, from, to, dashboardDTO.getAverageDailyExpenses()));
-        dashboardDTO.setIncreaseInIncome(incomeIncreaseAggregation.getIncomeIncreaseValue(user, from, to, dashboardDTO.getAverageDailyIncome()));
+        dashboardDTO.setIncreaseInExpense(expenseIncreaseAggregation.getExpenseIncreaseValue(from, to, dashboardDTO.getAverageDailyExpenses(), range));
+        dashboardDTO.setIncreaseInIncome(incomeIncreaseAggregation.getIncomeIncreaseValue(from, to, dashboardDTO.getAverageDailyIncome()));
         return ResponseEntity.ok(dashboardDTO);
     }
 

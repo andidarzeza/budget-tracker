@@ -19,12 +19,12 @@ public class ExportResource {
     private final SimpleDateFormat dateFormatter;
 
     @GetMapping("/pdf/dashboard")
-    public void exportToPDF(HttpServletResponse response, @RequestParam Instant from, @RequestParam Instant to) throws DocumentException, IOException {
+    public void exportToPDF(HttpServletResponse response, @RequestParam Instant from, @RequestParam Instant to, @RequestParam String range) throws DocumentException, IOException {
         response.setContentType("application/pdf");
         String currentDateTime = dateFormatter.format(new Date());
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=users_" + currentDateTime + ".pdf";
         response.setHeader(headerKey, headerValue);
-        exportService.exportDashboardPDF(response, from, to);
+        exportService.exportDashboardPDF(response, from, to, range);
     }
 }

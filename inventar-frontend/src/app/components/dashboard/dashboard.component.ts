@@ -10,7 +10,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 import { PdfExporterService } from 'src/app/services/pdf-exporter.service';
-import { DashboardDTO } from 'src/app/models/models';
+import { DashboardDTO, RangeType } from 'src/app/models/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,7 +18,11 @@ import { DashboardDTO } from 'src/app/models/models';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnDestroy {
+
+  selectedRange: RangeType = "Monthly";
+
   
+  ranges: RangeType[] = ["Monthly", "Yearly"];
   selectedDate = new Date();
   dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
@@ -51,6 +55,11 @@ export class DashboardComponent implements OnDestroy {
     private pdfExporter: PdfExporterService
   ) {}
 
+  selectRange(range: RangeType): void {
+    this.selectedRange = range;
+    this.getDashboardData();
+  }
+
   // fires only from onDateSelected function below
   private getDashboardData(): void {
     const currentYear: Year = this.dateUtil.fromYear(this.selectedDate.getFullYear());
@@ -61,10 +70,14 @@ export class DashboardComponent implements OnDestroy {
     
     this.sharedService.activateLoadingSpinner();
 
+    const from = this.getFromDate(currentYear, currentMonth);
+    const to = this.getToDate(currentYear, currentMonth);
+
     
     this.dashboardService.getDashboardData(
-      new Date(currentYear.getYear(), currentMonth.getMonth()),
-      new Date(currentYear.getYear(), currentMonth.getMonth()+1)
+      from,
+      to,
+      this.selectedRange
     )
     .pipe(takeUntil(this._subject))
     .subscribe((dashboardData: DashboardDTO) => {
@@ -77,11 +90,33 @@ export class DashboardComponent implements OnDestroy {
   }
 
   private getMonthlyLabels(days: Day[], currentYear: Year, currentMonth: Month): string[] {
-    return days.map(day => {
-      const dayString: string = (day?.getDayNumber() <= 9) ? "0" + day?.getDayNumber().toString() : day?.getDayNumber().toString();
-      const monthString: string = (currentMonth.getMonth() + 1 <= 9) ? "0" + (currentMonth.getMonth() + 1).toString() : (currentMonth.getMonth() + 1).toString();
-      return dayString + "-" + monthString + "-" + currentYear.getYear().toString()
-    });
+    if(this.selectedRange === "Monthly") {
+      return days.map(day => {
+        const dayString: string = (day?.getDayNumber() <= 9) ? "0" + day?.getDayNumber().toString() : day?.getDayNumber().toString();
+        const monthString: string = (currentMonth.getMonth() + 1 <= 9) ? "0" + (currentMonth.getMonth() + 1).toString() : (currentMonth.getMonth() + 1).toString();
+        return dayString + "-" + monthString + "-" + currentYear.getYear().toString()
+      });
+    } else {
+      return currentYear.getYearMonths().map((month: Month) => {
+        const m = month.getMonth() + 1; 
+        return (m <=9 ? "0" + m.toString() : m.toString()) + "-" + currentYear.getYear().toString();
+      });
+    }
+    
+  }
+
+  private getFromDate(year: Year, month: Month): Date {
+    if(this.selectedRange =="Monthly") {
+      return new Date(year.getYear(), month.getMonth());
+    }
+    return new Date(year.getYear(), 0);
+  }
+
+  private getToDate(year: Year, month: Month): Date {
+    if(this.selectedRange =="Monthly") {
+      return new Date(year.getYear(), month.getMonth()+1);
+    }
+    return new Date(year.getYear(), 12);
   }
   
   get expenseCategoriesData() {

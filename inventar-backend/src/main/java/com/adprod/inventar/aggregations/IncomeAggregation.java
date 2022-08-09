@@ -3,6 +3,7 @@ package com.adprod.inventar.aggregations;
 
 import com.adprod.inventar.models.IncomeAggregationDTO;
 import com.adprod.inventar.models.Income;
+import com.adprod.inventar.services.SecurityContextService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -21,12 +22,13 @@ import java.util.List;
 public class IncomeAggregation {
 
     private final MongoTemplate mongoTemplate;
+    private final SecurityContextService securityContextService;
 
-    public Double getIncomes(String user, Instant from, Instant to) {
+    public Double getIncomes(Instant from, Instant to) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
-        aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
+        aggregationResult.add(Aggregation.match(Criteria.where("user").is(securityContextService.username())));
         aggregationResult.add(Aggregation.group("$user").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("income"));
         TypedAggregation<Income> tempAgg = Aggregation.newAggregation(Income.class, aggregationResult);
         List<IncomeAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incomes", IncomeAggregationDTO.class).getMappedResults();

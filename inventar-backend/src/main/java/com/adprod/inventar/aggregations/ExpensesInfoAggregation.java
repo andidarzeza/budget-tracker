@@ -5,6 +5,7 @@ import com.adprod.inventar.models.ExpenseInfoDTO;
 import com.adprod.inventar.models.Expense;
 import com.adprod.inventar.models.Category;
 import com.adprod.inventar.repositories.CategoryRepository;
+import com.adprod.inventar.services.SecurityContextService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,12 +23,13 @@ import java.util.*;
 public class ExpensesInfoAggregation {
     private final MongoTemplate mongoTemplate;
     private final CategoryRepository categoryRepository;
+    private final SecurityContextService securityContextService;
 
-    public List<ExpenseInfoDTO> getExpensesInfo(String user, Instant from, Instant to) {
+    public List<ExpenseInfoDTO> getExpensesInfo(Instant from, Instant to) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
-        aggregationResult.add(Aggregation.match(Criteria.where("user").is(user)));
+        aggregationResult.add(Aggregation.match(Criteria.where("user").is(securityContextService.username())));
         aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("total"));
         TypedAggregation<Expense> tempAgg = Aggregation.newAggregation(Expense.class, aggregationResult);
         List<ExpenseInfoDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", ExpenseInfoDTO.class).getMappedResults();

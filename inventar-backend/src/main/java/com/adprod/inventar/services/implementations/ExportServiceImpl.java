@@ -32,7 +32,7 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public void exportDashboardPDF(HttpServletResponse response, Instant from, Instant to) throws DocumentException, IOException {
+    public void exportDashboardPDF(HttpServletResponse response, Instant from, Instant to, String range) throws DocumentException, IOException {
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, response.getOutputStream());
         document.open();
@@ -65,7 +65,7 @@ public class ExportServiceImpl implements ExportService {
         table.setSpacingBefore(10);
 
         writeTableHeader(table);
-        writeTableData(table, from, to);
+        writeTableData(table, from, to, range);
 
         document.add(table);
 
@@ -91,8 +91,8 @@ public class ExportServiceImpl implements ExportService {
         table.addCell(cell);
     }
 
-    private void writeTableData(PdfPTable table, Instant from, Instant to) {
-        DashboardDTO dashboardDTO = this.dashboardService.getDashboardData(from, to).getBody();
+    private void writeTableData(PdfPTable table, Instant from, Instant to, String range) {
+        DashboardDTO dashboardDTO = this.dashboardService.getDashboardData(from, to, range).getBody();
         List<DailyExpenseDTO> dailyExpenseDTOList = dashboardDTO.getDailyExpenses();
         List<DailyExpenseDTO> modifiableList = new ArrayList(dailyExpenseDTOList);
         Collections.sort(modifiableList, new Comparator<DailyExpenseDTO>(){

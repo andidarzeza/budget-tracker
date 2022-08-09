@@ -7,6 +7,8 @@ import { ExpensesChartModule } from './expenses-chart/expenses-chart.module';
 import { ExpenseIncomeResumeModule } from './expense-income-resume/expense-income-resume.module';
 import { BudgetInfoModule } from './budget-info/budget-info.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     BudgetInfoModule,
     ExpenseIncomeResumeModule,
     ExpensesChartModule,
-    SharedModule
+    SharedModule,
+    MatButtonModule
   ]
 })
 export class DashboardModule { }
