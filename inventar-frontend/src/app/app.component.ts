@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { IConfiguration } from './models/models';
+import { AccountService } from './services/account.service';
 import { AuthenticationService } from './services/authentication.service';
 import { ConfigurationService } from './services/configuration.service';
 import { SharedService } from './services/shared.service';
@@ -19,10 +20,12 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     public authenticationService: AuthenticationService,
     public sharedService: SharedService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private accountService: AccountService
   ) {}
 
   ngOnInit(): void {
+    this.accountService.getAccount().subscribe();
     this.configurationService
       .getConfiguration()
       .pipe(takeUntil(this.subject))

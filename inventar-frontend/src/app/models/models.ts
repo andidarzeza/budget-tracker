@@ -2,7 +2,7 @@ import { ChartType } from "chart.js";
 
 export interface Account {
     id: string;
-    balance: number;
+    balance: any;
 }
 
 export interface Category {

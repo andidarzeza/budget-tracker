@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Category, CategoryType, EntityType, Income, ResponseWrapper } from 'src/app/models/models';
+import { AccountService } from 'src/app/services/account.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -32,7 +33,8 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<AddIncomeComponent>, 
     private formBuilder: FormBuilder, 
     private incomeService: IncomeService, 
-    private categoryService: CategoriesService
+    private categoryService: CategoriesService,
+    private accountService: AccountService
   ) {}
 
   public baseCurrency = localStorage.getItem("baseCurrency");
@@ -86,13 +88,19 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
         this.incomeService
           .update(this.income.id, this.formGroup.value)
           .pipe(takeUntil(this._subject))
-          .subscribe(() => this.onSaveSuccess("Income updated with success"));
+          .subscribe(() => {
+            this.accountService.getAccount().subscribe();
+            this.onSaveSuccess("Income updated with success");
+          });
       } else if(!this.savingEntity){
         this.savingEntity = true;
         this.incomeService
           .save(this.formGroup.value)
           .pipe(takeUntil(this._subject))
-          .subscribe(() => this.onSaveSuccess("A new Income has been inserted"));
+          .subscribe(() => {
+            this.accountService.getAccount().subscribe();
+            this.onSaveSuccess("A new Income has been inserted")
+          });
       }
     }
   }

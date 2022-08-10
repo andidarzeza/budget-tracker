@@ -1,7 +1,9 @@
+import { getCurrencySymbol } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { IConfiguration, Theme } from 'src/app/models/models';
+import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { LocationService } from 'src/app/services/location.service';
@@ -60,13 +62,12 @@ export class NavBarComponent implements OnInit, OnDestroy {
     public authenticationService: AuthenticationService,
     public sidebarService: SideBarService,
     private configurationService: ConfigurationService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    public accountService: AccountService
   ) {
   }
+
   ngOnInit(): void {
-
-
-
     this.setInitialTheme();
     this.configurationService
       .getConfiguration()
@@ -78,10 +79,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
       });
   }
 
-  private checkForTimelightAndDayLight(): void {
-
-  }
-
   private setInitialTheme(): void {
     const theme: string = localStorage.getItem("themeColor");
     if(theme) this.changeThemeColor({color: theme} as Theme);
@@ -90,7 +87,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._subject.next();
     this._subject.complete();
-
   }
 
   logout(): void {

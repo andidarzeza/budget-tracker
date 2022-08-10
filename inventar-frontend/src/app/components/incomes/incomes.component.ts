@@ -13,6 +13,7 @@ import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { EntityOperation } from 'src/app/core/EntityOperation';
 import { BaseTable } from 'src/app/core/BaseTable';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-incomes',
@@ -52,7 +53,8 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
     private incomeService: IncomeService,
     public dialog: DialogService,
     private toaster: ToastrService,
-    private categoryService: CategoriesService
+    private categoryService: CategoriesService,
+    private accountService: AccountService
   ) {
     super(sharedService, dialog);
   }
@@ -100,6 +102,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .delete(id)
       .pipe(takeUntil(this._subject))
       .subscribe(() => {
+        this.accountService.getAccount().subscribe();
         this.query();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       });

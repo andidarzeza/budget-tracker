@@ -22,7 +22,12 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.createDailyChart();
+    console.log(changes);
+    
+    console.log("test", changes?.dailyExpensesLabels?.firstChange);
+    if(changes?.dailyExpenses && !changes?.dailyExpenses?.firstChange) {
+      this.createDailyChart();
+    }
   }
 
   ngOnInit(): void {

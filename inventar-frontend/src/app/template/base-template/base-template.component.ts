@@ -49,9 +49,12 @@ export class BaseTemplateComponent implements OnInit, OnDestroy {
   ) { }
 
   navigation: MenuItem[];
-  sideBarMode: SideBarMode = "over";
+  sideBarMode: SideBarMode = "side";
 
   ngOnInit(): void {
+    if(this.sideBarMode == "over") {
+      this.sideBarService.isOpened = false;
+    }
     this.getNavigationItems();
   }
 

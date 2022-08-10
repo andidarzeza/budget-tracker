@@ -8,7 +8,7 @@
         [ngStyle]="{'margin-left': (sideBarMode!='over' || !authenticationService.currentUserValue) ? '0' : '76px' }"
         [ngClass]="authenticationService.currentUserValue ? 'app-width' : 'app-full-width'"
         >
-        <div class="shadow" id="shadow" (click)="toggleSidebar()"></div>
+        <div class="shadow" id="shadow" *ngIf="sideBarMode=='over'" (click)="toggleSidebar()"></div>
         <nav-bar></nav-bar>
         <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation]
             *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled"

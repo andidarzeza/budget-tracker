@@ -8,6 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ClockModule } from './clock/clock.module';
 import { FlagPipeModule } from '../../pipes/flag-pipe/flag-pipe.module';
+import { CurrencySymbolModule } from '../../pipes/currency-symbol/currency-symbol.module';
 
 
 
@@ -21,7 +22,8 @@ import { FlagPipeModule } from '../../pipes/flag-pipe/flag-pipe.module';
     MatToolbarModule,
     ClockModule,
     MatDividerModule,
-    FlagPipeModule
+    FlagPipeModule,
+    CurrencySymbolModule
   ], exports: [NavBarComponent]
 })
 export class NavBarModule { }

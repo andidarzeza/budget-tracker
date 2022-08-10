@@ -1,4 +1,4 @@
-<div id="sidebar" [ngStyle]="{'position': sideBarMode!='over' ? 'relative' : 'absolute' }" class="sidebar {{sharedService.theme}}" style="position: absolute;height: 100%;z-index: 2;" *ngIf="authenticationService.currentUserValue">
+<div id="sidebar" [ngStyle]="{'position': sideBarMode!='over' ? 'relative' : 'absolute', 'width': sideBarMode!='over' ? '280px' : '76px' }" class="sidebar {{sharedService.theme}}" style="position: absolute;height: 100%;z-index: 2;" *ngIf="authenticationService.currentUserValue">
     <div class="logo-container">
         <!-- <img style="width: 66.9px;height: 66.9px;"> -->
         <button class="menu-item" mat-icon-button (click)="sideBarService.toggleSideBar()">
