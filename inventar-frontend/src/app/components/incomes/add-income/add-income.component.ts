@@ -9,7 +9,7 @@ import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { buildParams } from 'src/app/utils/param-bulder';
-import { TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add-income',
@@ -20,9 +20,10 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
   public savingEntity: boolean = false;
   private _subject = new Subject();
   public formGroup: FormGroup = this.formBuilder.group({
-    description: [''],
-    categoryID: ['', Validators.required],
-    incoming: ['', Validators.required]
+    description:  [''],
+    categoryID:   ['', Validators.required],
+    incoming:     ['', Validators.required],
+    currency:     ['', Validators.required]
   });
   constructor(
     @Inject(MAT_DIALOG_DATA) public income: Income,
@@ -34,7 +35,9 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
     private categoryService: CategoriesService
   ) {}
 
+  public baseCurrency = localStorage.getItem("baseCurrency");
 
+  currencies = CURRENCIES;
   public entity: EntityType = EntityType.INCOME;
 
   get name(){
@@ -68,6 +71,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
       .findAll(buildParams(0, 99999).append("categoryType", CategoryType.INCOME))
       .pipe(takeUntil(this._subject))
       .subscribe((response: ResponseWrapper) => {
+        this.formGroup.get("currency").setValue(this.baseCurrency);
         this.categories = response.data;
         if(this.editMode) {
           this.formGroup.patchValue(this.income);

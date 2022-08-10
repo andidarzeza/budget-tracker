@@ -35,12 +35,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void removeFromBalance(Double amount) {
-        balanceManager.balance().remove(amount);
+    public void removeFromBalance(String currency, Double amount) {
+        balanceManager.balance().remove(currency, amount);
     }
 
     @Override
-    public void addToBalance(Double amount) {
-        balanceManager.balance().add(amount);
+    public void addToBalance(String currency, Double amount) {
+        balanceManager.balance().add(currency, amount);
     }
 }

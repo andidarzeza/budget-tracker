@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Map;
+
 @Document
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,5 +18,5 @@ public class Account {
     @Id
     private String id;
     private String username;
-    private Double balance;
+    private Map<String, Double> balance;
 }

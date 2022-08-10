@@ -2,7 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
-import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { CURRENCIES, environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { Subject } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
@@ -41,6 +41,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     pageName: "Expenses",
     icon: 'attach_money'
   };
+
 
   filterOptions: FilterOptions[] = [
     {
@@ -110,8 +111,11 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   openAddEditForm(expense?: Expense): void {
-    this.dialog.openDialog(AddExpenseComponent, expense)
-    .onSuccess(() => this.query());
+    console.log(expense);
+    
+    this.dialog
+      .openDialog(AddExpenseComponent, expense)
+      .onSuccess(() => this.query());
   }
 
   onMouseEnter(temp: any): void {

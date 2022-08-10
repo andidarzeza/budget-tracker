@@ -37,7 +37,7 @@ import { IConfiguration } from 'src/app/models/models';
     )
   ]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent{
 
   constructor(private toasterService: ToastrService, private configurationSevice: ConfigurationService, public sharedService: SharedService, private formBuilder: FormBuilder, public authenticationService: AuthenticationService, private router: Router) { 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -59,9 +59,6 @@ export class LoginComponent implements OnInit {
 
   get password() {
     return this.loginGroup.controls['password'];
-  }
-
-  ngOnInit(): void {
   }
 
   login(): void {
@@ -92,5 +89,9 @@ export class LoginComponent implements OnInit {
       passwordInput.type = "text";
     }
     this.showPassword = !this.showPassword;
+  }
+
+  navigate(url: string): void {
+    this.router.navigate([url]);
   }
 }

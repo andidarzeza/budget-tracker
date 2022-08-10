@@ -2,7 +2,7 @@
     <form [formGroup]="formGroup">
 
         <div style="width: 100%; display: flex;justify-content: space-between;align-items: center;">
-            <mat-form-field appearance="outline" style="width: calc(60% - 5px);" class="{{sharedService.theme}}-select">
+            <mat-form-field appearance="outline" style="width: calc(50% - 5px);" class="{{sharedService.theme}}-select">
                 <mat-label class="{{sharedService.theme}}-text">Expense Category</mat-label>
                 <mat-select formControlName="categoryID" class="{{sharedService.theme}}-select">
                     <mat-option
@@ -14,9 +14,21 @@
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
             
-            <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: calc(40% - 5px);">
+            <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: calc(30% - 5px);">
                 <mat-label class="{{sharedService.theme}}-text">Money Spent</mat-label>
                 <input type="number" autocomplete="off" matInput formControlName="moneySpent">
+                <mat-error>This field is required.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" style="width: calc(20% - 5px);" class="{{sharedService.theme}}-select">
+                <mat-label class="{{sharedService.theme}}-text">Currency</mat-label>
+                <mat-select formControlName="currency" class="{{sharedService.theme}}-select">
+                    <mat-option
+                        class="{{sharedService.theme}}-text {{sharedService.theme}}-option {{sharedService.theme}}-body"
+                        *ngFor="let currency of currencies" [value]="currency">
+                        {{currency | flag}} {{currency}}
+                    </mat-option>
+                </mat-select>
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
         </div>

@@ -16,8 +16,9 @@ public class IncomeDTO {
     private String name;
     private Double incoming;
     private String description;
+    private String currency;
 
-    public IncomeDTO(String id, String category, String categoryID, Date createdTime, Date lastModifiedDate, String name, Double incoming, String description) {
+    public IncomeDTO(String id, String category, String categoryID, Date createdTime, Date lastModifiedDate, String name, Double incoming, String description, String currency) {
         this.id = id;
         this.category = category;
         this.categoryID = categoryID;
@@ -26,5 +27,6 @@ public class IncomeDTO {
         this.name = name;
         this.incoming = incoming;
         this.description = description;
+        this.currency = currency;
     }
 }

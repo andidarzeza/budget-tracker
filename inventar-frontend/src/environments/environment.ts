@@ -35,6 +35,8 @@ export const CREATE_DIALOG_CONFIGURATION = {
   disableClose: true
 }
 
+export const CURRENCIES = ["ALL", "EUR", "USD", "CAD", "GBP"];
+
 // Template Settings
 export const SIDEBAR_WIDTH = 280
 

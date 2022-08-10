@@ -18,4 +18,5 @@ public class Configuration {
     private boolean darkMode;
     private boolean animationMode;
     private String user;
+    private String baseCurrency;
 }

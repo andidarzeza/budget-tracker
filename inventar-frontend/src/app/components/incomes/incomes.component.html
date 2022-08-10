@@ -35,7 +35,7 @@
                 <th mat-header-cell mat-sort-header *matHeaderCellDef
                     class="centered-text {{sharedService.theme}}-text"> Income </th>
                 <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
-                    {{element?.incoming | number:'1.0':'en-US'}} ALL </td>
+                    {{element?.incoming | number:'1.0':'en-US'}} {{element?.currency}} </td>
             </ng-container>
 
             <!-- Category Column -->

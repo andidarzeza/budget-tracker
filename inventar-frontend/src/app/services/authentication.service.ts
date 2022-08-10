@@ -40,6 +40,7 @@ export class AuthenticationService {
   logout() {
       // remove user from local storage and set current user to null
       localStorage.removeItem('currentUser');
+      localStorage.removeItem('baseCurrency');
       this.currentUserSubject.next(null);
       this.router.navigate(['/login']);
     //   this.sharedService.checkLoadingSpinner();

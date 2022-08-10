@@ -13,6 +13,13 @@
     color: white;
 }
 
+.balance-info {
+    width: 400px;
+    height: 250px;
+    background: white;
+    cursor: default;
+}
+
 .toolbar {
     top: 0 !important;
     display: flex !important;

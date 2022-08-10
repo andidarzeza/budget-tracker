@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Getter
 @AllArgsConstructor
@@ -28,15 +30,17 @@ public class BalanceManager {
                 );
     }
 
-    protected void add(Double amount) {
+    protected void add(String currency, Double amount) {
         Account account = getAccount();
-        account.setBalance(account.getBalance() + amount);
+        var oldBalance = Optional.ofNullable(account.getBalance().get(currency)).orElse(0.0);
+        account.getBalance().put(currency, oldBalance + amount);
         accountRepository.save(account);
     }
 
-    protected void remove(Double amount) {
+    protected void remove(String currency, Double amount) {
         Account account = getAccount();
-        account.setBalance(account.getBalance() - amount);
+        var oldBalance = Optional.ofNullable(account.getBalance().get(currency)).orElse(0.0);
+        account.getBalance().put(currency, oldBalance - amount);
         accountRepository.save(account);
     }
 }

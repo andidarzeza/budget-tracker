@@ -1,6 +1,7 @@
 <mat-toolbar class="toolbar {{sharedService.theme}}" *ngIf="authenticationService.currentUserValue">
     <span>
-        <button *ngIf="sharedService.mobileView" class="menu-item" mat-icon-button (click)="sidebarService.toggleSideBar()" style="margin-left: 18px;">
+        <button *ngIf="sharedService.mobileView" class="menu-item" mat-icon-button
+            (click)="sidebarService.toggleSideBar()" style="margin-left: 18px;">
             <mat-icon class="{{sharedService.theme}}-icon">
                 menu
             </mat-icon>
@@ -13,8 +14,10 @@
     <div class="menu-container">
 
         <div *ngIf="!sharedService.mobileView" class="menu-item pointer" (click)="toggleDarkMode()">
-            <i *ngIf="!this.sharedService?.darkMode" style="font-size: 30px;" class="material-icons {{sharedService.theme}}-icon">nights_stay</i>
-            <mat-icon *ngIf="this.sharedService?.darkMode" class="fullscreen-icon {{sharedService.theme}}-icon">wb_sunny</mat-icon>
+            <i *ngIf="!this.sharedService?.darkMode" style="font-size: 30px;"
+                class="material-icons {{sharedService.theme}}-icon">nights_stay</i>
+            <mat-icon *ngIf="this.sharedService?.darkMode" class="fullscreen-icon {{sharedService.theme}}-icon">wb_sunny
+            </mat-icon>
         </div>
 
         <div class="flex-centered">
@@ -24,30 +27,44 @@
                 </div>
             </button>
             <div [matMenuTriggerFor]="userMenu" class="pointer arrow-down-container">
-                <mat-icon class="menu-item {{sharedService.theme}}-icon" style="margin-right: 0;">keyboard_arrow_down</mat-icon>
+                <mat-icon class="menu-item {{sharedService.theme}}-icon" style="margin-right: 0;">keyboard_arrow_down
+                </mat-icon>
             </div>
-            
+
             <mat-menu xPosition="before" class="{{sharedService.theme}}-user-menu user-menu" #userMenu="matMenu">
-                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item>Logged in as {{authenticationService?.currentUserValue?.firstName}} {{authenticationService?.currentUserValue?.lastName}}</button>
+                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item>Logged in as
+                    {{authenticationService?.currentUserValue?.firstName}}
+                    {{authenticationService?.currentUserValue?.lastName}}</button>
                 <mat-divider style="width: 100%;"></mat-divider>
-                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item [matMenuTriggerFor]="themes"><mat-icon class="{{sharedService.theme}}-icon">color_lens</mat-icon> Themes</button>
+
+                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item [matMenuTriggerFor]="balance">
+                    <mat-icon class="{{sharedService.theme}}-icon">account_balance_wallet</mat-icon> Balance
+                </button>
                 <mat-divider style="width: 100%;"></mat-divider>
-                <button class="{{sharedService.theme}}-user-menu-button" (click)="logout()" mat-menu-item> <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>Logout</button>
+                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item [matMenuTriggerFor]="themes">
+                    <mat-icon class="{{sharedService.theme}}-icon">color_lens</mat-icon> Themes
+                </button>
+                <mat-divider style="width: 100%;"></mat-divider>
+                <button class="{{sharedService.theme}}-user-menu-button" (click)="logout()" mat-menu-item>
+                    <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>Logout
+                </button>
             </mat-menu>
 
             <mat-menu class="{{sharedService.theme}}-themes-menu" #themes="matMenu">
-                <button 
-                    *ngFor="let theme of themesArray"
-                    mat-menu-item 
-                    class="flex-centered {{sharedService.theme}}-user-menu-button" 
-                    style="justify-content: inherit;" 
+                <button *ngFor="let theme of themesArray" mat-menu-item
+                    class="flex-centered {{sharedService.theme}}-user-menu-button" style="justify-content: inherit;"
                     (click)="changeThemeColor(theme)">
-                        <div class="round" [style.background-color]="theme.color"></div> 
-                        <span>{{theme.name}}</span>
-                    </button>
-                
-              </mat-menu>
-            
+                    <div class="round" [style.background-color]="theme.color"></div>
+                    <span>{{theme.name}}</span>
+                </button>
+            </mat-menu>
+
+            <mat-menu class="{{sharedService.theme}}-themes-menu" #balance="matMenu">
+               <div (click) = "$event.stopPropagation()" class="balance-info">
+
+               </div>
+            </mat-menu>
+
         </div>
         <mat-divider [vertical]="true" class="vertical-divider"></mat-divider>
         <div *ngIf="!sharedService.mobileView" class="menu-item" style="margin-right: 0;">

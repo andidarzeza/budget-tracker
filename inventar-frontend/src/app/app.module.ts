@@ -7,7 +7,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { SharedModule } from './shared/shared.module';
 import { CustomHttpInterceptorService } from './services/custom-http-interceptor.service';
-import {MatDialogModule} from '@angular/material/dialog';
 import { BaseTemplateModule } from './template/base-template/base-template.module';
 
 @NgModule({

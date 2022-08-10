@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { AddIncomeComponent } from './add-income.component';
 import { CreateFormModule } from 'src/app/shared/create-form/create-form.module';
+import { FlagPipeModule } from 'src/app/template/pipes/flag-pipe/flag-pipe.module';
 
 
 
@@ -21,7 +22,8 @@ import { CreateFormModule } from 'src/app/shared/create-form/create-form.module'
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
+    FlagPipeModule
   ]
 })
 export class AddIncomeModule { }

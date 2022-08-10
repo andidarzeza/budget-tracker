@@ -58,9 +58,9 @@ public class IncomeServiceImpl implements IncomeService {
             Optional<Category> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
                 Category sc = data.get();
-                response.add(new IncomeDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
+                response.add(new IncomeDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription(), item.getCurrency()));
             } else {
-                response.add(new IncomeDTO(item.getId(), "No Category Found", "0", item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription()));
+                response.add(new IncomeDTO(item.getId(), "No Category Found", "0", item.getCreatedTime(), item.getLastModifiedDate(), item.getName(), item.getIncoming(), item.getDescription(), item.getCurrency()));
             }
         });
         incomeWrapper.setData(response);
@@ -71,7 +71,7 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public ResponseEntity save(Income income) {
         income.setUser(securityContextService.username());
-        accountService.addToBalance(income.getIncoming());
+        accountService.addToBalance(income.getCurrency(), income.getIncoming());
         incomeRepository.save(income);
         historyService.save(historyService.from(CREATE, INCOME));
         return ResponseEntity.ok(income);
@@ -87,7 +87,7 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public ResponseEntity delete(String id) {
         Income income = findOne(id);
-        this.accountService.removeFromBalance(income.getIncoming());
+        this.accountService.removeFromBalance(income.getCurrency(), income.getIncoming());
         incomeRepository.delete(income);
         historyService.save(historyService.from(DELETE, INCOME));
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
@@ -98,7 +98,7 @@ public class IncomeServiceImpl implements IncomeService {
         income.setUser(securityContextService.username());
         Income incomeDB = findOne(id);
         double removeAndAddAmount =  income.getIncoming() - incomeDB.getIncoming();
-        this.accountService.addToBalance(removeAndAddAmount);
+        this.accountService.addToBalance(income.getCurrency(), removeAndAddAmount);
         income.setId(id);
         income.setCreatedTime(incomeDB.getCreatedTime());
         income.setLastModifiedDate(new Date());

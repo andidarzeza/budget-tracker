@@ -46,7 +46,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 configurationRepository
                     .findByUser(securityContextService.username())
                     .orElseGet(
-                        () -> new Configuration(null, false, true, null)
+                        () -> new Configuration(null, false, true, null, "ALL")
                     )
         );
     }

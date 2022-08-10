@@ -26,7 +26,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.configurationService
       .getConfiguration()
       .pipe(takeUntil(this.subject))
-      .subscribe((configuration: IConfiguration) => this.sharedService.theme = configuration.darkMode? 'dark' : 'light');
+      .subscribe((configuration: IConfiguration) => {
+        localStorage.setItem("baseCurrency", configuration.baseCurrency);
+        this.sharedService.theme = configuration.darkMode? 'dark' : 'light'
+      });
     this.sharedService.listenForThemeChange();
   }
 

@@ -54,7 +54,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             Optional<Category> data = categoryRepository.findById(item.getCategoryID());
             if(data.isPresent()) {
                 Category sc = data.get();
-                response.add(new ExpenseDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getMoneySpent(), item.getDescription()));
+                response.add(new ExpenseDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getMoneySpent(), item.getDescription(), item.getCurrency()));
             }
         });
         spendingWrapper.setData(response);
@@ -65,7 +65,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ResponseEntity save(Expense expense) {
         expense.setUser(securityContextService.username());
-        accountService.removeFromBalance(expense.getMoneySpent());
+        accountService.removeFromBalance(expense.getCurrency(), expense.getMoneySpent());
         expenseRepository.save(expense);
         historyService.save(historyService.from(EntityAction.CREATE, EXPENSE));
         return ResponseEntity.ok(expense);
@@ -84,7 +84,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ResponseEntity delete(String id) {
         Expense expense = (Expense) findOne(id).getBody();
-        accountService.addToBalance(expense.getMoneySpent());
+        accountService.addToBalance(expense.getCurrency(), expense.getMoneySpent());
         expenseRepository.delete(expense);
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }
@@ -94,7 +94,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         spending.setUser(securityContextService.username());
         Expense expense = (Expense) findOne(id).getBody();
         double removeAndAddAmount = expense.getMoneySpent() - spending.getMoneySpent();
-        accountService.addToBalance(removeAndAddAmount);
+        accountService.addToBalance(expense.getCurrency(), removeAndAddAmount);
         spending.setId(id);
         spending.setCreatedTime(expense.getCreatedTime());
         spending.setLastModifiedDate(new Date());

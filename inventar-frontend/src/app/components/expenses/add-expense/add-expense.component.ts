@@ -4,12 +4,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { SharedService } from 'src/app/services/shared.service';
-import { TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { Category, CategoryType, EntityType, Expense, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
+
+
 
 @Component({
   selector: 'app-add-expense',
@@ -22,6 +24,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
   private _subject = new Subject();
   public entity: EntityType = EntityType.EXPENSE;
   public categories: Category[] = [];
+  public baseCurrency = localStorage.getItem("baseCurrency");
   
   constructor(
     public sharedService: SharedService,
@@ -36,9 +39,11 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
   formGroup: FormGroup = this.formBuilder.group({
     description: [''],
     categoryID: ['', Validators.required],
-    moneySpent: ['', Validators.required]
+    moneySpent: ['', Validators.required],
+    currency: ['', Validators.required]
   });
 
+  currencies = CURRENCIES;
 
   ngOnInit(): void {
     this.getCategories();
@@ -49,7 +54,10 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
       .findAll(buildParams(0, 1000).append("categoryType", CategoryType.EXPENSE))
       .pipe(
         takeUntil(this._subject),
-        map((response: ResponseWrapper) => this.categories = response.data),
+        map((response: ResponseWrapper) => {
+          this.categories = response.data
+          this.formGroup.get("currency").setValue(this.baseCurrency);
+        }),
         filter(()=>this.editMode),
         map(() => this.formGroup.patchValue(this.expense))
       )

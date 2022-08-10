@@ -59,6 +59,7 @@ export interface Expense {
     description: string;
     categoryID: string;
     user: string;
+    currency: string;
 }
 
 export interface History {
@@ -100,6 +101,7 @@ export const ENTITIES = [
 export interface IConfiguration {
     darkMode: boolean,
     animationMode: boolean
+    baseCurrency: string;
 }
 
 export interface Income {

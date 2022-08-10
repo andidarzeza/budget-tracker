@@ -15,8 +15,9 @@ public class ExpenseDTO {
     private Date lastModifiedDate;
     private Double moneySpent;
     private String description;
+    private String currency;
 
-    public ExpenseDTO(String id, String category, String categoryID, Date createdTime, Date lastModifiedDate, Double moneySpent, String description) {
+    public ExpenseDTO(String id, String category, String categoryID, Date createdTime, Date lastModifiedDate, Double moneySpent, String description, String currency) {
         this.id = id;
         this.category = category;
         this.categoryID = categoryID;
@@ -24,5 +25,6 @@ public class ExpenseDTO {
         this.lastModifiedDate = lastModifiedDate;
         this.moneySpent = moneySpent;
         this.description = description;
+        this.currency = currency;
     }
 }
