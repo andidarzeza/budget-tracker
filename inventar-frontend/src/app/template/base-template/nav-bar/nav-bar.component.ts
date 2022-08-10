@@ -16,8 +16,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./nav-bar.component.css']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
-  interval = null;
-  currentDate = new Date();
+  
   configuration: IConfiguration;
   private _subject = new Subject();
   public EXPERIMENTAL_MODE = environment.experimentalMode;
@@ -66,10 +65,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
 
-    this.interval = setInterval(() => {
-      this.currentDate = new Date();
-      this.checkForTimelightAndDayLight();
-    }, 1000);
+
 
     this.setInitialTheme();
     this.configurationService
@@ -94,9 +90,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._subject.next();
     this._subject.complete();
-    if(this.interval) {
-      clearInterval(this.interval);
-    }
+
   }
 
   logout(): void {
@@ -122,5 +116,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
     root.style.setProperty('--lightShadowed', theme.shadowedColor);
     localStorage.setItem("themeColor", theme.color);
     this.themeService.next(theme.color);
+  }
+
+  get firstName() {
+    return this.authenticationService?.currentUserValue?.firstName;
+  }  
+  
+  get lastName() {
+    return this.authenticationService?.currentUserValue?.lastName;
   }
 }
