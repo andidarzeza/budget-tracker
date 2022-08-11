@@ -6,6 +6,11 @@
     </div>
     <span></span>
 </div>
+
+<div>
+    Appearance
+</div>
+
 <mat-card class="{{sharedService.theme}}-card {{sharedService.theme}}-dashboard-card configuration {{sharedService.theme}}-text" style="margin-top: 0;">
     <span>Dark Theme</span>
     <mat-slide-toggle [checked]="sharedService.theme === 'dark'" (change)="changeTheme()"></mat-slide-toggle>
@@ -16,6 +21,6 @@
     <mat-slide-toggle [checked]="sharedService.isSpinnerEnabled" (change)="setAnimationLoading()"></mat-slide-toggle>
 </mat-card>
 
-<div style="margin-top: 50px;margin-left: 50px;width: 500px;">
+<!-- <div style="margin-top: 50px;margin-left: 50px;width: 500px;">
     <dynamic-dropdown [data]="data" (onSelection)="onSelectionFunction($event)" (onCreate)="onCreateFunction($event)" (onDelete)="onDeleteFunction($event)"></dynamic-dropdown>
-</div>
+</div> -->

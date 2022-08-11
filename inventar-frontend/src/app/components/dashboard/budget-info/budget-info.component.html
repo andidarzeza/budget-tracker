@@ -23,8 +23,9 @@
             *ngIf="showDatePicker"></mat-calendar>
     </span>
 
-    <div class="current-balance">
-
-        
+    <div class="flex">
+        <button mat-raised-button style="margin: 5px;" [ngStyle]="{'background': selectedRange == range ? 'var(--light)' : 'inherit', 'color': selectedRange == range ? 'white' : 'inherit'}" (click)="selectRange(range)" *ngFor="let range of ranges" >
+            {{range}}
+        </button>
     </div>
 </div>

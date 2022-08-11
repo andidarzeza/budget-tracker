@@ -19,9 +19,8 @@ import { DashboardDTO, RangeType } from 'src/app/models/models';
 })
 export class DashboardComponent implements OnDestroy {
 
-  selectedRange: RangeType = "Monthly";
 
-  
+  selectedRange: RangeType = "Monthly";
   ranges: RangeType[] = ["Monthly", "Yearly"];
   selectedDate = new Date();
   dateUtil = new DateUtil();
@@ -55,10 +54,7 @@ export class DashboardComponent implements OnDestroy {
     private pdfExporter: PdfExporterService
   ) {}
 
-  selectRange(range: RangeType): void {
-    this.selectedRange = range;
-    this.getDashboardData();
-  }
+
 
   // fires only from onDateSelected function below
   private getDashboardData(): void {
@@ -87,6 +83,11 @@ export class DashboardComponent implements OnDestroy {
       this.sharedService.checkLoadingSpinner();
       this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION);
     });
+  }
+
+  onRangeSelect(range: RangeType): void {
+    this.selectedRange = range;
+    this.getDashboardData();
   }
 
   private getMonthlyLabels(days: Day[], currentYear: Year, currentMonth: Month): string[] {
