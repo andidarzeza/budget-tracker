@@ -8,6 +8,7 @@ import { SharedService } from './shared.service';
 export class SideBarService {
   public isOpened = true;
   public sidebarWidth = SIDEBAR_WIDTH;
+  public displaySidebar = false;
   constructor(public sharedService: SharedService) { }
 
   toggleSideBar(): void {

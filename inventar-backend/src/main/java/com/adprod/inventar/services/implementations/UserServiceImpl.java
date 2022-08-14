@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
                     request.getLastName()
             );
             repository.save(user);
-            accountService.save(new Account(null, user.getUsername(), new HashMap<>()));
+            accountService.save(new Account(null, "titl", user.getUsername(), new HashMap<>()));
             configurationService.save(new Configuration(null, false, true, user.getUsername(), "ALL"));
             historyService.save(historyService.from(REGISTRATION, USER));
             return ResponseEntity.ok(new ResponseMessage("Registration Successful"));

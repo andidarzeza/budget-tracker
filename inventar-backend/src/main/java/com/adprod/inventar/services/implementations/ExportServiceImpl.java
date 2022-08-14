@@ -92,7 +92,7 @@ public class ExportServiceImpl implements ExportService {
     }
 
     private void writeTableData(PdfPTable table, Instant from, Instant to, String range) {
-        DashboardDTO dashboardDTO = this.dashboardService.getDashboardData(from, to, range).getBody();
+        DashboardDTO dashboardDTO = this.dashboardService.getDashboardData(from, to, range, "").getBody();
         List<DailyExpenseDTO> dailyExpenseDTOList = dashboardDTO.getDailyExpenses();
         List<DailyExpenseDTO> modifiableList = new ArrayList(dailyExpenseDTOList);
         Collections.sort(modifiableList, new Comparator<DailyExpenseDTO>(){

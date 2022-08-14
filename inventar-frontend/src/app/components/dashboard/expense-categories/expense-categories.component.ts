@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -6,15 +6,12 @@ import { SharedService } from 'src/app/services/shared.service';
   templateUrl: './expense-categories.component.html',
   styleUrls: ['./expense-categories.component.css']
 })
-export class ExpenseCategoriesComponent implements OnInit {
+export class ExpenseCategoriesComponent {
 
   @Input() expenseCategoriesData: any[];
 
   constructor(
     public sharedService: SharedService
   ) { }
-
-  ngOnInit(): void {
-  }
 
 }

@@ -27,13 +27,14 @@ public class ExpenseIncreaseAggregation {
     private final MongoTemplate mongoTemplate;
     private final SecurityContextService securityContextService;
 
-    public Double getExpenseIncreaseValue(Instant from, Instant to, Double currentExpense, String range) {
+    public Double getExpenseIncreaseValue(Instant from, Instant to, Double currentExpense, String range, String account) {
         from = from.atZone(ZoneId.systemDefault()).minusMonths(1).toInstant();
         to = to.atZone(ZoneId.systemDefault()).minusMonths(1).toInstant();
         List<AggregationOperation> aggregationResult = new ArrayList<>();
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(securityContextService.username())));
+        aggregationResult.add(Aggregation.match(Criteria.where("account").is(account)));
         aggregationResult.add(Aggregation.group("$user").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("expenses"));
         TypedAggregation<Expense> tempAgg = Aggregation.newAggregation(Expense.class, aggregationResult);
         List<ExpenseAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", ExpenseAggregationDTO.class).getMappedResults();

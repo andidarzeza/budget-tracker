@@ -1,0 +1,8 @@
+
+
+<div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);border: 1px solid red;padding: 20px;">
+    <div *ngFor="let account of accounts" style="padding: 10px;border: 1px solid black;cursor: pointer;" (click)="selectAccount(account)">
+        {{account.title}}
+    </div>
+</div>
+

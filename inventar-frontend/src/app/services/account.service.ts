@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { serverAPIURL } from 'src/environments/environment';
-import { Account } from '../models/models';
+import { Account, SimplifiedAccount } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +11,17 @@ import { Account } from '../models/models';
 export class AccountService {
 
   readonly API_URl: string = `${serverAPIURL}/api/account`;
-  account: Account;
+  account: Account = null;
 
   constructor(public http: HttpClient) {
   }
 
-  getAccount(): Observable<any> {
-    return this.http.get(this.API_URl, {observe: 'response'}).pipe(map(account => this.account = account.body as any));
+  findAllAccountsSimplified(): Observable<SimplifiedAccount[]> {
+    return this.http.get<SimplifiedAccount[]>(`${this.API_URl}/simplified`);
   }
+
+  findOne(id: string): Observable<any> {
+    return this.http.get(`${this.API_URl}/${id}`).pipe(map(account => this.account = account as any));
+  }
+
 }

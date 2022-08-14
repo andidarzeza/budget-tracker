@@ -10,15 +10,6 @@
         <div class="total-incomes-container">
             <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
                 {{categoryData.total | number:'1.2-2':'en-US'}} ALL
-                <!-- <span *ngIf="true" class="percentage-badge percentage-up">
-                    <span>↑</span>{{10 | number:'1.2-2':'en-US'}}%
-                </span>
-                <span *ngIf="false" class="percentage-badge percentage-down">
-                    <span>&darr;</span>{{10 | absoluteValue | number:'1.2-2':'en-US'}}%
-                </span>
-                <span *ngIf="true" class="percentage-badge">
-                   {{10 | absoluteValue | number:'1.2-2':'en-US'}}%
-                </span> -->
             </div>
             <div class="total-incomes-description {{sharedService.theme}}-title">
                 Money spent so far.

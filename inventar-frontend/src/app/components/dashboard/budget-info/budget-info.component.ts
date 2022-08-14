@@ -1,8 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { Account, RangeType } from 'src/app/models/models';
+import { RangeType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { SharedService } from 'src/app/services/shared.service';
 
@@ -45,7 +44,6 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
 
   ranges: RangeType[] = ["Monthly", "Yearly"];
   selectedRange: RangeType = "Monthly";
-  public account: Account;
   private _subject = new Subject();
   public showDatePicker: boolean = false;
   public dateFrom: Date = new Date();
@@ -53,18 +51,9 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   
   @Output() dateSelected: EventEmitter<any> = new EventEmitter();
   @Output() onRangeSelect: EventEmitter<any> = new EventEmitter();
-  selectRange(range: RangeType): void {
-    this.selectedRange = range;
-    this.onRangeSelect.emit(this.selectedRange);
-  }
+
   ngOnInit(): void {
     this.emitSelectedDate();
-    this.accountService
-      .getAccount()
-      .pipe(takeUntil(this._subject))
-      .subscribe((response: any) => {
-        this.account = response.body;
-      });
   }
 
   switchDatePicker(): void {
@@ -75,19 +64,18 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
     this.dateSelected.emit({
       dateFrom: this.dateFrom,
       dateTo: this.dateTo
-    })
+    });
+  }
+  
+  selectRange(range: RangeType): void {
+    this.selectedRange = range;
+    this.onRangeSelect.emit(this.selectedRange);
   }
 
   public onDateSelected(date: Date): void {
     this.dateFrom = date;
     this.dateTo = new Date(this.dateFrom.getFullYear(), this.dateFrom.getMonth() + 1)
     this.emitSelectedDate();
-  }
-
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
-    document.removeEventListener('click', this.offClickHandler.bind(this), true); // bind on doc
   }
 
   public offClickHandler(event:any) {    
@@ -97,5 +85,11 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
         this.showDatePicker = false;
       }
     }
+  }
+
+  ngOnDestroy(): void {
+    this._subject.next();
+    this._subject.complete();
+    document.removeEventListener('click', this.offClickHandler.bind(this), true); // bind on doc
   }
 }

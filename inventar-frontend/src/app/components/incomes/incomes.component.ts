@@ -14,6 +14,7 @@ import { IncomeService } from 'src/app/services/pages/income.service';
 import { EntityOperation } from 'src/app/core/EntityOperation';
 import { BaseTable } from 'src/app/core/BaseTable';
 import { AccountService } from 'src/app/services/account.service';
+import { SideBarService } from 'src/app/services/side-bar.service';
 
 @Component({
   selector: 'app-incomes',
@@ -54,12 +55,13 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
     public dialog: DialogService,
     private toaster: ToastrService,
     private categoryService: CategoriesService,
-    private accountService: AccountService
+    private sideBarService: SideBarService
   ) {
     super(sharedService, dialog);
   }
 
   ngOnInit(): void {
+    this.sideBarService.displaySidebar = true;
     this.columns = this.sharedService.mobileView ? this.mobileColumns : this.columns;
     this.getCategories();
     this.query();
@@ -102,7 +104,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .delete(id)
       .pipe(takeUntil(this._subject))
       .subscribe(() => {
-        this.accountService.getAccount().subscribe();
+        // this.accountService.getAccount().subscribe();
         this.query();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       });

@@ -25,7 +25,7 @@ public class AverageExpenseAggregation {
     private final MongoTemplate mongoTemplate;
     private final SecurityContextService securityContextService;
 
-    public Double getAverageDailyExpense(Instant from, Instant to, String range) {
+    public Double getAverageDailyExpense(Instant from, Instant to, String range, String account) {
         LocalDateTime currentDate = LocalDateTime.now();
         LocalDateTime ldt = LocalDateTime.ofInstant(from, ZoneId.systemDefault());
         YearMonth yearMonthObject = YearMonth.of(ldt.getYear(), ldt.getMonth().getValue());
@@ -40,6 +40,7 @@ public class AverageExpenseAggregation {
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(securityContextService.username())));
+        aggregationResult.add(Aggregation.match(Criteria.where("account").is(account)));
         aggregationResult.add(Aggregation.group("$user").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("expenses"));
         TypedAggregation<Expense> tempAgg = Aggregation.newAggregation(Expense.class, aggregationResult);
         List<ExpenseAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", ExpenseAggregationDTO.class).getMappedResults();

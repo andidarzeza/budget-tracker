@@ -22,17 +22,21 @@ public class BalanceManager {
     }
 
     private Account getAccount() {
-        return accountRepository
-                .findByUsername(securityContextService.username())
-                .orElseThrow(
+        return Optional
+                    .ofNullable(accountRepository
+                            .findAllByUsername(securityContextService.username()).get(0))
+                    .orElseThrow(
                         () -> new NotFoundException("An error occurred, account was not found!")
-                );
+                    );
     }
 
     protected void add(String currency, Double amount) {
         Account account = getAccount();
         var oldBalance = Optional.ofNullable(account.getBalance().get(currency)).orElse(0.0);
         account.getBalance().put(currency, oldBalance + amount);
+        if((oldBalance + amount) == 0) {
+            account.getBalance().remove(currency);
+        }
         accountRepository.save(account);
     }
 
@@ -40,7 +44,7 @@ public class BalanceManager {
         Account account = getAccount();
         var oldBalance = Optional.ofNullable(account.getBalance().get(currency)).orElse(0.0);
         account.getBalance().put(currency, oldBalance - amount);
-        if((oldBalance - amount) <= 0) {
+        if((oldBalance - amount) == 0) {
             account.getBalance().remove(currency);
         }
         accountRepository.save(account);

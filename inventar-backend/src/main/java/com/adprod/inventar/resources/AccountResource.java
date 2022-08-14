@@ -12,8 +12,13 @@ public class AccountResource {
 
     private final AccountService accountService;
 
-    @GetMapping
-    public ResponseEntity getAccount(){
-        return accountService.find();
+    @GetMapping("/{id}")
+    public ResponseEntity findOne(@PathVariable String id){
+        return accountService.findOne(id);
+    }
+
+    @GetMapping("/simplified")
+    public ResponseEntity findUserAccountsSimplified(){
+        return accountService.findUserAccountsSimplified();
     }
 }

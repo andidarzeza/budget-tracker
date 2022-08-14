@@ -24,6 +24,7 @@ public class History {
     private String user;
     private String message;
     private EntityType entity;
+    private String account;
 
     public History(EntityAction action, String user, String message, EntityType entity) {
         this.action = action;

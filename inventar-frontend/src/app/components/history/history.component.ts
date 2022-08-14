@@ -12,6 +12,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ENTITIES, EntityAction, EntityType, ENTITY_ACTIONS, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { HistoryService } from 'src/app/services/pages/history.service';
+import { SideBarService } from 'src/app/services/side-bar.service';
 
 @Component({
   selector: 'app-history',
@@ -64,10 +65,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   constructor(
     public sharedService: SharedService,
-    private historyService: HistoryService
+    private historyService: HistoryService,
+    public sideBarService: SideBarService
   ) { }
 
   ngOnInit(): void {
+
+    this.sideBarService.displaySidebar = true;
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
     this.query();
   }

@@ -23,11 +23,12 @@ public class IncomesInfoAggregation {
     private final CategoryRepository categoryRepository;
     private final SecurityContextService securityContextService;
 
-    public List<IncomeInfoDTO> getIncomesInfo(Instant from, Instant to) {
+    public List<IncomeInfoDTO> getIncomesInfo(Instant from, Instant to, String account) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(securityContextService.username())));
+        aggregationResult.add(Aggregation.match(Criteria.where("account").is(account)));
         aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("total"));
         TypedAggregation<Income> tempAgg = Aggregation.newAggregation(Income.class, aggregationResult);
         List<IncomeInfoDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incomes", IncomeInfoDTO.class).getMappedResults();

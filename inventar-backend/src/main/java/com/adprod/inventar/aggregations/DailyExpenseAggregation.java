@@ -23,12 +23,13 @@ public class DailyExpenseAggregation {
     private final MongoTemplate mongoTemplate;
     private final SecurityContextService securityContextService;
 
-    public List<DailyExpenseDTO> getDailyExpenses(Instant from, Instant to, String range) {
+    public List<DailyExpenseDTO> getDailyExpenses(Instant from, Instant to, String range, String account) {
         String dateFormat = range.equals("Monthly") ? "'%d-%m-%Y'" : "'%m-%Y'";
         List<AggregationOperation> aggregationResult = new ArrayList<>();
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
         aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(securityContextService.username())));
+        aggregationResult.add(Aggregation.match(Criteria.where("account").is(account)));
         aggregationResult.add(
                 Aggregation
                         .project("$moneySpent")

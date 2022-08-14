@@ -4,6 +4,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { MenuItem, SideBarMode } from './base-template.models';
@@ -45,7 +46,8 @@ export class BaseTemplateComponent implements OnInit, OnDestroy {
     public authenticationService: AuthenticationService,
     public sharedService: SharedService,
     public sideBarService: SideBarService,
-    private http: HttpClient
+    private http: HttpClient,
+    public navBarService: NavBarService
   ) { }
 
   navigation: MenuItem[];

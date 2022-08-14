@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { IConfiguration } from './models/models';
@@ -21,11 +22,12 @@ export class AppComponent implements OnInit, OnDestroy {
     public authenticationService: AuthenticationService,
     public sharedService: SharedService,
     private configurationService: ConfigurationService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    public router: Router
   ) {}
 
   ngOnInit(): void {
-    this.accountService.getAccount().subscribe();
+    // this.accountService.getAccount().subscribe();
     this.configurationService
       .getConfiguration()
       .pipe(takeUntil(this.subject))
@@ -34,6 +36,14 @@ export class AppComponent implements OnInit, OnDestroy {
         this.sharedService.theme = configuration.darkMode? 'dark' : 'light'
       });
     this.sharedService.listenForThemeChange();
+
+
+    const accountId = localStorage.getItem("account");
+    if(accountId) {
+      this.accountService.findOne(accountId).subscribe();
+    } else {
+      this.router.navigate(["/account"]);
+    }
   }
 
   ngOnDestroy(): void {

@@ -41,6 +41,10 @@
                     <mat-icon class="{{sharedService.theme}}-icon">color_lens</mat-icon> Themes
                 </button>
                 <mat-divider style="width: 100%;"></mat-divider>
+                <button class="{{sharedService.theme}}-user-menu-button" (click)="switchAccount()" mat-menu-item>
+                    <mat-icon class="{{sharedService.theme}}-icon">account_circle</mat-icon>Switch Account
+                </button>
+                <mat-divider style="width: 100%;"></mat-divider>
                 <button class="{{sharedService.theme}}-user-menu-button" (click)="logout()" mat-menu-item>
                     <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>Logout
                 </button>
@@ -77,11 +81,6 @@
                                 {{bal?.value | number:'1.0':'en-US'}} {{ bal?.key| currencySymbol }}
                             </div>
                         </div>
-                    </div>
-
-                    <mat-divider></mat-divider>
-                    <div style="padding: 16px;">
-                        Total:
                     </div>
                     
                </div>

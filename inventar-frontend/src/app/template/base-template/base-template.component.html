@@ -1,15 +1,16 @@
 <div class="application-container">
 
-    <side-bar [ngClass]="sharedService.mobileView ? 'display-none' : ''" *ngIf="authenticationService.currentUserValue"
+    <side-bar [ngClass]="sharedService.mobileView ? 'display-none' : ''" *ngIf="authenticationService.currentUserValue && sideBarService.displaySidebar"
         [navigation]="navigation" [sideBarMode]="sideBarMode"></side-bar>
 
     <div 
         class="application {{sharedService.theme}}-body" id="application-body"
+        style="position: relative;"
         [ngStyle]="{'margin-left': (sideBarMode!='over' || !authenticationService.currentUserValue) ? '0' : '76px' }"
         [ngClass]="authenticationService.currentUserValue ? 'app-width' : 'app-full-width'"
         >
         <div class="shadow" id="shadow" *ngIf="sideBarMode=='over'" (click)="toggleSidebar()"></div>
-        <nav-bar></nav-bar>
+        <nav-bar *ngIf="navBarService.displayNavBar"></nav-bar>
         <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation]
             *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled"
             style="position: absolute;top: 64px;left:0;z-index: 2;"></mat-progress-bar>

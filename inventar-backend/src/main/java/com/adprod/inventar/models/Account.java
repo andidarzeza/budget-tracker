@@ -17,6 +17,7 @@ import java.util.Map;
 public class Account {
     @Id
     private String id;
+    private String title;
     private String username;
     private Map<String, Double> balance;
 }

@@ -25,6 +25,7 @@ public class Income {
     private String categoryID;
     private String user;
     private String currency;
+    private String account;
 
     public Income(String id, String name, Double incoming, String description, String categoryID, String user, String currency) {
         this.id = id;

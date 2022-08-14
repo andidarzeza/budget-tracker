@@ -11,6 +11,10 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 import { PdfExporterService } from 'src/app/services/pdf-exporter.service';
 import { DashboardDTO, RangeType } from 'src/app/models/models';
+import { SideBarService } from 'src/app/services/side-bar.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
+import { Router } from '@angular/router';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -51,13 +55,27 @@ export class DashboardComponent implements OnDestroy {
     public sharedService: SharedService,
     public exportService: ExportService,
     private toasterService: ToastrService,
-    private pdfExporter: PdfExporterService
-  ) {}
+    private pdfExporter: PdfExporterService,
+    public sideBarService: SideBarService,
+    public navBarService: NavBarService,
+    public router: Router,
+    public accountService: AccountService
+  ) {
+    this.sideBarService.displaySidebar = true;
+    this.navBarService.displayNavBar = true;
+    const accountId = this.router.getCurrentNavigation()?.extras?.state?.accountId;
+    if(accountId) {
+      console.log("tets");
+      
+    }
+  }
 
 
 
   // fires only from onDateSelected function below
   private getDashboardData(): void {
+    console.log(this.accountService.account);
+    
     const currentYear: Year = this.dateUtil.fromYear(this.selectedDate.getFullYear());
     const currentMonth: Month = currentYear.getMonthByValue(this.selectedDate.getMonth());
     const days: Day[] = currentMonth.getDaysOfMonth();

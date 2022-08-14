@@ -2,6 +2,7 @@ package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
+import com.adprod.inventar.models.wrappers.SimplifiedAccountDTO;
 import com.adprod.inventar.repositories.AccountRepository;
 import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.SecurityContextService;
@@ -19,13 +20,19 @@ public class AccountServiceImpl implements AccountService {
     private final BalanceManager balanceManager;
 
     @Override
-    public ResponseEntity find() {
+    public ResponseEntity findOne(String id) {
         return ResponseEntity.ok(
                 accountRepository
-                .findByUsername(securityContextService.username())
-                .orElseThrow(
-                        () -> new NotFoundException("An error occurred, account was not found")
-                )
+                .findByUsernameAndAndId(securityContextService.username(), id)
+        );
+    }
+
+    @Override
+    public ResponseEntity findUserAccountsSimplified() {
+        return ResponseEntity.ok(
+                accountRepository
+                        .findAllByUsername(securityContextService.username()).stream().map(account -> new SimplifiedAccountDTO(account.getId(), account.getTitle()))
+
         );
     }
 

@@ -17,6 +17,7 @@ import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models
 import { buildParams } from 'src/app/utils/param-bulder';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { EntityOperation } from 'src/app/core/EntityOperation';
+import { SideBarService } from 'src/app/services/side-bar.service';
 
 @Component({
   selector: 'app-categories',
@@ -63,10 +64,12 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
     public sharedService: SharedService,
     private categoriesService: CategoriesService,
     public dialog: DialogService, 
-    private toaster: ToastrService
+    private toaster: ToastrService,
+    public sideBarService: SideBarService
   ) {}
 
   ngOnInit(): void {
+    this.sideBarService.displaySidebar = true;
     this.query();
   }
 

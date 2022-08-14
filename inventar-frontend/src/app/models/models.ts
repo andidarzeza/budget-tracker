@@ -143,3 +143,8 @@ export interface UserRequest {
 }
 
 export type RangeType = "Monthly" | "Yearly";
+
+export interface SimplifiedAccount {
+    id: string;
+    title: string;
+}

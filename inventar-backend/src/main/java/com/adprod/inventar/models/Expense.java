@@ -24,4 +24,5 @@ public class Expense {
     private String categoryID;
     private String user;
     private String currency;
+    private String account;
 }

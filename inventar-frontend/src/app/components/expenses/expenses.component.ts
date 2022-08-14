@@ -17,6 +17,8 @@ import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { EntityOperation } from 'src/app/core/EntityOperation';
+import { AccountService } from 'src/app/services/account.service';
+import { SideBarService } from 'src/app/services/side-bar.service';
 
 @Component({
   selector: 'app-expenses',
@@ -71,10 +73,13 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     private expenseService: ExpenseService,
     public dialog: DialogService,
     private categoryService: CategoriesService,
-    private toaster: ToastrService
+    private toaster: ToastrService,
+    public accountService: AccountService,
+    public sideBarService: SideBarService
   ) {}
 
   ngOnInit(): void {
+    this.sideBarService.displaySidebar = true;
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
     this.categoryService.findAll(buildParams(0, 9999).append("categoryType", CategoryType.EXPENSE)).subscribe((res: ResponseWrapper) => {
       const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
@@ -110,12 +115,14 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
       });
   }
 
-  openAddEditForm(expense?: Expense): void {
-    console.log(expense);
-    
+  openAddEditForm(expense?: Expense): void {    
     this.dialog
       .openDialog(AddExpenseComponent, expense)
-      .onSuccess(() => this.query());
+      .onSuccess(() => {
+        // this.accountService.getAccount().subscribe();
+        this.query()
+        
+      } );
   }
 
   onMouseEnter(temp: any): void {
@@ -153,6 +160,8 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
       .delete(id)
       .pipe(takeUntil(this._subject)) 
       .subscribe(() => {
+
+        // this.accountService.getAccount().subscribe();
         this.sharedService.checkLoadingSpinner();
         this.query();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
