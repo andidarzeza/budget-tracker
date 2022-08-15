@@ -18,6 +18,7 @@ import { buildParams } from 'src/app/utils/param-bulder';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { EntityOperation } from 'src/app/core/EntityOperation';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-categories',
@@ -65,7 +66,8 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
     private categoriesService: CategoriesService,
     public dialog: DialogService, 
     private toaster: ToastrService,
-    public sideBarService: SideBarService
+    public sideBarService: SideBarService,
+    public accountService: AccountService
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +85,7 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.categoriesService
-      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType))
+      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
         this.dataSource = res?.data;

@@ -22,13 +22,6 @@ export class AccountComponent implements OnInit {
   accounts: SimplifiedAccount[];
 
   ngOnInit(): void {
-
-    const accountId = localStorage.getItem("account");
-    if(accountId) {
-      this.router.navigate(["/dashboard"]);
-      // this.accountService.findOne(accountId).subscribe();
-    }
-
     this.navBarService.displayNavBar = false;
     this.sideBarService.displaySidebar = false;
     this.accountService.findAllAccountsSimplified().subscribe((simplifiedAccounts: SimplifiedAccount[]) => {
@@ -36,12 +29,19 @@ export class AccountComponent implements OnInit {
     });
   }
 
-  selectAccount(account: SimplifiedAccount): void {
-    console.log(account);
+  selectAccount(account: SimplifiedAccount): void {    
     this.accountService.findOne(account.id).subscribe(() => {
       localStorage.setItem("account", account.id);
+      this.router.navigate(["/dashboard"]);
     });
-    this.router.navigate(["/dashboard"]);
+  }
+
+  editAccount(account: SimplifiedAccount): void {
+
+  }
+
+  deleteAccount(account: SimplifiedAccount): void {
+    
   }
 
 }

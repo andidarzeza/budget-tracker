@@ -22,9 +22,6 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-    
-    console.log("test", changes?.dailyExpensesLabels?.firstChange);
     if(changes?.dailyExpenses && !changes?.dailyExpenses?.firstChange) {
       this.createDailyChart();
     }
@@ -70,7 +67,7 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
   }
 
   private listenForColorChange(): void {
-    this.themeService.colorChange.subscribe((color: string) => {
+    this.themeService.colorChange.subscribe((color: string) => {      
       this.sharedService.changeColor(this.chart, this.getChartBackgroundColor(color), color);
     });
   }

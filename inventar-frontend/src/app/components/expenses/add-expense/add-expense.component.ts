@@ -10,6 +10,7 @@ import { Category, CategoryType, EntityType, Expense, ResponseWrapper } from 'sr
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { AccountService } from 'src/app/services/account.service';
 
 
 
@@ -33,7 +34,8 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<AddExpenseComponent>,
     private formBuilder: FormBuilder,
     private expenseService: ExpenseService,
-    private categoryService: CategoriesService
+    private categoryService: CategoriesService,
+    public accountService: AccountService
   ) {}
   
   formGroup: FormGroup = this.formBuilder.group({
@@ -51,7 +53,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
 
   private getCategories(): void {
     this.categoryService
-      .findAll(buildParams(0, 1000).append("categoryType", CategoryType.EXPENSE))
+      .findAll(buildParams(0, 1000).append("categoryType", CategoryType.EXPENSE).append("account", this.accountService.getAccount()))
       .pipe(
         takeUntil(this._subject),
         map((response: ResponseWrapper) => {
@@ -72,8 +74,10 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     if(this.formGroup.valid && !this.savingEntity){
       if(this.editMode) {
         this.savingEntity = true;
+        const payload = this.formGroup.value;
+        payload.account = this.accountService.getAccount();
         this.expenseService
-          .update(this.expense.id, this.formGroup.value)
+          .update(this.expense.id, payload)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {
             this.closeDialog(true);
@@ -82,8 +86,10 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
           });
       } else if(!this.savingEntity) {
         this.savingEntity = true;
+        const payload = this.formGroup.value;
+        payload.account = this.accountService.getAccount();
         this.expenseService
-          .save(this.formGroup.value)
+          .save(payload)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {
             this.closeDialog(true);  

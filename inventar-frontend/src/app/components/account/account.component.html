@@ -1,8 +1,37 @@
 
 
-<div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);border: 1px solid red;padding: 20px;">
-    <div *ngFor="let account of accounts" style="padding: 10px;border: 1px solid black;cursor: pointer;" (click)="selectAccount(account)">
-        {{account.title}}
+<div class="light-dashboard-card" style="width: 440px;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);padding: 20px;">
+    <div style="padding-bottom:20px;width: 100%;display: flex;justify-content: center;align-items: center;">
+        <button mat-icon-button class="light" style="color: white;width: 50px;height: 50px;">
+            AL
+        </button>
+    </div>
+
+    <div matRipple class="account" *ngFor="let account of accounts" (click)="selectAccount(account)">
+        <div>
+
+            {{account.title}}
+        </div>
+
+        <div>
+            <button (click)="$event.stopPropagation()" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="editAccount(account)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <button mat-menu-item (click)="deleteAccount(account)">
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+        </div>
+
+        
+          
+        
     </div>
 </div>
 

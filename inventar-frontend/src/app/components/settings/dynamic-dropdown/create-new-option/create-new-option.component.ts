@@ -42,7 +42,6 @@ export class CreateNewOptionComponent implements OnInit{
         this.createMode = false;
         this.editMode = false;
     } else {
-      console.log("required!");
     }
   }
 

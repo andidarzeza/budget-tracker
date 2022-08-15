@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EntityType } from 'src/app/models/models';
+import { AccountService } from 'src/app/services/account.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -26,7 +27,8 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<AddCategoryComponent>,
     private formBuilder: FormBuilder,
-    private categoriesService: CategoriesService
+    private categoriesService: CategoriesService,
+    public accountService: AccountService
   ) {}
   
   categoryGroup: FormGroup = this.formBuilder.group({
@@ -42,7 +44,6 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
   }
 
   test(): void {
-    console.log("test");
     this.showIconSelect = true;
   }
 
@@ -56,6 +57,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         this.data.spendingCategory.icon = this.icon.value;
         const payload = this.data.spendingCategory;
         payload['categoryType'] = this.data.categoriesType;
+        payload.account = this.accountService.getAccount();
         this.savingEntity = true;
         this.categoriesService
           .update(payload.id, payload)
@@ -64,6 +66,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
       } else if(!this.savingEntity){
         const payload = this.categoryGroup.value;
         payload['categoryType'] = this.data.categoriesType;
+        payload.account = this.accountService.getAccount();
         this.savingEntity = true;
         this.categoriesService
           .save(payload)

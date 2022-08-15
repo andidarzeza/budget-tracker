@@ -67,10 +67,10 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getCategories();
   }
-
+  
   private getCategories(): void {
     this.categoryService
-      .findAll(buildParams(0, 99999).append("categoryType", CategoryType.INCOME))
+      .findAll(buildParams(0, 99999).append("categoryType", CategoryType.INCOME).append("account", this.accountService.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((response: ResponseWrapper) => {
         this.formGroup.get("currency").setValue(this.baseCurrency);
@@ -85,20 +85,22 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
     if(this.formGroup.valid && !this.savingEntity){
       if(this.editMode) {
         this.savingEntity = true;
+        const payload = this.formGroup.value;
+        payload.account = this.accountService.getAccount();
         this.incomeService
-          .update(this.income.id, this.formGroup.value)
+          .update(this.income.id, payload)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {
-            // this.accountService.getAccount().subscribe();
             this.onSaveSuccess("Income updated with success");
           });
       } else if(!this.savingEntity){
         this.savingEntity = true;
+        const payload = this.formGroup.value;
+        payload.account = this.accountService.getAccount();
         this.incomeService
-          .save(this.formGroup.value)
+          .save(payload)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {
-            // this.accountService.getAccount().subscribe();
             this.onSaveSuccess("A new Income has been inserted")
           });
       }

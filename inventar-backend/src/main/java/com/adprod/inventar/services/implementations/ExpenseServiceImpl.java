@@ -36,6 +36,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         String category = params.get("category");
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder = booleanBuilder.and(QExpense.expense.user.eq(securityContextService.username()));
+        booleanBuilder = booleanBuilder.and(QExpense.expense.account.eq(params.get("account")));
         if(Objects.nonNull(description)) {
             booleanBuilder = booleanBuilder.and(QExpense.expense.description.containsIgnoreCase(description));
         }

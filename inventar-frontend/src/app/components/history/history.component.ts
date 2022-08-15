@@ -13,6 +13,7 @@ import { ENTITIES, EntityAction, EntityType, ENTITY_ACTIONS, ResponseWrapper } f
 import { buildParams } from 'src/app/utils/param-bulder';
 import { HistoryService } from 'src/app/services/pages/history.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-history',
@@ -66,7 +67,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
   constructor(
     public sharedService: SharedService,
     private historyService: HistoryService,
-    public sideBarService: SideBarService
+    public sideBarService: SideBarService,
+    public accountService: AccountService
   ) { }
 
   ngOnInit(): void {
@@ -112,7 +114,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.historyService
-      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters))
+      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
         this.historyList = res?.data;

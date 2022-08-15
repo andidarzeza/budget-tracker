@@ -60,7 +60,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   onSelectionFunction(items: string[]): void {
-    console.log(items);
   }
 
   setAnimationLoading(): void {

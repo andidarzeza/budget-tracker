@@ -38,7 +38,6 @@ export class SideBarComponent implements OnChanges {
     
     setTimeout(() => {
       const activeItem = document.getElementById("active-item") as HTMLElement;   
-      console.log(activeItem);
       if(activeItem) {
         const margin = index+1;
         activeItem.style.transform = `translate(-50%, calc(${index * 100}% + ${(index * 5) + (margin *5)}px))`;

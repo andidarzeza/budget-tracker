@@ -3,6 +3,7 @@ package com.adprod.inventar.services.implementations;
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.History;
 import com.adprod.inventar.models.QHistory;
+import com.adprod.inventar.models.QIncome;
 import com.adprod.inventar.models.enums.EntityAction;
 import com.adprod.inventar.models.enums.EntityType;
 import com.adprod.inventar.models.wrappers.ResponseWrapper;
@@ -33,6 +34,7 @@ public class HistoryServiceImpl implements HistoryService {
         String message = params.get("message");
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder = booleanBuilder.and(QHistory.history.user.eq(securityContextService.username()));
+        booleanBuilder = booleanBuilder.and(QHistory.history.account.eq(params.get("account")));
         if(Objects.nonNull(action)){
             booleanBuilder = booleanBuilder.and(QHistory.history.action.eq(EntityAction.valueOf(action)));
         }

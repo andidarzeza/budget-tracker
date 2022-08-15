@@ -72,7 +72,7 @@ export class LoginComponent{
           console.log("Reduce number of times to sign in?");
           
         }
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/account']);
       },
       (error: any) => {
         if(error?.status === 403) {

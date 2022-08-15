@@ -1,4 +1,3 @@
-import { getCurrencySymbol } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -7,8 +6,6 @@ import { IConfiguration, Theme } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
-import { LocationService } from 'src/app/services/location.service';
-import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';

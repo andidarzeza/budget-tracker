@@ -58,23 +58,17 @@ export class DashboardComponent implements OnDestroy {
     private pdfExporter: PdfExporterService,
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
-    public router: Router,
+    public router: Router,  
     public accountService: AccountService
   ) {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
-    const accountId = this.router.getCurrentNavigation()?.extras?.state?.accountId;
-    if(accountId) {
-      console.log("tets");
-      
-    }
   }
 
 
 
   // fires only from onDateSelected function below
   private getDashboardData(): void {
-    console.log(this.accountService.account);
     
     const currentYear: Year = this.dateUtil.fromYear(this.selectedDate.getFullYear());
     const currentMonth: Month = currentYear.getMonthByValue(this.selectedDate.getMonth());

@@ -22,7 +22,7 @@ export class DashboardService {
       .append("from", from.toISOString())
       .append("to", to.toISOString())
       .append("range", range)
-      .append("account", this.accountService.account.id);
+      .append("account", this.accountService.getAccount());
     return this.http.get<DashboardDTO>(this.API_URl, {params});
   }
 

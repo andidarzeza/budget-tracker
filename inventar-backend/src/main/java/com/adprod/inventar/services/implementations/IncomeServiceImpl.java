@@ -40,6 +40,7 @@ public class IncomeServiceImpl implements IncomeService {
         String category = params.get("category");
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder = booleanBuilder.and(QIncome.income.user.eq(securityContextService.username()));
+        booleanBuilder = booleanBuilder.and(QIncome.income.account.eq(params.get("account")));
         if(Objects.nonNull(description)) {
             booleanBuilder = booleanBuilder.and(QIncome.income.description.containsIgnoreCase(description));
         }

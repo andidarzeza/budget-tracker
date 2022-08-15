@@ -81,7 +81,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
-    this.categoryService.findAll(buildParams(0, 9999).append("categoryType", CategoryType.EXPENSE)).subscribe((res: ResponseWrapper) => {
+    this.categoryService.findAll(buildParams(0, 9999).append("categoryType", CategoryType.EXPENSE).append("account", this.accountService?.getAccount())).subscribe((res: ResponseWrapper) => {
       const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
       const index = this.filterOptions.indexOf(item);
       this.filterOptions[index].matSelectOptions = {
@@ -103,7 +103,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.expenseService
-      .findAll(buildParams( this.page, this.size, this.sort, this.previousFilters))
+      .findAll(buildParams( this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
         this.expenses = res?.data;
@@ -119,14 +119,11 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     this.dialog
       .openDialog(AddExpenseComponent, expense)
       .onSuccess(() => {
-        // this.accountService.getAccount().subscribe();
         this.query()
-        
-      } );
+      });
   }
 
   onMouseEnter(temp: any): void {
-    console.log(temp);
   }
 
   onSearch(payload: any): void {

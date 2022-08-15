@@ -21,7 +21,14 @@ export class AccountService {
   }
 
   findOne(id: string): Observable<any> {
-    return this.http.get(`${this.API_URl}/${id}`).pipe(map(account => this.account = account as any));
+    return this.http.get(`${this.API_URl}/${id}`).pipe(map(account => {
+      this.account = account as any;
+      localStorage.setItem("account", this.account.id)
+    }));
+  }
+
+  getAccount(): string {
+    return localStorage.getItem("account");
   }
 
 }

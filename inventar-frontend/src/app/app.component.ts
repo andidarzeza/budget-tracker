@@ -27,7 +27,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // this.accountService.getAccount().subscribe();
     this.configurationService
       .getConfiguration()
       .pipe(takeUntil(this.subject))
@@ -36,12 +35,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.sharedService.theme = configuration.darkMode? 'dark' : 'light'
       });
     this.sharedService.listenForThemeChange();
-
-
-    const accountId = localStorage.getItem("account");
-    if(accountId) {
-      this.accountService.findOne(accountId).subscribe();
-    } else {
+      
+    if(this.accountService?.getAccount() == null) {      
       this.router.navigate(["/account"]);
     }
   }

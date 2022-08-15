@@ -68,11 +68,14 @@ export class SharedService {
   }
 
   public changeColor(chart: Chart, backgroundColor: string, borderColor: string): void {
-    let chartObj = chart as any;
-    chartObj.data.datasets[0].backgroundColor = [backgroundColor];
-    chartObj.data.datasets[0].borderColor = [borderColor];
-    chartObj.data.datasets[0].pointBackgroundColor = [borderColor];    
-    chart.update();
+    if(chart) {
+      let chartObj = chart as any;
+      chartObj.data.datasets[0].backgroundColor = [backgroundColor];
+      chartObj.data.datasets[0].borderColor = [borderColor];
+      chartObj.data.datasets[0].pointBackgroundColor = [borderColor];    
+      chart.update();
+    }
+    
   }
   
 }

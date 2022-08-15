@@ -55,7 +55,8 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
     public dialog: DialogService,
     private toaster: ToastrService,
     private categoryService: CategoriesService,
-    private sideBarService: SideBarService
+    private sideBarService: SideBarService,
+    public accountService: AccountService
   ) {
     super(sharedService, dialog);
   }
@@ -69,7 +70,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
 
   private getCategories(): void {
     this.categoryService
-      .findAll(buildParams(0, 9999).append("categoryType", CategoryType.INCOME))
+      .findAll(buildParams(0, 9999).append("categoryType", CategoryType.INCOME).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
         const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
@@ -85,7 +86,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.incomeService
-      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters))
+      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
         this.data = res?.data;
@@ -104,7 +105,6 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .delete(id)
       .pipe(takeUntil(this._subject))
       .subscribe(() => {
-        // this.accountService.getAccount().subscribe();
         this.query();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       });
