@@ -15,6 +15,7 @@ import { EntityOperation } from 'src/app/core/EntityOperation';
 import { BaseTable } from 'src/app/core/BaseTable';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
 
 @Component({
   selector: 'app-incomes',
@@ -56,6 +57,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
     private toaster: ToastrService,
     private categoryService: CategoriesService,
     private sideBarService: SideBarService,
+    private navBarService: NavBarService,
     public accountService: AccountService
   ) {
     super(sharedService, dialog);
@@ -63,6 +65,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
 
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
+    this.navBarService.displayNavBar = true;
     this.columns = this.sharedService.mobileView ? this.mobileColumns : this.columns;
     this.getCategories();
     this.query();

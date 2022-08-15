@@ -19,6 +19,7 @@ import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { EntityOperation } from 'src/app/core/EntityOperation';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
 
 @Component({
   selector: 'app-expenses',
@@ -75,11 +76,13 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     private categoryService: CategoriesService,
     private toaster: ToastrService,
     public accountService: AccountService,
-    public sideBarService: SideBarService
+    public sideBarService: SideBarService,
+    public navBarService: NavBarService
   ) {}
 
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
+    this.navBarService.displayNavBar = true;
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
     this.categoryService.findAll(buildParams(0, 9999).append("categoryType", CategoryType.EXPENSE).append("account", this.accountService?.getAccount())).subscribe((res: ResponseWrapper) => {
       const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];

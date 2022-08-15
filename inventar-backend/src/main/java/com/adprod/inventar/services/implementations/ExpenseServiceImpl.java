@@ -65,6 +65,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity save(Expense expense) {
+        this.accountService.checkAccount(expense.getAccount());
         expense.setUser(securityContextService.username());
         accountService.removeFromBalance(expense.getCurrency(), expense.getMoneySpent());
         expenseRepository.save(expense);
@@ -92,6 +93,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ResponseEntity update(String id, Expense spending) {
+        this.accountService.checkAccount(spending.getAccount());
         spending.setUser(securityContextService.username());
         Expense expense = (Expense) findOne(id).getBody();
         double removeAndAddAmount = expense.getMoneySpent() - spending.getMoneySpent();

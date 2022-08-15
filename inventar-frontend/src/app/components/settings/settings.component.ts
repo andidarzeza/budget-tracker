@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IConfiguration } from 'src/app/models/models';
 import { ConfigurationService } from 'src/app/services/configuration.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 
@@ -15,15 +16,16 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private configurationSubscription: Subscription = null;
   private updateConfigurationSubscription: Subscription = null;
   private spinnerSubscription: Subscription = null;
-  data=['tt', 'test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12', 'test13', 'test14'];
   constructor(
     public sharedService: SharedService, 
     private configurationService: ConfigurationService,
-    public sideBarService: SideBarService
+    public sideBarService: SideBarService,
+    public navBarService: NavBarService
   ) { }
 
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
+    this.navBarService.displayNavBar = true;
     this.sharedService.activateLoadingSpinner();
     this.configurationSubscription = this.configurationService.getConfiguration().subscribe((configuration: IConfiguration) => {
       this.configuration = configuration;
@@ -46,20 +48,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
     () => {
       this.sharedService.checkLoadingSpinner();
     });
-  }
-
-  onCreateFunction(item: string): void {
-    this.data.push(item);
-  }
-
-  onDeleteFunction(item: string): void {
-    const index = this.data.indexOf(item);
-    if(index >-1) {
-      this.data.splice(index, 1);
-    }
-  }
-
-  onSelectionFunction(items: string[]): void {
   }
 
   setAnimationLoading(): void {

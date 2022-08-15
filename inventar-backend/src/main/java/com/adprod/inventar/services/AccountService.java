@@ -9,4 +9,5 @@ public interface AccountService {
     Account save(Account account);
     void removeFromBalance(String currency, Double amount);
     void addToBalance(String currency, Double amount);
+    void checkAccount(String account);
 }

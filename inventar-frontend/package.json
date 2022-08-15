@@ -21,6 +21,7 @@
         "@angular/platform-browser": "~9.1.9",
         "@angular/platform-browser-dynamic": "~9.1.9",
         "@angular/router": "~9.1.9",
+        "bootstrap-icons": "^1.9.1",
         "chart.js": "^3.6.2",
         "country-flag-icons": "^1.5.5",
         "ngx-toastr": "^13.2.0",

@@ -14,6 +14,7 @@ import { buildParams } from 'src/app/utils/param-bulder';
 import { HistoryService } from 'src/app/services/pages/history.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { AccountService } from 'src/app/services/account.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
 
 @Component({
   selector: 'app-history',
@@ -68,12 +69,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
     public sharedService: SharedService,
     private historyService: HistoryService,
     public sideBarService: SideBarService,
+    public navBarService: NavBarService,
     public accountService: AccountService
   ) { }
 
   ngOnInit(): void {
-
     this.sideBarService.displaySidebar = true;
+    this.navBarService.displayNavBar = true;
     this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
     this.query();
   }

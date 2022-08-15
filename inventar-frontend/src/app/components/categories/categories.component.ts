@@ -19,6 +19,7 @@ import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { EntityOperation } from 'src/app/core/EntityOperation';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { AccountService } from 'src/app/services/account.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
 
 @Component({
   selector: 'app-categories',
@@ -67,11 +68,13 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
     public dialog: DialogService, 
     private toaster: ToastrService,
     public sideBarService: SideBarService,
-    public accountService: AccountService
+    public accountService: AccountService,
+    public navBarService: NavBarService
   ) {}
 
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
+    this.navBarService.displayNavBar = true;
     this.query();
   }
 

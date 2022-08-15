@@ -7,6 +7,7 @@ import static com.adprod.inventar.models.enums.EntityType.*;
 import com.adprod.inventar.models.enums.EntityType;
 import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
+import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.CategoryService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.SecurityContextService;
@@ -28,6 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final HistoryService historyService;
     private final EntityType entityType = CATEGORY;
+    private final AccountService accountService;
 
     @Override
     public ResponseEntity findAll(Pageable pageable, Map<String, String> params) {
@@ -66,6 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseEntity save(Category category) {
+        accountService.checkAccount(category.getAccount());
         category.setUser(securityContextService.username());
         categoryRepository.save(category);
         historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
@@ -74,6 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseEntity update(String id, Category category) {
+        accountService.checkAccount(category.getAccount());
         category.setUser(securityContextService.username());
         category.setLastModifiedDate(LocalDateTime.now());
         category.setId(id);

@@ -50,4 +50,11 @@ public class AccountServiceImpl implements AccountService {
     public void addToBalance(String currency, Double amount) {
         balanceManager.balance().add(currency, amount);
     }
+
+    @Override
+    public void checkAccount(String account) {
+        this.accountRepository
+                .findByUsernameAndAndId(securityContextService.username(), account)
+                .orElseThrow(() -> new NotFoundException("Account with number: " + account + " was not found"));
+    }
 }
