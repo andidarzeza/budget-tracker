@@ -71,8 +71,6 @@ export class BaseTemplateComponent implements OnInit, OnDestroy {
 
 
   prepareRoute() {
-    console.log(this.outlet);
-    
     return this.outlet && this.outlet?.activatedRouteData && this.outlet?.activatedRouteData['animation'];
   }
 

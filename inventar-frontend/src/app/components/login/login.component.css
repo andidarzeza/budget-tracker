@@ -4,6 +4,9 @@
     align-items: center;
     height: 100%;
     width: 100%;
+    /* background: linear-gradient(-45deg, white, #253E8A, white, #2F418F);
+	background-size: 400% 400%; */
+	/* animation: gradient 15s ease infinite; */
 }
 
 .logo-container {
@@ -124,16 +127,6 @@ input {
 }
 
 
-
-
-
-
-
-
-
-
-
-
 .circular-container {
     width: 100%;
     border-radius: 35px 35px 0 0;
@@ -174,4 +167,18 @@ input {
     bottom: 0;
     right: 0;
     transform: translate(37%, 44%);
+}
+
+
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }

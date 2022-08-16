@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CapsLockModule } from 'src/app/directives/caps-lock/caps-lock.module';
+import { SpinnerModule } from 'src/app/template/shared/spinner/spinner.module';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { CapsLockModule } from 'src/app/directives/caps-lock/caps-lock.module';
     ReactiveFormsModule,
     MatInputModule,
     FormsModule,
+    SpinnerModule,
     MatIconModule,
     MatCheckboxModule,
     MatButtonModule
