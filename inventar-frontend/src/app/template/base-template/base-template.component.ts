@@ -4,7 +4,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { slider, stepper } from 'src/app/animations';
+import { slider } from 'src/app/animations';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';

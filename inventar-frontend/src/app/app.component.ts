@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ChildrenOutletContexts, Router, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { stepper } from './animations';
 import { IConfiguration } from './models/models';
 import { AccountService } from './services/account.service';
 import { AuthenticationService } from './services/authentication.service';
