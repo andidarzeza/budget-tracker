@@ -160,8 +160,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
       .delete(id)
       .pipe(takeUntil(this._subject)) 
       .subscribe(() => {
-
-        // this.accountService.getAccount().subscribe();
+        this.accountService.findOne(this.accountService.getAccount()).subscribe();
         this.sharedService.checkLoadingSpinner();
         this.query();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);

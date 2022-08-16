@@ -4,6 +4,7 @@ import { BaseTemplateComponent } from './base-template.component';
 import { NavBarModule } from './nav-bar/nav-bar.module';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { SideBarModule } from './side-bar/side-bar.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -12,6 +13,7 @@ import { SideBarModule } from './side-bar/side-bar.module';
   imports: [
     CommonModule,
     NavBarModule,
+    BrowserAnimationsModule,
     MatProgressBarModule,
     SideBarModule,
   ],

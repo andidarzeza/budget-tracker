@@ -91,6 +91,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
           .update(this.income.id, payload)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {
+            this.accountService.findOne(this.accountService.getAccount()).subscribe();
             this.onSaveSuccess("Income updated with success");
           });
       } else if(!this.savingEntity){
@@ -101,6 +102,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
           .save(payload)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {
+            this.accountService.findOne(this.accountService.getAccount()).subscribe();
             this.onSaveSuccess("A new Income has been inserted")
           });
       }

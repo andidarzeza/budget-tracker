@@ -80,6 +80,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
           .update(this.expense.id, payload)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {
+            this.accountService.findOne(this.accountService.getAccount()).subscribe();
             this.closeDialog(true);
             this.savingEntity = false;
             this.toaster.success("Expense updated successfully", "Success", TOASTER_CONFIGURATION);
@@ -92,6 +93,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
           .save(payload)
           .pipe(takeUntil(this._subject))
           .subscribe(() => {
+            this.accountService.findOne(this.accountService.getAccount()).subscribe();
             this.closeDialog(true);  
             this.savingEntity = false;
             this.toaster.success("A new Expense has been inserted", "Success", TOASTER_CONFIGURATION);    

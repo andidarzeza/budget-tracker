@@ -5,7 +5,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { serverAPIURL } from 'src/environments/environment';
 import { User, UserRequest } from '../models/models';
+import { NavBarService } from './nav-bar.service';
 import { SharedService } from './shared.service';
+import { SideBarService } from './side-bar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,13 @@ export class AuthenticationService {
   public currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
 
-  constructor(private http: HttpClient, private router: Router, public sharedService: SharedService) {
+  constructor(
+    private http: HttpClient, 
+    private router: Router, 
+    public sharedService: SharedService,
+    private navBarService: NavBarService,
+    private sideBarService: SideBarService
+  ) {
       this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
       this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -39,6 +47,8 @@ export class AuthenticationService {
 
   logout() {
       // remove user from local storage and set current user to null
+      this.navBarService.displayNavBar = false;
+      this.sideBarService.displaySidebar = false;
       localStorage.removeItem('currentUser');
       localStorage.removeItem('baseCurrency');
       localStorage.removeItem('account');

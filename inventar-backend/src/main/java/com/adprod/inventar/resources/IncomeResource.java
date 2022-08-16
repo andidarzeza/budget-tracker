@@ -2,12 +2,10 @@ package com.adprod.inventar.resources;
 
 import com.adprod.inventar.models.Income;
 import com.adprod.inventar.services.IncomeService;
-import com.adprod.inventar.services.SecurityContextService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 @RestController

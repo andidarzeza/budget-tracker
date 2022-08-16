@@ -39,8 +39,19 @@ import { IConfiguration } from 'src/app/models/models';
 })
 export class LoginComponent{
 
-  constructor(private toasterService: ToastrService, private configurationSevice: ConfigurationService, public sharedService: SharedService, private formBuilder: FormBuilder, public authenticationService: AuthenticationService, private router: Router) { 
+  constructor(
+    private toasterService: ToastrService, 
+    private configurationSevice: ConfigurationService, 
+    public sharedService: SharedService, 
+    private formBuilder: FormBuilder, 
+    public authenticationService: AuthenticationService, 
+    private router: Router
+  ) { 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const account = localStorage.getItem("account");
+    if(!account) {
+      this.router.navigate(['/account']);
+    }
     if(currentUser) {
       this.router.navigate(['/dashboard']);
     }

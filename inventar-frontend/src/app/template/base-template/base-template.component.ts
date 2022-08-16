@@ -1,8 +1,10 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { slider, stepper } from 'src/app/animations';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -35,12 +37,19 @@ import { MenuItem, SideBarMode } from './base-template.models';
           ]
         )
       ]
-    )
+    ),
+    
+      // fader,
+      slider,
+      // transformer,
+      // stepper
+    
   ]
 })
 export class BaseTemplateComponent implements OnInit, OnDestroy {
 
   private subject = new Subject();
+  @Input() outlet: RouterOutlet;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -59,6 +68,14 @@ export class BaseTemplateComponent implements OnInit, OnDestroy {
     }
     this.getNavigationItems();
   }
+
+
+  prepareRoute() {
+    console.log(this.outlet);
+    
+    return this.outlet && this.outlet?.activatedRouteData && this.outlet?.activatedRouteData['animation'];
+  }
+
 
   private getNavigationItems(): void {
     this.http

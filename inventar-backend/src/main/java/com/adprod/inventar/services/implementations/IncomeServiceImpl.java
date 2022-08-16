@@ -73,7 +73,7 @@ public class IncomeServiceImpl implements IncomeService {
     public ResponseEntity save(Income income) {
         this.accountService.checkAccount(income.getAccount());
         income.setUser(securityContextService.username());
-        accountService.addToBalance(income.getCurrency(), income.getIncoming());
+        accountService.addToBalance(income.getAccount(), income.getCurrency(), income.getIncoming());
         incomeRepository.save(income);
         historyService.save(historyService.from(CREATE, INCOME));
         return ResponseEntity.ok(income);
@@ -89,7 +89,7 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public ResponseEntity delete(String id) {
         Income income = findOne(id);
-        accountService.removeFromBalance(income.getCurrency(), income.getIncoming());
+        accountService.removeFromBalance(income.getAccount(), income.getCurrency(), income.getIncoming());
         incomeRepository.delete(income);
         historyService.save(historyService.from(DELETE, INCOME));
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
@@ -101,7 +101,7 @@ public class IncomeServiceImpl implements IncomeService {
         income.setUser(securityContextService.username());
         Income incomeDB = findOne(id);
         double removeAndAddAmount =  income.getIncoming() - incomeDB.getIncoming();
-        this.accountService.addToBalance(income.getCurrency(), removeAndAddAmount);
+        this.accountService.addToBalance(income.getAccount(), income.getCurrency(), removeAndAddAmount);
         income.setId(id);
         income.setCreatedTime(incomeDB.getCreatedTime());
         income.setLastModifiedDate(new Date());

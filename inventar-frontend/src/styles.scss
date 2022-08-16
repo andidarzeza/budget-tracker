@@ -13,6 +13,11 @@
 html,
 body {
     height: 100%;
+    overflow-x: hidden;
+}
+
+app-account, app-login, side-bar {
+    height: 100%;
 }
 
 :root {
@@ -45,8 +50,7 @@ body {
 }
 
 app-dashboard {
-    display: block;
-    height: calc(100% - 64px);
+    height: 100%;
 }
 
 app-date-picker {

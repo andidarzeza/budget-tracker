@@ -21,17 +21,16 @@ public class BalanceManager {
         return this;
     }
 
-    private Account getAccount() {
-        return Optional
-                    .ofNullable(accountRepository
-                            .findAllByUsername(securityContextService.username()).get(0))
-                    .orElseThrow(
+    private Account getAccount(String account) {
+        return accountRepository
+                .findByUsernameAndAndId(securityContextService.username(), account)
+                .orElseThrow(
                         () -> new NotFoundException("An error occurred, account was not found!")
-                    );
+                );
     }
 
-    protected void add(String currency, Double amount) {
-        Account account = getAccount();
+    protected void add(String accountId, String currency, Double amount) {
+        Account account = getAccount(accountId);
         var oldBalance = Optional.ofNullable(account.getBalance().get(currency)).orElse(0.0);
         account.getBalance().put(currency, oldBalance + amount);
         if((oldBalance + amount) == 0) {
@@ -40,8 +39,8 @@ public class BalanceManager {
         accountRepository.save(account);
     }
 
-    protected void remove(String currency, Double amount) {
-        Account account = getAccount();
+    protected void remove(String accountId, String currency, Double amount) {
+        Account account = getAccount(accountId);
         var oldBalance = Optional.ofNullable(account.getBalance().get(currency)).orElse(0.0);
         account.getBalance().put(currency, oldBalance - amount);
         if((oldBalance - amount) == 0) {

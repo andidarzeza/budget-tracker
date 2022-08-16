@@ -108,6 +108,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .delete(id)
       .pipe(takeUntil(this._subject))
       .subscribe(() => {
+        this.accountService.findOne(this.accountService.getAccount()).subscribe();
         this.query();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       });

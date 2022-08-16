@@ -1,3 +1,3 @@
-<base-template>
-    <router-outlet></router-outlet>
+<base-template [outlet]="outlet">
+    <router-outlet #outlet="outlet"></router-outlet>
 </base-template>
