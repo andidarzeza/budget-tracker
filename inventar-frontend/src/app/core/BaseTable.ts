@@ -41,13 +41,6 @@ export abstract class BaseTable<E> {
         this.dialog.openDialog(this.createComponent, entity).onSuccess(() => this.query());
     }
 
-    paginatorEvent(event: PageEvent): void {
-        this.size = event?.pageSize;
-        this.page = event?.pageIndex;
-        this.query();
-        this.sharedService.scrollTableToTop();
-    }
-
     onSidenavClose(): void {
         this.isSidenavOpened = false;
     }

@@ -5,13 +5,12 @@ import { SharedService } from 'src/app/services/shared.service';
 import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { Subject } from 'rxjs';
-import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 import { takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import { CategoryType, Expense, ResponseWrapper } from 'src/app/models/models';
+import { CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
 import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
@@ -36,8 +35,33 @@ export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, Enti
   public totalItems: number = 0;
   public defaultSort: string = "createdTime,desc";
   public sort: string = this.defaultSort;
-  public displayedColumns: string[] = ['createdTime', 'category', 'description', 'moneySpent', 'actions'];
-  public mobileColumns: string[] = ['category', 'moneySpent', 'actions'];
+  
+
+
+  columnDefinition: ColumnDefinition[] = [
+    {
+      column: 'createdTime',
+      type: 'date'
+    },
+    {
+      column: 'category',
+      type: 'string'
+    },
+    {
+      column: 'description',
+      type: 'string'
+    },
+    {
+      column: 'moneySpent',
+      type: 'currency'
+    },
+    {
+      column: 'actions',
+      type: 'actions'
+    }
+  ];
+  public columns: string[] = this.columnDefinition.map(columnDefinition => columnDefinition.column);
+
   public expenses: Expense[] = [];
   private previousFilters: HttpParams;
   public expenseViewId = "";
@@ -103,7 +127,6 @@ export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, Enti
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
-    this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
     this.categoryService.findAll(buildParams(0, 9999).append("categoryType", CategoryType.EXPENSE).append("account", this.accountService?.getAccount())).subscribe((res: ResponseWrapper) => {
       const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
       const index = this.filterOptions.indexOf(item);
@@ -114,13 +137,6 @@ export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, Enti
       };
     });
     this.query();
-  }
-
-  paginatorEvent(event: PageEvent): void {
-    this.size = event?.pageSize;
-    this.page = event?.pageIndex;
-    this.query();
-    this.sharedService.scrollTableToTop();
   }
 
   query(): void {

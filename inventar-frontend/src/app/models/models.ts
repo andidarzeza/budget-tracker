@@ -148,3 +148,10 @@ export interface SimplifiedAccount {
     id: string;
     title: string;
 }
+
+export type ColumnType = "string" | "double" | "date" | "actions" | "currency";
+
+export interface ColumnDefinition {
+    column: string;
+    type: ColumnType
+}

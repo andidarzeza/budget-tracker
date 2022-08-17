@@ -60,13 +60,6 @@ export class SharedService {
     if(this.totalRequests === 0)  setTimeout(() => this.stillLoading = false, 500);
   }
 
-  scrollTableToTop(): void {
-    const element: HTMLCollectionOf<HTMLTableSectionElement> = document.getElementsByTagName("tbody");
-    if(element.length > 0) {
-      element[0].scrollTo({top: 0, behavior: 'smooth'});
-    }
-  }
-
   public changeColor(chart: Chart, backgroundColor: string, borderColor: string): void {
     if(chart) {
       let chartObj = chart as any;

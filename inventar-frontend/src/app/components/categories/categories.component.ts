@@ -78,13 +78,6 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
     this.query();
   }
 
-  paginatorEvent(event: PageEvent): void {
-    this.size = event?.pageSize;
-    this.page = event?.pageIndex;
-    this.query();
-    this.sharedService.scrollTableToTop();
-  }
-
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.categoriesService

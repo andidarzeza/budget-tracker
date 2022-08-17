@@ -106,13 +106,6 @@ export class HistoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  paginatorEvent(event: PageEvent): void {
-    this.size = event?.pageSize;
-    this.page = event?.pageIndex;
-    this.query();
-    this.sharedService.scrollTableToTop();
-  }
-
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.historyService
