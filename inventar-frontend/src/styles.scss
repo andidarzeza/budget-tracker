@@ -633,3 +633,57 @@ th {
         width: 100%;
     }
 }
+
+
+
+
+.circular-container {
+    width: 100%;
+    border-radius: 35px 35px 0 0;
+    height: 350px;
+    background: #3560AD;
+    position: relative;
+    overflow: hidden;
+}
+
+.circle-1 {
+    width: 350px;
+    height: 350px;
+    position: absolute;
+
+    background: #20328A;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);    
+    left: 50%;
+    top: 50%;
+}
+
+.circle-2 {
+    width: 450px;
+    height: 450px;
+    background: #2B388F;
+    position: absolute;
+    border-radius: 50%;    transform: translate(-50%, -50%);    
+    left: 50%;
+    top: 50%;
+}
+
+.circle-3 {
+    border-radius: 50%;
+    border: 170px solid #2B388F;
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(37%, 44%);
+}
+
+
+.create-dialog>mat-dialog-container {
+    padding: 0;
+}
+
+create-form>form {
+    padding: 0px 20px;
+}

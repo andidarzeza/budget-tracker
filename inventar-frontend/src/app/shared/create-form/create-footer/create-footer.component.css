@@ -1,4 +1,6 @@
 .create-footer-container {
     display: flex;
     justify-content: flex-end;
+    padding: 20px;
+    padding-top: 0;
 }

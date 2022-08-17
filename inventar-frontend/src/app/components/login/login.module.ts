@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CapsLockModule } from 'src/app/directives/caps-lock/caps-lock.module';
 import { SpinnerModule } from 'src/app/template/shared/spinner/spinner.module';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { SpinnerModule } from 'src/app/template/shared/spinner/spinner.module';
     MatCardModule,
     CapsLockModule,
     ReactiveFormsModule,
+    MatProgressBarModule,
     MatInputModule,
     FormsModule,
     SpinnerModule,

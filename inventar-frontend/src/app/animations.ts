@@ -13,9 +13,9 @@ import {
 export const slider =
   trigger('routeAnimations', [
     transition('loginPage => accountPage', slideTo('right') ),
-    transition('* => loginPage', slideTo('right') ),
-    transition('accountPage => *', slideTo('right') ),
-    transition('* => accountPage', slideTo('right') ),
+    // transition('* => loginPage', slideTo('right') ),
+    // transition('accountPage => *', slideTo('right') ),
+    // transition('* => accountPage', slideTo('right') ),
   ]);
 
 

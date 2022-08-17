@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 
@@ -17,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatRippleModule,
     MatMenuModule,
+    MatProgressBarModule,
     MatIconModule
   ],
   exports: [AccountComponent]

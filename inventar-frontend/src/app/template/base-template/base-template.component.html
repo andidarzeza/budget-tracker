@@ -1,6 +1,6 @@
 <div [@routeAnimations]="prepareRoute()" class="application-container">
 
-    <side-bar [ngClass]="sharedService.mobileView ? 'display-none' : ''" *ngIf="authenticationService.currentUserValue && sideBarService.displaySidebar"
+    <side-bar *ngIf="authenticationService.currentUserValue && sideBarService.displaySidebar"
         [navigation]="navigation" [sideBarMode]="sideBarMode"></side-bar>
 
     <div 
@@ -11,9 +11,6 @@
         >
         <div class="shadow" id="shadow" *ngIf="sideBarMode=='over'" (click)="toggleSidebar()"></div>
         <nav-bar *ngIf="navBarService.displayNavBar"></nav-bar>
-        <!-- navbar: {{navBarService.displayNavBar}}
-        <br>
-        sidebar: {{sideBarService.displaySidebar}} -->
         <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation]
             *ngIf="sharedService.stillLoading && sharedService.isSpinnerEnabled"
             style="position: absolute;top: 64px;left:0;z-index: 2;"></mat-progress-bar>

@@ -1,13 +1,31 @@
-<div class="container">
-    <span class="header">
-        <mat-icon class="header-icon">{{icon}}</mat-icon>
-        <span class="header-title">
-            {{editMode ? "Update " + entity : "Create new " + entity}}
-        </span>
-    </span>
-    <div class="actions">
-        <button mat-icon-button (click)="closeDialog(false)">
-            <mat-icon class="{{sharedService.theme}}-icon">close</mat-icon>
-        </button>
+<div class="container" style="position: relative;">
+    <div class="circular-container" style="border-radius: 0px;height: 180px;">
+        <div class="circle-3" style="transform: translate(40%, 41%);">
+            <div class="circle-2">
+                <div class="circle-1" style="width: 180px;height: 180px;">
+                    <mat-icon class="header-icon">
+                        {{icon}}
+                    </mat-icon>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex;justify-content: space-between;">
+            <span class="header">
+                <!-- <mat-icon class="header-icon">{{icon}}</mat-icon> -->
+                <span class="header-title" style="color: white;position: absolute;bottom: 20px;">
+                    {{editMode ? "Update " + entity : "Create new " + entity}}
+                </span>
+            </span>
+            <div class="actions">
+                <button mat-icon-button (click)="closeDialog(false)">
+                    <mat-icon style="color: white;" class="{{sharedService.theme}}-icon">close</mat-icon>
+                </button>
+            </div>
+        </div>
+        
     </div>
+    
+
+
 </div>

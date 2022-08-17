@@ -28,7 +28,7 @@ export class DialogService implements OnDestroy {
   openDialog(component: ComponentType<any>, data?: any): ConfirmDialogHandler {
     const configuration = {
       data: data,
-      panelClass: this.sharedService.theme + '-class',
+      panelClass: [this.sharedService.theme + '-class', 'create-dialog'],
       ...CREATE_DIALOG_CONFIGURATION
     };
 

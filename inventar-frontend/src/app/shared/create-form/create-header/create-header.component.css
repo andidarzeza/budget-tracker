@@ -1,16 +1,18 @@
 .header-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--light);
-    font-size: 40px;
-    color: white;
-    border-radius: 8px;
-    padding: 7px;
+    color: #ffffff87;
+    position: absolute;
+    z-index: 123;
+    top: 50%;
+    left: 50%;
+    width: 85px;
+    font-size: 85px;
+    transform: translate(-50%, -50%);
+    height: 85px;
 }
 
 .header-title {
-    margin-left: 10px;
-    font-size: 22px;
+    margin-left: 13px;
+    font-size: 25px;
     font-weight: 200;
 }
 
@@ -24,8 +26,6 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    margin-top: -15px;
-    padding: 20px 0px;
     margin-bottom: 10px;
 }
 
