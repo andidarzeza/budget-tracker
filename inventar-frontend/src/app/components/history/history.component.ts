@@ -3,13 +3,12 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from 'src/environments/environment';
 import { Subject } from 'rxjs';
-import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 import { MatSidenav } from '@angular/material/sidenav';
 import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
 import { takeUntil } from 'rxjs/operators';
-import { ENTITIES, EntityAction, EntityType, ENTITY_ACTIONS, ResponseWrapper } from 'src/app/models/models';
+import { ColumnDefinition, ENTITIES, EntityAction, EntityType, ENTITY_ACTIONS, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { HistoryService } from 'src/app/services/pages/history.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
@@ -29,9 +28,35 @@ export class HistoryComponent implements OnInit, OnDestroy {
   public totalItems: number = 0;
   private defaultSort: string = "date,desc";
   private sort: string = this.defaultSort;
-  public displayedColumns: string[] = ['date', 'action', 'entity', 'message', 'user', 'actions'];
-  public mobileColumns: string[] = ['entity', 'message', 'user', 'actions'];
-  public historyList: History[] = [];
+
+  columnDefinition: ColumnDefinition[] = [
+    {
+      column: 'date',
+      type: 'date'
+    },
+    {
+      column: 'action',
+      type: 'string'
+    },
+    {
+      column: 'entity',
+      type: 'string'
+    },
+    {
+      column: 'message',
+      type: 'string'
+    },
+    {
+      column: 'user',
+      type: 'string'
+    },
+    {
+      column: 'actions',
+      type: 'actions'
+    }
+  ];
+
+  public data: History[] = [];
   public historyId: string;
   isSidenavOpened: boolean = false;
   @ViewChild('drawer') drawer: MatSidenav;
@@ -76,7 +101,11 @@ export class HistoryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
-    this.displayedColumns = this.sharedService.mobileView ? this.mobileColumns : this.displayedColumns;
+    this.query();
+  }
+
+  onScroll(): void {
+    this.page++;
     this.query();
   }
 
@@ -112,7 +141,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
-        this.historyList = res?.data;
+        this.data = this.data.concat(res?.data);
         this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();
       },
@@ -141,7 +170,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
     this.isSidenavOpened = false;
   }
 
-  viewHistoryDetails(id: string): void {
+  viewDetails(id: string): void {
     this.historyId = id;
     this.isSidenavOpened = true;
     this.drawer.toggle();

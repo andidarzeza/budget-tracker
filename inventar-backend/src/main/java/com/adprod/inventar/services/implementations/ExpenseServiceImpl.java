@@ -35,12 +35,10 @@ public class ExpenseServiceImpl implements ExpenseService {
         String description = params.get("description");
         Double expense = Double.parseDouble(Objects.nonNull(params.get("expense")) ? params.get("expense") : "-1");
         String category = params.get("category");
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-        booleanBuilder = booleanBuilder.and(QExpense.expense.user.eq(securityContextService.username()));
-        booleanBuilder = booleanBuilder.and(QExpense.expense.account.eq(params.get("account")));
-        if(Objects.nonNull(description)) {
-            booleanBuilder = booleanBuilder.and(QExpense.expense.description.containsIgnoreCase(description));
-        }
+        BooleanBuilder booleanBuilder = new BooleanBuilder()
+                .and(QExpense.expense.user.eq(securityContextService.username()))
+                .and(QExpense.expense.account.eq(params.get("account")))
+                .and(QExpense.expense.description.containsIgnoreCase(Objects.toString(description, "")));
         if(expense > 0) {
             booleanBuilder = booleanBuilder.and(QExpense.expense.moneySpent.eq(expense));
         }

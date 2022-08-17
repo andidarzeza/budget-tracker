@@ -5,6 +5,7 @@ import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
 import { Subject } from "rxjs";
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from "src/environments/environment";
+import { ColumnDefinition } from "../models/models";
 import { DialogService } from "../services/dialog.service";
 import { SharedService } from "../services/shared.service";
 import { TableActionInput } from "../shared/table-actions/TableActionInput";
@@ -18,6 +19,7 @@ export abstract class BaseTable<E> {
     abstract createComponent: any;
 
     data: E[] = [];
+    columnDefinition: ColumnDefinition[]
     entityViewId: string;
     isSidenavOpened: boolean = false;
     @ViewChild('drawer') drawer: MatSidenav;
@@ -32,8 +34,6 @@ export abstract class BaseTable<E> {
     sort: string = this.defaultSort;
 
     abstract tableActionInput: TableActionInput;
-    abstract columns: string[];
-    abstract mobileColumns: string[];
 
     abstract query(): void;
 

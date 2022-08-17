@@ -19,14 +19,13 @@ import { EntityOperation } from 'src/app/core/EntityOperation';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
-import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
 
 @Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css']
 })
-export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, EntityOperation<Expense> {
+export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Expense> {
   @ViewChild('drawer') drawer: MatSidenav;
   isSidenavOpened: boolean = false;
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
@@ -35,8 +34,6 @@ export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, Enti
   public totalItems: number = 0;
   public defaultSort: string = "createdTime,desc";
   public sort: string = this.defaultSort;
-  
-
 
   columnDefinition: ColumnDefinition[] = [
     {
@@ -60,7 +57,6 @@ export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, Enti
       type: 'actions'
     }
   ];
-  public columns: string[] = this.columnDefinition.map(columnDefinition => columnDefinition.column);
 
   public expenses: Expense[] = [];
   private previousFilters: HttpParams;
@@ -106,23 +102,10 @@ export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, Enti
   ) { }
 
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      const drawerList = document.getElementsByTagName('tbody');
-      if (drawerList?.length > 0) {
-        const drawer = drawerList[0] as any;
-        const scrollLoader = new ScrollLoader(drawer);
-        scrollLoader.listenForScrollChange(drawer).onScroll(() => {
-          this.page++;
-          this.query();
-          console.log("testing 123");
-
-        });
-      }
-    }, 100);
+  onScroll(): void {
+    this.page++;
+    this.query();
   }
-
-
 
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
@@ -158,24 +141,18 @@ export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, Enti
     this.dialog
       .openDialog(AddExpenseComponent, expense)
       .onSuccess(() => {
-        this.query()
+        this.resetAndQuery()
       });
-  }
-
-  onMouseEnter(temp: any): void {
   }
 
   onSearch(payload: any): void {
     this.previousFilters = payload.params;
-    this.expenses = [];
-    this.page = 0;
-    this.query();
+    this.resetAndQuery();
   }
 
   reset(): void {
     this.previousFilters = null;
-    this.expenses = [];
-    this.query();
+    this.resetAndQuery();
   }
 
   viewExpenseDetails(id: string): void {
@@ -200,7 +177,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, Enti
       .subscribe(() => {
         this.accountService.findOne(this.accountService.getAccount()).subscribe();
         this.sharedService.checkLoadingSpinner();
-        this.query();
+        this.resetAndQuery();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       },
         () => {
@@ -216,6 +193,12 @@ export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, Enti
   ngOnDestroy(): void {
     this._subject.next();
     this._subject.complete();
+  }
+
+  resetAndQuery(): void {
+    this.expenses = [];
+    this.page = 0;
+    this.query();
   }
 
   public getExpenseDate(date: any): string {

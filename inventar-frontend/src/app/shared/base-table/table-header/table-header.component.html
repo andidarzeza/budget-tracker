@@ -1,0 +1,5 @@
+<div style="width: 100%;display: flex;align-items: center;padding: 18px 0;border-bottom: 1px solid rgba(0,0,0,.12);">
+    <div class="{{sharedService.theme}}-text" *ngFor="let column of displayedColumns" style="font-size: 12px;text-align: center;font-family: Roboto, 'Helvetica Neue', sans-serif;font-weight: 500;" [style.width.%]="100/displayedColumns?.length">
+        {{column}}
+    </div>
+</div>

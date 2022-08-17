@@ -1,0 +1,21 @@
+.body-container {
+    overflow: auto;
+    height: calc(100% - 57px);
+}
+
+.table-row {
+    min-height: 47px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,.12);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.row-entry {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

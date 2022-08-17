@@ -9,65 +9,7 @@
         (onSearch)="onSearch($event)" (onReset)="reset()">
     </table-actions>
 
-    <div class="{{sharedService.theme}}-book-tb-container">
-        <table *ngIf="historyList.length != 0" mat-table matSort [dataSource]="historyList"
-            class="{{sharedService.theme}}-table" (matSortChange)="announceSortChange($event)">
-            <ng-container matColumnDef="date">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef
-                    class="centered-text {{sharedService.theme}}-text"> Date </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
-                    {{element?.date | customDate}}</td>
-            </ng-container>
-
-            <!-- Entity Column -->
-            <ng-container matColumnDef="entity">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef
-                    class="centered-text {{sharedService.theme}}-text"> Entity </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
-                    {{element?.entity}}</td>
-            </ng-container>
-
-            <!-- Action Column -->
-            <ng-container matColumnDef="action">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef
-                    class="centered-text {{sharedService.theme}}-text"> Action </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
-                    {{element?.action}} </td>
-            </ng-container>
-
-            <!-- Message Column -->
-            <ng-container matColumnDef="message">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef
-                    class="centered-text {{sharedService.theme}}-text"> Message </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
-                    {{element?.message}}</td>
-            </ng-container>
-
-            <!-- User Column -->
-            <ng-container matColumnDef="user">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef
-                    class="centered-text {{sharedService.theme}}-text"> User </th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text">
-                    {{element?.user}} </td>
-            </ng-container>
-
-            <!-- Actions Column -->
-            <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef class="centered-text {{sharedService.theme}}-text custom-header">
-                    Actions</th>
-                <td mat-cell *matCellDef="let element" class="centered-text {{sharedService.theme}}-text"
-                    style="padding: 0;">
-                    <app-record-actions (openViewDrawer)="viewHistoryDetails(element?.id)" [displayEditAction]="false"
-                        [displayDeleteAction]="false"></app-record-actions>
-                </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr [class]="sharedService.getAnimation(row)" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-
-
-        <table-message [total]="historyList.length"></table-message>
-    </div>
+    <base-table [data]="data" [columnDefinition]="columnDefinition"
+    (onViewDetails)="viewDetails($event)" (onScroll)="onScroll()"></base-table>
 
 </mat-drawer-container>

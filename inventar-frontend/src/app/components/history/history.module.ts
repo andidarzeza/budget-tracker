@@ -17,6 +17,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { MatMenuModule } from '@angular/material/menu';
 import { HistoryDetailsModule } from './history-details/history-details.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { BaseTableModule } from 'src/app/shared/base-table/base-table.module';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     MatPaginatorModule,
     MatButtonModule,
     HistoryDetailsModule,
+    BaseTableModule,
     MatSidenavModule,
     MatSelectModule,
     MatOptionModule,

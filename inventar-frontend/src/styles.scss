@@ -93,17 +93,17 @@ app-date-picker {
 }
 
 /* width */
-.mat-table tbody::-webkit-scrollbar {
+table-body>div::-webkit-scrollbar {
   width: 2px;
 }
 
 /* Track */
-.mat-table tbody::-webkit-scrollbar-track {
+table-body>div::-webkit-scrollbar-track {
   background: transparent;
 }
 
 /* Handle on hover */
-.mat-table tbody::-webkit-scrollbar-thumb:hover {
+table-body>div::-webkit-scrollbar-thumb:hover {
   background: transparent;
 }
 

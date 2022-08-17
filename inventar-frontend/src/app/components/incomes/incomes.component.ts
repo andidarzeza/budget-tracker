@@ -6,7 +6,7 @@ import { AddIncomeComponent } from './add-income/add-income.component';
 import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
 import { takeUntil } from 'rxjs/operators';
-import { CategoryType, Income, ResponseWrapper } from 'src/app/models/models';
+import { CategoryType, ColumnDefinition, Income, ResponseWrapper } from 'src/app/models/models';
 import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
@@ -23,10 +23,32 @@ import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
   templateUrl: './incomes.component.html',
   styleUrls: ['./incomes.component.css']
 })
-export class IncomesComponent extends BaseTable<Income> implements EntityOperation<Income>, AfterViewInit{
+export class IncomesComponent extends BaseTable<Income> implements EntityOperation<Income> {
 
-  columns: string[] = ['date', 'category', 'description', 'income', 'actions'];
-  mobileColumns: string[] = ['category', 'income', 'actions'];
+
+  columnDefinition: ColumnDefinition[] = [
+    {
+      column: 'createdTime',
+      type: 'date'
+    },
+    {
+      column: 'category',
+      type: 'string'
+    },
+    {
+      column: 'description',
+      type: 'string'
+    },
+    {
+      column: 'incoming',
+      type: 'currency'
+    },
+    {
+      column: 'actions',
+      type: 'actions'
+    }
+  ];
+
   createComponent = AddIncomeComponent;
   tableActionInput: TableActionInput = {
     pageName: "Incomes",
@@ -64,26 +86,14 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
     super(sharedService, dialog);
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      const drawerList = document.getElementsByTagName('tbody');
-      if (drawerList?.length > 0) {
-        const drawer = drawerList[0] as any;
-        const scrollLoader = new ScrollLoader(drawer);
-        scrollLoader.listenForScrollChange(drawer).onScroll(() => {
-          this.page++;
-          this.query();
-          console.log("testing 123");
-
-        });
-      }
-    }, 100);
+  onScroll(): void {
+    this.page++;
+    this.query();
   }
 
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
-    this.columns = this.sharedService.mobileView ? this.mobileColumns : this.columns;
     this.getCategories();
     this.query();
   }
@@ -132,7 +142,6 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       });
   }
-
 
   ngOnDestroy(): void {
     this._subject.next();

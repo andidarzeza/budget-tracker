@@ -1,0 +1,26 @@
+<div class="body-container" [id]="tableId">
+    <div *ngFor="let element of data" class="table-row">
+        <div *ngFor="let columnDef of columnDefinitions" [style.width.%]="100/columnDefinitions?.length"
+            class="{{sharedService.theme}}-text text-center row-entry">
+            <span [ngSwitch]="columnDef.type">
+                <ng-container *ngSwitchCase="'date'">
+                    {{element[columnDef.column] | customDate}}
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'string'">
+                    {{element[columnDef.column]}}
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'currency'">
+                    {{element[columnDef.column] | number:'1.0':'en-US' }} {{element?.currency}}
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'actions'">
+                    <app-record-actions (openViewDrawer)="viewDetails(element?.id)"
+                        (openEditForm)="openAddEditForm(element)"
+                        (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></app-record-actions>
+                </ng-container>
+            </span>
+        </div>
+    </div>
+</div>

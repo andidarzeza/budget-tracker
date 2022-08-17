@@ -18,6 +18,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { IncomeDetailsComponent } from './income-details/income-details.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { AddIncomeModule } from './add-income/add-income.module';
+import { BaseTableModule } from 'src/app/shared/base-table/base-table.module';
 
 
 
@@ -28,9 +29,6 @@ import { AddIncomeModule } from './add-income/add-income.module';
   imports: [
     CommonModule,
     IncomesRoutingModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatSortModule,
     MatIconModule,
     MatDialogModule,
     MatSidenavModule,
@@ -42,8 +40,8 @@ import { AddIncomeModule } from './add-income/add-income.module';
     FormsModule,
     SharedModule,
     AddIncomeModule,
-    MatSelectModule,
-    MatMenuModule
+    MatMenuModule,
+    BaseTableModule
   ]
 })
 export class IncomesModule { }
