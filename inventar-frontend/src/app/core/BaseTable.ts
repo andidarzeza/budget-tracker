@@ -17,7 +17,7 @@ export abstract class BaseTable<E> {
 
     abstract createComponent: any;
 
-    data: E[];
+    data: E[] = [];
     entityViewId: string;
     isSidenavOpened: boolean = false;
     @ViewChild('drawer') drawer: MatSidenav;

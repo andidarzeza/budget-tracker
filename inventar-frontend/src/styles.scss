@@ -445,7 +445,7 @@ button.toast-close-button {
 .table-container {
     width: var(--table-width);
     margin: auto;
-    margin-top: 40px;
+    margin-top: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, .12);
     display: flex;
     justify-content: space-between;
@@ -486,11 +486,12 @@ button.toast-close-button {
     top: 0;
 }
 
-.category-table-actions > div:nth-of-type(1) { box-shadow: none !important; }
+.category-table-actions > div:nth-of-type(1) { box-shadow: none !important;margin-top: 0 !important; }
 
 .mat-sort-header-container {
     justify-content: center;
 }
+
 
  /* TODO: fix in future */
 
@@ -501,6 +502,9 @@ button.toast-close-button {
     align-items: center;
 }
 
+.category-table tbody{
+    height: calc(100% - 56px) !important;
+}
 
 .mat-menu-panel.floating-menu{
     background: inherit !important;

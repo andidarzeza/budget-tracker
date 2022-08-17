@@ -11,7 +11,7 @@
     </table-actions>
 
 
-    <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
+    <div class="{{sharedService.theme}}-book-tb-container">
         <table mat-table [dataSource]="data" class="mat-elevation-z8 {{sharedService.theme}}-table"
             style="box-shadow: none;" matSort (matSortChange)="announceSortChange($event)">
             <!-- Date Column -->
@@ -65,10 +65,10 @@
         <table-message [total]="data?.length"></table-message>
     </div>
 
-
+<!-- 
     <mat-paginator [length]="totalItems"
         class="table-paginator {{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text"
         [pageSize]="size" [pageSizeOptions]="pageSizeOptions" (page)="paginatorEvent($event)">
-    </mat-paginator>
+    </mat-paginator> -->
 
 </mat-drawer-container>

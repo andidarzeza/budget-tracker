@@ -1,8 +1,8 @@
 import { HttpParams } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
-import { CURRENCIES, environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { Subject } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
@@ -20,13 +20,14 @@ import { EntityOperation } from 'src/app/core/EntityOperation';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
 
 @Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css']
 })
-export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Expense> {
+export class ExpensesComponent implements OnInit, AfterViewInit, OnDestroy, EntityOperation<Expense> {
   @ViewChild('drawer') drawer: MatSidenav;
   isSidenavOpened: boolean = false;
   public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
@@ -78,7 +79,26 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     public accountService: AccountService,
     public sideBarService: SideBarService,
     public navBarService: NavBarService
-  ) {}
+  ) { }
+
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      const drawerList = document.getElementsByTagName('tbody');
+      if (drawerList?.length > 0) {
+        const drawer = drawerList[0] as any;
+        const scrollLoader = new ScrollLoader(drawer);
+        scrollLoader.listenForScrollChange(drawer).onScroll(() => {
+          this.page++;
+          this.query();
+          console.log("testing 123");
+
+        });
+      }
+    }, 100);
+  }
+
+
 
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
@@ -88,9 +108,9 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
       const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
       const index = this.filterOptions.indexOf(item);
       this.filterOptions[index].matSelectOptions = {
-          options: res.data,
-          displayBy: "category",
-          valueBy: "id"
+        options: res.data,
+        displayBy: "category",
+        valueBy: "id"
       };
     });
     this.query();
@@ -106,19 +126,19 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   query(): void {
     this.sharedService.activateLoadingSpinner();
     this.expenseService
-      .findAll(buildParams( this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
+      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
-        this.expenses = res?.data;
+        this.expenses = this.expenses.concat(res?.data);
         this.totalItems = res?.count;
-        this.sharedService.checkLoadingSpinner();     
-      },
-      () => {
         this.sharedService.checkLoadingSpinner();
-      });
+      },
+        () => {
+          this.sharedService.checkLoadingSpinner();
+        });
   }
 
-  openAddEditForm(expense?: Expense): void {    
+  openAddEditForm(expense?: Expense): void {
     this.dialog
       .openDialog(AddExpenseComponent, expense)
       .onSuccess(() => {
@@ -131,12 +151,14 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
 
   onSearch(payload: any): void {
     this.previousFilters = payload.params;
+    this.expenses = [];
     this.page = 0;
     this.query();
   }
 
   reset(): void {
     this.previousFilters = null;
+    this.expenses = [];
     this.query();
   }
 
@@ -158,20 +180,20 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     this.sharedService.activateLoadingSpinner();
     this.expenseService
       .delete(id)
-      .pipe(takeUntil(this._subject)) 
+      .pipe(takeUntil(this._subject))
       .subscribe(() => {
         this.accountService.findOne(this.accountService.getAccount()).subscribe();
         this.sharedService.checkLoadingSpinner();
         this.query();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       },
-      () => {
-        this.sharedService.checkLoadingSpinner();
-      });
+        () => {
+          this.sharedService.checkLoadingSpinner();
+        });
   }
 
   announceSortChange(sort: Sort): void {
-    this.sort = sort.direction ? `${sort.active},${sort.direction}` : this.defaultSort; 
+    this.sort = sort.direction ? `${sort.active},${sort.direction}` : this.defaultSort;
     this.query();
   }
 
@@ -180,9 +202,9 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     this._subject.complete();
   }
 
-  public getExpenseDate(date: any): string {    
+  public getExpenseDate(date: any): string {
     const now = new Date();
-    if(now.getTime() - new Date(date).getTime() < 24 * 60 * 60 * 1000) {
+    if (now.getTime() - new Date(date).getTime() < 24 * 60 * 60 * 1000) {
       return 'a day ago';
     }
     return date.getTime(date).toString();

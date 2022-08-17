@@ -12,7 +12,7 @@
         (onSearch)="onSearch($event)" (onReset)="reset()">
     </table-actions>
 
-    <div class="{{sharedService.theme}}-book-tb-container" [style.height.px]="sharedService.getHeight(0)">
+    <div class="{{sharedService.theme}}-book-tb-container">
         <table mat-table [dataSource]="expenses" class="mat-elevation-z8 {{sharedService.theme}}-table"
             style="box-shadow: none;" matSort #table (matSortChange)="announceSortChange($event)">
             <!-- Created Time Column -->
@@ -70,9 +70,9 @@
     </div>
 
 
-    <mat-paginator [length]="totalItems" [pageSize]="size" [pageSizeOptions]="pageSizeOptions"
+    <!-- <mat-paginator [length]="totalItems" [pageSize]="size" [pageSizeOptions]="pageSizeOptions"
         (page)="paginatorEvent($event)"
         class="table-paginator {{sharedService.theme}}-paginator {{sharedService.theme}}-table {{sharedService.theme}}-text">
-    </mat-paginator>
+    </mat-paginator> -->
 
 </mat-drawer-container>

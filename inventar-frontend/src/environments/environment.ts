@@ -42,7 +42,7 @@ export const SIDEBAR_WIDTH = 280
 
 // Pagination Options
 export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
-export const PAGE_SIZE = 20;
+export const PAGE_SIZE = 50;
 
 /*
  * For easier debugging in development mode, you can import the following file

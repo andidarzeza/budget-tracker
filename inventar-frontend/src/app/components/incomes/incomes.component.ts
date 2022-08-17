@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -16,13 +16,14 @@ import { BaseTable } from 'src/app/core/BaseTable';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
 
 @Component({
   selector: 'app-incomes',
   templateUrl: './incomes.component.html',
   styleUrls: ['./incomes.component.css']
 })
-export class IncomesComponent extends BaseTable<Income> implements EntityOperation<Income>{
+export class IncomesComponent extends BaseTable<Income> implements EntityOperation<Income>, AfterViewInit{
 
   columns: string[] = ['date', 'category', 'description', 'income', 'actions'];
   mobileColumns: string[] = ['category', 'income', 'actions'];
@@ -63,6 +64,22 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
     super(sharedService, dialog);
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      const drawerList = document.getElementsByTagName('tbody');
+      if (drawerList?.length > 0) {
+        const drawer = drawerList[0] as any;
+        const scrollLoader = new ScrollLoader(drawer);
+        scrollLoader.listenForScrollChange(drawer).onScroll(() => {
+          this.page++;
+          this.query();
+          console.log("testing 123");
+
+        });
+      }
+    }, 100);
+  }
+
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
@@ -92,7 +109,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
-        this.data = res?.data;
+        this.data = this.data.concat(res?.data);
         this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();
       },
@@ -109,6 +126,8 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .pipe(takeUntil(this._subject))
       .subscribe(() => {
         this.accountService.findOne(this.accountService.getAccount()).subscribe();
+        this.page = 0;
+        this.data = [];
         this.query();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       });

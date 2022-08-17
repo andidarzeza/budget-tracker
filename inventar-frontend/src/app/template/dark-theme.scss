@@ -59,7 +59,8 @@
 
 .dark-book-tb-container {
     width: var(--table-width);
-    height: 700px;
+    height: calc(100% - 115px);
+    
     background-color: var(--dark);
     overflow: hidden;
     margin: auto;

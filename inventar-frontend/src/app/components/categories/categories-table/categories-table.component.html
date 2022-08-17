@@ -1,6 +1,6 @@
-<div class="{{sharedService.theme}}-book-tb-container" style="width: 100%;"
-    [style.height.px]="sharedService.getHeight(74)">
-    <table mat-table [dataSource]="dataSource" class="{{sharedService.theme}}-table" matSort
+<div class="{{sharedService.theme}}-book-tb-container" style="width: 100%;height: 100%;"
+    >
+    <table class="category-table" mat-table [dataSource]="dataSource" class="{{sharedService.theme}}-table" matSort
         (matSortChange)="announceSortChange($event)">
 
         <!-- Icon Column -->

@@ -68,7 +68,7 @@
 
 .light-book-tb-container {
     width: var(--table-width);
-    height: 700px;
+    height: calc(100% - 115px);
     background-color: white;
     overflow: auto;
     margin: auto;
@@ -86,9 +86,9 @@
 }
 
 /* Handle */
-.light-table tbody::-webkit-scrollbar-thumb {
-    background: white;
-}
+// .light-table tbody::-webkit-scrollbar-thumb {
+//     background: white;
+// }
 
 .light-user-circle {
     background-color: white;
