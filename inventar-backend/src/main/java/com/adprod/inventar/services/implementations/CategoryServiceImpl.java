@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -61,9 +62,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseEntity delete(String id) {
-        categoryRepository.deleteById(id);
-        historyService.save(historyService.from(EntityAction.DELETE, this.entityType));
-        return ResponseEntity.ok(new ResponseMessage("Category with id: " + id + " was deleted successfully."));
+        return categoryRepository
+                .findById(id)
+                .map(category -> {
+                    categoryRepository.deleteById(id);
+                    historyService.save(historyService.from(EntityAction.DELETE, entityType, category.getAccount()));
+                    return ResponseEntity.ok(new ResponseMessage("Category with id: " + id + " was deleted successfully."));
+                })
+                .orElseThrow(() -> new NotFoundException("No category found with id: " + id));
+
     }
 
     @Override
@@ -71,7 +78,7 @@ public class CategoryServiceImpl implements CategoryService {
         accountService.checkAccount(category.getAccount());
         category.setUser(securityContextService.username());
         categoryRepository.save(category);
-        historyService.save(historyService.from(EntityAction.CREATE, this.entityType));
+        historyService.save(historyService.from(EntityAction.CREATE, entityType, category.getAccount()));
         return ResponseEntity.ok(category);
     }
 
@@ -82,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setLastModifiedDate(LocalDateTime.now());
         category.setId(id);
         categoryRepository.save(category);
-        historyService.save(historyService.from(EntityAction.UPDATE, this.entityType));
+        historyService.save(historyService.from(EntityAction.UPDATE, entityType, category.getAccount()));
         return ResponseEntity.ok(category);
     }
 }

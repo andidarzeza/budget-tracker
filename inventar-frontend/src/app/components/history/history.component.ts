@@ -89,6 +89,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
       type: "text"
     }
   ];
+  resetData: boolean = false;
 
   constructor(
     public sharedService: SharedService,
@@ -141,7 +142,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
-        this.data = this.data.concat(res?.data);
+        this.data = this.resetData ? res?.data : this.data.concat(res?.data);
+        this.resetData = false;
         this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();
       },
@@ -152,13 +154,12 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   onSearch(payload: any): void {
     this.previousFilters = payload.params;
-    this.page = 0;
-    this.query();
+    this.resetAndQuery();
   }
 
   reset(): void {
     this.previousFilters = null;
-    this.query();
+    this.resetAndQuery();
   }
 
   announceSortChange(sort: Sort): void {
@@ -174,6 +175,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
     this.historyId = id;
     this.isSidenavOpened = true;
     this.drawer.toggle();
+  }
+
+  resetAndQuery(): void {
+    this.sharedService.scrollTableToTop();
+    this.resetData = true;
+    this.page = 0;
+    this.query();
   }
 
   ngOnDestroy(): void {

@@ -16,6 +16,7 @@ export abstract class BaseTable<E> {
 
     }
 
+    resetData: boolean = false;
     abstract createComponent: any;
 
     data: E[] = [];
@@ -38,7 +39,7 @@ export abstract class BaseTable<E> {
     abstract query(): void;
 
     openAddEditForm(entity?: E): void {
-        this.dialog.openDialog(this.createComponent, entity).onSuccess(() => this.query());
+        this.dialog.openDialog(this.createComponent, entity).onSuccess(() => this.resetAndQuery());
     }
 
     onSidenavClose(): void {
@@ -58,6 +59,12 @@ export abstract class BaseTable<E> {
 
     reset(): void {
         this.previousFilters = null;
+        this.query();
+    }
+
+    resetAndQuery(): void {
+        this.resetData = true;
+        this.page = 0;
         this.query();
     }
 

@@ -16,7 +16,7 @@ public interface HistoryService {
 
     ResponseEntity findOne(String id);
 
-    History from(EntityAction action, EntityType entity);
+    History from(EntityAction action, EntityType entity, String account);
 
     void save(History history);
 

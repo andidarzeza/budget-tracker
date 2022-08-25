@@ -5,7 +5,7 @@
         </history-details>
     </mat-drawer>
 
-    <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onRefresh)="query()"
+    <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onRefresh)="resetAndQuery()"
         (onSearch)="onSearch($event)" (onReset)="reset()">
     </table-actions>
 

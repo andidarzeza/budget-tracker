@@ -26,11 +26,12 @@ public class History {
     private EntityType entity;
     private String account;
 
-    public History(EntityAction action, String user, String message, EntityType entity) {
+    public History(EntityAction action, String user, String message, EntityType entity, String account) {
         this.action = action;
         this.user = user;
         this.message = message;
         this.entity = entity;
+        this.account = account;
     }
 
 }

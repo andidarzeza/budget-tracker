@@ -75,7 +75,7 @@ public class IncomeServiceImpl implements IncomeService {
         income.setUser(securityContextService.username());
         accountService.addToBalance(income.getAccount(), income.getCurrency(), income.getIncoming());
         incomeRepository.save(income);
-        historyService.save(historyService.from(CREATE, INCOME));
+        historyService.save(historyService.from(CREATE, INCOME, income.getAccount()));
         return ResponseEntity.ok(income);
     }
 
@@ -91,7 +91,7 @@ public class IncomeServiceImpl implements IncomeService {
         Income income = findOne(id);
         accountService.removeFromBalance(income.getAccount(), income.getCurrency(), income.getIncoming());
         incomeRepository.delete(income);
-        historyService.save(historyService.from(DELETE, INCOME));
+        historyService.save(historyService.from(DELETE, INCOME, income.getAccount()));
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }
 
@@ -106,7 +106,7 @@ public class IncomeServiceImpl implements IncomeService {
         income.setCreatedTime(incomeDB.getCreatedTime());
         income.setLastModifiedDate(new Date());
         incomeRepository.save(income);
-        historyService.save(historyService.from(UPDATE, INCOME));
+        historyService.save(historyService.from(UPDATE, INCOME, income.getAccount()));
         return ResponseEntity.ok(income);
 
     }

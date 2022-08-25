@@ -16,7 +16,6 @@ import { BaseTable } from 'src/app/core/BaseTable';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
-import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
 
 @Component({
   selector: 'app-incomes',
@@ -119,7 +118,8 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
-        this.data = this.data.concat(res?.data);
+        this.data = this.resetData ? res?.data : this.data.concat(res?.data);
+        this.resetData = false;
         this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();
       },
@@ -136,11 +136,16 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .pipe(takeUntil(this._subject))
       .subscribe(() => {
         this.accountService.findOne(this.accountService.getAccount()).subscribe();
-        this.page = 0;
-        this.data = [];
-        this.query();
+        this.resetAndQuery();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       });
+  }
+
+  resetAndQuery(): void {
+    this.sharedService.scrollTableToTop();
+    this.resetData = true;
+    this.page = 0;
+    this.query();
   }
 
   ngOnDestroy(): void {

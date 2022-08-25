@@ -28,7 +28,9 @@ export class SideBarComponent implements OnChanges {
     // if(changes.navigation.firstChange) {
       this.navigation?.forEach((item: MenuItem) => {
         if(item.link === window.location.pathname) {
-          this.animateSelectedOption(this.navigation.indexOf(item));
+          setTimeout(()=>{
+            this.animateSelectedOption(this.navigation.indexOf(item));
+          },0)
         }
       });
     // }
@@ -36,13 +38,13 @@ export class SideBarComponent implements OnChanges {
   
   animateSelectedOption(index: number): void {
     
-    setTimeout(() => {
+    // setTimeout(() => {
       const activeItem = document.getElementById("active-item") as HTMLElement;   
       if(activeItem) {
         const margin = index+1;
         activeItem.style.transform = `translate(-50%, calc(${index * 100}% + ${(index * 5) + (margin *5)}px))`;
       }
-    }, 0);
+    // }, 0);
     
   }
 

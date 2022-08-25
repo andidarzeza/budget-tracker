@@ -68,7 +68,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         expense.setUser(securityContextService.username());
         accountService.removeFromBalance(expense.getAccount(), expense.getCurrency(), expense.getMoneySpent());
         expenseRepository.save(expense);
-        historyService.save(historyService.from(EntityAction.CREATE, EXPENSE));
+        historyService.save(historyService.from(EntityAction.CREATE, EXPENSE, expense.getAccount()));
         return ResponseEntity.ok(expense);
     }
 
@@ -87,6 +87,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         Expense expense = (Expense) findOne(id).getBody();
         accountService.addToBalance(expense.getAccount(), expense.getCurrency(), expense.getMoneySpent());
         expenseRepository.delete(expense);
+        historyService.save(historyService.from(EntityAction.DELETE, EXPENSE, expense.getAccount()));
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }
 
@@ -101,7 +102,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         spending.setCreatedTime(expense.getCreatedTime());
         spending.setLastModifiedDate(new Date());
         expenseRepository.save(spending);
-        historyService.save(historyService.from(EntityAction.UPDATE, EXPENSE));
+        historyService.save(historyService.from(EntityAction.UPDATE, EXPENSE, spending.getAccount()));
         return ResponseEntity.ok(spending);
     }
 }

@@ -89,6 +89,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   private _subject = new Subject();
 
   public EXPERIMENTAL_MODE = environment.experimentalMode;
+  resetData: boolean = false;
 
   constructor(
     public sharedService: SharedService,
@@ -128,7 +129,8 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
-        this.expenses = this.expenses.concat(res?.data);
+        this.expenses = this.resetData ? res.data : this.expenses.concat(res?.data);
+        this.resetData = false;
         this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();
       },
@@ -196,7 +198,8 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
   }
 
   resetAndQuery(): void {
-    this.expenses = [];
+    this.sharedService.scrollTableToTop();
+    this.resetData = true;
     this.page = 0;
     this.query();
   }

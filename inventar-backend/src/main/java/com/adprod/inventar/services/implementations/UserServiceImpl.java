@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
             repository.save(user);
             accountService.save(new Account(null, "titl", user.getUsername(), new HashMap<>()));
             configurationService.save(new Configuration(null, false, true, user.getUsername(), "ALL"));
-            historyService.save(historyService.from(REGISTRATION, USER));
+//            historyService.save(historyService.from(REGISTRATION, USER));
             return ResponseEntity.ok(new ResponseMessage("Registration Successful"));
         }
         return new ResponseEntity(new ResponseMessage("Username already in use"), HttpStatus.CONFLICT);
@@ -60,14 +60,6 @@ public class UserServiceImpl implements UserService {
         if(userOptional.isPresent()) {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
             final String jwt = jwtManager.createToken(userOptional.get());
-            historyService.save(
-                    new History(
-                            AUTHENTICATION,
-                            userRequest.getUsername(),
-                            "User " + userRequest.getUsername() + " has logged in.",
-                            USER
-                    )
-            );
             return new ResponseEntity(new LoginResponse(userOptional.get().getUsername(), jwt, userOptional.get().getFirstName(), userOptional.get().getLastName()), HttpStatus.OK);
         } else {
             return new ResponseEntity(new ResponseMessage("Authentication Failed"), HttpStatus.FORBIDDEN);

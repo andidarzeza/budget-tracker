@@ -7,7 +7,7 @@
 
 
     <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
-        (onOpenDialog)="openAddEditForm()" (onRefresh)="query()" (onSearch)="onSearch($event)" (onReset)="reset()">
+        (onOpenDialog)="openAddEditForm()" (onRefresh)="resetAndQuery()" (onSearch)="onSearch($event)" (onReset)="reset()">
     </table-actions>
 
     <base-table [data]="data" [columnDefinition]="columnDefinition"
