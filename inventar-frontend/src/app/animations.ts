@@ -1,18 +1,39 @@
 import {
-    trigger,
-    transition,
-    style,
-    query,
-    group,
-    animate
-  } from '@angular/animations';
+  trigger,
+  transition,
+  style,
+  query,
+  group,
+  animate
+} from '@angular/animations';
 
+export const inOutAnimation = trigger(
+  'inOutAnimation', 
+  [
+    transition(
+      ':enter', 
+      [
+        style({ opacity: 0 }),
+        animate('400ms ease-out', 
+                style({opacity: 1 }))
+      ]
+    ),
+    transition(
+      ':leave', 
+      [
+        style({ opacity: 1 }),
+        animate('400ms ease-in', 
+                style({ opacity: 0 }))
+      ]
+    )
+  ]
+)
 
 // Positioned
 
 export const slider =
   trigger('routeAnimations', [
-    transition('loginPage => accountPage', slideTo('right') ),
+    transition('loginPage => accountPage', slideTo('right')),
     // transition('* => loginPage', slideTo('right') ),
     // transition('accountPage => *', slideTo('right') ),
     // transition('* => accountPage', slideTo('right') ),
@@ -31,14 +52,14 @@ function slideTo(direction) {
       })
     ], optional),
     query(':enter', [
-      style({ [direction]: '-100%'})
+      style({ [direction]: '-100%' })
     ]),
     group([
       query(':leave', [
-        animate('600ms ease-out', style({ [direction]: '100%'}))
+        animate('600ms ease-out', style({ [direction]: '100%' }))
       ], optional),
       query(':enter', [
-        animate('600ms ease-out', style({ [direction]: '0%'}))
+        animate('600ms ease-out', style({ [direction]: '0%' }))
       ])
     ]),
     // Normalize the page style... Might not be necessary

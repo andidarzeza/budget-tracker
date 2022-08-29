@@ -1,3 +1,6 @@
 <create-header [icon]="icon" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)"></create-header>
-<ng-content></ng-content>
+<div class="content-container">
+    <form-spinner [loadingData]="loadingData"></form-spinner>
+    <ng-content></ng-content>
+</div>
 <create-footer (create)="add()"></create-footer>

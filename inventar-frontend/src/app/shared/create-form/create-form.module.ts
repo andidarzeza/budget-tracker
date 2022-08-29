@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CreateFormComponent } from './create-form.component';
 import { CreateHeaderModule } from './create-header/create-header.module';
 import { CreateFooterModule } from './create-footer/create-footer.module';
+import { FormSpinnerModule } from './form-spinner/form-spinner.module';
 
 
 
@@ -11,7 +12,8 @@ import { CreateFooterModule } from './create-footer/create-footer.module';
   imports: [
     CommonModule,
     CreateHeaderModule,
-    CreateFooterModule
+    CreateFooterModule,
+    FormSpinnerModule
   ],
   exports: [
     CreateFormComponent

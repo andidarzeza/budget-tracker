@@ -18,7 +18,8 @@ export class TableBodyComponent implements AfterViewInit {
   @Output() onAddEditForm = new EventEmitter();
   @Output() onViewDetails = new EventEmitter();
   @Output() onScroll = new EventEmitter();
-
+  menuX:number=100
+  menuY:number=0
 
   tableId = uuidv4();
   constructor(
@@ -30,7 +31,7 @@ export class TableBodyComponent implements AfterViewInit {
       const element = document.getElementById(this.tableId);
       if (element) {
         const scrollLoader = new ScrollLoader(element);
-        scrollLoader.listenForScrollChange(element).onScroll(() => {          
+        scrollLoader.listenForScrollChange().onScroll(() => {          
           this.onScroll.emit();
         });
       }

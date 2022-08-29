@@ -1,7 +1,7 @@
-<create-form icon="attach_money" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()">
+<create-form [loadingData]="loadingData" icon="attach_money" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()">
 
-    
-    <form [formGroup]="formGroup">
+
+    <form [formGroup]="formGroup" style="position: relative;">
 
         <div style="width: 100%; display: flex;justify-content: space-between;align-items: center;">
             <mat-form-field appearance="outline" style="width: calc(50% - 5px);" class="{{sharedService.theme}}-select">
@@ -15,7 +15,7 @@
                 </mat-select>
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
-            
+
             <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: calc(30% - 5px);">
                 <mat-label class="{{sharedService.theme}}-text">Money Spent</mat-label>
                 <input type="number" autocomplete="off" matInput formControlName="moneySpent">

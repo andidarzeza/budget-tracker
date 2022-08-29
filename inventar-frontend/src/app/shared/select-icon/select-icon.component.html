@@ -1,5 +1,21 @@
 
-
+<style>
+    /* width */
+    ::-webkit-scrollbar {
+        width: 5px;
+        border-radius: 10px;
+    }
+  
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.178);
+    }
+  
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.411);
+    }
+  </style>
 <mat-form-field  (click)="open()" class="{{sharedService.theme}}-text" appearance="outline" style="width: 100%;cursor: pointer;">
     <mat-label style="display: flex;align-items: center;" class="{{sharedService.theme}}-text">
         <mat-icon class="selected-icon" *ngIf="inputPlaceHolder">
@@ -15,7 +31,7 @@
 </mat-form-field>
 
 <div *ngIf="showIconSelect" [@slideAnimation] class="icon-select {{sharedService.theme}}-table {{sharedService.theme}}-icon">
-    <div class="actions">
+    <!-- <div class="actions">
         <button mat-icon-button (click)="close()">
             <mat-icon>
                 keyboard_arrow_left
@@ -25,7 +41,7 @@
         <span (click)="close()" style="font-size: 16px;padding-top: 4px;cursor: pointer;">
             Back
         </span>
-    </div>
+    </div> -->
 
     <mat-divider></mat-divider>
 

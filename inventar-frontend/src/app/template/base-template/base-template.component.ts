@@ -5,6 +5,7 @@ import { RouterOutlet } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { slider } from 'src/app/animations';
+import { inOutAnimation } from 'src/app/components/settings/dynamic-dropdown/animations';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -17,33 +18,8 @@ import { MenuItem, SideBarMode } from './base-template.models';
   templateUrl: './base-template.component.html',
   styleUrls: ['./base-template.component.css'],
   animations: [
-    trigger(
-      'inOutAnimation', 
-      [
-        transition(
-          ':enter', 
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out', 
-                    style({opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave', 
-          [
-            style({ opacity: 1 }),
-            animate('400ms ease-in', 
-                    style({ opacity: 0 }))
-          ]
-        )
-      ]
-    ),
-    
-      // fader,
-      slider,
-      // transformer,
-      // stepper
-    
+    inOutAnimation,
+    slider
   ]
 })
 export class BaseTemplateComponent implements OnInit, OnDestroy {

@@ -2,8 +2,8 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { EntityType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
@@ -16,11 +16,12 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   styleUrls: ['./add-category.component.css']
 })
 export class AddCategoryComponent implements OnInit, OnDestroy {
-  
+  loadingData = false;
   private _subject = new Subject();
   savingEntity = false;
   public entity: EntityType = EntityType.CATEGORY;
-  
+  showIconSelect = false;
+
   constructor(
     public sharedService: SharedService,
     private toaster: ToastrService,
@@ -39,17 +40,24 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if(this.editMode) {
-      this.categoryGroup.patchValue(this.data.spendingCategory);
+      this.loadingData = true;
     }
+    this.getCategory().subscribe();
   }
 
-  test(): void {
-    this.showIconSelect = true;
+  private getCategory(): Observable<any> {
+    return this.categoriesService
+      .findOne(this.id)
+      .pipe(
+        takeUntil(this._subject),
+        filter(() => this.editMode),
+        map(category => this.categoryGroup.patchValue(category)),
+        map(() => this.loadingData = false)
+      )
   }
-
-  showIconSelect = false;
 
   add(): void {
+    this.loadingData = true;
     if(this.categoryGroup.valid && !this.savingEntity){
       if(this.editMode) {
         this.data.spendingCategory.category = this.category.value;
@@ -79,6 +87,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
   onSaveSuccess(message: string): void {
     this.closeDialog(true);  
     this.savingEntity = false;
+    this.loadingData = false;
     this.toaster.success(message, "Success", TOASTER_CONFIGURATION);
   }
 
@@ -105,6 +114,10 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
 
   get description(){
     return this.categoryGroup.controls['description'];
+  }
+
+  get id() {
+    return this.data?.spendingCategory?.id
   }
 
   get icon(){

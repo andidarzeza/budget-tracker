@@ -2,8 +2,8 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, mergeMap, takeUntil } from 'rxjs/operators';
 import { Category, CategoryType, EntityType, Income, ResponseWrapper } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
@@ -20,6 +20,7 @@ import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment'
 export class AddIncomeComponent implements OnInit, OnDestroy {
   public savingEntity: boolean = false;
   private _subject = new Subject();
+  loadingData = false;
   public formGroup: FormGroup = this.formBuilder.group({
     description:  [''],
     categoryID:   ['', Validators.required],
@@ -65,23 +66,37 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
   public categories: Category[] = [];
 
   ngOnInit(): void {
+    this.formGroup.get("currency").setValue(this.baseCurrency)
     this.getCategories();
   }
   
   private getCategories(): void {
+    this.loadingData = true;
     this.categoryService
       .findAll(buildParams(0, 99999).append("categoryType", CategoryType.INCOME).append("account", this.accountService.getAccount()))
-      .pipe(takeUntil(this._subject))
-      .subscribe((response: ResponseWrapper) => {
-        this.formGroup.get("currency").setValue(this.baseCurrency);
-        this.categories = response.data;
-        if(this.editMode) {
-          this.formGroup.patchValue(this.income);
-        }
-    });
+      .pipe(
+        takeUntil(this._subject),
+        map(response => this.categories = response.data),
+        map(() => this.loadingData = false),
+        filter(() => this.editMode),
+        mergeMap(() => this.getIncome())
+      )
+      .subscribe();
+  }
+
+  private getIncome(): Observable<any> {
+    this.loadingData = true;
+    return this.incomeService
+      .findOne(this.id)
+      .pipe(
+        takeUntil(this._subject),
+        map((income) => this.formGroup.patchValue(income)),
+        map(() => this.loadingData = false)
+      )
   }
 
   add(): void {
+    this.loadingData = true;
     if(this.formGroup.valid && !this.savingEntity){
       if(this.editMode) {
         this.savingEntity = true;
@@ -115,8 +130,13 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
 
   onSaveSuccess(message: string): void {
     this.closeDialog(true);  
+    this.loadingData = false;
     this.savingEntity = false;
     this.toaster.success(message, "Success", TOASTER_CONFIGURATION);
+  }
+
+  get id() {
+    return this.income?.id;
   }
 
   ngOnDestroy(): void {

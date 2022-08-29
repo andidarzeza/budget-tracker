@@ -4,14 +4,12 @@ export class ScrollLoader {
     this.element = element;
   }
 
-  listenForScrollChange(elem: any) {
+  listenForScrollChange() {
     return {
       onScroll: (callable: any) => {
-        elem.addEventListener('scroll', function (event) {
-          var element = event.target;
-          // console.log(element.scrollHeight, element.scrollTop, (element.clientHeight));
-
-          if (element.scrollHeight - element.scrollTop === (element.clientHeight)) {
+        this.element.addEventListener('scroll', function (event) {
+          var elem = event.target;
+          if (elem.scrollHeight - elem.scrollTop < elem.clientHeight + 50) {
             callable.call();
           }
         });
