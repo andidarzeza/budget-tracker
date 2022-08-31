@@ -1,6 +1,5 @@
 import { HttpParams } from "@angular/common/http";
-import { ViewChild } from "@angular/core";
-import { PageEvent } from "@angular/material/paginator";
+import { OnDestroy, ViewChild } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
 import { Subject } from "rxjs";
@@ -10,12 +9,14 @@ import { DialogService } from "../services/dialog.service";
 import { SharedService } from "../services/shared.service";
 import { TableActionInput } from "../shared/base-table/table-actions/TableActionInput";
 
-export abstract class BaseTable<E> {
+export abstract class BaseTable<E> implements OnDestroy {
 
-    public constructor(public sharedService: SharedService, public dialog: DialogService) {
+    public constructor(
+        public sharedService: SharedService, 
+        public dialog: DialogService
+    ) {}
 
-    }
-
+    stopLoading = false;
     resetData: boolean = false;
     abstract createComponent: any;
 
@@ -30,13 +31,13 @@ export abstract class BaseTable<E> {
     totalItems: number = 0;
     _subject = new Subject();
     previousFilters: HttpParams;
-
     defaultSort: string = "createdTime,desc";
     sort: string = this.defaultSort;
 
     abstract tableActionInput: TableActionInput;
 
     abstract query(): void;
+    abstract delete(id: string): void;
 
     openAddEditForm(entity?: E): void {
         this.dialog.openDialog(this.createComponent, entity).onSuccess(() => this.resetAndQuery());
@@ -51,18 +52,19 @@ export abstract class BaseTable<E> {
         this.query();
     }
 
+    openDeleteConfirmDialog(id: string): void {
+        this.dialog.openConfirmDialog().onSuccess(() => this.delete(id));
+    }
+
     onSearch(payload: any): void {
         this.previousFilters = payload.params;
         this.page = 0;
         this.query();
     }
 
-    reset(): void {
-        this.previousFilters = null;
-        this.query();
-    }
-
     resetAndQuery(): void {
+        this.previousFilters = null;
+        this.stopLoading = false;
         this.resetData = true;
         this.page = 0;
         this.query();
@@ -72,6 +74,18 @@ export abstract class BaseTable<E> {
         this.isSidenavOpened = true;
         this.entityViewId = id;
         this.drawer.toggle();
+    }
+
+    onScroll(): void {
+        if (!this.stopLoading) {
+            this.page++;
+            this.query();
+        }
+    }
+
+    ngOnDestroy(): void {
+        this._subject.next();
+        this._subject.complete();
     }
 
 }

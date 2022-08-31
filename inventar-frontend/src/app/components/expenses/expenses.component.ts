@@ -1,15 +1,11 @@
-import { HttpParams } from '@angular/common/http';
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
-import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
-import { Subject } from 'rxjs';
-import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
-import { MatSidenav } from '@angular/material/sidenav';
 import { CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
 import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
 import { buildParams } from 'src/app/utils/param-bulder';
@@ -19,53 +15,23 @@ import { EntityOperation } from 'src/app/core/EntityOperation';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
+import { BaseTable } from 'src/app/core/BaseTable';
 
 @Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css']
 })
-export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Expense> {
-  @ViewChild('drawer') drawer: MatSidenav;
-  isSidenavOpened: boolean = false;
-  public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
-  public page: number = 0;
-  public size: number = PAGE_SIZE;
-  public totalItems: number = 0;
-  public defaultSort: string = "createdTime,desc";
-  public sort: string = this.defaultSort;
+export class ExpensesComponent extends BaseTable<Expense> implements EntityOperation<Expense> {
+  createComponent = AddExpenseComponent;
 
-  columnDefinition: ColumnDefinition[] = [
-    {
-      column: 'createdTime',
-      type: 'date'
-    },
-    {
-      column: 'category',
-      type: 'string'
-    },
-    {
-      column: 'description',
-      type: 'string'
-    },
-    {
-      column: 'moneySpent',
-      type: 'currency'
-    },
-    {
-      column: 'actions',
-      type: 'actions'
-    }
-  ];
-
-  public expenses: Expense[] = [];
-  private previousFilters: HttpParams;
-  public expenseViewId = "";
+  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("EXPENSE");
+  
   public tableActionInput: TableActionInput = {
     pageName: "Expenses",
     icon: 'attach_money'
   };
-
 
   filterOptions: FilterOptions[] = [
     {
@@ -86,11 +52,6 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     }
   ];
 
-  private _subject = new Subject();
-
-  public EXPERIMENTAL_MODE = environment.experimentalMode;
-  resetData: boolean = false;
-
   constructor(
     public sharedService: SharedService,
     private expenseService: ExpenseService,
@@ -99,13 +60,10 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
     private toaster: ToastrService,
     public accountService: AccountService,
     public sideBarService: SideBarService,
-    public navBarService: NavBarService
-  ) { }
-
-
-  onScroll(): void {
-    this.page++;
-    this.query();
+    public navBarService: NavBarService,
+    public columnDefinitionService: ColumnDefinitionService
+  ) {
+    super(sharedService, dialog);
   }
 
   ngOnInit(): void {
@@ -129,7 +87,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
-        this.expenses = this.resetData ? res.data : this.expenses.concat(res?.data);
+        this.data = this.resetData ? res.data : this.data.concat(res?.data);
         this.resetData = false;
         this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();
@@ -137,38 +95,6 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
         () => {
           this.sharedService.checkLoadingSpinner();
         });
-  }
-
-  openAddEditForm(expense?: Expense): void {
-    this.dialog
-      .openDialog(AddExpenseComponent, expense)
-      .onSuccess(() => {
-        this.resetAndQuery()
-      });
-  }
-
-  onSearch(payload: any): void {
-    this.previousFilters = payload.params;
-    this.resetAndQuery();
-  }
-
-  reset(): void {
-    this.previousFilters = null;
-    this.resetAndQuery();
-  }
-
-  viewExpenseDetails(id: string): void {
-    this.isSidenavOpened = true;
-    this.expenseViewId = id;
-    this.drawer.toggle();
-  }
-
-  onSidenavClose(): void {
-    this.isSidenavOpened = false;
-  }
-
-  openDeleteConfirmDialog(id: string): void {
-    this.dialog.openConfirmDialog().onSuccess(() => this.delete(id));
   }
 
   delete(id: string): void {
@@ -182,33 +108,7 @@ export class ExpensesComponent implements OnInit, OnDestroy, EntityOperation<Exp
         this.resetAndQuery();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       },
-        () => {
-          this.sharedService.checkLoadingSpinner();
-        });
+      () => this.sharedService.checkLoadingSpinner());
   }
 
-  announceSortChange(sort: Sort): void {
-    this.sort = sort.direction ? `${sort.active},${sort.direction}` : this.defaultSort;
-    this.query();
-  }
-
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
-  }
-
-  resetAndQuery(): void {
-    this.sharedService.scrollTableToTop();
-    this.resetData = true;
-    this.page = 0;
-    this.query();
-  }
-
-  public getExpenseDate(date: any): string {
-    const now = new Date();
-    if (now.getTime() - new Date(date).getTime() < 24 * 60 * 60 * 1000) {
-      return 'a day ago';
-    }
-    return date.getTime(date).toString();
-  }
 }

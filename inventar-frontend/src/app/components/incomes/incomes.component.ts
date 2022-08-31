@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -16,6 +16,7 @@ import { BaseTable } from 'src/app/core/BaseTable';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 
 @Component({
   selector: 'app-incomes',
@@ -25,28 +26,7 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 export class IncomesComponent extends BaseTable<Income> implements EntityOperation<Income> {
 
 
-  columnDefinition: ColumnDefinition[] = [
-    {
-      column: 'createdTime',
-      type: 'date'
-    },
-    {
-      column: 'category',
-      type: 'string'
-    },
-    {
-      column: 'description',
-      type: 'string'
-    },
-    {
-      column: 'incoming',
-      type: 'currency'
-    },
-    {
-      column: 'actions',
-      type: 'actions'
-    }
-  ];
+  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("INCOME");
 
   createComponent = AddIncomeComponent;
   tableActionInput: TableActionInput = {
@@ -80,14 +60,10 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
     private categoryService: CategoriesService,
     private sideBarService: SideBarService,
     private navBarService: NavBarService,
-    public accountService: AccountService
+    public accountService: AccountService,
+    public columnDefinitionService: ColumnDefinitionService
   ) {
     super(sharedService, dialog);
-  }
-
-  onScroll(): void {
-    this.page++;
-    this.query();
   }
 
   ngOnInit(): void {
@@ -118,16 +94,13 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
+        this.stopLoading = res.data.length < this.size;
         this.data = this.resetData ? res?.data : this.data.concat(res?.data);
         this.resetData = false;
         this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();
       },
       () => this.sharedService.checkLoadingSpinner());
-  }
-
-  openDeleteConfirmDialog(id: string): void {
-    this.dialog.openConfirmDialog().onSuccess(() => this.delete(id));
   }
 
   delete(id: string): void {
@@ -141,15 +114,4 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       });
   }
 
-  resetAndQuery(): void {
-    this.sharedService.scrollTableToTop();
-    this.resetData = true;
-    this.page = 0;
-    this.query();
-  }
-
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
-  }
 }

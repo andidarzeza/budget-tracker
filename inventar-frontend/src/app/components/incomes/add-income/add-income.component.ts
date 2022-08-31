@@ -96,9 +96,9 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
   }
 
   add(): void {
-    this.loadingData = true;
     if(this.formGroup.valid && !this.savingEntity){
       if(this.editMode) {
+        this.loadingData = true;
         this.savingEntity = true;
         const payload = this.formGroup.value;
         payload.account = this.accountService.getAccount();
@@ -110,6 +110,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
             this.onSaveSuccess("Income updated with success");
           });
       } else if(!this.savingEntity){
+        this.loadingData = true;
         this.savingEntity = true;
         const payload = this.formGroup.value;
         payload.account = this.accountService.getAccount();

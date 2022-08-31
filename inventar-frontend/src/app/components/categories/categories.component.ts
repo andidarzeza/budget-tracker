@@ -1,37 +1,32 @@
-import { HttpParams } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
-import { PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddCategoryComponent } from './add-category/add-category.component';
-import { Subject } from 'rxjs';
-import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
 import { DialogService } from 'src/app/services/dialog.service';
-import { filter, takeUntil } from 'rxjs/operators';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { MatSidenav } from '@angular/material/sidenav';
-import { Category, CategoryType, ResponseWrapper } from 'src/app/models/models';
-import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
-import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
+import { takeUntil } from 'rxjs/operators';
+import { Category, CategoryType, ColumnDefinition, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { EntityOperation } from 'src/app/core/EntityOperation';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { AccountService } from 'src/app/services/account.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { BaseTable } from 'src/app/core/BaseTable';
+import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
+import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
+import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 
 @Component({
   selector: 'app-categories',
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<Category> {
+export class CategoriesComponent extends BaseTable<Category> implements EntityOperation<Category>, OnInit, OnDestroy {
+  
+  createComponent = AddCategoryComponent;
+  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("CATEGORY");
 
-  isSidenavOpened: boolean = false;
-  @ViewChild('drawer') drawer: MatSidenav;
-  categoryId: string;
-  previousFilters: HttpParams;
   filterOptions: FilterOptions[] = [
     {
       field: "category",
@@ -44,23 +39,14 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
       type: "text"
     }
   ];
+    
 
-  public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
-  public page: number = 0;
-  public size: number = PAGE_SIZE;
-  public totalItems: number = 0;
-  public totalRequests: number = 0;
   public categoriesType: CategoryType = CategoryType.EXPENSE;
-  public theme: string = 'light';
-  public displayedColumns: string[] = ['icon', 'category', 'description', 'actions'];
-  public dataSource: Category[] = [];
-  public defaultSort: string = "createdTime,desc";
-  public sort: string = this.defaultSort;
-  private _subject = new Subject();
   public tableActionInput: TableActionInput = {
     pageName: "Categories",
     icon: 'library_books'
   };
+  resetData: boolean = false;
 
   constructor(
     public sharedService: SharedService,
@@ -69,8 +55,11 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
     private toaster: ToastrService,
     public sideBarService: SideBarService,
     public accountService: AccountService,
-    public navBarService: NavBarService
-  ) {}
+    public navBarService: NavBarService,
+    public columnDefinitionService: ColumnDefinitionService
+  ) {
+    super(sharedService, dialog);
+  }
 
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
@@ -84,46 +73,14 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
       .subscribe((res: ResponseWrapper) => {
-        this.dataSource = res?.data;
+        this.stopLoading = res.data.length < this.size;
+        this.data = this.resetData ? res?.data : this.data.concat(res?.data);
         this.totalItems = res?.count;
         this.sharedService.checkLoadingSpinner();     
       },
       () => {
         this.sharedService.checkLoadingSpinner();
       });
-  }
-
-  onSidenavClose(): void {
-    this.isSidenavOpened = false;
-  }
-
-  viewCategoryDetails(id: string): void {
-    this.categoryId = id;
-    this.isSidenavOpened = true;
-    this.drawer.toggle();
-  }
-
-  openAddEditForm(spendingCategory?: Category): void {
-    this.dialog
-      .openDialog(AddCategoryComponent, {spendingCategory, categoriesType: this.categoriesType})
-      .onSuccess(() => this.query());
-  }
-
-  onSearch(payload: any): void {
-    this.previousFilters = payload.params;
-    this.page = 0;
-    this.query();
-  }
-
-  reset(): void {
-    this.previousFilters = null;
-    this.query();
-  }
-
-  openDeleteConfirmDialog(id: string): void {
-    this.dialog
-    .openConfirmDialog()
-    .onSuccess(() => this.delete(id));
   }
 
   delete(id: string): void {
@@ -136,26 +93,4 @@ export class CategoriesComponent implements OnInit, OnDestroy, EntityOperation<C
       });
   }
 
-  changeCategoriesType(event: MatTabChangeEvent): void {
-    switch(event.index) {
-      case 0:
-        this.categoriesType = CategoryType.EXPENSE;
-        break;
-      case 1:
-        this.categoriesType = CategoryType.INCOME;
-        break;
-    }
-    this.page = 0;
-    this.query();
-  }
-
-  announceSortChange(sort: Sort): void {
-    this.sort = sort.direction ? `${sort.active},${sort.direction}` : this.defaultSort;
-    this.query();
-  }
-
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
-  }
 }

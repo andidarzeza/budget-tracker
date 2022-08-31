@@ -9,16 +9,16 @@ import { CategoriesRoutingModule } from './categories-routing.module';
 import { MatSortModule } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
 import { SharedModule } from 'src/app/shared/shared.module';
-import {MatTabsModule} from '@angular/material/tabs';
-import { CategoriesTableComponent } from './categories-table/categories-table.component';
+import { MatTabsModule } from '@angular/material/tabs';
 import { CategoryDetailModule } from './category-detail/category-detail.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { AddCategoryModule } from './add-category/add-category.module';
 import { FilterModule } from 'src/app/shared/base-table/table-actions/filter/filter.module';
+import { BaseTableModule } from 'src/app/shared/base-table/base-table.module';
 
 
 @NgModule({
-  declarations: [CategoriesComponent, CategoriesTableComponent],
+  declarations: [CategoriesComponent],
   imports: [
     CommonModule,
     CategoriesRoutingModule,
@@ -33,7 +33,8 @@ import { FilterModule } from 'src/app/shared/base-table/table-actions/filter/fil
     MatMenuModule,
     FilterModule,
     AddCategoryModule,
-    SharedModule
+    SharedModule,
+    BaseTableModule
   ]
 })
 export class CategoriesModule { }

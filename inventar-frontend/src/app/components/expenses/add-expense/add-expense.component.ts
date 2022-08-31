@@ -84,9 +84,9 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
   }
   
   add(): void {
-    this.loadingData = true;
     if(this.formGroup.valid && !this.savingEntity){
       if(this.editMode) {
+        this.loadingData = true;
         this.savingEntity = true;
         const payload = this.formGroup.value;
         payload.account = this.accountService.getAccount();
@@ -101,6 +101,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
             this.toaster.success("Expense updated successfully", "Success", TOASTER_CONFIGURATION);
           });
       } else if(!this.savingEntity) {
+        this.loadingData = true;
         this.savingEntity = true;
         const payload = this.formGroup.value;
         payload.account = this.accountService.getAccount();

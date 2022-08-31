@@ -57,9 +57,9 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
   }
 
   add(): void {
-    this.loadingData = true;
     if(this.categoryGroup.valid && !this.savingEntity){
       if(this.editMode) {
+        this.loadingData = true;
         this.data.spendingCategory.category = this.category.value;
         this.data.spendingCategory.description = this.description.value;
         this.data.spendingCategory.icon = this.icon.value;
@@ -72,6 +72,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this._subject))  
           .subscribe(() => this.onSaveSuccess("Category Updated with Success"));
       } else if(!this.savingEntity){
+        this.loadingData = true;
         const payload = this.categoryGroup.value;
         payload['categoryType'] = this.data.categoriesType;
         payload.account = this.accountService.getAccount();
