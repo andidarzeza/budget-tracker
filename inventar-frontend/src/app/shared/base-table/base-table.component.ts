@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Sort } from '@angular/material/sort';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ColumnDefinition } from 'src/app/models/models';
 import { SharedService } from 'src/app/services/shared.service';
+import { FilterOptions } from './table-actions/filter/filter.models';
+import { TableActionInput } from './table-actions/TableActionInput';
 
 @Component({
   selector: 'base-table',
@@ -18,6 +19,14 @@ export class BaseTableComponent implements OnChanges{
   @Output() onAddEditForm = new EventEmitter();
   @Output() onViewDetails = new EventEmitter();
   @Output() onScroll = new EventEmitter();
+
+  @Input() tableActionInput: TableActionInput;
+  @Input() filterOptions: FilterOptions[];
+
+  @Output() onRefresh: EventEmitter<any> = new EventEmitter();
+  @Output() onOpenDialog: EventEmitter<any> = new EventEmitter();
+  @Output() onSearch: EventEmitter<any> = new EventEmitter();
+  @Output() onReset: EventEmitter<any> = new EventEmitter();
   
   constructor(
     public sharedService: SharedService

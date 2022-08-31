@@ -5,16 +5,17 @@
         </app-expense-detail>
     </mat-drawer>
 
-
-    <!-- <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
-        (onOpenDialog)="openAddEditForm()" (onRefresh)="resetAndQuery()" (onSearch)="onSearch($event)" (onReset)="reset()">
-    </table-actions> -->
-
     <base-table [data]="expenses" [columnDefinition]="columnDefinition"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)"
         (onAddEditForm)="openAddEditForm($event)"
         (onViewDetails)="viewExpenseDetails($event)"
         (onScroll)="onScroll()"
+        [filterOptions]="filterOptions"
+        [tableActionInput]="tableActionInput"
+        (onOpenDialog)="openAddEditForm()"
+        (onRefresh)="resetAndQuery()"
+        (onSearch)="onSearch($event)"
+        (onReset)="reset()"
     ></base-table>
 
 </mat-drawer-container>

@@ -1,11 +1,12 @@
 <div class="{{sharedService.theme}}-book-tb-container">
+    <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
+        (onOpenDialog)="onOpenDialog.emit()" (onRefresh)="onRefresh.emit()" (onSearch)="onSearch.emit($event)"
+        (onReset)="onReset.emit()">
+    </table-actions>
+
     <table-header [displayedColumns]="displayedColumns"></table-header>
-    <table-body 
-        [data]="data" [columnDefinitions]="columnDefinition" 
-        (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
-        (onAddEditForm)="onAddEditForm.emit($event)"
-        (onViewDetails)="onViewDetails.emit($event)"
-        (onScroll)="onScroll.emit()"
-    ></table-body>
+    <table-body [data]="data" [columnDefinitions]="columnDefinition"
+        (onDeleteConfirmation)="onDeleteConfirmation.emit($event)" (onAddEditForm)="onAddEditForm.emit($event)"
+        (onViewDetails)="onViewDetails.emit($event)" (onScroll)="onScroll.emit()"></table-body>
     <table-message [total]="data?.length"></table-message>
 </div>

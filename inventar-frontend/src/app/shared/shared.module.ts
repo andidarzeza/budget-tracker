@@ -9,16 +9,16 @@ import { FloatingMenuComponent } from './floating-menu/floating-menu.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AbsoluteValuePipe } from '../pipes/absolute-value.pipe';
-import { TableActionsComponent } from './table-actions/table-actions.component';
+import { TableActionsComponent } from './base-table/table-actions/table-actions.component';
 import { DialogService } from '../services/dialog.service';
 import { AddExpenseComponent } from '../components/expenses/add-expense/add-expense.component';
 import { RecordActionsComponent } from './record-actions/record-actions.component';
 import { CustomDatePipe } from '../pipes/custom-date.pipe';
 import { MatInputModule } from '@angular/material/input';
-import { FilterModule } from './table-actions/filter/filter.module';
+import { FilterModule } from './base-table/table-actions/filter/filter.module';
 import { TableMessageModule } from './table-message/table-message.module';
 import { ConfirmModule } from './confirm/confirm.module';
-import { TableActionsModule } from './table-actions/table-actions.module';
+import { TableActionsModule } from './base-table/table-actions/table-actions.module';
 
 
 

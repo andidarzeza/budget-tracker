@@ -14,7 +14,7 @@ import { CategoriesTableComponent } from './categories-table/categories-table.co
 import { CategoryDetailModule } from './category-detail/category-detail.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { AddCategoryModule } from './add-category/add-category.module';
-import { FilterModule } from 'src/app/shared/table-actions/filter/filter.module';
+import { FilterModule } from 'src/app/shared/base-table/table-actions/filter/filter.module';
 
 
 @NgModule({

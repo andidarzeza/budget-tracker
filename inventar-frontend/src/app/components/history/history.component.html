@@ -4,12 +4,9 @@
         <history-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [historyId]="historyId">
         </history-details>
     </mat-drawer>
-
-    <!-- <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onRefresh)="resetAndQuery()"
-        (onSearch)="onSearch($event)" (onReset)="reset()">
-    </table-actions> -->
-
-    <base-table [data]="data" [columnDefinition]="columnDefinition"
-    (onViewDetails)="viewDetails($event)" (onScroll)="onScroll()"></base-table>
+    
+    <base-table [data]="data" [columnDefinition]="columnDefinition" (onViewDetails)="viewDetails($event)"
+        (onScroll)="onScroll()" [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
+        (onRefresh)="resetAndQuery()" (onSearch)="onSearch($event)" (onReset)="reset()"></base-table>
 
 </mat-drawer-container>

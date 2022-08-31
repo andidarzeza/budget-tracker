@@ -8,7 +8,7 @@ import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from "src/environments/environment";
 import { ColumnDefinition } from "../models/models";
 import { DialogService } from "../services/dialog.service";
 import { SharedService } from "../services/shared.service";
-import { TableActionInput } from "../shared/table-actions/TableActionInput";
+import { TableActionInput } from "../shared/base-table/table-actions/TableActionInput";
 
 export abstract class BaseTable<E> {
 

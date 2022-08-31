@@ -6,12 +6,12 @@ import { environment, PAGE_SIZE, PAGE_SIZE_OPTIONS, TOASTER_CONFIGURATION } from
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { Subject } from 'rxjs';
 import { Sort } from '@angular/material/sort';
-import { TableActionInput } from 'src/app/shared/table-actions/TableActionInput';
+import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
-import { FilterOptions } from 'src/app/shared/table-actions/filter/filter.models';
+import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';

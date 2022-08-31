@@ -5,13 +5,10 @@
         </app-income-details>
     </mat-drawer>
 
-
-    <!-- <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
-        (onOpenDialog)="openAddEditForm()" (onRefresh)="resetAndQuery()" (onSearch)="onSearch($event)" (onReset)="reset()">
-    </table-actions> -->
-
     <base-table [data]="data" [columnDefinition]="columnDefinition"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
-        (onViewDetails)="viewDetails($event)" (onScroll)="onScroll()"></base-table>
+        (onViewDetails)="viewDetails($event)" (onScroll)="onScroll()" [filterOptions]="filterOptions"
+        [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="resetAndQuery()"
+        (onSearch)="onSearch($event)" (onReset)="reset()"></base-table>
 
 </mat-drawer-container>
