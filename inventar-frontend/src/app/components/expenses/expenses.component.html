@@ -6,9 +6,9 @@
     </mat-drawer>
 
 
-    <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
+    <!-- <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
         (onOpenDialog)="openAddEditForm()" (onRefresh)="resetAndQuery()" (onSearch)="onSearch($event)" (onReset)="reset()">
-    </table-actions>
+    </table-actions> -->
 
     <base-table [data]="expenses" [columnDefinition]="columnDefinition"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)"

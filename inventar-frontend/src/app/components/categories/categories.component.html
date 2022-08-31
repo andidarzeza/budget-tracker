@@ -7,9 +7,9 @@
 
 
     <div class="table-container {{sharedService.theme}}-table" style="position: relative;display: flex;flex-direction: column;height: calc(100% - 40px);">
-        <table-actions class="category-table-actions" style="width: calc(100% + 50px);margin-top: 0px;" [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
+        <!-- <table-actions class="category-table-actions" style="width: calc(100% + 50px);margin-top: 0px;" [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
             (onOpenDialog)="openAddEditForm()" (onRefresh)="query()" (onSearch)="onSearch($event)" (onReset)="reset()">
-        </table-actions>
+        </table-actions> -->
         <mat-tab-group style="height: calc(100% - 74px);" class="category-tabs" (selectedTabChange)="changeCategoriesType($event)">
             <mat-tab style="height: calc(100% - 100px);">
                 <ng-template mat-tab-label>

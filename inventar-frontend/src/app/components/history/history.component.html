@@ -5,9 +5,9 @@
         </history-details>
     </mat-drawer>
 
-    <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onRefresh)="resetAndQuery()"
+    <!-- <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onRefresh)="resetAndQuery()"
         (onSearch)="onSearch($event)" (onReset)="reset()">
-    </table-actions>
+    </table-actions> -->
 
     <base-table [data]="data" [columnDefinition]="columnDefinition"
     (onViewDetails)="viewDetails($event)" (onScroll)="onScroll()"></base-table>
