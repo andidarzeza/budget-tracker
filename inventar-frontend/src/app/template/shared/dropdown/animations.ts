@@ -7,17 +7,17 @@ export const slideDownUp = trigger(
       transition(
         ':enter', 
         [
-          style({ opacity: 0 }),
-          animate('100ms ease-out', 
-                  style({opacity: 1 }))
+          style({ opacity: 0, height: 0 }),
+          animate('200ms ease-out', 
+                  style({opacity: 1, height: 100 }))
         ]
       ),
       transition(
         ':leave', 
         [
-          style({ opacity: 1 }),
-          animate('100ms ease-in', 
-                  style({ opacity: 0 }))
+          style({ opacity: 1, height: 100 }),
+          animate('200ms ease-in', 
+                  style({ opacity: 0, height: 0 }))
         ]
       )
     ]

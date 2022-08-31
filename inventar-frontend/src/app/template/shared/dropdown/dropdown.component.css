@@ -18,4 +18,16 @@
 
 .dropdown-option {
     padding: 7px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background 100ms;
+}
+
+.dropdown-option:hover {
+    background: rgba(0, 0, 0, .12);
+}
+
+.option-text {
+    margin-left: 7px;
 }

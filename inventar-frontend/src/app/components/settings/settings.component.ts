@@ -6,6 +6,7 @@ import { ConfigurationService } from 'src/app/services/configuration.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { DropdownOption } from 'src/app/template/shared/dropdown/models';
 
 @Component({
   selector: 'app-settings',
@@ -14,7 +15,25 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 })
 export class SettingsComponent implements OnInit, OnDestroy {
   configuration: IConfiguration = null;
+
+
   private subject = new Subject();
+
+  appearanceOptions: DropdownOption[] = [
+    {
+      icon: 'color_lens',
+      title: 'Theme'
+    },
+    {
+      icon: 'nights_stay',
+      title: 'Dark Mode'
+    },
+    {
+      icon: 'language',
+      title: 'Language'
+    }
+  ];
+
   constructor(
     public sharedService: SharedService,
     private configurationService: ConfigurationService,

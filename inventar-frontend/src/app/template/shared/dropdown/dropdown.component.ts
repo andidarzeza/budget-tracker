@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { SharedService } from 'src/app/services/shared.service';
 import { slideDownUp } from './animations';
+import { DropdownOption } from './models';
 
 @Component({
   selector: 'dropdown',
@@ -7,12 +9,11 @@ import { slideDownUp } from './animations';
   styleUrls: ['./dropdown.component.css'],
   animations: [slideDownUp]
 })
-export class DropdownComponent implements OnInit {
+export class DropdownComponent {
   showOptions = true;
-  constructor() { }
-  options: string[] = ['Brightnes', 'Color', 'Theme', 'Language', 'Size']
-  ngOnInit(): void {
-  }
-
-
+  @Input() title: string;
+  @Input() options: DropdownOption[];
+  constructor(
+    public sharedService: SharedService
+  ) { }
 }

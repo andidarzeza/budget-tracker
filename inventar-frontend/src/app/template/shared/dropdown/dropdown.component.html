@@ -1,15 +1,21 @@
 <div class="dropdown-container">
-    <div class="dropdown-title" (click)="showOptions = !showOptions">
+    <div class="dropdown-title {{sharedService.theme + '-title'}}" (click)="showOptions = !showOptions">
         <span>
-            Appearance
+            {{title}}
         </span>
 
         <mat-icon>
             {{showOptions ? 'keyboard_arrow_down': 'keyboard_arrow_right'}}
         </mat-icon>
     </div>
-    <div class="dropdown-options" *ngIf="showOptions" [@slideDownUp] [style.height.px]="options.length * 34"
-        style="overflow: hidden;">
-        <div class="dropdown-option" *ngFor="let option of options">{{option}}</div>
+    <div class="dropdown-options {{sharedService.theme + '-title'}}" *ngIf="showOptions" [@slideDownUp] [style.height.px]="options.length * 38">
+        <div class="dropdown-option" *ngFor="let option of options">
+            <mat-icon>
+                {{option.icon}}
+            </mat-icon>
+            <span class="option-text">
+                {{option.title}}
+            </span>
+        </div>
     </div>
 </div>
