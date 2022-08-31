@@ -1,4 +1,4 @@
-<mat-drawer-container class="example-container {{sharedService.theme}}-body" autosize>
+<mat-drawer-container class="drawer-table-container" autosize>
     <mat-drawer #drawer class="sidenav {{sharedService.theme}}-table" mode="over" position="end"
         (closed)="onSidenavClose()">
         <history-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [historyId]="historyId">

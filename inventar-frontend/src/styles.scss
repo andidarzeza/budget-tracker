@@ -5,7 +5,7 @@
 @import '../../inventar-frontend/src/app/template/shared.scss';
 
 @import '../../inventar-frontend/src/app/components/settings/dynamic-dropdown/custom-dropdown.scss';
-
+@import './assets/fonts/fonts.scss';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -688,6 +688,6 @@ th {
     padding: 0;
 }
 
-// create-form>div>form {
-    
-// }
+.drawer-table-container {
+    background: transparent;
+}

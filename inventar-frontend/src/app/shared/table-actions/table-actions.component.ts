@@ -1,6 +1,6 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
+import { filterAnimation } from './filter/filter.animations';
 import { FilterOptions } from './filter/filter.models';
 import { TableActionInput } from './TableActionInput';
 
@@ -9,19 +9,7 @@ import { TableActionInput } from './TableActionInput';
   templateUrl: './table-actions.component.html',
   styleUrls: ['./table-actions.component.css'],
   animations: [
-    trigger(
-      'inAnimation',
-      [
-        transition(
-          ':enter',
-          [
-            style({ opacity: 0 }),
-            animate('200ms ease-out',
-              style({ opacity: 1 }))
-          ]
-        )
-      ]
-    )
+    filterAnimation
   ]
 })
 export class TableActionsComponent {
@@ -34,7 +22,6 @@ export class TableActionsComponent {
   @Output() onSearch: EventEmitter<any> = new EventEmitter();
   @Output() onReset: EventEmitter<any> = new EventEmitter();
   showSearchInput: boolean = false;
-  public filterId = "filter-id";
 
   public containerId = "actions-container-id";
   public searchIconId = "search-icon-id";
@@ -52,29 +39,17 @@ export class TableActionsComponent {
   }
 
   openSearchInput(): void {
-    const elem = document.getElementById(this.filterId);
-    if(elem) {
-      elem.style.display = "block";
-    }
     this.showSearchInput = true;
   }
 
   reset(): void {
     this.onReset.emit();
     this.showSearchInput = false;
-    const elem = document.getElementById(this.filterId);
-    if(elem) {
-      elem.style.display = "none";
-    }
   }
 
   search(payload: any): void {
     this.onSearch.emit(payload);
     this.showSearchInput = false;
-    const elem = document.getElementById(this.filterId);
-    if(elem) {
-      elem.style.display = "none";
-    }
   }
 
 
@@ -99,12 +74,7 @@ export class TableActionsComponent {
     }
 
     if (!elem?.contains(event.target) && event.target.id !== this.searchIconId && close) {
-
       this.showSearchInput = false;
-      const elem = document.getElementById(this.filterId);
-      if(elem) {
-        elem.style.display = "none";
-      }
     }
 
   }

@@ -8,7 +8,7 @@
 
     <div *ngIf="showSearchInput" style="height: 74px;max-height: 74px;"></div>
 
-    <filter [id]="filterId" style="display: none;" (onReset)="reset()" (onSearch)="search($event)" [filterOptions]="filterOptions" [@inAnimation] class="filter"></filter>
+    <filter *ngIf="showSearchInput" (onReset)="reset()" (onSearch)="search($event)" [filterOptions]="filterOptions" [@filterAnimation] class="filter"></filter>
 
     <div class="table-actions action-container {{sharedService.theme}}-text"
         *ngIf="!sharedService.mobileView && !showSearchInput">

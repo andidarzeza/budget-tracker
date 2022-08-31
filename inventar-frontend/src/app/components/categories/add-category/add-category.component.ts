@@ -41,8 +41,8 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if(this.editMode) {
       this.loadingData = true;
+      this.getCategory().subscribe();
     }
-    this.getCategory().subscribe();
   }
 
   private getCategory(): Observable<any> {

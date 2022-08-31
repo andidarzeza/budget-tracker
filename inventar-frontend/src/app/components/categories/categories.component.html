@@ -1,4 +1,4 @@
-<mat-drawer-container class="example-container {{sharedService.theme}}-body" autosize>
+<mat-drawer-container class="drawer-table-container {{sharedService.theme}}-body" autosize>
     <mat-drawer #drawer class="sidenav {{sharedService.theme}}-table" mode="over" position="end"
         (closed)="onSidenavClose()">
         <app-category-detail *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [categoryId]="categoryId">

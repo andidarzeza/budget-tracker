@@ -42,7 +42,7 @@ export class SideBarComponent implements OnChanges {
       const activeItem = document.getElementById("active-item") as HTMLElement;   
       if(activeItem) {
         const margin = index+1;
-        activeItem.style.transform = `translate(-50%, calc(${index * 100}% + ${(index * 5) + (margin *5)}px))`;
+        activeItem.style.transform = `translate(0%, calc(${index * 100}% + ${(index * 3) + (margin *3)}px))`;
       }
     // }, 0);
     
