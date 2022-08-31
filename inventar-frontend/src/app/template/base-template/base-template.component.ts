@@ -1,4 +1,3 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';

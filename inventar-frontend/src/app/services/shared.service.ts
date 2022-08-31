@@ -9,7 +9,6 @@ import { filter } from 'rxjs/operators';
 export class SharedService {
   private dataSource = new BehaviorSubject<string>("");
   public theme: string = 'dark';
-  public stillLoading: boolean = false;
   public darkMode: boolean = true;
   public isSpinnerEnabled: boolean = true;
   public mobileView: boolean = false;
@@ -48,16 +47,6 @@ export class SharedService {
     this.themeSubscribable
       .pipe(filter(value => value !== ""))
       .subscribe(theme => this.theme = theme);
-  }
-
-  activateLoadingSpinner(): void {
-    this.totalRequests++;
-    this.stillLoading = true;
-  }
-
-  checkLoadingSpinner(): void {
-    this.totalRequests--;
-    if(this.totalRequests === 0)  setTimeout(() => this.stillLoading = false, 500);
   }
 
   scrollTableToTop(): void {

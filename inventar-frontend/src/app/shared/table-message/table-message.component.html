@@ -1,7 +1,7 @@
-<div [@inOutAnimation] *ngIf="sharedService.stillLoading && total==0" class="no-data" [style.height.px]="sharedService.getHeight(60)">
+<div [@inOutAnimation] *ngIf="total==0" class="no-data" [style.height.px]="sharedService.getHeight(60)">
     We are loading your data for you, please wait...
 </div>
-<div [@inOutAnimation] *ngIf="total == 0 && !sharedService.stillLoading" class="no-data"
+<div [@inOutAnimation] *ngIf="total == 0" class="no-data"
     [style.height.px]="sharedService.getHeight(60)">
     No data to display!
 </div>

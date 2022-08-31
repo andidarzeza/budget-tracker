@@ -9,9 +9,6 @@
         [ngClass]="authenticationService.currentUserValue ? 'app-width' : 'app-full-width'">
         <div class="shadow" id="shadow" *ngIf="sideBarMode=='over'" (click)="toggleSidebar()"></div>
         <nav-bar *ngIf="navBarService.displayNavBar"></nav-bar>
-        <!-- <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation]
-            *ngIf="sharedService.stillLoading"
-            style="position: absolute;top: 64px;left:0;z-index: 2;"></mat-progress-bar> -->
         <div class="content-container {{sharedService.theme + '-body'}}">
             <ng-content></ng-content>
         </div>

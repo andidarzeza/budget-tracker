@@ -27,7 +27,7 @@ export class ExpensesComponent extends BaseTable<Expense> implements EntityOpera
   createComponent = AddExpenseComponent;
 
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("EXPENSE");
-  
+
   public tableActionInput: TableActionInput = {
     pageName: "Expenses",
     icon: 'attach_money'
@@ -82,7 +82,6 @@ export class ExpensesComponent extends BaseTable<Expense> implements EntityOpera
   }
 
   query(): void {
-    this.sharedService.activateLoadingSpinner();
     this.expenseService
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
@@ -90,25 +89,18 @@ export class ExpensesComponent extends BaseTable<Expense> implements EntityOpera
         this.data = this.resetData ? res.data : this.data.concat(res?.data);
         this.resetData = false;
         this.totalItems = res?.count;
-        this.sharedService.checkLoadingSpinner();
-      },
-        () => {
-          this.sharedService.checkLoadingSpinner();
-        });
+      });
   }
 
   delete(id: string): void {
-    this.sharedService.activateLoadingSpinner();
     this.expenseService
       .delete(id)
       .pipe(takeUntil(this._subject))
       .subscribe(() => {
         this.accountService.findOne(this.accountService.getAccount()).subscribe();
-        this.sharedService.checkLoadingSpinner();
         this.resetAndQuery();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
-      },
-      () => this.sharedService.checkLoadingSpinner());
+      })
   }
 
 }

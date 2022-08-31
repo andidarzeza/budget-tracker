@@ -68,7 +68,6 @@ export class CategoriesComponent extends BaseTable<Category> implements EntityOp
   }
 
   query(): void {
-    this.sharedService.activateLoadingSpinner();
     this.categoriesService
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
@@ -76,10 +75,6 @@ export class CategoriesComponent extends BaseTable<Category> implements EntityOp
         this.stopLoading = res.data.length < this.size;
         this.data = this.resetData ? res?.data : this.data.concat(res?.data);
         this.totalItems = res?.count;
-        this.sharedService.checkLoadingSpinner();     
-      },
-      () => {
-        this.sharedService.checkLoadingSpinner();
       });
   }
 

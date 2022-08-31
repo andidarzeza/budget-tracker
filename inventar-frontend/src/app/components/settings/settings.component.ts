@@ -25,29 +25,23 @@ export class SettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
-    this.sharedService.activateLoadingSpinner();
     this.configurationService
       .getConfiguration()
       .pipe(takeUntil(this.subject))
       .subscribe((configuration: IConfiguration) => {
         this.configuration = configuration;
         this.sharedService.theme = configuration.darkMode ? 'dark' : 'light';
-        this.sharedService.checkLoadingSpinner();
-      },
-        () => this.sharedService.checkLoadingSpinner());
+      });
   }
 
   changeTheme(): void {
     this.configuration.darkMode = !this.configuration.darkMode;
-    this.sharedService.activateLoadingSpinner();
     this.configurationService
       .updateConfiguration(this.configuration)
       .pipe(takeUntil(this.subject))
       .subscribe(() => {
         this.sharedService.changeTheme(this.configuration.darkMode);
-        this.sharedService.checkLoadingSpinner();
-      },
-      () => this.sharedService.checkLoadingSpinner());
+      });
   }
 
   ngOnDestroy(): void {

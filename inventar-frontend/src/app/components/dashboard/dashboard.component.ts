@@ -76,12 +76,9 @@ export class DashboardComponent implements OnDestroy {
 
     this.dailyExpensesLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
     
-    this.sharedService.activateLoadingSpinner();
-
     const from = this.getFromDate(currentYear, currentMonth);
     const to = this.getToDate(currentYear, currentMonth);
 
-    
     this.dashboardService.getDashboardData(
       from,
       to,
@@ -89,10 +86,8 @@ export class DashboardComponent implements OnDestroy {
     )
     .pipe(takeUntil(this._subject))
     .subscribe((dashboardData: DashboardDTO) => {
-      this.sharedService.checkLoadingSpinner();
       this.dashboardData = dashboardData;
     }, () => {
-      this.sharedService.checkLoadingSpinner();
       this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION);
     });
   }

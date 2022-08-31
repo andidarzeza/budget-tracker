@@ -137,7 +137,6 @@ export class HistoryComponent implements OnInit, OnDestroy {
   }
 
   query(): void {
-    this.sharedService.activateLoadingSpinner();
     this.historyService
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
@@ -145,11 +144,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
         this.data = this.resetData ? res?.data : this.data.concat(res?.data);
         this.resetData = false;
         this.totalItems = res?.count;
-        this.sharedService.checkLoadingSpinner();
-      },
-        () => {
-          this.sharedService.checkLoadingSpinner();
-        });
+      });
   }
 
   onSearch(payload: any): void {

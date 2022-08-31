@@ -100,15 +100,12 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
   toggleDarkMode(): void {
     this.configuration.darkMode = !this.sharedService.darkMode;
-    this.sharedService.activateLoadingSpinner();
     this.configurationService
       .updateConfiguration(this.configuration)
       .pipe(takeUntil(this._subject))
       .subscribe(() => {
         this.sharedService.changeTheme(this.configuration.darkMode);
-        this.sharedService.checkLoadingSpinner();
-      },
-      () => this.sharedService.checkLoadingSpinner());
+      });
   }
 
   changeThemeColor(theme: Theme): void {

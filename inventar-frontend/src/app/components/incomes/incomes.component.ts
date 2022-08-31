@@ -89,7 +89,6 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
   }
 
   query(): void {
-    this.sharedService.activateLoadingSpinner();
     this.incomeService
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this._subject))
@@ -98,9 +97,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
         this.data = this.resetData ? res?.data : this.data.concat(res?.data);
         this.resetData = false;
         this.totalItems = res?.count;
-        this.sharedService.checkLoadingSpinner();
-      },
-      () => this.sharedService.checkLoadingSpinner());
+      });
   }
 
   delete(id: string): void {
