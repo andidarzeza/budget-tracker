@@ -38,7 +38,7 @@ export const CREATE_DIALOG_CONFIGURATION = {
 export const CURRENCIES = ["ALL", "EUR", "USD", "CAD", "GBP"];
 
 // Template Settings
-export const SIDEBAR_WIDTH = 280
+export const SIDEBAR_WIDTH = 250
 
 // Pagination Options
 export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];

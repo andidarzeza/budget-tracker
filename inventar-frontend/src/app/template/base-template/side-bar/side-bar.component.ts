@@ -11,7 +11,7 @@ import { MenuItem, SideBarMode } from '../base-template.models';
   styleUrls: ['./side-bar.component.css']
 })
 export class SideBarComponent implements OnChanges {
-  
+
   @Input() navigation: MenuItem[];
   @Input() sideBarMode: SideBarMode;
 
@@ -24,28 +24,21 @@ export class SideBarComponent implements OnChanges {
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    
-    // if(changes.navigation.firstChange) {
-      this.navigation?.forEach((item: MenuItem) => {
-        if(item.link === window.location.pathname) {
-          setTimeout(()=>{
-            this.animateSelectedOption(this.navigation.indexOf(item));
-          },0)
-        }
-      });
-    // }
-  }
-  
-  animateSelectedOption(index: number): void {
-    
-    // setTimeout(() => {
-      const activeItem = document.getElementById("active-item") as HTMLElement;   
-      if(activeItem) {
-        const margin = index+1;
-        activeItem.style.transform = `translate(0%, calc(${index * 100}% + ${(index * 3) + (margin *3)}px))`;
+    this.navigation?.forEach((item: MenuItem) => {
+      if (item.link === window.location.pathname) {
+        setTimeout(() => {
+          this.animateSelectedOption(this.navigation.indexOf(item));
+        }, 0)
       }
-    // }, 0);
-    
+    });
+  }
+
+  animateSelectedOption(index: number): void {
+    const activeItem = document.getElementById("active-item") as HTMLElement;
+    if (activeItem) {
+      const margin = index + 1;
+      activeItem.style.transform = `translate(0%, calc(${index * 100}% + ${(index * 3) + (margin * 3)}px))`;
+    }
   }
 
 
@@ -61,9 +54,9 @@ export class SideBarComponent implements OnChanges {
   //           this.selIndex--;
   //           // this.router.navigate([this.navigation[this.selIndex].link]);
   //           this.animateSelectedOption(this.selIndex);
-            
+
   //         }
-          
+
   //       // }
   // }
 

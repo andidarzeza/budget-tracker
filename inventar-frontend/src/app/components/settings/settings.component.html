@@ -1,4 +1,4 @@
-
+<!-- 
 <div class="button-container">
     <div class="titulli">
         <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-text">settings</mat-icon>
@@ -10,11 +10,27 @@
 <mat-card class="{{sharedService.theme}}-card {{sharedService.theme}}-dashboard-card configuration {{sharedService.theme}}-text" style="margin-top: 0;">
     <span>Dark Theme</span>
     <mat-slide-toggle [checked]="sharedService.theme === 'dark'" (change)="changeTheme()"></mat-slide-toggle>
-</mat-card>
+</mat-card> -->
+
+
+<div
+    class="{{sharedService.theme}}-table"
+    style="width: var(--table-width);height:calc(100% - 104px);margin: auto;margin-top: 20px;box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);border-radius: 10px;">
+    <!-- TABLE - ACTIONS: CREATE, REFRESH, SEARCH -->
+    <div class="main-action-container {{sharedService.theme}}-table" style="position: relative;">
+        <div class="title-container">
+            <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">
+                settings
+            </mat-icon>
+            <span class="title {{sharedService.theme}}-title">Settings</span>
+        </div>
+    </div>
+
+    <div style="width: 300px;height: calc(100% - 75px);border-right: 1px solid rgba(0, 0, 0, .12);">
+
+    </div>
+</div>
 
 <!-- <div style="margin-top: 50px;margin-left: 50px;width: 500px;">
     <dynamic-dropdown [data]="data" (onSelection)="onSelectionFunction($event)" (onCreate)="onCreateFunction($event)" (onDelete)="onDeleteFunction($event)"></dynamic-dropdown>
 </div> -->
-
-
-
