@@ -1,0 +1,15 @@
+<div class="dropdown-container">
+    <div class="dropdown-title" (click)="showOptions = !showOptions">
+        <span>
+            Appearance
+        </span>
+
+        <mat-icon>
+            {{showOptions ? 'keyboard_arrow_down': 'keyboard_arrow_right'}}
+        </mat-icon>
+    </div>
+    <div class="dropdown-options" *ngIf="showOptions" [@slideDownUp] [style.height.px]="options.length * 34"
+        style="overflow: hidden;">
+        <div class="dropdown-option" *ngFor="let option of options">{{option}}</div>
+    </div>
+</div>
