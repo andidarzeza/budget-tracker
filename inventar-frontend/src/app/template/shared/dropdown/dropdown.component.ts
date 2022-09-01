@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { SharedService } from 'src/app/services/shared.service';
 import { slideDownUp } from './animations';
 import { DropdownOption } from './models';
@@ -12,8 +13,19 @@ import { DropdownOption } from './models';
 export class DropdownComponent {
   showOptions = true;
   @Input() title: string;
+  @Input() selectedPath: string;
   @Input() options: DropdownOption[];
+  @Output() onNavigation = new EventEmitter();
   constructor(
-    public sharedService: SharedService
+    public sharedService: SharedService,
+    private router: Router
   ) { }
+
+  navigate(path: string): void {
+    if(this.selectedPath != path) {
+      this.router.navigate([path]);
+      this.onNavigation.emit(path);
+    }
+    
+  }
 }

@@ -6,8 +6,7 @@
 </mat-card> -->
 
 
-<div
-    class="{{sharedService.theme}}-table"
+<div class="{{sharedService.theme}}-table"
     style="width: var(--table-width);height:calc(100% - 104px);margin: auto;margin-top: 20px;box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);border-radius: 10px;">
     <div class="main-action-container {{sharedService.theme}}-table" style="position: relative;">
         <div class="title-container">
@@ -18,10 +17,19 @@
         </div>
     </div>
 
-    <div class="{{sharedService.theme}}-settings" style="overflow-y: auto;width: 300px;height: calc(100% - 75px);border-right: 1px solid rgba(0, 0, 0, .12);">
-        <dropdown [title]="'Appearance'" [options]="appearanceOptions"></dropdown>
-        <dropdown [title]="'Account'" [options]="[]"></dropdown>
+    <div style="display: flex;height: 100%;">
+        <div class="{{sharedService.theme}}-settings"
+            style="overflow-y: auto;width: 300px;height: calc(100% - 75px);border-right: 1px solid rgba(0, 0, 0, .12);">
+            <dropdown [selectedPath]="selectedPath" [title]="'Appearance'" (onNavigation)="onNavigation($event)" [options]="appearanceOptions"></dropdown>
+            <dropdown [selectedPath]="selectedPath" [title]="'Account'" (onNavigation)="onNavigation($event)" [options]="[]"></dropdown>
+        </div>
+        <div style="padding: 20px;">
+            <router-outlet></router-outlet>
+        </div>
     </div>
+
+
+
 </div>
 
 <!-- <div style="margin-top: 50px;margin-left: 50px;width: 500px;">

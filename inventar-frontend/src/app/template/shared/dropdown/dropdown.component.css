@@ -22,10 +22,14 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    transition: background 100ms;
+    transition: background 300ms;
 }
 
 .dropdown-option:hover {
+    background: rgba(0, 0, 0, .12);
+}
+
+.selected-option {
     background: rgba(0, 0, 0, .12);
 }
 

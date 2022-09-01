@@ -25,7 +25,7 @@ export class SideBarComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.navigation?.forEach((item: MenuItem) => {
-      if (item.link === window.location.pathname) {
+      if (item.link === window.location.pathname || window.location.pathname.includes(item.link)) {
         setTimeout(() => {
           this.animateSelectedOption(this.navigation.indexOf(item));
         }, 0)

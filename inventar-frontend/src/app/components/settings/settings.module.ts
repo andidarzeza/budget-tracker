@@ -7,6 +7,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SettingsRoutingModule } from './settings-routing.module';
 import { DynamicDropdownModule } from './dynamic-dropdown/dynamic-dropdown.module';
 import { DropdownModule } from 'src/app/template/shared/dropdown/dropdown.module';
+import { ThemeModule } from './theme/theme.module';
+import { DarkModeModule } from './dark-mode/dark-mode.module';
+import { LanguageModule } from './language/language.module';
 
 
 @NgModule({
@@ -18,7 +21,10 @@ import { DropdownModule } from 'src/app/template/shared/dropdown/dropdown.module
     MatCardModule,
     DynamicDropdownModule,
     MatSlideToggleModule,
-    DropdownModule
+    DropdownModule,
+    ThemeModule,
+    DarkModeModule,
+    LanguageModule
   ]
 })
 export class SettingsModule { }

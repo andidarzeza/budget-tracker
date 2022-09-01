@@ -1,4 +1,4 @@
-<div class="dropdown-container {{sharedService.theme}}-table">
+<div class="dropdown-container">
     <div class="dropdown-title {{sharedService.theme + '-title'}}" (click)="showOptions = !showOptions">
         <span>
             {{title}}
@@ -9,7 +9,7 @@
         </mat-icon>
     </div>
     <div class="dropdown-options {{sharedService.theme + '-title'}}" *ngIf="showOptions" [@slideDownUp] [style.height.px]="options.length * 38">
-        <div class="dropdown-option" *ngFor="let option of options">
+        <div (click)="navigate(option.path)" class="dropdown-option" [ngClass]="{'selected-option': selectedPath == option.path}" *ngFor="let option of options">
             <mat-icon class="{{sharedService.theme}}-icon">
                 {{option.icon}}
             </mat-icon>
