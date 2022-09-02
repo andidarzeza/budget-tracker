@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Chart } from 'chart.js';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { ConfigurationService } from './configuration.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +13,11 @@ export class SharedService {
   public darkMode: boolean = true;
   public isSpinnerEnabled: boolean = true;
   public mobileView: boolean = false;
-  private totalRequests: number = 0;
   themeSubscribable = this.dataSource.asObservable();
 
-  constructor() { 
+  constructor(
+    private configurationService: ConfigurationService
+  ) { 
     this.mobileView = window.innerWidth <= 600;
     this.listenForResizeEvent();
   }
@@ -37,8 +39,8 @@ export class SharedService {
     return (Date.now() - new Date(entity?.lastModifiedDate).getTime() < 5000) ? 'animate-pulse' : '';
   }
 
-  changeTheme(darkMode: boolean): void {
-    this.darkMode = darkMode;
+  changeTheme(): void {
+    this.darkMode = this.configurationService.configuration.darkMode;
     this.theme = this.darkMode ? 'dark' : 'light';
     this.dataSource.next(this.theme);
   }

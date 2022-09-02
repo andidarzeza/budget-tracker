@@ -75,7 +75,7 @@ export class LoginComponent {
           mergeMap(() => this.configurationSevice.getConfiguration())
         )
         .pipe(
-          map(configuration => this.sharedService.changeTheme(configuration.darkMode)),
+          map(configuration => this.sharedService.changeTheme()),
           mergeMap(() => this.accountService.findAllAccountsSimplified())
         )
         .subscribe((response: any) => {

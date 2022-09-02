@@ -4,4 +4,5 @@ export interface DropdownOption {
     path: string;
     showSwitch?: boolean;
     switchValue?: boolean;
+    onSwitchChange?: any
 }

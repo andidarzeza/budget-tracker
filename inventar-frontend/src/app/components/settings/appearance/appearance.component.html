@@ -1,3 +1,17 @@
-<div>
-    <toggle></toggle>
+<div style="width: calc(100% - 40px);padding: 20px;display: flex;justify-content: space-between;align-items: center;">
+    <div class="{{sharedService.theme + '-title'}}">
+        Theme
+    </div>
+    <div class="{{sharedService.theme + '-title'}}">
+        test
+    </div>
+</div>
+
+<div style="width: calc(100% - 40px);padding: 20px;display: flex;justify-content: space-between;align-items: center;">
+    <div class="{{sharedService.theme + '-title'}}">
+        Dark Mode
+    </div>
+    <div>
+        <toggle [checked]="sharedService.theme == 'dark'" (onValueChange)="changeTheme($event)"></toggle>
+    </div>
 </div>

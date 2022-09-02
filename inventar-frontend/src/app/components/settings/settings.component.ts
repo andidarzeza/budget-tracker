@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IConfiguration } from 'src/app/models/models';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -15,10 +14,7 @@ import { DropdownOption } from 'src/app/template/shared/dropdown/models';
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit, OnDestroy {
-  configuration: IConfiguration = null;
-
-
-  private subject = new Subject();
+  subject = new Subject();
   appearancePath = "/settings/appearance";
   appearanceOptions: DropdownOption[] = [
     {
@@ -31,7 +27,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
       title: 'Dark Mode',
       path: 'dark-mode',
       showSwitch: true,
-      switchValue: true
+      switchValue: this.sharedService.theme == 'dark',
+      onSwitchChange: (value) => {
+        this.changeTheme(value);
+      }
     },
     {
       icon: 'language',
@@ -66,41 +65,36 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   constructor(
     public sharedService: SharedService,
-    private configurationService: ConfigurationService,
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
-    private router: Router
+    private router: Router,
+    private configurationService: ConfigurationService
   ) { }
+  ngOnDestroy(): void {
+    this.subject.next();
+    this.subject.complete();
+  }
 
   ngOnInit(): void {
     this.router.navigate([this.selectedPath]);
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
-    this.configurationService
-      .getConfiguration()
-      .pipe(takeUntil(this.subject))
-      .subscribe((configuration: IConfiguration) => {
-        this.configuration = configuration;
-        this.sharedService.theme = configuration.darkMode ? 'dark' : 'light';
-      });
+    this.sharedService.themeSubscribable.subscribe(theme => {
+      this.appearanceOptions.filter(item => item.title === "Dark Mode")[0].switchValue = theme == 'dark';
+    })
   }
   
-  onNavigation(path: string): void {
-    this.selectedTab = path;
-  }
-  
-  changeTheme(): void {
-    this.configuration.darkMode = !this.configuration.darkMode;
+  changeTheme(value: boolean): void {
+    this.configurationService.configuration.darkMode = value;
     this.configurationService
-      .updateConfiguration(this.configuration)
+      .updateConfiguration()
       .pipe(takeUntil(this.subject))
       .subscribe(() => {
-        this.sharedService.changeTheme(this.configuration.darkMode);
+        this.sharedService.changeTheme();
       });
   }
 
-  ngOnDestroy(): void {
-    this.subject.next();
-    this.subject.complete();
+  onNavigation(path: string): void {
+    this.selectedTab = path;
   }
 }

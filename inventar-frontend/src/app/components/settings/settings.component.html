@@ -19,15 +19,15 @@
         </div>
     </div>
 
-    <div style="display: flex;height: 100%;">
+    <div style="display: flex;height: calc(100% - 75px);">
         <div class="{{sharedService.theme}}-settings"
             style="
             border-radius: 0 0 0 10px;
-            overflow-y: auto;width: 300px;height: calc(100% - 75px);border-right: 1px solid rgba(0, 0, 0, .12);">
+            overflow-y: auto;width: 300px;height: 100%;border-right: 1px solid rgba(0, 0, 0, .12);">
             <dropdown [selectedTab]="selectedTab" [title]="'Appearance'" [path]="appearancePath" (onNavigation)="onNavigation($event)" [options]="appearanceOptions"></dropdown>
             <dropdown [selectedTab]="selectedTab" [title]="'Account'" [path]="accountPath" (onNavigation)="onNavigation($event)" [options]="accountOptions"></dropdown>
         </div>
-        <div style="padding: 20px;">
+        <div style="padding: 20px;width: calc(100% - 300px);">
             <router-outlet></router-outlet>
         </div>
     </div>

@@ -3,8 +3,8 @@
     width: 20px;
     border-radius: 50%;
     top: 50%;
-    left: 2px;
-    transform: translate(0, -50%);
+    /* left: 2px; */
+    transform: translate(2px, -50%);
     position: absolute;
     background: white;
     transition: transform 200ms, left 200ms;
@@ -15,6 +15,7 @@
     width: 40px;
     height: 24px;
     position: relative;
+    cursor: pointer;
     border-radius: 12px;
     transition: background 200ms;
 }
@@ -25,4 +26,15 @@
 
 .toggle-innactive {
     background: rgba(0, 0, 0, .12);
+}
+
+.no-select {
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
 }
