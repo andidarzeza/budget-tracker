@@ -1,14 +1,5 @@
-<!--
-
-<mat-card class="{{sharedService.theme}}-card {{sharedService.theme}}-dashboard-card configuration {{sharedService.theme}}-text" style="margin-top: 0;">
-    <span>Dark Theme</span>
-    <mat-slide-toggle [checked]="sharedService.theme === 'dark'" (change)="changeTheme()"></mat-slide-toggle>
-</mat-card> -->
-
-
-<div class="{{sharedService.theme}}-table"
-    style="width: var(--table-width);height:calc(100% - 104px);margin: auto;margin-top: 20px;box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);border-radius: 10px;">
-    <div class="main-action-container {{sharedService.theme}}-table" style="position: relative;">
+<div class="{{sharedService.theme}}-table settings-table">
+    <div class="main-action-container {{sharedService.theme}}-table">
         <div class="title-container">
             <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">
                 settings
@@ -19,11 +10,8 @@
         </div>
     </div>
 
-    <div style="display: flex;height: calc(100% - 75px);">
-        <div class="{{sharedService.theme}}-settings"
-            style="
-            border-radius: 0 0 0 10px;
-            overflow-y: auto;width: 300px;height: 100%;border-right: 1px solid rgba(0, 0, 0, .12);">
+    <div class="settings-content">
+        <div class="{{sharedService.theme}}-settings settings-menu">
             <dropdown [selectedTab]="selectedTab" [title]="'Appearance'" [path]="appearancePath" (onNavigation)="onNavigation($event)" [options]="appearanceOptions"></dropdown>
             <dropdown [selectedTab]="selectedTab" [title]="'Account'" [path]="accountPath" (onNavigation)="onNavigation($event)" [options]="accountOptions"></dropdown>
         </div>

@@ -81,7 +81,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.navBarService.displayNavBar = true;
     this.sharedService.themeSubscribable.subscribe(theme => {
       this.appearanceOptions.filter(item => item.title === "Dark Mode")[0].switchValue = theme == 'dark';
-    })
+    });
   }
   
   changeTheme(value: boolean): void {

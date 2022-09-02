@@ -13,7 +13,7 @@ export class ToggleComponent implements AfterViewInit, OnChanges {
   private toggleElement;
   constructor() { }
 
-  ngOnChanges(): void {
+  ngOnChanges(): void {    
     this.animateToggle();    
   }
 

@@ -30,6 +30,14 @@
     align-items: center;
 }
 
+.settings-table {
+    width: var(--table-width);
+    height: calc(100% - 104px);
+    margin: auto;
+    margin-top: 20px;
+    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+    border-radius: 10px;
+}
 
 .title-container {
     display: flex;
@@ -47,6 +55,20 @@
     justify-content: space-between;
     align-items: center;
     border-radius: 10px 10px 0 0;
+    position: relative;
+}
+
+.settings-content {
+    display: flex;
+    height: calc(100% - 75px);
+}
+
+.settings-menu {
+    border-radius: 0 0 0 10px;
+    overflow-y: auto;
+    width: 300px;
+    height: 100%;
+    border-right: 1px solid rgba(0, 0, 0, .12);
 }
 
 .title {
