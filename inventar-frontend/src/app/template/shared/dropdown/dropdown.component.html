@@ -1,6 +1,6 @@
 <div class="dropdown-container">
     <div class="dropdown-title {{sharedService.theme + '-title'}}" (click)="showOptions = !showOptions">
-        <span>
+        <span class="dropdown-title-value">
             {{title}}
         </span>
 
@@ -9,13 +9,18 @@
         </mat-icon>
     </div>
     <div class="dropdown-options {{sharedService.theme + '-title'}}" *ngIf="showOptions" [@slideDownUp] [style.height.px]="options.length * 38">
-        <div (click)="navigate(option.path)" class="dropdown-option" [ngClass]="{'selected-option': selectedPath == option.path}" *ngFor="let option of options">
-            <mat-icon class="{{sharedService.theme}}-icon">
-                {{option.icon}}
-            </mat-icon>
-            <span class="option-text">
-                {{option.title}}
-            </span>
+        <div (click)="select(option.path)" class="dropdown-option" [ngClass]="{'selected-option': selectedTab == option.path}" *ngFor="let option of options">
+            <div style="display: flex;align-items: center;">
+                <mat-icon class="{{sharedService.theme}}-icon">
+                    {{option.icon}}
+                </mat-icon>
+                <span class="option-text">
+                    {{option.title}}
+                </span>
+            </div>
+            <div style="margin-right: 10px;display: flex;align-items: center;" *ngIf="option.showSwitch">
+                <toggle></toggle>
+            </div>
         </div>
     </div>
 </div>

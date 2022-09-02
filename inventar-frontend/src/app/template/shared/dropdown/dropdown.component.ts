@@ -13,19 +13,21 @@ import { DropdownOption } from './models';
 export class DropdownComponent {
   showOptions = true;
   @Input() title: string;
-  @Input() selectedPath: string;
+  @Input() selectedTab: string;
   @Input() options: DropdownOption[];
+  @Input() path: string;
   @Output() onNavigation = new EventEmitter();
   constructor(
     public sharedService: SharedService,
     private router: Router
   ) { }
 
-  navigate(path: string): void {
-    if(this.selectedPath != path) {
-      this.router.navigate([path]);
+  select(path: string): void {
+    if(this.selectedTab != path) {
       this.onNavigation.emit(path);
     }
+
+    this.router.navigate([this.path]);
     
   }
 }

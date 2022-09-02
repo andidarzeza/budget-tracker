@@ -1,22 +1,18 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { DarkModeComponent } from './dark-mode/dark-mode.component';
-import { LanguageComponent } from './language/language.component';
+import { AccountComponent } from './account/account.component';
+import { AppearanceComponent } from './appearance/appearance.component';
 import { SettingsComponent } from './settings.component';
-import { ThemeComponent } from './theme/theme.component';
 
 
 const routes: Routes = [{
   path: '', component: SettingsComponent,
   children: [
     {
-      path: 'theme', component: ThemeComponent
+      path: 'appearance', component: AppearanceComponent
     },
     {
-      path: 'dark-mode', component: DarkModeComponent
-    },
-    {
-      path: 'language', component: LanguageComponent
+      path: 'account', component: AccountComponent
     }
   ]
 }];

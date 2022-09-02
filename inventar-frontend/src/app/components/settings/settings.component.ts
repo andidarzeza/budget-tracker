@@ -19,25 +19,50 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
 
   private subject = new Subject();
-
+  appearancePath = "/settings/appearance";
   appearanceOptions: DropdownOption[] = [
     {
       icon: 'color_lens',
       title: 'Theme',
-      path: '/settings/theme'
+      path: 'theme'
     },
     {
       icon: 'nights_stay',
       title: 'Dark Mode',
-      path: '/settings/dark-mode'
+      path: 'dark-mode',
+      showSwitch: true,
+      switchValue: true
     },
     {
       icon: 'language',
       title: 'Language',
-      path: '/settings/language'
+      path: 'language'
     }
   ];
-  selectedPath = this.appearanceOptions[0].path;
+
+  accountPath = "/settings/account";
+  accountOptions: DropdownOption[] = [
+    {
+      icon: 'account_circle',
+      title: 'Account',
+      path: 'account'
+    },
+    {
+      icon: 'supervisor_account',
+      title: 'Profiles',
+      path: 'profiles'
+    },
+    {
+      icon: 'delete_forever',
+      title: 'Delete Account',
+      path: 'delete-account'
+    }
+  ];
+
+
+  selectedPath = this.appearancePath;
+  simplifiedPath = this.selectedPath.split("/")[this.selectedPath.split("/").length - 1];
+  selectedTab = this.appearanceOptions[0].path;
 
   constructor(
     public sharedService: SharedService,
@@ -48,10 +73,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    const settingsPath = localStorage.getItem("setting-path");
-    if(settingsPath) {
-      this.selectedPath = settingsPath;
-    }
     this.router.navigate([this.selectedPath]);
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
@@ -65,8 +86,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
   
   onNavigation(path: string): void {
-    this.selectedPath = path;
-    localStorage.setItem("setting-path", path);
+    this.selectedTab = path;
   }
   
   changeTheme(): void {

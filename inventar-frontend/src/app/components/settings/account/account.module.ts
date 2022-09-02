@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ThemeComponent } from './theme.component';
+import { AccountComponent } from './account.component';
 
 
 
 @NgModule({
-  declarations: [ThemeComponent],
+  declarations: [AccountComponent],
   imports: [
     CommonModule
   ],
   exports: [
-    ThemeComponent
+    AccountComponent
   ]
 })
-export class ThemeModule { }
+export class AccountModule { }

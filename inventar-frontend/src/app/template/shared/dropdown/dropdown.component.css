@@ -23,15 +23,16 @@
     align-items: center;
     cursor: pointer;
     transition: background 300ms;
+    justify-content: space-between;
 }
 
-.dropdown-option:hover {
+/* .dropdown-option:hover {
     background: rgba(0, 0, 0, .12);
-}
+} */
 
-.selected-option {
+/* .selected-option {
     background: rgba(0, 0, 0, .12);
-}
+} */
 
 .option-text {
     margin-left: 7px;
