@@ -57,6 +57,7 @@ export abstract class BaseTable<E> implements OnDestroy {
     }
 
     onSearch(payload: any): void {
+        this.resetData = true;
         this.previousFilters = payload.params;
         this.page = 0;
         this.query();

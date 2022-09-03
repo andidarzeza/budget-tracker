@@ -1,0 +1,11 @@
+<div class="input-container">
+
+    
+    <div class="prefix-icon no-select" *ngIf="showPrefixContainer">
+        <ng-content select="[prefix]"></ng-content>
+    </div>
+    <input type="text" class="input" [ngClass]="{'left-padding': !showPrefixContainer, 'right-padding': !showSuffixContainer}" placeholder="Apple ID">
+    <div class="prefix-icon no-select" *ngIf="showSuffixContainer">
+        <ng-content select="[suffix]"></ng-content>
+    </div>
+</div>

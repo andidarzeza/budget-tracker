@@ -1,0 +1,59 @@
+.input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #d6d6d6;
+    background: white;
+    border-radius: 6px;
+    height: 41px;
+    max-height: 41px;
+}
+
+.input {
+    padding: 10px 15px;
+    padding-left: 0px;
+    padding-right: 0px;
+    outline: none;
+    color: #494949;
+    border: none;
+    width: 300px;
+    background: none;
+    height: calc(100% - 20px);
+    font-size: 14px;
+}
+
+.input-container:focus ~ .input-container{
+    border: 1px solid var(--light);
+    box-shadow: 0 0 0 1px var(--light);
+}
+
+.prefix-icon > mat-icon {
+    color: #494949;
+}
+
+.prefix-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 43px;
+    height: 43px;
+}
+
+.no-select {
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+}
+
+.left-padding {
+    padding-left: 15px;
+}
+
+.right-padding {
+    padding-right: 15px;
+}

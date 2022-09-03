@@ -6,7 +6,7 @@
         <span class="title {{sharedService.theme}}-title">{{tableActionInput?.pageName}}</span>
     </div>
 
-    <div *ngIf="showSearchInput" style="height: 74px;max-height: 74px;"></div>
+    <div *ngIf="showSearchInput" style="height: 66px;max-height: 66px;"></div>
 
     <filter *ngIf="showSearchInput" (onReset)="reset()" (onSearch)="search($event)" [filterOptions]="filterOptions" [@filterAnimation] class="filter"></filter>
 

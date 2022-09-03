@@ -1,6 +1,6 @@
 .body-container {
     overflow: auto;
-    height: calc(100% - 132px);
+    height: calc(100% - 124px);
 }
 
 .table-row {
@@ -9,7 +9,6 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid rgba(0,0,0,.12);
-    /* padding: 3px 0; */
 }
 
 .text-center {
