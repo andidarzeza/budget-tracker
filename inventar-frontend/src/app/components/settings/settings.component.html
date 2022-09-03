@@ -9,6 +9,13 @@
             </span>
         </div>
 
+        <div style="width: 500px;max-width: calc(100% - 350px);">
+            <and-input [placeholder]="'Search'">
+                <mat-icon prefix>search</mat-icon>
+            </and-input>
+        </div>
+        
+
         
 
     </div>
@@ -20,7 +27,7 @@
             <dropdown [selectedTab]="selectedTab" [title]="'Account'" [path]="accountPath"
                 (onNavigation)="onNavigation($event)" [options]="accountOptions"></dropdown>
         </div>
-        <div style="padding: 20px;width: calc(100% - 300px);">
+        <div style="padding: 20px;width: calc(100% - 340px);">
             <router-outlet></router-outlet>
         </div>
     </div>

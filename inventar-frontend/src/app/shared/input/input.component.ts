@@ -1,4 +1,5 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'and-input',
@@ -6,14 +7,16 @@ import { AfterViewInit, Component } from '@angular/core';
   styleUrls: ['./input.component.css']
 })
 export class InputComponent implements AfterViewInit {
-
+  @Input() placeholder = "";
+  inputContainerId = uuidv4();
   showPrefixContainer = true;
   showSuffixContainer = true;
   constructor() { }
 
   ngAfterViewInit(): void {
-    const prefix = document.querySelector("[prefix]");
-    const suffix = document.querySelector("[suffix]");
+    const container = document.getElementById(this.inputContainerId);
+    const prefix = container.querySelector("[prefix]");
+    const suffix = container.querySelector("[suffix]");
     if (prefix) {
       this.showPrefixContainer = true;
     } else {

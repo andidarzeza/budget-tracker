@@ -9,6 +9,7 @@ import { DynamicDropdownModule } from './dynamic-dropdown/dynamic-dropdown.modul
 import { DropdownModule } from 'src/app/template/shared/dropdown/dropdown.module';
 import { AppearanceModule } from './appearance/appearance.module';
 import { AccountModule } from './account/account.module';
+import { InputModule } from 'src/app/shared/input/input.module';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { AccountModule } from './account/account.module';
     MatSlideToggleModule,
     DropdownModule,
     AppearanceModule,
-    AccountModule
+    AccountModule,
+    InputModule
   ]
 })
 export class SettingsModule { }

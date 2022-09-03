@@ -1,6 +1,5 @@
 .input-container {
     display: flex;
-    justify-content: center;
     align-items: center;
     border: 1px solid #d6d6d6;
     background: white;
@@ -16,10 +15,17 @@
     outline: none;
     color: #494949;
     border: none;
-    width: 300px;
     background: none;
     height: calc(100% - 20px);
     font-size: 14px;
+}
+
+.input-width-with-prefix {
+    width: calc(100% - 58px);
+}
+
+.input-width-without-prefix {
+    width: calc(100% - 30px);
 }
 
 .input-container:focus ~ .input-container{
