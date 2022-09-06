@@ -8,6 +8,7 @@ import { ColumnDefinition, ResponseWrapper } from "../models/models";
 import { DialogService } from "../services/dialog.service";
 import { SharedService } from "../services/shared.service";
 import { TableActionInput } from "../shared/base-table/table-actions/TableActionInput";
+import { v4 as uuidv4 } from 'uuid';
 
 export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
 
@@ -15,7 +16,7 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
         public sharedService: SharedService,
         public dialog: DialogService
     ) { }
-
+    tableId: string = uuidv4();
     stopLoading = false;
     resetData: boolean = false;
     abstract createComponent: any;
@@ -41,8 +42,7 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
     abstract delete(id: string): void;
 
     ngAfterViewInit(): void {
-        const elems = document.getElementsByTagName("table-body")[0] as any
-        this.scrollElement = elems?.getElementsByTagName("div")[0] as any;
+        this.scrollElement = document.getElementById(this.tableId);
     }
 
     onQuerySuccess(response: ResponseWrapper): void {
@@ -111,6 +111,10 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
         if (!this.stopLoading) {
             this.page++;
             this.query();
+        } else {
+            console.log('test');
+            
+            const tempIndex = this.currentIndex;
         }
     }
 
@@ -119,7 +123,9 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
             const resu: E[] = this.data.slice((this.currentIndex - 1) * this.size, this.currentIndex * this.size);
             this.currentIndex--;
             this.displayData.splice(this.displayData.length - this.size, this.size);
-            this.displayData = resu.concat(this.displayData);            
+            this.displayData = resu.concat(this.displayData);
+            console.log(this.scrollElement);
+                   
             this.scrollElement.scrollTo({ top: 300 });
         }
     }

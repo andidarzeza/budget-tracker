@@ -5,7 +5,7 @@
     </table-actions>
 
     <table-header [displayedColumns]="displayedColumns"></table-header>
-    <table-body [data]="data" [columnDefinitions]="columnDefinition"
+    <table-body [data]="data" [tableId]="tableId" [columnDefinitions]="columnDefinition"
         (onDeleteConfirmation)="onDeleteConfirmation.emit($event)" (onAddEditForm)="onAddEditForm.emit($event)"
         (onViewDetails)="onViewDetails.emit($event)" (onScroll)="onScroll.emit()" (onTopScroll)="onTopScroll.emit()"></table-body>
     <table-message [total]="data?.length"></table-message>

@@ -2,7 +2,6 @@ import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/
 import { ColumnDefinition } from 'src/app/models/models';
 import { SharedService } from 'src/app/services/shared.service';
 import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
-import {v4 as uuidv4} from 'uuid';
 
 @Component({
   selector: 'table-body',
@@ -13,6 +12,7 @@ export class TableBodyComponent implements AfterViewInit {
 
   @Input() columnDefinitions: ColumnDefinition[];
   @Input() data: any[];
+  @Input() tableId: string;
 
   @Output() onDeleteConfirmation = new EventEmitter();
   @Output() onAddEditForm = new EventEmitter();
@@ -22,7 +22,6 @@ export class TableBodyComponent implements AfterViewInit {
   menuX:number=100
   menuY:number=0
 
-  tableId = uuidv4();
   constructor(
     public sharedService: SharedService
   ) { }
