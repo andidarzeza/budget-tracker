@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
-import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from 'src/environments/environment';
+import { PAGE_SIZE } from 'src/environments/environment';
 import { Subject } from 'rxjs';
 import { Sort } from '@angular/material/sort';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
@@ -22,7 +22,6 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 })
 export class HistoryComponent implements OnInit, OnDestroy {
 
-  public pageSizeOptions: number[] = PAGE_SIZE_OPTIONS;
   public page: number = 0;
   public size: number = PAGE_SIZE;
   public totalItems: number = 0;

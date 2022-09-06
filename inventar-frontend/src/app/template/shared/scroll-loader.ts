@@ -13,6 +13,14 @@ export class ScrollLoader {
             callable.call();
           }
         });
+      },
+      onTopScroll: (callable: any) => {
+        this.element.addEventListener('scroll', function (event) {
+          var elem = event.target;          
+          if (elem.scrollTop == 0) {            
+            callable.call();
+          }
+        });
       }
     }
   }

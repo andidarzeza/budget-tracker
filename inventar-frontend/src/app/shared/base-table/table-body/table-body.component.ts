@@ -18,6 +18,7 @@ export class TableBodyComponent implements AfterViewInit {
   @Output() onAddEditForm = new EventEmitter();
   @Output() onViewDetails = new EventEmitter();
   @Output() onScroll = new EventEmitter();
+  @Output() onTopScroll = new EventEmitter();
   menuX:number=100
   menuY:number=0
 
@@ -31,9 +32,13 @@ export class TableBodyComponent implements AfterViewInit {
       const element = document.getElementById(this.tableId);
       if (element) {
         const scrollLoader = new ScrollLoader(element);
-        scrollLoader.listenForScrollChange().onScroll(() => {          
+        const listenable = scrollLoader.listenForScrollChange();
+        listenable.onScroll(() => {          
           this.onScroll.emit();
         });
+        listenable.onTopScroll(() => {
+          this.onTopScroll.emit();
+        })
       }
     }, 100);
   }

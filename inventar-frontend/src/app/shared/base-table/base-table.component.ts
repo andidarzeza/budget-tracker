@@ -19,7 +19,8 @@ export class BaseTableComponent implements OnChanges{
   @Output() onAddEditForm = new EventEmitter();
   @Output() onViewDetails = new EventEmitter();
   @Output() onScroll = new EventEmitter();
-
+  @Output() onTopScroll = new EventEmitter();
+  
   @Input() tableActionInput: TableActionInput;
   @Input() filterOptions: FilterOptions[];
 
