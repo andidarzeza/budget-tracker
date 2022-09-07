@@ -83,14 +83,14 @@ export class ExpensesComponent extends BaseTable<Expense> implements EntityOpera
   query(): void {
     this.expenseService
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
-      .pipe(takeUntil(this._subject))
+      .pipe(takeUntil(this.subject))
       .subscribe((res: ResponseWrapper) => this.onQuerySuccess(res));
   }
 
   delete(id: string): void {
     this.expenseService
       .delete(id)
-      .pipe(takeUntil(this._subject))
+      .pipe(takeUntil(this.subject))
       .subscribe(() => {
         this.accountService.findOne(this.accountService.getAccount()).subscribe();
         this.resetAndQuery();

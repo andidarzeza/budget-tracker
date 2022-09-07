@@ -70,7 +70,7 @@ export class CategoriesComponent extends BaseTable<Category> implements EntityOp
   query(): void {
     this.categoriesService
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType).append("account", this.accountService?.getAccount()))
-      .pipe(takeUntil(this._subject))
+      .pipe(takeUntil(this.subject))
       .subscribe((res: ResponseWrapper) => {
         this.stopLoading = res.data.length < this.size;
         this.data = this.resetData ? res?.data : this.data.concat(res?.data);
@@ -81,7 +81,7 @@ export class CategoriesComponent extends BaseTable<Category> implements EntityOp
   delete(id: string): void {
     this.categoriesService
       .delete(id)
-      .pipe(takeUntil(this._subject))
+      .pipe(takeUntil(this.subject))
       .subscribe(() => {
         this.query();
         this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);

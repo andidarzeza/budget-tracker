@@ -76,7 +76,7 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
   private getCategories(): void {
     this.categoryService
       .findAll(buildParams(0, 9999).append("categoryType", CategoryType.INCOME).append("account", this.accountService?.getAccount()))
-      .pipe(takeUntil(this._subject))
+      .pipe(takeUntil(this.subject))
       .subscribe((res: ResponseWrapper) => {
         const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
         const index = this.filterOptions.indexOf(item);
@@ -91,14 +91,14 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
   query(): void {
     this.incomeService
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
-      .pipe(takeUntil(this._subject))
+      .pipe(takeUntil(this.subject))
       .subscribe((res: ResponseWrapper) => this.onQuerySuccess(res));
   }
 
   delete(id: string): void {
     this.incomeService
       .delete(id)
-      .pipe(takeUntil(this._subject))
+      .pipe(takeUntil(this.subject))
       .subscribe(() => {
         this.accountService.findOne(this.accountService.getAccount()).subscribe();
         this.resetAndQuery();

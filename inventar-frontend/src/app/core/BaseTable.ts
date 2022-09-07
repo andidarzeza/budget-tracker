@@ -16,28 +16,36 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
         public sharedService: SharedService,
         public dialog: DialogService
     ) { }
-    tableId: string = uuidv4();
-    stopLoading = false;
-    resetData: boolean = false;
-    abstract createComponent: any;
 
-    data: E[] = [];
-    displayData: E[] = [];
-    columnDefinition: ColumnDefinition[]
+    tableId: string = uuidv4();
     entityViewId: string;
+    
+    stopLoading: boolean = false;
+    resetData: boolean = false;
     isSidenavOpened: boolean = false;
-    @ViewChild('drawer') drawer: MatSidenav;
+
     page: number = 0;
     currentIndex: number = 0;
     size: number = PAGE_SIZE;
     totalItems: number = 0;
-    _subject = new Subject();
+
+    data: E[] = [];
+    displayData: E[] = [];
+    columnDefinition: ColumnDefinition[];
+    
+    
+    @ViewChild('drawer') drawer: MatSidenav;
+    
+    
+    
+    subject = new Subject();
     previousFilters: HttpParams;
     defaultSort: string = "createdTime,desc";
     sort: string = this.defaultSort;
     private scrollElement: any;
-    abstract tableActionInput: TableActionInput;
 
+    abstract createComponent: any;
+    abstract tableActionInput: TableActionInput;
     abstract query(): void;
     abstract delete(id: string): void;
 
@@ -111,10 +119,6 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
         if (!this.stopLoading) {
             this.page++;
             this.query();
-        } else {
-            console.log('test');
-            
-            const tempIndex = this.currentIndex;
         }
     }
 
@@ -123,16 +127,14 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
             const resu: E[] = this.data.slice((this.currentIndex - 1) * this.size, this.currentIndex * this.size);
             this.currentIndex--;
             this.displayData.splice(this.displayData.length - this.size, this.size);
-            this.displayData = resu.concat(this.displayData);
-            console.log(this.scrollElement);
-                   
+            this.displayData = resu.concat(this.displayData);                   
             this.scrollElement.scrollTo({ top: 300 });
         }
     }
 
     ngOnDestroy(): void {
-        this._subject.next();
-        this._subject.complete();
+        this.subject.next();
+        this.subject.complete();
     }
 
 }

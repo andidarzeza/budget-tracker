@@ -19,27 +19,19 @@ export class TableBodyComponent implements AfterViewInit {
   @Output() onViewDetails = new EventEmitter();
   @Output() onScroll = new EventEmitter();
   @Output() onTopScroll = new EventEmitter();
-  menuX:number=100
-  menuY:number=0
 
   constructor(
     public sharedService: SharedService
   ) { }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      const element = document.getElementById(this.tableId);
-      if (element) {
-        const scrollLoader = new ScrollLoader(element);
-        const listenable = scrollLoader.listenForScrollChange();
-        listenable.onScroll(() => {          
-          this.onScroll.emit();
-        });
-        listenable.onTopScroll(() => {
-          this.onTopScroll.emit();
-        })
-      }
-    }, 100);
+    const element = document.getElementById(this.tableId);
+    if (element) {
+      const scrollLoader = new ScrollLoader(element);
+      const listenable = scrollLoader.listenForScrollChange();
+      listenable.onScroll(() => this.onScroll.emit());
+      listenable.onTopScroll(() => this.onTopScroll.emit());
+    }
   }
 
   openDeleteConfirmDialog(id: string): void {
