@@ -3,18 +3,24 @@ import { AfterViewInit, OnDestroy, ViewChild } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
 import { Subject } from "rxjs";
-import { PAGE_SIZE } from "src/environments/environment";
+import { PAGE_SIZE, TOASTER_CONFIGURATION } from "src/environments/environment";
 import { ColumnDefinition, ResponseWrapper } from "../models/models";
 import { DialogService } from "../services/dialog.service";
 import { SharedService } from "../services/shared.service";
 import { TableActionInput } from "../shared/base-table/table-actions/TableActionInput";
 import { v4 as uuidv4 } from 'uuid';
+import { takeUntil } from "rxjs/operators";
+import { ToastrService } from "ngx-toastr";
+import { AccountService } from "../services/account.service";
 
 export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
 
     public constructor(
-        public sharedService: SharedService,
-        public dialog: DialogService
+        protected sharedService: SharedService,
+        protected dialog: DialogService,
+        protected entityService: any,
+        protected toaster: ToastrService,
+        protected accountService: AccountService
     ) { }
 
     tableId: string = uuidv4();
@@ -47,7 +53,7 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
     abstract createComponent: any;
     abstract tableActionInput: TableActionInput;
     abstract query(): void;
-    abstract delete(id: string): void;
+    // abstract delete(id: string): void;
 
     ngAfterViewInit(): void {
         this.scrollElement = document.getElementById(this.tableId);
@@ -131,6 +137,17 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
             this.scrollElement.scrollTo({ top: 300 });
         }
     }
+
+    delete(id: string): void {
+        this.entityService
+          .delete(id)
+          .pipe(takeUntil(this.subject))
+          .subscribe(() => {
+            this.accountService.findOne(this.accountService.getAccount()).subscribe();
+            this.resetAndQuery();
+            this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
+          })
+      }
 
     ngOnDestroy(): void {
         this.subject.next();

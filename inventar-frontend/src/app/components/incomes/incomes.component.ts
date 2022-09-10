@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
-import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddIncomeComponent } from './add-income/add-income.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
@@ -11,20 +10,19 @@ import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/fi
 import { buildParams } from 'src/app/utils/param-bulder';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
-import { EntityOperation } from 'src/app/core/EntityOperation';
 import { BaseTable } from 'src/app/core/BaseTable';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 
+
 @Component({
   selector: 'app-incomes',
   templateUrl: './incomes.component.html',
   styleUrls: ['./incomes.component.css']
 })
-export class IncomesComponent extends BaseTable<Income> implements EntityOperation<Income> {
-
+export class IncomesComponent extends BaseTable<Income>{
 
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("INCOME");
 
@@ -54,19 +52,19 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
 
   constructor(
     public sharedService: SharedService,
-    private incomeService: IncomeService,
+    public incomeService: IncomeService,
     public dialog: DialogService,
-    private toaster: ToastrService,
-    private categoryService: CategoriesService,
-    private sideBarService: SideBarService,
-    private navBarService: NavBarService,
+    public toaster: ToastrService,
+    public categoryService: CategoriesService,
+    public sideBarService: SideBarService,
+    public navBarService: NavBarService,
     public accountService: AccountService,
     public columnDefinitionService: ColumnDefinitionService
   ) {
-    super(sharedService, dialog);
+    super(sharedService, dialog, incomeService, toaster, accountService);
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
     this.getCategories();
@@ -93,17 +91,6 @@ export class IncomesComponent extends BaseTable<Income> implements EntityOperati
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this.subject))
       .subscribe((res: ResponseWrapper) => this.onQuerySuccess(res));
-  }
-
-  delete(id: string): void {
-    this.incomeService
-      .delete(id)
-      .pipe(takeUntil(this.subject))
-      .subscribe(() => {
-        this.accountService.findOne(this.accountService.getAccount()).subscribe();
-        this.resetAndQuery();
-        this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
-      });
   }
 
 }

@@ -93,19 +93,19 @@ app-date-picker {
 }
 
 /* width */
-// table-body>div::-webkit-scrollbar {
-//   width: 2px;
-// }
+table-body>div::-webkit-scrollbar {
+  width: 0px;
+}
 
 /* Track */
-// table-body>div::-webkit-scrollbar-track {
-//   background: transparent;
-// }
+table-body>div::-webkit-scrollbar-track {
+  background: transparent;
+}
 
 /* Handle on hover */
-// table-body>div::-webkit-scrollbar-thumb:hover {
-//   background: transparent;
-// }
+table-body>div::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
 
 /* position */
 

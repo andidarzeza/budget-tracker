@@ -1,14 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
-import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { DialogService } from 'src/app/services/dialog.service';
 import { takeUntil } from 'rxjs/operators';
 import { Category, CategoryType, ColumnDefinition, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
-import { EntityOperation } from 'src/app/core/EntityOperation';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { AccountService } from 'src/app/services/account.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
@@ -22,7 +20,7 @@ import { ColumnDefinitionService } from 'src/app/core/services/column-definition
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent extends BaseTable<Category> implements EntityOperation<Category>, OnInit, OnDestroy {
+export class CategoriesComponent extends BaseTable<Category> implements OnInit, OnDestroy {
   
   createComponent = AddCategoryComponent;
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("CATEGORY");
@@ -50,15 +48,15 @@ export class CategoriesComponent extends BaseTable<Category> implements EntityOp
 
   constructor(
     public sharedService: SharedService,
-    private categoriesService: CategoriesService,
+    public categoriesService: CategoriesService,
     public dialog: DialogService, 
-    private toaster: ToastrService,
+    public toaster: ToastrService,
     public sideBarService: SideBarService,
     public accountService: AccountService,
     public navBarService: NavBarService,
     public columnDefinitionService: ColumnDefinitionService
   ) {
-    super(sharedService, dialog);
+    super(sharedService, dialog, categoriesService, toaster, accountService);
   }
 
   ngOnInit(): void {
@@ -75,16 +73,6 @@ export class CategoriesComponent extends BaseTable<Category> implements EntityOp
         this.stopLoading = res.data.length < this.size;
         this.data = this.resetData ? res?.data : this.data.concat(res?.data);
         this.totalItems = res?.count;
-      });
-  }
-
-  delete(id: string): void {
-    this.categoriesService
-      .delete(id)
-      .pipe(takeUntil(this.subject))
-      .subscribe(() => {
-        this.query();
-        this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
       });
   }
 

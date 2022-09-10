@@ -153,5 +153,6 @@ export type ColumnType = "string" | "double" | "date" | "actions" | "currency";
 
 export interface ColumnDefinition {
     column: string;
-    type: ColumnType
+    label: string;
+    type: ColumnType;
 }

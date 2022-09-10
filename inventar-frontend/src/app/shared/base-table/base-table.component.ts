@@ -36,7 +36,7 @@ export class BaseTableComponent implements OnChanges{
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes.columnDefinition) {
-      this.displayedColumns = this.columnDefinition.map(columnDefinition => columnDefinition.column);
+      this.displayedColumns = this.columnDefinition.map(columnDefinition => columnDefinition.label);
     }
   }
 

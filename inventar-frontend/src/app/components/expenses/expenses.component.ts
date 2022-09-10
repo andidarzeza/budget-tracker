@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from 'src/app/services/shared.service';
-import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { takeUntil } from 'rxjs/operators';
@@ -11,7 +10,6 @@ import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/fi
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
-import { EntityOperation } from 'src/app/core/EntityOperation';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
@@ -23,7 +21,7 @@ import { BaseTable } from 'src/app/core/BaseTable';
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css']
 })
-export class ExpensesComponent extends BaseTable<Expense> implements EntityOperation<Expense> {
+export class ExpensesComponent extends BaseTable<Expense> {
   createComponent = AddExpenseComponent;
 
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("EXPENSE");
@@ -56,13 +54,13 @@ export class ExpensesComponent extends BaseTable<Expense> implements EntityOpera
     private expenseService: ExpenseService,
     public dialog: DialogService,
     private categoryService: CategoriesService,
-    private toaster: ToastrService,
-    public accountService: AccountService,
+    protected toaster: ToastrService,
+    protected accountService: AccountService,
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
     public columnDefinitionService: ColumnDefinitionService
   ) {
-    super(sharedService, dialog);
+    super(sharedService, dialog, expenseService, toaster, accountService);
   }
 
   ngOnInit(): void {
@@ -85,17 +83,6 @@ export class ExpensesComponent extends BaseTable<Expense> implements EntityOpera
       .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this.subject))
       .subscribe((res: ResponseWrapper) => this.onQuerySuccess(res));
-  }
-
-  delete(id: string): void {
-    this.expenseService
-      .delete(id)
-      .pipe(takeUntil(this.subject))
-      .subscribe(() => {
-        this.accountService.findOne(this.accountService.getAccount()).subscribe();
-        this.resetAndQuery();
-        this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
-      })
   }
 
 }
