@@ -15,6 +15,7 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { BaseTable } from 'src/app/core/BaseTable';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-expenses',
@@ -22,6 +23,7 @@ import { BaseTable } from 'src/app/core/BaseTable';
   styleUrls: ['./expenses.component.css']
 })
 export class ExpensesComponent extends BaseTable<Expense> {
+  
   createComponent = AddExpenseComponent;
 
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("EXPENSE");
@@ -78,11 +80,8 @@ export class ExpensesComponent extends BaseTable<Expense> {
     this.query();
   }
 
-  query(): void {
-    this.expenseService
-      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
-      .pipe(takeUntil(this.subject))
-      .subscribe((res: ResponseWrapper) => this.onQuerySuccess(res));
+  getQueryParams(): HttpParams {
+    return buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount());
   }
 
 }

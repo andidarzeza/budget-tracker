@@ -1,9 +1,11 @@
 .light {
-    background: var(--light);   
+    background: var(--light);
+    transition: background var(--background-animation-timing);
 }
 
 .light-body {
     background: white;
+    transition: background var(--background-animation-timing);
 }
 
 .light-sb9:before {
@@ -45,6 +47,7 @@
 
 .light-table {
     background: white;
+    transition: background var(--background-animation-timing) !important;
 }
 
 .light-text {
@@ -72,6 +75,7 @@
     background-color: white;
     border-radius: 10px;
     overflow: auto;
+    transition: background var(--background-animation-timing);
     margin: auto;
     position: relative;
     margin-top: 20px;
@@ -80,6 +84,7 @@
 
 .light-settings {
     background: #F8F8F8;
+    transition: background var(--background-animation-timing);
 }
 
 .light-mobile-action-menu {

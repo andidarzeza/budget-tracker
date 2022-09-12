@@ -25,24 +25,10 @@ import { BaseTableModule } from 'src/app/shared/base-table/base-table.module';
   imports: [
     CommonModule,
     HistoryRoutingModule,
-    MatDialogModule,
-    MatIconModule,
-    MatTableModule,
-    MatSortModule,
     SharedModule,
-    MatPaginatorModule,
-    MatButtonModule,
     HistoryDetailsModule,
     BaseTableModule,
     MatSidenavModule,
-    MatSelectModule,
-    MatOptionModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatOptionModule,
-    MatNativeDateModule,
-    MatMenuModule
   ]
 })
 export class HistoryModule { }

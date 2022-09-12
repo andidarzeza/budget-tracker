@@ -52,8 +52,7 @@
 .sidebar {
     width: 76px;
     z-index: 3;
-    transition: width 300ms;
-    transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: width 300ms cubic-bezier(0.25, 0.8, 0.25, 1), background var(--background-animation-timing);
 }
 
 .custom-icon-size {

@@ -14,13 +14,17 @@ import { BaseTable } from 'src/app/core/BaseTable';
 import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-categories',
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent extends BaseTable<Category> implements OnInit, OnDestroy {
+export class CategoriesComponent extends BaseTable<Category>{
+  getQueryParams(): HttpParams {
+    return buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType).append("account", this.accountService?.getAccount())
+  }
   
   createComponent = AddCategoryComponent;
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("CATEGORY");
@@ -63,17 +67,6 @@ export class CategoriesComponent extends BaseTable<Category> implements OnInit, 
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
     this.query();
-  }
-
-  query(): void {
-    this.categoriesService
-      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType).append("account", this.accountService?.getAccount()))
-      .pipe(takeUntil(this.subject))
-      .subscribe((res: ResponseWrapper) => {
-        this.stopLoading = res.data.length < this.size;
-        this.data = this.resetData ? res?.data : this.data.concat(res?.data);
-        this.totalItems = res?.count;
-      });
   }
 
 }

@@ -4,8 +4,7 @@
         <app-expense-detail *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()">
         </app-expense-detail>
     </mat-drawer>
-    <!-- {{displayData?.length}}
-    {{data?.length}} -->
+    
     <base-table [data]="displayData" [columnDefinition]="columnDefinition"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)"
         (onAddEditForm)="openAddEditForm($event)"

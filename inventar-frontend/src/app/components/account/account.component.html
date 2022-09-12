@@ -1,6 +1,6 @@
 
 
-<div class="light-dashboard-card" style="border-radius: 10px;min-height: 230px;background:white;width: 440px;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);padding: 20px;">
+<div class="light-dashboard-card {{sharedService.theme}}-table" style="border-radius: 10px;min-height: 230px;width: 440px;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);padding: 20px;">
   <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation]
                 *ngIf="showSpinner" style="position: absolute;top:0;left:0;z-index: 2;"></mat-progress-bar>  
   <div style="padding-bottom:20px;width: 100%;display: flex;justify-content: center;align-items: center;">
@@ -10,14 +10,14 @@
     </div>
 
     <div matRipple class="account" *ngFor="let account of accounts" (click)="selectAccount(account)">
-        <div>
+        <div class="{{sharedService.theme}}-title">
 
             {{account.title}}
         </div>
 
         <div>
             <button (click)="$event.stopPropagation()" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-                <mat-icon>more_vert</mat-icon>
+                <mat-icon class="{{sharedService.theme}}-title">more_vert</mat-icon>
             </button>
               <mat-menu #menu="matMenu">
                 <button mat-menu-item (click)="editAccount(account)">

@@ -1,5 +1,5 @@
 import { HttpParams } from "@angular/common/http";
-import { AfterViewInit, OnDestroy, ViewChild } from "@angular/core";
+import { AfterViewInit, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
 import { Subject } from "rxjs";
@@ -13,7 +13,7 @@ import { takeUntil } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
 import { AccountService } from "../services/account.service";
 
-export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
+export abstract class BaseTable<E> implements OnDestroy, AfterViewInit, OnInit {
 
     public constructor(
         protected sharedService: SharedService,
@@ -22,10 +22,13 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
         protected toaster: ToastrService,
         protected accountService: AccountService
     ) { }
+    ngOnInit(): void {
+        console.log("on init 2");
+    }
 
     tableId: string = uuidv4();
     entityViewId: string;
-    
+
     stopLoading: boolean = false;
     resetData: boolean = false;
     isSidenavOpened: boolean = false;
@@ -34,26 +37,25 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
     currentIndex: number = 0;
     size: number = PAGE_SIZE;
     totalItems: number = 0;
-
     data: E[] = [];
     displayData: E[] = [];
     columnDefinition: ColumnDefinition[];
-    
-    
     @ViewChild('drawer') drawer: MatSidenav;
-    
-    
-    
     subject = new Subject();
     previousFilters: HttpParams;
-    defaultSort: string = "createdTime,desc";
-    sort: string = this.defaultSort;
+    sort: string;
     private scrollElement: any;
 
     abstract createComponent: any;
     abstract tableActionInput: TableActionInput;
-    abstract query(): void;
-    // abstract delete(id: string): void;
+    abstract getQueryParams(): HttpParams;
+
+    query(): void {
+        this.entityService
+            .findAll(this.getQueryParams())
+            .pipe(takeUntil(this.subject))
+            .subscribe((res: ResponseWrapper) => this.onQuerySuccess(res));
+    }
 
     ngAfterViewInit(): void {
         this.scrollElement = document.getElementById(this.tableId);
@@ -61,14 +63,14 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
 
     onQuerySuccess(response: ResponseWrapper): void {
         this.data = this.resetData ? response.data : this.data.concat(response?.data);
-        if(this.resetData) {
+        if (this.resetData) {
             this.displayData = response?.data;
         } else {
             if (this.displayData.length >= 100) {
                 this.displayData.splice(0, this.size);
                 this.currentIndex++;
                 this.displayData = this.displayData.concat(response.data);
-                
+
                 const num = this.scrollElement.clientHeight;
                 const result = (num * 5) + 200;
                 this.scrollElement.scrollTo({ top: result });
@@ -76,7 +78,7 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
                 this.displayData = this.displayData.concat(response.data);
             }
         }
-        
+
         this.stopLoading = response.data.length < this.size;
         this.resetData = false;
         this.totalItems = response?.count;
@@ -91,7 +93,6 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
     }
 
     announceSortChange(sort: Sort): void {
-        this.sort = sort.direction ? `${sort.active},${sort.direction}` : this.defaultSort;
         this.query();
     }
 
@@ -133,21 +134,21 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
             const resu: E[] = this.data.slice((this.currentIndex - 1) * this.size, this.currentIndex * this.size);
             this.currentIndex--;
             this.displayData.splice(this.displayData.length - this.size, this.size);
-            this.displayData = resu.concat(this.displayData);                   
+            this.displayData = resu.concat(this.displayData);
             this.scrollElement.scrollTo({ top: 300 });
         }
     }
 
     delete(id: string): void {
         this.entityService
-          .delete(id)
-          .pipe(takeUntil(this.subject))
-          .subscribe(() => {
-            this.accountService.findOne(this.accountService.getAccount()).subscribe();
-            this.resetAndQuery();
-            this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
-          })
-      }
+            .delete(id)
+            .pipe(takeUntil(this.subject))
+            .subscribe(() => {
+                this.accountService.findOne(this.accountService.getAccount()).subscribe();
+                this.resetAndQuery();
+                this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
+            })
+    }
 
     ngOnDestroy(): void {
         this.subject.next();

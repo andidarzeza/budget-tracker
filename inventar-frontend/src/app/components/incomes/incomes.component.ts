@@ -15,6 +15,7 @@ import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
+import { HttpParams } from '@angular/common/http';
 
 
 @Component({
@@ -64,7 +65,11 @@ export class IncomesComponent extends BaseTable<Income>{
     super(sharedService, dialog, incomeService, toaster, accountService);
   }
 
-  ngOnInit(): void {    
+  getQueryParams(): HttpParams {
+    return buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount());
+  }
+  
+  ngOnInit(): void {        
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
     this.getCategories();
@@ -84,13 +89,6 @@ export class IncomesComponent extends BaseTable<Income>{
           valueBy: "id"
         }
       });
-  }
-
-  query(): void {
-    this.incomeService
-      .findAll(buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount()))
-      .pipe(takeUntil(this.subject))
-      .subscribe((res: ResponseWrapper) => this.onQuerySuccess(res));
   }
 
 }
