@@ -20,7 +20,7 @@ import { HttpParams } from '@angular/common/http';
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent extends BaseTable<History>{
-
+  sort: string = "date,desc";
   createComponent: any;
 
 

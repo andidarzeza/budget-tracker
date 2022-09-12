@@ -1,5 +1,5 @@
 import { HttpParams } from "@angular/common/http";
-import { AfterViewInit, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { AfterViewInit, OnDestroy, ViewChild } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
 import { Subject } from "rxjs";
@@ -13,7 +13,7 @@ import { takeUntil } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
 import { AccountService } from "../services/account.service";
 
-export abstract class BaseTable<E> implements OnDestroy, AfterViewInit, OnInit {
+export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
 
     public constructor(
         protected sharedService: SharedService,
@@ -22,9 +22,6 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit, OnInit {
         protected toaster: ToastrService,
         protected accountService: AccountService
     ) { }
-    ngOnInit(): void {
-        console.log("on init 2");
-    }
 
     tableId: string = uuidv4();
     entityViewId: string;
@@ -43,7 +40,7 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit, OnInit {
     @ViewChild('drawer') drawer: MatSidenav;
     subject = new Subject();
     previousFilters: HttpParams;
-    sort: string;
+    abstract sort: string;
     private scrollElement: any;
 
     abstract createComponent: any;

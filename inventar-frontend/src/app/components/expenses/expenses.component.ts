@@ -25,7 +25,7 @@ import { HttpParams } from '@angular/common/http';
 export class ExpensesComponent extends BaseTable<Expense> {
   
   createComponent = AddExpenseComponent;
-
+  sort: string = "createdTime,desc";
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("EXPENSE");
   public tableActionInput: TableActionInput = {
     pageName: "Expenses",

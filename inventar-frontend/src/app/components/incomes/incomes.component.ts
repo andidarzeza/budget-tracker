@@ -24,6 +24,7 @@ import { HttpParams } from '@angular/common/http';
   styleUrls: ['./incomes.component.css']
 })
 export class IncomesComponent extends BaseTable<Income>{
+  sort: string = "createdTime,desc";
 
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("INCOME");
 
