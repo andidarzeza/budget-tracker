@@ -13,6 +13,8 @@ export class TableBodyComponent implements AfterViewInit {
   @Input() columnDefinitions: ColumnDefinition[];
   @Input() data: any[];
   @Input() tableId: string;
+  @Input() displayEditAction: boolean;
+  @Input() displayDeleteAction: boolean;
 
   @Output() onDeleteConfirmation = new EventEmitter();
   @Output() onAddEditForm = new EventEmitter();

@@ -24,6 +24,8 @@ export class BaseTableComponent implements OnChanges{
   @Input() tableActionInput: TableActionInput;
   @Input() filterOptions: FilterOptions[];
   @Input() tableId: string;
+  @Input() displayEditAction: boolean;
+  @Input() displayDeleteAction: boolean;
 
   @Output() onRefresh: EventEmitter<any> = new EventEmitter();
   @Output() onOpenDialog: EventEmitter<any> = new EventEmitter();

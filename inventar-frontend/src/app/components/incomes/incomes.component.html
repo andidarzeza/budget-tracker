@@ -9,6 +9,7 @@
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
         (onViewDetails)="viewDetails($event)" (onScroll)="onScroll()" [filterOptions]="filterOptions"
         [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="resetAndQuery()"
-        (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"></base-table>
+        (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
+        [displayEditAction]="true" [displayDeleteAction]="true"></base-table>
 
 </mat-drawer-container>

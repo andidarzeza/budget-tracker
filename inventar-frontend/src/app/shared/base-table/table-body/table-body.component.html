@@ -17,6 +17,8 @@
 
                 <ng-container *ngSwitchCase="'actions'">
                     <app-record-actions (openViewDrawer)="viewDetails(element?.id)"
+                        [displayDeleteAction]="displayDeleteAction"
+                        [displayEditAction]="displayEditAction"
                         (openEditForm)="openAddEditForm(element)"
                         (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></app-record-actions>
                 </ng-container>
