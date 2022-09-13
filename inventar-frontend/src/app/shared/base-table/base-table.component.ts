@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { inOutSlide } from 'src/app/animations';
 import { ColumnDefinition } from 'src/app/models/models';
 import { SharedService } from 'src/app/services/shared.service';
 import { FilterOptions } from './table-actions/filter/filter.models';
@@ -7,7 +8,8 @@ import { TableActionInput } from './table-actions/TableActionInput';
 @Component({
   selector: 'base-table',
   templateUrl: './base-table.component.html',
-  styleUrls: ['./base-table.component.css']
+  styleUrls: ['./base-table.component.css'],
+  animations: [inOutSlide]
 })
 export class BaseTableComponent implements OnChanges{
 
@@ -31,7 +33,7 @@ export class BaseTableComponent implements OnChanges{
   @Output() onOpenDialog: EventEmitter<any> = new EventEmitter();
   @Output() onSearch: EventEmitter<any> = new EventEmitter();
   @Output() onReset: EventEmitter<any> = new EventEmitter();
-  
+  displayDrawer = false;
   constructor(
     public sharedService: SharedService
   ) { }
@@ -51,7 +53,10 @@ export class BaseTableComponent implements OnChanges{
   }
 
   viewDetails(id: string): void {
-    this.onViewDetails.emit(id);
+    console.log("test");
+    
+    this.displayDrawer = true;
+    // this.onViewDetails.emit(id);
   }
 
 

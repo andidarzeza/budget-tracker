@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -14,22 +14,19 @@ import { SharedService } from 'src/app/services/shared.service';
           ':enter', 
           [
             style({ opacity: 0 }),
-            animate('500ms ease-out', style({opacity: 1 }))
+            animate('250ms ease-out', style({opacity: 1 }))
           ]
         )
       ]
     )
   ]
 })
-export class TableMessageComponent implements OnInit {
+export class TableMessageComponent {
 
   @Input() total: number;
 
-  constructor(
-    public sharedService: SharedService
-  ) { }
+  constructor(public sharedService: SharedService) {
 
-  ngOnInit(): void {
   }
 
 }

@@ -18,14 +18,10 @@
     </mat-card>
 
     <div *ngIf="expenseCategoriesData?.length == 0" 
-        class="{{sharedService.theme}}-title"
-    style="height: 250px;display: flex;align-items: center;justify-content: center;">
-        <mat-icon style="    font-size: 60px;
-        height: 60px;
-        width: 60px;">
-            insert_chart_outlined
-        </mat-icon>
-        <div style="font-size: 22px;">
+        class="{{sharedService.theme}}-text"
+    style="padding: 25px 0px;display: flex;align-items: center;justify-content: center;">
+
+        <div style="font-size: 16px;">
             Your expenses will appear here
         </div>
         

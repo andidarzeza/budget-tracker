@@ -17,15 +17,18 @@ export class RecordActionsComponent {
   
   constructor(public sharedService: SharedService) { }
 
-  emitDeleteAction(): void {
+  emitDeleteAction(event): void {  
+    event.stopPropagation();
     this.openDeleteDialog.emit();
   }
 
-  emitEditAction(): void {
+  emitEditAction(event): void {    
+    event.stopPropagation();
     this.openEditForm.emit();
   }
 
-  emitViewAction(): void {
+  emitViewAction(event): void {
+    event.stopPropagation();
     this.openViewDrawer.emit();
   }
 

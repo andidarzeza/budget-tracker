@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { inOutAnimation } from 'src/app/animations';
 import { ColumnDefinition } from 'src/app/models/models';
 import { SharedService } from 'src/app/services/shared.service';
 import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
@@ -6,7 +7,8 @@ import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
 @Component({
   selector: 'table-body',
   templateUrl: './table-body.component.html',
-  styleUrls: ['./table-body.component.css']
+  styleUrls: ['./table-body.component.css'],
+  animations: [inOutAnimation]
 })
 export class TableBodyComponent implements AfterViewInit {
 
@@ -15,12 +17,14 @@ export class TableBodyComponent implements AfterViewInit {
   @Input() tableId: string;
   @Input() displayEditAction: boolean;
   @Input() displayDeleteAction: boolean;
+  @Input() displayDrawer: boolean;
 
   @Output() onDeleteConfirmation = new EventEmitter();
   @Output() onAddEditForm = new EventEmitter();
   @Output() onViewDetails = new EventEmitter();
   @Output() onScroll = new EventEmitter();
   @Output() onTopScroll = new EventEmitter();
+  selectedId: string;
 
   constructor(
     public sharedService: SharedService
@@ -45,6 +49,7 @@ export class TableBodyComponent implements AfterViewInit {
   }
 
   viewDetails(id: string): void {
+    this.selectedId = id;
     this.onViewDetails.emit(id);
   }
 

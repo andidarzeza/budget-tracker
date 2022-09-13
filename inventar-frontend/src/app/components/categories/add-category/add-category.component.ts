@@ -64,7 +64,9 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         this.data.spendingCategory.description = this.description.value;
         this.data.spendingCategory.icon = this.icon.value;
         const payload = this.data.spendingCategory;
-        payload['categoryType'] = this.data.categoriesType;
+        // payload['categoryType'] = this.data.categoriesType;
+        payload['categoryType'] = 'EXPENSE';
+        
         payload.account = this.accountService.getAccount();
         this.savingEntity = true;
         this.categoriesService
@@ -74,7 +76,8 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
       } else if(!this.savingEntity){
         this.loadingData = true;
         const payload = this.categoryGroup.value;
-        payload['categoryType'] = this.data.categoriesType;
+        // payload['categoryType'] = this.data.categoriesType;
+        payload['categoryType'] = 'EXPENSE';
         payload.account = this.accountService.getAccount();
         this.savingEntity = true;
         this.categoriesService

@@ -475,27 +475,13 @@ button.toast-close-button {
     color: #9F9F9F !important;
 }
 
-.no-data {
-    text-align: center;
-    font-size: 17px;
-    color: rgb(159, 159, 159);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    width: 100%;
-    top: 0;
-}
-
 .category-table-actions > div:nth-of-type(1) { box-shadow: none !important;margin-top: 0 !important; }
 
 .mat-sort-header-container {
     justify-content: center;
 }
 
-
  /* TODO: fix in future */
-
 .mat-menu-content:not(:empty) {
     padding: 0 !important;
     display: flex;

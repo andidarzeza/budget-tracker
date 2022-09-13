@@ -29,6 +29,28 @@ export const inOutAnimation = trigger(
   ]
 )
 
+export const inOutSlide = trigger(
+  'inOutSlide', 
+  [
+    transition(
+      ':enter', 
+      [
+        style({ width: '0px' }),
+        animate('400ms cubic-bezier(0.25, 0.8, 0.25, 1)', 
+                style({width: '40%' }))
+      ]
+    ),
+    transition(
+      ':leave', 
+      [
+        style({ width: '40%' }),
+        animate('400ms cubic-bezier(0.25, 0.8, 0.25, 1)', 
+                style({ width: '0px' }))
+      ]
+    )
+  ]
+)
+
 // Positioned
 
 export const slider =

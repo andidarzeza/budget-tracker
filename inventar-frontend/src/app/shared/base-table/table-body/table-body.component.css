@@ -1,6 +1,6 @@
 .body-container {
     overflow: auto;
-    height: calc(100% - 124px);
+    height: calc(100% - 57px);
 }
 
 .table-row {
@@ -18,4 +18,15 @@
 .row-entry {
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.hover-table-row:hover{
+    background: #80808008 !important;
+}
+.pointer {
+    cursor: pointer;
+}
+
+.active-element {
+    background: #80808014;
 }

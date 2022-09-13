@@ -11,7 +11,6 @@ export class SharedService {
   private dataSource = new BehaviorSubject<string>("");
   public theme: string = 'dark';
   public darkMode: boolean = true;
-  public isSpinnerEnabled: boolean = true;
   public mobileView: boolean = false;
   themeSubscribable = this.dataSource.asObservable();
 

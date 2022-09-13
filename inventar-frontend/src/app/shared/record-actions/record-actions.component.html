@@ -1,11 +1,11 @@
 <div class="action-container">
-    <button mat-icon-button color="primary" (click)="emitViewAction()">
+    <button mat-icon-button color="primary" (click)="emitViewAction($event)">
         <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-view-button">open_in_new</mat-icon>
     </button>
-    <button *ngIf="displayEditAction" mat-icon-button (click)="emitEditAction()">
+    <button *ngIf="displayEditAction" mat-icon-button (click)="emitEditAction($event)">
         <mat-icon>edit</mat-icon>
     </button>
-    <button *ngIf="displayDeleteAction" mat-icon-button color="warn" (click)="emitDeleteAction()">
+    <button *ngIf="displayDeleteAction" mat-icon-button color="warn" (click)="emitDeleteAction($event)">
         <mat-icon>delete</mat-icon>
     </button>
 </div>
@@ -15,15 +15,15 @@
 </button>
     
 <mat-menu class="{{sharedService.theme}}-mobile-action-menu" #menu="matMenu">
-    <button mat-menu-item (click)="emitViewAction()">
+    <button mat-menu-item (click)="emitViewAction($event)">
         <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-view-button">open_in_new</mat-icon>
         <span class="{{sharedService.theme}}-text">View</span>
     </button>
-    <button mat-menu-item (click)="emitEditAction()">
+    <button mat-menu-item (click)="emitEditAction($event)">
         <mat-icon style="color: #9F9F9F !important;">edit</mat-icon>
         <span class="{{sharedService.theme}}-text">Edit</span>
     </button>
-    <button mat-menu-item (click)="emitDeleteAction()">
+    <button mat-menu-item (click)="emitDeleteAction($event)">
         <mat-icon color="warn">delete</mat-icon>
         <span class="{{sharedService.theme}}-text">Delete</span>
     </button>

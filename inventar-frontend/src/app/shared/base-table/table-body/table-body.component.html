@@ -1,5 +1,8 @@
 <div class="body-container" [id]="tableId">
-    <div *ngFor="let element of data" class="table-row">
+    <!-- {{displayDrawer}} -->
+    <div matRipple [matRippleColor]="'#80808014'" *ngFor="let element of data"
+        [ngClass]="{'hover-table-row pointer': (selectedId!=element.id), 'active-element': (selectedId==element.id)}" class="table-row"
+        (click)="viewDetails(element.id)">
         <div *ngFor="let columnDef of columnDefinitions" [style.width.%]="100/columnDefinitions?.length"
             class="{{sharedService.theme}}-text text-center row-entry">
             <span [ngSwitch]="columnDef.type">
@@ -17,8 +20,7 @@
 
                 <ng-container *ngSwitchCase="'actions'">
                     <app-record-actions (openViewDrawer)="viewDetails(element?.id)"
-                        [displayDeleteAction]="displayDeleteAction"
-                        [displayEditAction]="displayEditAction"
+                        [displayDeleteAction]="displayDeleteAction" [displayEditAction]="displayEditAction"
                         (openEditForm)="openAddEditForm(element)"
                         (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></app-record-actions>
                 </ng-container>

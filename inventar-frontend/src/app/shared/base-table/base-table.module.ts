@@ -6,6 +6,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { TableHeaderModule } from './table-header/table-header.module';
 import { TableBodyModule } from './table-body/table-body.module';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 
 
@@ -17,7 +19,9 @@ import { TableBodyModule } from './table-body/table-body.module';
     MatTableModule,
     MatSortModule,
     TableHeaderModule,
-    TableBodyModule
+    MatIconModule,
+    TableBodyModule,
+    MatButtonModule
   ],
   exports: [
     BaseTableComponent
