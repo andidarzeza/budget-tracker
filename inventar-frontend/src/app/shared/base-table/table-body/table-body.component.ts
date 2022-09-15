@@ -40,6 +40,17 @@ export class TableBodyComponent implements AfterViewInit {
     }
   }
 
+  getRequestedWidth(columns: number, type: any): any {
+    if(this.displayDrawer) {
+      if(type == 'actions') {
+        return 0;
+      } else {
+        return 60/(columns-1);
+      }
+    }
+    return 100 / columns;
+  }
+
   openDeleteConfirmDialog(id: string): void {
     this.onDeleteConfirmation.emit(id);
   }

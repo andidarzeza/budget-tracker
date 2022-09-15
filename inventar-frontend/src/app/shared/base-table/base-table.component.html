@@ -5,8 +5,8 @@
     </table-actions>
 
     <div style="display: flex;height: calc(100% - 67px);position: relative;">
-        <div [ngClass]="displayDrawer ? 'table-opened' : 'table-closed'" class="data-table">
-            <table-header [displayedColumns]="displayedColumns"></table-header>
+        <div [ngClass]="displayDrawer ? 'table-opened' : 'table-closed'">
+            <table-header [displayDrawer]="displayDrawer" [columnDefinitions]="columnDefinition"></table-header>
             <table-body [displayDrawer]="displayDrawer" [displayEditAction]="displayEditAction"
                 [displayDeleteAction]="displayDeleteAction" [data]="data" [tableId]="tableId"
                 [columnDefinitions]="columnDefinition" (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
@@ -15,27 +15,13 @@
             <table-message [total]="data?.length"></table-message>
         </div>
 
-        <div [@inOutSlide] style="
-        position: absolute;
-    right: 0px;
-    max-width: 40%;
-    overflow-x: hidden;
-    width: 40%;
-    height: 100%;
-    background: white;
-    border-left: 1px solid rgba(0, 0, 0, 0.12);" *ngIf="displayDrawer">
-            <div style="    width: calc(100% - 20px);
-            height: 57px;
-            display: flex;
-            align-items: center;
-            justify-content: end;
-            padding-right: 20px;">
+        <div [@inOutSlide] class="details-sidebar-container" *ngIf="displayDrawer">
+            <div class="details-sidebar-actions">
                 <button mat-icon-button (click)="displayDrawer=false">
                     <mat-icon>
                         close
                     </mat-icon>
                 </button>
-
             </div>
         </div>
     </div>

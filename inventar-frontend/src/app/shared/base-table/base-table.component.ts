@@ -11,12 +11,10 @@ import { TableActionInput } from './table-actions/TableActionInput';
   styleUrls: ['./base-table.component.css'],
   animations: [inOutSlide]
 })
-export class BaseTableComponent implements OnChanges{
+export class BaseTableComponent {
 
   @Input() data: any[];
   @Input() columnDefinition: ColumnDefinition[];
-  displayedColumns: string[];
-
   @Output() onDeleteConfirmation = new EventEmitter();
   @Output() onAddEditForm = new EventEmitter();
   @Output() onViewDetails = new EventEmitter();
@@ -38,12 +36,6 @@ export class BaseTableComponent implements OnChanges{
     public sharedService: SharedService
   ) { }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if(changes.columnDefinition) {
-      this.displayedColumns = this.columnDefinition.map(columnDefinition => columnDefinition.label);
-    }
-  }
-
   openDeleteConfirmDialog(id: string): void {
     this.onDeleteConfirmation.emit(id);
   }
@@ -53,7 +45,6 @@ export class BaseTableComponent implements OnChanges{
   }
 
   viewDetails(id: string): void {
-    console.log("test");
     
     this.displayDrawer = true;
     // this.onViewDetails.emit(id);

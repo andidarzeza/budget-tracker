@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ColumnDefinition } from 'src/app/models/models';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -6,15 +7,24 @@ import { SharedService } from 'src/app/services/shared.service';
   templateUrl: './table-header.component.html',
   styleUrls: ['./table-header.component.css']
 })
-export class TableHeaderComponent implements OnInit {
+export class TableHeaderComponent {
 
   constructor(
     public sharedService: SharedService
   ) { }
 
-  @Input() displayedColumns: string[];
+  @Input() displayDrawer: boolean;
+  @Input() columnDefinitions: ColumnDefinition[];
 
-  ngOnInit(): void {
+  getRequestedWidth(columns: number, type: any): any {
+    if(this.displayDrawer) {
+      if(type == 'Actions') {
+        return 0;
+      } else {
+        return 60/(columns-1);
+      }
+    }
+    return 100 / columns;
   }
 
 }

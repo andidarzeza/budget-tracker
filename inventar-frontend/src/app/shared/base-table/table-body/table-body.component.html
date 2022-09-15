@@ -3,7 +3,7 @@
     <div matRipple [matRippleColor]="'#80808014'" *ngFor="let element of data"
         [ngClass]="{'hover-table-row pointer': (selectedId!=element.id), 'active-element': (selectedId==element.id)}" class="table-row"
         (click)="viewDetails(element.id)">
-        <div *ngFor="let columnDef of columnDefinitions" [style.width.%]="100/columnDefinitions?.length"
+        <div *ngFor="let columnDef of columnDefinitions" class="table-row" [style.width.%]="getRequestedWidth(columnDefinitions?.length, columnDef.type)"
             class="{{sharedService.theme}}-text text-center row-entry">
             <span [ngSwitch]="columnDef.type">
                 <ng-container *ngSwitchCase="'date'">
