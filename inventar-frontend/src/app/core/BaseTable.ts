@@ -63,7 +63,7 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
         if (this.resetData) {
             this.displayData = response?.data;
         } else {
-            if (this.displayData.length >= 100) {
+            if (this.displayData.length >= 60) {
                 this.displayData.splice(0, this.size);
                 this.currentIndex++;
                 this.displayData = this.displayData.concat(response.data);

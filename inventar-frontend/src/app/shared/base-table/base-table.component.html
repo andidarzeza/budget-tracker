@@ -15,10 +15,10 @@
             <table-message [total]="data?.length"></table-message>
         </div>
 
-        <div [@inOutSlide] class="details-sidebar-container" *ngIf="displayDrawer">
+        <div [@inOutSlide] class="details-sidebar-container {{sharedService.theme}}-table" *ngIf="displayDrawer">
             <div class="details-sidebar-actions">
                 <button mat-icon-button (click)="displayDrawer=false">
-                    <mat-icon>
+                    <mat-icon class="{{sharedService.theme}}-icon">
                         close
                     </mat-icon>
                 </button>
