@@ -51,7 +51,7 @@
 }
 
 .main-action-container {
-    border-bottom: 1px solid rgba(0, 0, 0, .12);
+    /* border-bottom: 1px solid rgba(0, 0, 0, .12); */
     display: flex;
     /* justify-content: space-between; */
     align-items: center;
@@ -61,7 +61,7 @@
 
 .settings-content {
     display: flex;
-    height: calc(100% - 67px);
+    height: calc(100% - 66px);
 }
 
 .settings-menu {
@@ -69,7 +69,6 @@
     overflow-y: auto;
     width: 300px;
     height: 100%;
-    border-right: 1px solid rgba(0, 0, 0, .12);
 }
 
 .title {

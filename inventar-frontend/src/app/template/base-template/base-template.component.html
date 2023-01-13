@@ -9,7 +9,7 @@
         [ngClass]="authenticationService.currentUserValue ? 'app-width' : 'app-full-width'">
         <div class="shadow" id="shadow" *ngIf="sideBarMode=='over'" (click)="toggleSidebar()"></div>
         <nav-bar *ngIf="navBarService.displayNavBar"></nav-bar>
-        <div class="content-container {{sharedService.theme + '-body'}}">
+        <div class="content-container">
             <ng-content></ng-content>
         </div>
     </div>

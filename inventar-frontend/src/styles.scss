@@ -63,6 +63,57 @@ app-date-picker {
     border-radius: 4px;
 }
 
+.dark-theme {
+    --primary: var(--dark);
+    --secondary: #111619;
+    --card: var(--primary);
+    --card-shadow: none;
+    --icon-primary: var(--light) !important;
+    --primary-text: #9F9F9F;
+}
+
+.light-theme {
+    --primary: var(--light);
+    --secondary: #F8F8F8;
+    --card: white;
+    --card-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px !important;
+    --icon-primary: white !important;
+    --primary-text: white;
+}
+
+// transition
+
+.mat-toolbar, #application-body, .content-container, .mat-card, .main-action-container, .table-header, .settings-menu, .settings-content, .settings-view {
+    transition: background var(--background-animation-timing) !important;
+}
+
+// background
+
+.mat-toolbar, #application-body, .main-action-container, .sidebar, .table-header, .settings-menu, .settings-content {
+    background: var(--primary);
+}
+
+.mat-icon {
+    color: var(--icon-primary) !important;
+}
+
+.mat-card {
+    background: var(--card);
+    box-shadow: var(--card-shadow) !important;
+}
+
+.settings-view {
+    border-radius: 10px 0 0 0;
+}
+
+.content-container, .settings-view  {
+    background: var(--secondary);
+}
+
+.title {
+    color: var(--primary-text);
+}
+
 
 .sb9:before {
     content: "";

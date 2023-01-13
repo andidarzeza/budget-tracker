@@ -4,38 +4,35 @@ import { takeUntil } from 'rxjs/operators';
 import { Category } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'app-category-detail',
   templateUrl: './category-detail.component.html',
   styleUrls: ['./category-detail.component.css']
 })
-export class CategoryDetailComponent implements OnInit, OnDestroy {
+export class CategoryDetailComponent extends Unsubscribe implements OnInit {
 
   @Input() categoryId: string;
   private category: Category;
-  private _subject = new Subject();
   @Output() onCloseAction: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private categoriesService: CategoriesService,
     public sharedService: SharedService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.categoriesService
       .findOne(this.categoryId)
-      .pipe(takeUntil(this._subject))
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((category: Category) => this.category = category);
   }
 
   closeDrawer(): void {
     this.onCloseAction.emit();
-  }
-
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
   }
 
   get name() {

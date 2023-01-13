@@ -21,7 +21,7 @@ import { HttpParams } from '@angular/common/http';
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent extends BaseTable<Category>{
+export class CategoriesComponent extends BaseTable<Category> {
   sort: string = "lastModifiedDate,desc";
   getQueryParams(): HttpParams {
     return buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType).append("account", this.accountService?.getAccount())

@@ -1,8 +1,7 @@
 <!-- TABLE - ACTIONS: CREATE, REFRESH, SEARCH -->
-<div class="main-action-container {{sharedService.theme}}-table" style="position: relative;" [id]="containerId">
+<div class="main-action-container" style="position: relative;" [id]="containerId">
     <div class="title-container" *ngIf="!showSearchInput">
-        <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-title">{{tableActionInput?.icon}}
-        </mat-icon>
+        <mat-icon>{{tableActionInput?.icon}}</mat-icon>
         <span class="title {{sharedService.theme}}-title">{{tableActionInput?.pageName}}</span>
     </div>
 

@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CREATE_DIALOG_CONFIGURATION } from 'src/environments/environment';
 import { ConfirmComponent } from '../shared/confirm/confirm.component';
+import { Unsubscribe } from '../shared/unsubscribe';
 import { SharedService } from './shared.service';
 
 export interface ConfirmDialogHandler {
@@ -14,15 +15,14 @@ export interface ConfirmDialogHandler {
 @Injectable({
   providedIn: 'root'
 })
-export class DialogService implements OnDestroy {
+export class DialogService extends Unsubscribe {
 
-  private _subject = new Subject();
 
-  constructor(public dialog: MatDialog, private sharedService: SharedService) { }
-
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
+  constructor(
+    public dialog: MatDialog,
+    private sharedService: SharedService
+  ) {
+    super();
   }
 
   openDialog(component: ComponentType<any>, data?: any): ConfirmDialogHandler {
@@ -36,7 +36,7 @@ export class DialogService implements OnDestroy {
       onSuccess: (callable: any) => {
         this.dialog.open(component, configuration)
           .afterClosed()
-          .pipe(takeUntil(this._subject), filter((update) => update))
+          .pipe(takeUntil(this.unsubscribe$), filter((update) => update))
           .subscribe(() => callable.call());
       }
     }
@@ -53,7 +53,7 @@ export class DialogService implements OnDestroy {
       onSuccess: (callable: any) => {
         this.dialog.open(ConfirmComponent, configuration)
           .afterClosed()
-          .pipe(takeUntil(this._subject), filter((update) => update))
+          .pipe(takeUntil(this.unsubscribe$), filter((update) => update))
           .subscribe(() => callable.call());
       }
     }

@@ -1,0 +1,17 @@
+.confirm-actions {
+    width: 120px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    transition: left 500ms ease;
+}
+
+.action-container {
+    display: flex;
+    align-items: center;
+    max-width: 120px;
+    overflow: hidden;
+    position: relative;
+}

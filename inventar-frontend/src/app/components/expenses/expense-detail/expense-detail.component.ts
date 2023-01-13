@@ -1,30 +1,31 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
 import { Category, Expense } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'app-expense-detail',
   templateUrl: './expense-detail.component.html',
   styleUrls: ['./expense-detail.component.css']
 })
-export class ExpenseDetailComponent implements OnInit, OnChanges, OnDestroy {
+export class ExpenseDetailComponent extends Unsubscribe implements OnInit, OnChanges, OnDestroy {
   
   @Input() expenseViewId: string;
   @Output() onCloseAction: EventEmitter<any> = new EventEmitter<any>();
   expense: Expense;
   public expenseCategory: Category;
   
-  private _subject = new Subject();
   
   constructor(
     private expenseService: ExpenseService,
     public sharedService: SharedService,
     private categoryService: CategoriesService
-  ) {}
+  ) {
+    super();
+  }
   
   ngOnInit(): void {
     this.getExpense();
@@ -40,7 +41,7 @@ export class ExpenseDetailComponent implements OnInit, OnChanges, OnDestroy {
     this.expenseService
       .findOne(this.expenseViewId)
       .pipe(
-        takeUntil(this._subject),
+        takeUntil(this.unsubscribe$),
         mergeMap((expense: Expense) => {
           this.expense = expense;
           return this.categoryService.findOne(this.expense.categoryID);
@@ -55,8 +56,6 @@ export class ExpenseDetailComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.expenseViewId = "";
     this.expense = null;
-    this._subject.next();
-    this._subject.complete();
   }
 
   get category() {

@@ -1,9 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
 import { DateUtil, Day, Month, Year } from 'src/app/utils/DateUtil';
 import { SharedService } from 'src/app/services/shared.service';
-import { Subject } from 'rxjs';
 import { FloatingMenuConfig } from 'src/app/shared/floating-menu/FloatingMenuConfig';
 import { ExportService } from 'src/app/services/export.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -15,13 +14,14 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnDestroy {
+export class DashboardComponent extends Unsubscribe {
 
 
   selectedRange: RangeType = "Monthly";
@@ -29,7 +29,6 @@ export class DashboardComponent implements OnDestroy {
   selectedDate = new Date();
   dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
-  private _subject = new Subject();
   public floatingMenu: FloatingMenuConfig = {
     position: "above",
     buttons: [
@@ -61,6 +60,7 @@ export class DashboardComponent implements OnDestroy {
     public router: Router,  
     public accountService: AccountService
   ) {
+    super();
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
   }
@@ -84,7 +84,7 @@ export class DashboardComponent implements OnDestroy {
       to,
       this.selectedRange
     )
-    .pipe(takeUntil(this._subject))
+    .pipe(takeUntil(this.unsubscribe$))
     .subscribe((dashboardData: DashboardDTO) => {
       this.dashboardData = dashboardData;
     }, () => {
@@ -140,8 +140,4 @@ export class DashboardComponent implements OnDestroy {
     this.getDashboardData();
   }
 
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
-  }
 }

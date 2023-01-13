@@ -1,29 +1,30 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Subject } from 'rxjs';
 import { mergeMap, takeUntil } from 'rxjs/operators';
 import { Category, Income } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'app-income-details',
   templateUrl: './income-details.component.html',
   styleUrls: ['./income-details.component.css']
 })
-export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
+export class IncomeDetailsComponent extends Unsubscribe implements OnInit, OnChanges, OnDestroy {
 
   @Input() incomeViewId: string;
   @Output() onCloseAction: EventEmitter<any> = new EventEmitter<any>();
   private income: Income;
   private incomeCategory: Category;
-  private _subject = new Subject();
   
   constructor(
     private incomeService: IncomeService,
     public sharedService: SharedService,
     private categoryService: CategoriesService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.getIncome();
@@ -39,7 +40,7 @@ export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
     this.incomeService
       .findOne(this.incomeViewId)
       .pipe(
-        takeUntil(this._subject),
+        takeUntil(this.unsubscribe$),
         mergeMap((incomeRespone: Income) => {          
           this.income = incomeRespone;
           return this.categoryService.findOne(this.income.categoryID);
@@ -54,8 +55,6 @@ export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.incomeViewId = "";
     this.income = null;
-    this._subject.next();
-    this._subject.complete();
   }
 
   get incomeCreatedTime() {

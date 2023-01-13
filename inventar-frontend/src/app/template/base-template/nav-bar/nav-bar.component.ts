@@ -9,6 +9,7 @@ import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -16,10 +17,9 @@ import { environment } from 'src/environments/environment';
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css']
 })
-export class NavBarComponent implements OnInit, OnDestroy {
+export class NavBarComponent extends Unsubscribe implements OnInit {
   
   configuration: IConfiguration;
-  private _subject = new Subject();
   public EXPERIMENTAL_MODE = environment.experimentalMode;
 
   public themesArray: Theme[] = [
@@ -65,13 +65,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
     public accountService: AccountService,
     public router: Router
   ) {
+    super();
   }
 
   ngOnInit(): void {
     this.setInitialTheme();
     this.configurationService
       .getConfiguration()
-      .pipe(takeUntil(this._subject))
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((configuration: IConfiguration) => {
         this.configuration = configuration;
         this.sharedService.darkMode = configuration.darkMode;
@@ -84,11 +85,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
     if(theme) this.changeThemeColor({color: theme} as Theme);
   }
 
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
-  }
-
   logout(): void {
     this.authenticationService.logout();
   }
@@ -99,13 +95,15 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   toggleDarkMode(): void {
-    this.configuration.darkMode = !this.sharedService.darkMode;
-    this.configurationService
-      .updateConfiguration()
-      .pipe(takeUntil(this._subject))
-      .subscribe(() => {
-        this.sharedService.changeTheme();
-      });
+    
+    this.themeService.changeTheme();
+    // this.configuration.darkMode = !this.sharedService.darkMode;
+    // this.configurationService
+    //   .updateConfiguration()
+    //   .pipe(takeUntil(this.unsubscribe$))
+    //   .subscribe(() => {
+    //     this.sharedService.changeTheme();
+    //   });
   }
 
   changeThemeColor(theme: Theme): void {

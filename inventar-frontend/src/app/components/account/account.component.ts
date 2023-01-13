@@ -1,13 +1,13 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SimplifiedAccount } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'app-account',
@@ -37,7 +37,7 @@ import { SideBarService } from 'src/app/services/side-bar.service';
     )
   ]
 })
-export class AccountComponent implements OnInit, OnDestroy {
+export class AccountComponent extends Unsubscribe implements OnInit {
 
   constructor(
     public accountService: AccountService,
@@ -45,9 +45,10 @@ export class AccountComponent implements OnInit, OnDestroy {
     public navBarService: NavBarService,
     public sharedService: SharedService,
     public router: Router
-  ) { }
+  ) { 
+    super();
+  }
 
-  private _subject = new Subject();
   accounts: SimplifiedAccount[];
   showSpinner = true;
   ngOnInit(): void {
@@ -57,7 +58,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     if (!accounts) {
       this.accountService
         .findAllAccountsSimplified()
-        .pipe(takeUntil(this._subject))
+        .pipe(takeUntil(this.unsubscribe$))
         .subscribe((simplifiedAccounts: SimplifiedAccount[]) => {
           this.accounts = simplifiedAccounts
           this.showSpinner = false;
@@ -86,11 +87,6 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   deleteAccount(account: SimplifiedAccount): void {
 
-  }
-
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
   }
 
 }

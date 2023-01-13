@@ -1,17 +1,18 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { SharedService } from 'src/app/services/shared.service';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { filter, map, mergeMap, takeUntil } from 'rxjs/operators';
-import { Category, CategoryType, EntityType, Expense, ResponseWrapper } from 'src/app/models/models';
+import { Category, CategoryType, EntityType, Expense } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { AccountService } from 'src/app/services/account.service';
 import { inOutAnimation } from 'src/app/animations';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 
 
@@ -21,10 +22,9 @@ import { inOutAnimation } from 'src/app/animations';
   styleUrls: ['./add-expense.component.css'],
   animations: [inOutAnimation]
 })
-export class AddExpenseComponent implements OnInit, OnDestroy {
+export class AddExpenseComponent extends Unsubscribe implements OnInit {
 
   public savingEntity = false;
-  private _subject = new Subject();
   public entity: EntityType = EntityType.EXPENSE;
   public categories: Category[] = [];
   public baseCurrency = localStorage.getItem("baseCurrency");
@@ -38,7 +38,9 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     private expenseService: ExpenseService,
     private categoryService: CategoriesService,
     public accountService: AccountService
-  ) {}
+  ) {
+    super();
+  }
   
   formGroup: FormGroup = this.formBuilder.group({
     description: [''],
@@ -59,7 +61,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     return this.expenseService
       .findOne(this.id)
       .pipe(
-        takeUntil(this._subject),
+        takeUntil(this.unsubscribe$),
         map(expense => this.formGroup.patchValue(expense)),
         map(() => this.loadingData = false)
       )
@@ -70,7 +72,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     this.categoryService
       .findAll(buildParams(0, 1000).append("categoryType", CategoryType.EXPENSE).append("account", this.accountService.getAccount()))
       .pipe(
-        takeUntil(this._subject),
+        takeUntil(this.unsubscribe$),
         map((response) => this.categories = response.data),
         map(() => this.loadingData = false),
         filter(() => this.editMode),
@@ -92,9 +94,9 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
         payload.account = this.accountService.getAccount();
         this.expenseService
           .update(this.expense.id, payload)
-          .pipe(takeUntil(this._subject))
+          .pipe(takeUntil(this.unsubscribe$))
           .subscribe(() => {
-            this.accountService.findOne(this.accountService.getAccount()).subscribe();
+            this.accountService.findOne(this.accountService.getAccount()).pipe(takeUntil(this.unsubscribe$)).subscribe();
             this.closeDialog(true);
             this.loadingData = false
             this.savingEntity = false;
@@ -107,9 +109,9 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
         payload.account = this.accountService.getAccount();
         this.expenseService
           .save(payload)
-          .pipe(takeUntil(this._subject))
+          .pipe(takeUntil(this.unsubscribe$))
           .subscribe(() => {
-            this.accountService.findOne(this.accountService.getAccount()).subscribe();
+            this.accountService.findOne(this.accountService.getAccount()).pipe(takeUntil(this.unsubscribe$)).subscribe();
             this.closeDialog(true);  
             this.savingEntity = false;
             this.toaster.success("A new Expense has been inserted", "Success", TOASTER_CONFIGURATION);    
@@ -126,8 +128,4 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     return this.expense?.id
   }
 
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
-  }
 }

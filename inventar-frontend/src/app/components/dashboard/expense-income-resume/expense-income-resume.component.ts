@@ -7,16 +7,13 @@ import { SharedService } from 'src/app/services/shared.service';
   templateUrl: './expense-income-resume.component.html',
   styleUrls: ['./expense-income-resume.component.css']
 })
-export class ExpenseIncomeResumeComponent implements OnInit {
+export class ExpenseIncomeResumeComponent {
 
   @Input() dashboardData: DashboardDTO;
 
   constructor(
     public sharedService: SharedService
   ) { }
-
-  ngOnInit(): void {
-  }
 
   public get expenses() {
     return this.dashboardData?.expenses ?? 0;

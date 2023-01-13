@@ -6,6 +6,7 @@ import { ConfigurationService } from 'src/app/services/configuration.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { DropdownOption } from 'src/app/template/shared/dropdown/models';
 
 @Component({
@@ -13,8 +14,7 @@ import { DropdownOption } from 'src/app/template/shared/dropdown/models';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
-export class SettingsComponent implements OnInit, OnDestroy {
-  subject = new Subject();
+export class SettingsComponent extends Unsubscribe implements OnInit {
   appearancePath = "/settings/appearance";
   appearanceOptions: DropdownOption[] = [
     {
@@ -69,10 +69,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     public navBarService: NavBarService,
     private router: Router,
     private configurationService: ConfigurationService
-  ) { }
-  ngOnDestroy(): void {
-    this.subject.next();
-    this.subject.complete();
+  ) {
+    super();
   }
 
   ngOnInit(): void {
@@ -88,7 +86,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.configurationService.configuration.darkMode = value;
     this.configurationService
       .updateConfiguration()
-      .pipe(takeUntil(this.subject))
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.sharedService.changeTheme();
       });

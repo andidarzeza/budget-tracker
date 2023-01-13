@@ -1,5 +1,5 @@
 <div class="dropdown-container">
-    <div class="dropdown-title {{sharedService.theme + '-title'}}" (click)="showOptions = !showOptions">
+    <div class="dropdown-title title" (click)="showOptions = !showOptions">
         <span class="dropdown-title-value">
             {{title}}
         </span>
@@ -14,7 +14,7 @@
                 <mat-icon class="{{sharedService.theme}}-icon">
                     {{option.icon}}
                 </mat-icon>
-                <span class="option-text">
+                <span class="option-text title">
                     {{option.title}}
                 </span>
             </div>

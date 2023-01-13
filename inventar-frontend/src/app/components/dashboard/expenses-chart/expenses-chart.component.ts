@@ -4,13 +4,15 @@ import { Chart, registerables } from 'chart.js';
 import { ChartUtils } from 'src/app/utils/chart';
 import { ThemeService } from 'src/app/services/theme.service';
 import { DailyExpenseDTO } from 'src/app/models/models';
+import { takeUntil } from 'rxjs/operators';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'expenses-chart',
   templateUrl: './expenses-chart.component.html',
   styleUrls: ['./expenses-chart.component.css']
 })
-export class ExpensesChartComponent implements OnInit, OnChanges {
+export class ExpensesChartComponent extends Unsubscribe implements OnInit, OnChanges {
   chart: Chart;
   @Input() dailyExpensesLabels: string[];
   @Input() dailyExpenses: DailyExpenseDTO[];
@@ -19,7 +21,9 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
     public sharedService: SharedService,
     public chartUtil: ChartUtils,
     private themeService: ThemeService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes?.dailyExpenses && !changes?.dailyExpenses?.firstChange) {
@@ -67,9 +71,11 @@ export class ExpensesChartComponent implements OnInit, OnChanges {
   }
 
   private listenForColorChange(): void {
-    this.themeService.colorChange.subscribe((color: string) => {      
-      this.sharedService.changeColor(this.chart, this.getChartBackgroundColor(color), color);
-    });
+    this.themeService.colorChange
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((color: string) => {      
+        this.sharedService.changeColor(this.chart, this.getChartBackgroundColor(color), color);
+      });
   }
 
   private getChartBackgroundColor(color: string): string {

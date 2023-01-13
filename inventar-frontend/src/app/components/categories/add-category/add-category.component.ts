@@ -1,13 +1,14 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { EntityType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -15,9 +16,8 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   templateUrl: './add-category.component.html',
   styleUrls: ['./add-category.component.css']
 })
-export class AddCategoryComponent implements OnInit, OnDestroy {
+export class AddCategoryComponent extends Unsubscribe implements OnInit {
   loadingData = false;
-  private _subject = new Subject();
   savingEntity = false;
   public entity: EntityType = EntityType.CATEGORY;
   showIconSelect = false;
@@ -30,7 +30,9 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private categoriesService: CategoriesService,
     public accountService: AccountService
-  ) {}
+  ) {
+    super();
+  }
   
   categoryGroup: FormGroup = this.formBuilder.group({
     category:     ['', Validators.required],
@@ -49,7 +51,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
     return this.categoriesService
       .findOne(this.id)
       .pipe(
-        takeUntil(this._subject),
+        takeUntil(this.unsubscribe$),
         filter(() => this.editMode),
         map(category => this.categoryGroup.patchValue(category)),
         map(() => this.loadingData = false)
@@ -71,7 +73,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         this.savingEntity = true;
         this.categoriesService
           .update(payload.id, payload)
-          .pipe(takeUntil(this._subject))  
+          .pipe(takeUntil(this.unsubscribe$))  
           .subscribe(() => this.onSaveSuccess("Category Updated with Success"));
       } else if(!this.savingEntity){
         this.loadingData = true;
@@ -82,7 +84,7 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
         this.savingEntity = true;
         this.categoriesService
           .save(payload)
-          .pipe(takeUntil(this._subject))
+          .pipe(takeUntil(this.unsubscribe$))
           .subscribe(() => this.onSaveSuccess("A new Category has been inserted"));
       }
     }
@@ -101,11 +103,6 @@ export class AddCategoryComponent implements OnInit, OnDestroy {
 
   onIconSelect(icon: string): void {
     this.icon.setValue(icon);
-  }
-  
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
   }
 
   get editMode() {

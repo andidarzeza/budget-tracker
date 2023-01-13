@@ -9,6 +9,7 @@ import { AccountService } from 'src/app/services/account.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
@@ -17,9 +18,8 @@ import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment'
   templateUrl: './add-income.component.html',
   styleUrls: ['./add-income.component.css']
 })
-export class AddIncomeComponent implements OnInit, OnDestroy {
+export class AddIncomeComponent extends Unsubscribe implements OnInit {
   public savingEntity: boolean = false;
-  private _subject = new Subject();
   loadingData = false;
   public formGroup: FormGroup = this.formBuilder.group({
     description:  [''],
@@ -36,7 +36,9 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
     private incomeService: IncomeService, 
     private categoryService: CategoriesService,
     private accountService: AccountService
-  ) {}
+  ) {
+    super();
+  }
 
   public baseCurrency = localStorage.getItem("baseCurrency");
 
@@ -75,7 +77,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
     this.categoryService
       .findAll(buildParams(0, 99999).append("categoryType", CategoryType.INCOME).append("account", this.accountService.getAccount()))
       .pipe(
-        takeUntil(this._subject),
+        takeUntil(this.unsubscribe$),
         map(response => this.categories = response.data),
         map(() => this.loadingData = false),
         filter(() => this.editMode),
@@ -89,7 +91,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
     return this.incomeService
       .findOne(this.id)
       .pipe(
-        takeUntil(this._subject),
+        takeUntil(this.unsubscribe$),
         map((income) => this.formGroup.patchValue(income)),
         map(() => this.loadingData = false)
       )
@@ -104,7 +106,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
         payload.account = this.accountService.getAccount();
         this.incomeService
           .update(this.income.id, payload)
-          .pipe(takeUntil(this._subject))
+          .pipe(takeUntil(this.unsubscribe$))
           .subscribe(() => {
             this.accountService.findOne(this.accountService.getAccount()).subscribe();
             this.onSaveSuccess("Income updated with success");
@@ -116,7 +118,7 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
         payload.account = this.accountService.getAccount();
         this.incomeService
           .save(payload)
-          .pipe(takeUntil(this._subject))
+          .pipe(takeUntil(this.unsubscribe$))
           .subscribe(() => {
             this.accountService.findOne(this.accountService.getAccount()).subscribe();
             this.onSaveSuccess("A new Income has been inserted")
@@ -138,11 +140,6 @@ export class AddIncomeComponent implements OnInit, OnDestroy {
 
   get id() {
     return this.income?.id;
-  }
-
-  ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
   }
 
 }

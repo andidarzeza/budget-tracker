@@ -34,7 +34,7 @@ export class TableBodyComponent implements AfterViewInit {
     const element = document.getElementById(this.tableId);
     if (element) {
       const scrollLoader = new ScrollLoader(element);
-      const listenable = scrollLoader.listenForScrollChange();
+      const listenable = scrollLoader.listenForScrollChange(1);
       listenable.onScroll(() => this.onScroll.emit());
       listenable.onTopScroll(() => this.onTopScroll.emit());
     }

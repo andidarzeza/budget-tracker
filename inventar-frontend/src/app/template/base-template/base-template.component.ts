@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { slider } from 'src/app/animations';
 import { inOutAnimation } from 'src/app/components/settings/dynamic-dropdown/animations';
@@ -9,6 +8,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { MenuItem, SideBarMode } from './base-template.models';
 
 
@@ -21,9 +21,8 @@ import { MenuItem, SideBarMode } from './base-template.models';
     slider
   ]
 })
-export class BaseTemplateComponent implements OnInit, OnDestroy {
+export class BaseTemplateComponent extends Unsubscribe implements OnInit {
 
-  private subject = new Subject();
   @Input() outlet: RouterOutlet;
 
   constructor(
@@ -32,7 +31,9 @@ export class BaseTemplateComponent implements OnInit, OnDestroy {
     public sideBarService: SideBarService,
     private http: HttpClient,
     public navBarService: NavBarService
-  ) { }
+  ) {
+    super();
+  }
 
   navigation: MenuItem[];
   sideBarMode: SideBarMode = "side";
@@ -53,7 +54,7 @@ export class BaseTemplateComponent implements OnInit, OnDestroy {
   private getNavigationItems(): void {
     this.http
     .get("assets/navigation.json")
-    .pipe(takeUntil(this.subject))
+    .pipe(takeUntil(this.unsubscribe$))
     .subscribe((data: MenuItem[]) => this.navigation = data);
   }
 
@@ -61,8 +62,4 @@ export class BaseTemplateComponent implements OnInit, OnDestroy {
     this.sideBarService.toggleSideBar();
   }
 
-  ngOnDestroy(): void {
-    this.subject.next();
-    this.subject.complete();
-  }
 }

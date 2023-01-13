@@ -1,8 +1,7 @@
 import { HttpParams } from "@angular/common/http";
-import { AfterViewInit, OnDestroy, ViewChild } from "@angular/core";
+import { AfterViewInit, ViewChild } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
-import { Subject } from "rxjs";
 import { PAGE_SIZE, TOASTER_CONFIGURATION } from "src/environments/environment";
 import { ColumnDefinition, ResponseWrapper } from "../models/models";
 import { DialogService } from "../services/dialog.service";
@@ -12,8 +11,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { takeUntil } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
 import { AccountService } from "../services/account.service";
+import { Unsubscribe } from "../shared/unsubscribe";
 
-export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
+export abstract class BaseTable<E> extends Unsubscribe implements AfterViewInit {
 
     public constructor(
         protected sharedService: SharedService,
@@ -21,7 +21,9 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
         protected entityService: any,
         protected toaster: ToastrService,
         protected accountService: AccountService
-    ) { }
+    ) {
+        super();
+    }
 
     tableId: string = uuidv4();
     entityViewId: string;
@@ -38,7 +40,6 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
     displayData: E[] = [];
     columnDefinition: ColumnDefinition[];
     @ViewChild('drawer') drawer: MatSidenav;
-    subject = new Subject();
     previousFilters: HttpParams;
     abstract sort: string;
     private scrollElement: any;
@@ -50,7 +51,7 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
     query(): void {
         this.entityService
             .findAll(this.getQueryParams())
-            .pipe(takeUntil(this.subject))
+            .pipe(takeUntil(this.unsubscribe$))
             .subscribe((res: ResponseWrapper) => this.onQuerySuccess(res));
     }
 
@@ -139,17 +140,12 @@ export abstract class BaseTable<E> implements OnDestroy, AfterViewInit {
     delete(id: string): void {
         this.entityService
             .delete(id)
-            .pipe(takeUntil(this.subject))
+            .pipe(takeUntil(this.unsubscribe$))
             .subscribe(() => {
                 this.accountService.findOne(this.accountService.getAccount()).subscribe();
                 this.resetAndQuery();
                 this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
             })
-    }
-
-    ngOnDestroy(): void {
-        this.subject.next();
-        this.subject.complete();
     }
 
 }

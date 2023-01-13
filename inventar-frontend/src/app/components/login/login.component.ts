@@ -75,12 +75,10 @@ export class LoginComponent {
           mergeMap(() => this.configurationSevice.getConfiguration())
         )
         .pipe(
-          map(configuration => this.sharedService.changeTheme()),
+          map(() => this.sharedService.changeTheme()),
           mergeMap(() => this.accountService.findAllAccountsSimplified())
         )
         .subscribe((response: any) => {
-          
-          console.log(response);
           
           this.showSpinner = false;
           this.router.navigateByUrl('/account', {

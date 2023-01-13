@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { RangeType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'budget-info',
@@ -33,18 +34,18 @@ import { SharedService } from 'src/app/services/shared.service';
     )
   ]
 })
-export class BudgetInfoComponent implements OnInit, OnDestroy {
+export class BudgetInfoComponent extends Unsubscribe implements OnInit, OnDestroy {
 
   constructor(
     public accountService: AccountService, 
     public sharedService: SharedService
   ) {
+    super();
     document.addEventListener('click', this.offClickHandler.bind(this)); // bind on doc
   }
 
   ranges: RangeType[] = ["Monthly", "Yearly"];
   selectedRange: RangeType = "Monthly";
-  private _subject = new Subject();
   public showDatePicker: boolean = false;
   public dateFrom: Date = new Date();
   public dateTo: Date = new Date(this.dateFrom.getFullYear(), this.dateFrom.getMonth() + 1);
@@ -88,8 +89,6 @@ export class BudgetInfoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._subject.next();
-    this._subject.complete();
     document.removeEventListener('click', this.offClickHandler.bind(this), true); // bind on doc
   }
 }

@@ -80,7 +80,7 @@ export class IncomesComponent extends BaseTable<Income>{
   private getCategories(): void {
     this.categoryService
       .findAll(buildParams(0, 9999).append("categoryType", CategoryType.INCOME).append("account", this.accountService?.getAccount()))
-      .pipe(takeUntil(this.subject))
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((res: ResponseWrapper) => {
         const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
         const index = this.filterOptions.indexOf(item);
