@@ -1,6 +1,8 @@
 <mat-toolbar class="toolbar" *ngIf="authenticationService.currentUserValue">
+
+
     <span>
-        <button *ngIf="sharedService.mobileView" class="menu-item" mat-icon-button
+        <button *ngIf="this.breakpointService.screenSize == 'mobile' && !sidebarService.isOpened" class="menu-item" mat-icon-button
             (click)="sidebarService.toggleSideBar()" style="margin-left: 18px;">
             <mat-icon class="{{sharedService.theme}}-icon">
                 menu
@@ -9,63 +11,63 @@
     </span>
     <div class="menu-container">
 
-        <div *ngIf="!sharedService.mobileView" class="menu-item pointer" (click)="toggleDarkMode()">
+        <div *ngIf="this.breakpointService.screenSize != 'mobile'" class="menu-item pointer" (click)="toggleDarkMode()">
             <i *ngIf="!this.sharedService?.darkMode" style="font-size: 30px;"
-                class="material-icons {{sharedService.theme}}-icon">nights_stay</i>
-            <mat-icon *ngIf="this.sharedService?.darkMode" class="fullscreen-icon {{sharedService.theme}}-icon">wb_sunny
+                class="material-icons primary-icon">nights_stay</i>
+            <mat-icon *ngIf="this.sharedService?.darkMode" class="fullscreen-icon primary-icon">wb_sunny
             </mat-icon>
         </div>
 
         <div class="flex-centered">
             <button class="user-name-button" mat-icon-button color="primary" [matMenuTriggerFor]="userMenu">
-                <div class="user-name fw-500 {{sharedService.theme}}-user-circle">
+                <div class="user-name fw-500 title">
                     {{ firstName?.charAt(0) | uppercase }}{{ lastName?.charAt(0) | uppercase }}
                 </div>
             </button>
             <div [matMenuTriggerFor]="userMenu" class="pointer arrow-down-container">
-                <mat-icon class="menu-item {{sharedService.theme}}-icon" style="margin-right: 0;">keyboard_arrow_down
+                <mat-icon class="menu-item primary-icon" style="margin-right: 0;">keyboard_arrow_down
                 </mat-icon>
             </div>
 
-            <mat-menu xPosition="before" class="{{sharedService.theme}}-user-menu user-menu" #userMenu="matMenu">
-                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item>Logged in as
+            <mat-menu xPosition="before" class="user-menu" #userMenu="matMenu">
+                <button class="title" mat-menu-item>Logged in as
                     {{ firstName | titlecase }}
                     {{ lastName | titlecase }}</button>
                 <mat-divider style="width: 100%;"></mat-divider>
 
-                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item [matMenuTriggerFor]="balance">
-                    <mat-icon class="{{sharedService.theme}}-icon">account_balance_wallet</mat-icon> Balance
+                <button class="title" mat-menu-item [matMenuTriggerFor]="balance">
+                    <mat-icon class="primary-icon">account_balance_wallet</mat-icon> Balance
                 </button>
                 <mat-divider style="width: 100%;"></mat-divider>
-                <button class="{{sharedService.theme}}-user-menu-button" mat-menu-item [matMenuTriggerFor]="themes">
-                    <mat-icon class="{{sharedService.theme}}-icon">color_lens</mat-icon> Themes
+                <button class="title" mat-menu-item [matMenuTriggerFor]="themes">
+                    <mat-icon class="primary-icon">color_lens</mat-icon> Themes
                 </button>
                 <mat-divider style="width: 100%;"></mat-divider>
-                <button class="{{sharedService.theme}}-user-menu-button" (click)="switchAccount()" mat-menu-item>
-                    <mat-icon class="{{sharedService.theme}}-icon">account_circle</mat-icon>Switch Account
+                <button class="title" (click)="switchAccount()" mat-menu-item>
+                    <mat-icon class="primary-icon">account_circle</mat-icon>Switch Account
                 </button>
                 <mat-divider style="width: 100%;"></mat-divider>
-                <button class="{{sharedService.theme}}-user-menu-button" (click)="logout()" mat-menu-item>
-                    <mat-icon class="{{sharedService.theme}}-icon">exit_to_app</mat-icon>Logout
+                <button class="title" (click)="logout()" mat-menu-item>
+                    <mat-icon class="primary-icon">exit_to_app</mat-icon>Logout
                 </button>
             </mat-menu>
 
-            <mat-menu class="{{sharedService.theme}}-themes-menu" #themes="matMenu">
+            <mat-menu #themes="matMenu">
                 <button *ngFor="let theme of themesArray" mat-menu-item
-                    class="flex-centered {{sharedService.theme}}-user-menu-button" style="justify-content: inherit; width: 200px;"
+                    class="flex-centered title" style="justify-content: inherit; width: 200px;"
                     (click)="changeThemeColor(theme)">
                     <div class="round" [style.background-color]="theme.color"></div>
                     <span>{{theme.name}}</span>
                 </button>
             </mat-menu>
 
-            <mat-menu class="{{sharedService.theme}}-themes-menu" #balance="matMenu">
-               <div (click) = "$event.stopPropagation()" class="balance-info {{sharedService.theme}}-body {{sharedService.theme}}-balance-text">
+            <mat-menu #balance="matMenu">
+               <div (click) = "$event.stopPropagation()" class="balance-info">
                     <div style="padding: 16px;font-size: 16px;display: flex;align-items: center;">
-                        <mat-icon style="color: rgba(0,0,0,.54)" class="{{sharedService.theme}}-icon">
+                        <mat-icon class="primary-icon">
                             account_balance_wallet
                         </mat-icon>
-                        <span style="margin-left: 16px;">
+                        <span class="title" style="margin-left: 16px;">
                             Balance
                         </span>
                     </div>
@@ -73,7 +75,7 @@
                     <mat-divider></mat-divider>
 
                     <div style="max-height: 156px;overflow: auto;">
-                        <div *ngFor="let bal of accountService?.account?.balance | keyvalue" style="padding: 16px;display: flex;justify-content: space-between;align-items: center;">
+                        <div *ngFor="let bal of accountService?.account?.balance | keyvalue" class="title" style="padding: 16px;display: flex;justify-content: space-between;align-items: center;">
                             <div>
                                 {{bal?.key | flag}} {{bal?.key}}
                             </div>
@@ -87,8 +89,8 @@
             </mat-menu>
 
         </div>
-        <mat-divider [vertical]="true" class="vertical-divider"></mat-divider>
+        <mat-divider *ngIf="breakpointService.screenSize != 'mobile'" [vertical]="true" class="vertical-divider"></mat-divider>
 
-        <clock *ngIf="!sharedService.mobileView"></clock>
+        <clock *ngIf="breakpointService.screenSize != 'mobile'"></clock>
     </div>
 </mat-toolbar>

@@ -4,11 +4,11 @@
     </div> -->
 
     <div
-        style="position: relative;background:white;border-radius: 35px;height:90%;margin-right:10%;width: 630px;box-shadow: rgb(60 64 67 / 30%) 0px 1px 2px 0px, rgb(60 64 67 / 15%) 0px 2px 6px 2px !important;">
+    class="login-card">
 
         <!-- <spinner *ngIf="showSpinner"></spinner> -->
 
-        <div class="circular-container">
+        <div class="circular-container" *ngIf="breakpointService.screenSize != 'mobile'">
             <div class="circle-3">
                 <div class="circle-2">
                     <div class="circle-1"></div>
@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        <div style="padding: 20px;height: 200px;background: white;padding-top: 0;">
+        <div class="form-container" style="padding: 20px;height: 200px;background: white;padding-top: 0;">
             <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation]
                 *ngIf="showSpinner" style="position: absolute;left:0;z-index: 2;"></mat-progress-bar>
             <form [formGroup]="loginGroup" autocomplete="off" style="padding-top: 20px;">

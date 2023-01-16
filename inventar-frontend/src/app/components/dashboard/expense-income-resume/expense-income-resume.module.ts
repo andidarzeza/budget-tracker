@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ExpenseIncomeResumeComponent } from './expense-income-resume.component';
 import { MatCardModule } from '@angular/material/card';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
@@ -11,7 +12,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     MatCardModule,
-    SharedModule
+    SharedModule,
+    MatIconModule
   ],
   exports: [ExpenseIncomeResumeComponent]
 })

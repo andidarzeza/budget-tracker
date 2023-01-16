@@ -1,7 +1,7 @@
 <!-- TABLE - ACTIONS: CREATE, REFRESH, SEARCH -->
 <div class="main-action-container" style="position: relative;" [id]="containerId">
     <div class="title-container" *ngIf="!showSearchInput">
-        <mat-icon>{{tableActionInput?.icon}}</mat-icon>
+        <mat-icon class="primary-icon">{{tableActionInput?.icon}}</mat-icon>
         <span class="title {{sharedService.theme}}-title">{{tableActionInput?.pageName}}</span>
     </div>
 
@@ -9,7 +9,7 @@
 
     <filter *ngIf="showSearchInput" (onReset)="reset()" (onSearch)="search($event)" [filterOptions]="filterOptions" [@filterAnimation] class="filter"></filter>
 
-    <div class="table-actions action-container {{sharedService.theme}}-text"
+    <div class="table-actions title action-container"
         *ngIf="!sharedService.mobileView && !showSearchInput">
         <mat-icon (click)="refresh()" class="pointer no-select {{sharedService.theme}}-icon"
             style="float: right;margin-left: 10px">refresh</mat-icon>

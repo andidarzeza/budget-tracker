@@ -8,6 +8,7 @@ import { TableHeaderModule } from './table-header/table-header.module';
 import { TableBodyModule } from './table-body/table-body.module';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 
@@ -21,7 +22,8 @@ import { MatButtonModule } from '@angular/material/button';
     TableHeaderModule,
     MatIconModule,
     TableBodyModule,
-    MatButtonModule
+    MatButtonModule,
+    MatPaginatorModule
   ],
   exports: [
     BaseTableComponent

@@ -4,9 +4,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
     width: 100%;
-    top: 123px;
-    /* height: calc(100% - 123px); */
-    padding: 32px 0;
+    top: 57px;
+    position: absolute;
+    height: calc(100% - 56px);
 }

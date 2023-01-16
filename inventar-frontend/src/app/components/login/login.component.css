@@ -4,6 +4,7 @@
     align-items: center;
     height: 100%;
     width: 100%;
+    background: url('../../../assets/images/landing-page.jpg');
     /* background: linear-gradient(-45deg, white, #253E8A, white, #2F418F);
 	background-size: 400% 400%; */
 	/* animation: gradient 15s ease infinite; */
@@ -23,7 +24,7 @@
     height: 100%;
 }
 
-.form-container {
+/* .form-container {
     width: 45%;
     display: flex;
     justify-content: center;
@@ -31,7 +32,7 @@
     height: 100%;
     z-index: 2;
     background: #f7f7f7;
-}
+} */
 
 .remember-me {
     padding-bottom: 17px;
@@ -105,6 +106,28 @@ input {
     transition: opacity 200ms;
 }
 
+
+.login-card {
+    position: relative;background:white;border-radius: 35px;height:90%;margin-right:10%;width: 630px;
+    box-shadow: rgb(60 64 67 / 30%) 0px 1px 2px 0px, rgb(60 64 67 / 15%) 0px 2px 6px 2px !important;
+}
+
+@media only screen and (max-width: 640px) {
+    .login-container {
+        justify-content: center;
+    }
+
+    .login-card {
+        margin: 0;
+        height: 52%;
+        width: calc(100% - 50px);
+    }
+
+    .form-container {
+        border-radius: 35px;
+    }
+}
+
 @media only screen and (max-width: 1000px) {
 
     .login-card {
@@ -113,10 +136,6 @@ input {
 
     .logo-container {
         display: none;
-    }
-
-    .form-container {
-        width: 100%;
     }
 }
 

@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { inOutAnimation } from 'src/app/animations';
 import { ColumnDefinition } from 'src/app/models/models';
 import { SharedService } from 'src/app/services/shared.service';
-import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
 
 @Component({
   selector: 'table-body',
@@ -10,7 +9,7 @@ import { ScrollLoader } from 'src/app/template/shared/scroll-loader';
   styleUrls: ['./table-body.component.css'],
   animations: [inOutAnimation]
 })
-export class TableBodyComponent implements AfterViewInit {
+export class TableBodyComponent {
 
   @Input() columnDefinitions: ColumnDefinition[];
   @Input() data: any[];
@@ -30,16 +29,6 @@ export class TableBodyComponent implements AfterViewInit {
     public sharedService: SharedService
   ) { }
 
-  ngAfterViewInit(): void {
-    const element = document.getElementById(this.tableId);
-    if (element) {
-      const scrollLoader = new ScrollLoader(element);
-      const listenable = scrollLoader.listenForScrollChange(1);
-      listenable.onScroll(() => this.onScroll.emit());
-      listenable.onTopScroll(() => this.onTopScroll.emit());
-    }
-  }
-
   getRequestedWidth(columns: number, type: any): any {
     if(this.displayDrawer) {
       if(type == 'actions') {
@@ -50,6 +39,8 @@ export class TableBodyComponent implements AfterViewInit {
     }
     return 100 / columns;
   }
+
+  idTrackFn = (element: any) => element.id;
 
   openDeleteConfirmDialog(id: string): void {
     this.onDeleteConfirmation.emit(id);

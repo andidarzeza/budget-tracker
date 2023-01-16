@@ -10,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { IConfiguration } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -47,7 +48,8 @@ export class LoginComponent {
     private formBuilder: FormBuilder,
     public authenticationService: AuthenticationService,
     private accountService: AccountService,
-    private router: Router
+    private router: Router,
+    public breakpointService: BreakpointService
   ) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const account = localStorage.getItem("account");

@@ -1,7 +1,7 @@
 <div id="sidebar" [ngStyle]="{'position': sideBarMode!='over' ? 'relative' : 'absolute', 'width': sideBarMode!='over' ? '250px' : '76px' }" class="sidebar grad" style="position: absolute;height: 100%;z-index: 2;" *ngIf="authenticationService.currentUserValue">
     <div class="logo-container">
         <button class="menu-item" mat-icon-button (click)="sideBarService.toggleSideBar()">
-            <mat-icon class="{{sharedService.theme}}-icon">
+            <mat-icon class="primary-icon">
                 menu
             </mat-icon>
         </button>
@@ -22,7 +22,7 @@
             matTooltipPosition="below"
             matTooltipClass="sidebar-tooltip"
         >
-            <mat-icon class="sidebar-icon">{{item.icon}}</mat-icon>
+            <mat-icon class="primary-icon sidebar-icon">{{item.icon}}</mat-icon>
             <span *ngIf="sideBarService.isOpened" class="title">{{item.text}}</span>
         </div>
     </div>

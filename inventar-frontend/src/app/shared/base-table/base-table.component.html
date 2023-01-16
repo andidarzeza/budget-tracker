@@ -4,7 +4,7 @@
         (onReset)="onReset.emit()">
     </table-actions>
 
-    <div style="display: flex;height: calc(100% - 67px);position: relative;">
+    <div style="display: flex;height: calc(100% - 126px);position: relative;">
         <div [ngClass]="displayDrawer ? 'table-opened' : 'table-closed'">
             <table-header [displayDrawer]="displayDrawer" [columnDefinitions]="columnDefinition"></table-header>
             <table-body [displayDrawer]="displayDrawer" [displayEditAction]="displayEditAction"
@@ -12,6 +12,13 @@
                 [columnDefinitions]="columnDefinition" (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
                 (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"
                 (onScroll)="onScroll.emit()" (onTopScroll)="onTopScroll.emit()"></table-body>
+
+            <mat-paginator style="border-top: 1px solid rgba(0, 0, 0, .12);" [length]="200"
+                [pageSize]="20" [showFirstLastButtons]="true"
+                [pageSizeOptions]="[]"
+                [hidePageSize]="breakpointService.screenSize == 'mobile'"
+                [pageIndex]="0">
+            </mat-paginator>
             <table-message [total]="data?.length"></table-message>
         </div>
 

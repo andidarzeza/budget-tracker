@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { inOutSlide } from 'src/app/animations';
 import { ColumnDefinition } from 'src/app/models/models';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { FilterOptions } from './table-actions/filter/filter.models';
 import { TableActionInput } from './table-actions/TableActionInput';
@@ -33,7 +34,8 @@ export class BaseTableComponent {
   @Output() onReset: EventEmitter<any> = new EventEmitter();
   displayDrawer = false;
   constructor(
-    public sharedService: SharedService
+    public sharedService: SharedService,
+    public breakpointService: BreakpointService
   ) { }
 
   openDeleteConfirmDialog(id: string): void {
@@ -45,9 +47,7 @@ export class BaseTableComponent {
   }
 
   viewDetails(id: string): void {
-    
     this.displayDrawer = true;
-    // this.onViewDetails.emit(id);
   }
 
 

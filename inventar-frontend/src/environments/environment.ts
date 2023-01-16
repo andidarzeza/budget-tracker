@@ -8,7 +8,7 @@ export const environment = {
 };
 
 // HOME NETWORK
-// export const serverAPIURL = 'http://192.168.1.9:9000';
+// export const serverAPIURL = 'http://192.168.1.10:9000';
 
 // TT NETWORK
 // export const serverAPIURL = 'http://192.168.1.9:9000';

@@ -55,6 +55,10 @@
   justify-content: space-between;
 }
 
+.expense-card {
+    background: var(--primary) !important;
+}
+
 
 @media only screen and (max-width: 1500px) {
     .percentage-badge {
@@ -86,19 +90,19 @@
    }
 }
 
-@media only screen and (max-width: 510px) {
+@media only screen and (max-width: 640px) {
 
     .cards-container {
-        width: calc(100% - 35px);
+        width: calc(100% - 0);
     }
     .avg-card-cnt {
         width: 100%;
         margin-bottom: 0px;
-        flex-direction: column;
+        /* flex-direction: column; */
     }
 
     .dashboard-card {
-        width: calc(100% - 32px);
+        /* width: calc(100% - 32px); */
         margin-bottom: 10px;
     }
 }

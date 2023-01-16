@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { IConfiguration, Theme } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
@@ -63,7 +64,8 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
     private configurationService: ConfigurationService,
     private themeService: ThemeService,
     public accountService: AccountService,
-    public router: Router
+    public router: Router,
+    public breakpointService: BreakpointService
   ) {
     super();
   }

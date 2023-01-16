@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { IConfiguration } from './models/models';
 import { AccountService } from './services/account.service';
 import { AuthenticationService } from './services/authentication.service';
+import { BreakpointService } from './services/breakpoint.service';
 import { ConfigurationService } from './services/configuration.service';
 import { SharedService } from './services/shared.service';
 import { ThemeService } from './services/theme.service';
@@ -25,7 +26,8 @@ export class AppComponent extends Unsubscribe implements OnInit {
     private configurationService: ConfigurationService,
     private accountService: AccountService,
     public router: Router,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private breakpointService: BreakpointService
   ) {
     super();
     this.themeService.initTheme();

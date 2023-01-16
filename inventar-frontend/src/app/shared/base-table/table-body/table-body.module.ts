@@ -6,6 +6,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 
 
@@ -16,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
     SharedModule,
     MatRippleModule,
     MatMenuModule,
+    ScrollingModule,
     MatIconModule,
     MatButtonModule
   ],

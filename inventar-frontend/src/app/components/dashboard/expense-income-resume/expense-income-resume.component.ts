@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DashboardDTO } from 'src/app/models/models';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -12,7 +13,8 @@ export class ExpenseIncomeResumeComponent {
   @Input() dashboardData: DashboardDTO;
 
   constructor(
-    public sharedService: SharedService
+    public sharedService: SharedService,
+    public breakpointService: BreakpointService
   ) { }
 
   public get expenses() {

@@ -64,37 +64,61 @@ app-date-picker {
 }
 
 .dark-theme {
+    // background
     --primary: var(--dark);
     --secondary: #111619;
+    // icon
+    --primary-icon: var(--light) !important;
+    --secondary-icon: red;
+    // text
+    --primary-text: #9F9F9F;
+    --secondary-text: white;
+    // other
     --card: var(--primary);
     --card-shadow: none;
-    --icon-primary: var(--light) !important;
-    --primary-text: #9F9F9F;
 }
 
 .light-theme {
+    // background
     --primary: var(--light);
     --secondary: #F8F8F8;
+    // icon
+    --primary-icon: white !important;
+    --secondary-icon: red;
+    // text
+    --primary-text: white;
+    --secondary-text: black;
+    // other
     --card: white;
     --card-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px !important;
-    --icon-primary: white !important;
-    --primary-text: white;
 }
 
 // transition
 
-.mat-toolbar, #application-body, .content-container, .mat-card, .main-action-container, .table-header, .settings-menu, .settings-content, .settings-view {
+.mat-toolbar, #application-body, .content-container, .mat-card, .main-action-container, 
+.settings-menu, .settings-view, .mat-menu-content, .balance-info, .table-header, .mat-paginator {
     transition: background var(--background-animation-timing) !important;
+}
+
+.secondary-title {
+    color: var(--secondary-text) !important;
 }
 
 // background
 
-.mat-toolbar, #application-body, .main-action-container, .sidebar, .table-header, .settings-menu, .settings-content {
+.mat-toolbar, #application-body, .main-action-container, .sidebar, 
+.mat-menu-content, .balance-info {
     background: var(--primary);
 }
 
-.mat-icon {
-    color: var(--icon-primary) !important;
+
+.primary-icon {
+    color: var(--primary-icon) !important;
+}
+
+
+.secondary-icon {
+    color: var(--secondary-icon) !important;
 }
 
 .mat-card {
@@ -102,11 +126,8 @@ app-date-picker {
     box-shadow: var(--card-shadow) !important;
 }
 
-.settings-view {
-    border-radius: 10px 0 0 0;
-}
 
-.content-container, .settings-view  {
+.content-container, .settings-view, .settings-menu, .table-header, .mat-paginator  {
     background: var(--secondary);
 }
 
@@ -683,7 +704,7 @@ th {
     width: 100%;
     border-radius: 35px 35px 0 0;
     height: 350px;
-    background: #3560AD;
+    background: var(--primary);
     position: relative;
     overflow: hidden;
 }
@@ -693,7 +714,7 @@ th {
     height: 350px;
     position: absolute;
 
-    background: #20328A;
+    background: var(--primary);
     border-radius: 50%;
     transform: translate(-50%, -50%);    
     left: 50%;
@@ -712,7 +733,7 @@ th {
 
 .circle-3 {
     border-radius: 50%;
-    border: 170px solid #2B388F;
+    border: 170px solid var(--primary);
     width: 700px;
     height: 700px;
     position: absolute;
