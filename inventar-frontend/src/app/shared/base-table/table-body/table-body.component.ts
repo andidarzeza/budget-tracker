@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { inOutAnimation } from 'src/app/animations';
 import { ColumnDefinition } from 'src/app/models/models';
-import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'table-body',
@@ -25,9 +24,7 @@ export class TableBodyComponent {
   @Output() onTopScroll = new EventEmitter();
   selectedId: string;
 
-  constructor(
-    public sharedService: SharedService
-  ) { }
+  constructor() { }
 
   getRequestedWidth(columns: number, type: any): any {
     if(this.displayDrawer) {

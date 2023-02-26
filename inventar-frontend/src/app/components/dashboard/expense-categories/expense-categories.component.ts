@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'expense-categories',
@@ -10,8 +9,6 @@ export class ExpenseCategoriesComponent {
 
   @Input() expenseCategoriesData: any[];
 
-  constructor(
-    public sharedService: SharedService
-  ) { }
+  constructor() { }
 
 }

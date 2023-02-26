@@ -1,27 +1,26 @@
 <div class="mt-1 mb-1">
     
-    <mat-card class="mt-1 {{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card category-card" *ngFor="let categoryData of expenseCategoriesData">
-        <div class="incomes-title fw-500 {{sharedService.theme}}-title flex align-center">
+    <mat-card class="mt-1 category-card" *ngFor="let categoryData of expenseCategoriesData">
+        <div class="incomes-title fw-500 flex align-center">
             <mat-icon>{{categoryData.icon}}</mat-icon> 
             <span class="ml-1">
                 {{categoryData._id}}
             </span>
         </div>
         <div class="total-incomes-container">
-            <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
+            <div class="total-incomes" style="position: relative;">
                 {{categoryData.total | number:'1.2-2':'en-US'}} ALL
             </div>
-            <div class="total-incomes-description {{sharedService.theme}}-title">
+            <div class="total-incomes-description">
                 Money spent so far.
             </div>
         </div>
     </mat-card>
 
-    <div *ngIf="expenseCategoriesData?.length == 0" 
-        class="{{sharedService.theme}}-text"
+    <div *ngIf="expenseCategoriesData?.length == 0"
     style="padding: 25px 0px;display: flex;align-items: center;justify-content: center;">
 
-        <div style="font-size: 16px;">
+        <div style="font-size: 16px;" class="card-color">
             Your expenses will appear here
         </div>
         

@@ -18,12 +18,12 @@
   </style>
 <mat-form-field  (click)="open()" class="{{sharedService.theme}}-text" appearance="outline" style="width: 100%;cursor: pointer;">
     <mat-label style="display: flex;align-items: center;" class="{{sharedService.theme}}-text">
-        <mat-icon class="selected-icon" *ngIf="inputPlaceHolder">
-            {{inputPlaceHolder}}
+        <mat-icon class="selected-icon" *ngIf="value">
+            {{value}}
         </mat-icon>
 
         <span style="padding-top: 3px;">
-            {{inputPlaceHolder ? inputPlaceHolder : 'Select Icon'}}
+            {{value ? value : 'Select Icon'}}
         </span>
     </mat-label>
     <input style="cursor: pointer" readonly type="text" autocomplete="off" matInput>
@@ -43,14 +43,17 @@
         </span>
     </div> -->
 
+
     <mat-divider></mat-divider>
 
     <div class="icons">
-        <div *ngFor="let icon of icons" [ngStyle]="{'background': inputPlaceHolder==icon ? 'var(--light)' : 'default' }" class="icon {{sharedService.theme}}-body" (click)="select(icon)">
-            <mat-icon [ngStyle]="{'color': inputPlaceHolder==icon ? 'white' : 'var(--light)' }">
+
+    {{value}}
+        <div *ngFor="let icon of icons" [ngStyle]="{'background': value==icon ? 'var(--light)' : 'default' }" class="icon {{sharedService.theme}}-body" (click)="select(icon)">
+            <mat-icon [ngStyle]="{'color': value==icon ? 'white' : 'var(--light)' }">
                 {{icon}}
             </mat-icon>
-            <span style="margin-top: 5px;" class="{{sharedService.theme}}-title" [ngStyle]="{'color': inputPlaceHolder==icon ? 'white' : 'default' }">
+            <span style="margin-top: 5px;" class="{{sharedService.theme}}-title" [ngStyle]="{'color': value==icon ? 'white' : 'default' }">
                 {{icon}}
             </span>
         </div>

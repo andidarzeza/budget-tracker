@@ -1,5 +1,4 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { SharedService } from 'src/app/services/shared.service';
 import { filterAnimation } from './filter/filter.animations';
 import { FilterOptions } from './filter/filter.models';
 import { TableActionInput } from './TableActionInput';
@@ -26,9 +25,7 @@ export class TableActionsComponent {
   public containerId = "actions-container-id";
   public searchIconId = "search-icon-id";
 
-  constructor(
-    public sharedService: SharedService
-  ) { }
+  constructor() { }
 
   refresh(): void {
     this.onRefresh.emit();

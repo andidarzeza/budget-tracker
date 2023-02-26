@@ -8,4 +8,6 @@
     top: 57px;
     position: absolute;
     height: calc(100% - 56px);
+    background: var(--secondary);
+    color: var(--card-title);
 }

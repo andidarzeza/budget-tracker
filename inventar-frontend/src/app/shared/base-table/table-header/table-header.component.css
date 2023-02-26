@@ -1,5 +1,6 @@
 .header-column {
     transition: width 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
+    color: var(--primary-text);
 }
 
 .table-header {
@@ -8,4 +9,5 @@
     align-items: center;
     padding: 18px 0;
     border-bottom: 1px solid rgba(0,0,0,.12);
+    background: var(--primary);
 }

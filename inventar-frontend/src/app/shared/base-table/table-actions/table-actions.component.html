@@ -2,7 +2,7 @@
 <div class="main-action-container" style="position: relative;" [id]="containerId">
     <div class="title-container" *ngIf="!showSearchInput">
         <mat-icon class="primary-icon">{{tableActionInput?.icon}}</mat-icon>
-        <span class="title {{sharedService.theme}}-title">{{tableActionInput?.pageName}}</span>
+        <span class="title">{{tableActionInput?.pageName}}</span>
     </div>
 
     <div *ngIf="showSearchInput" style="height: 66px;max-height: 66px;"></div>
@@ -10,12 +10,12 @@
     <filter *ngIf="showSearchInput" (onReset)="reset()" (onSearch)="search($event)" [filterOptions]="filterOptions" [@filterAnimation] class="filter"></filter>
 
     <div class="table-actions title action-container"
-        *ngIf="!sharedService.mobileView && !showSearchInput">
-        <mat-icon (click)="refresh()" class="pointer no-select {{sharedService.theme}}-icon"
+        *ngIf="!showSearchInput">
+        <mat-icon (click)="refresh()" class="pointer no-select"
             style="float: right;margin-left: 10px">refresh</mat-icon>
         <mat-icon *ngIf="!tableActionInput?.extra?.hideInsertButton" (click)="openDialog()"
-            class="pointer no-select {{sharedService.theme}}-icon" style="float: right;">add</mat-icon>
-        <mat-icon class="pointer no-select {{sharedService.theme}}-icon" style="float: right;margin-right: 9px"
+            class="pointer no-select" style="float: right;">add</mat-icon>
+        <mat-icon class="pointer no-select" style="float: right;margin-right: 9px"
             [id]="searchIconId"
             (click)="openSearchInput()">search</mat-icon>
     </div>

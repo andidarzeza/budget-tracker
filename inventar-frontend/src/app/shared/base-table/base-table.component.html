@@ -1,4 +1,4 @@
-<div class="{{sharedService.theme}}-book-tb-container">
+<div class="base-table-container">
     <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
         (onOpenDialog)="onOpenDialog.emit()" (onRefresh)="onRefresh.emit()" (onSearch)="onSearch.emit($event)"
         (onReset)="onReset.emit()">
@@ -13,7 +13,7 @@
                 (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"
                 (onScroll)="onScroll.emit()" (onTopScroll)="onTopScroll.emit()"></table-body>
 
-            <mat-paginator style="border-top: 1px solid rgba(0, 0, 0, .12);" [length]="200"
+            <mat-paginator class="base-table-paginator" [length]="200"
                 [pageSize]="20" [showFirstLastButtons]="true"
                 [pageSizeOptions]="[]"
                 [hidePageSize]="breakpointService.screenSize == 'mobile'"
@@ -22,10 +22,10 @@
             <table-message [total]="data?.length"></table-message>
         </div>
 
-        <div [@inOutSlide] class="details-sidebar-container {{sharedService.theme}}-table" *ngIf="displayDrawer">
+        <div [@inOutSlide] class="details-sidebar-container" *ngIf="displayDrawer">
             <div class="details-sidebar-actions">
                 <button mat-icon-button (click)="displayDrawer=false">
-                    <mat-icon class="{{sharedService.theme}}-icon">
+                    <mat-icon class="">
                         close
                     </mat-icon>
                 </button>

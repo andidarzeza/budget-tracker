@@ -1,8 +1,8 @@
 <div class="cards-container">
     <div class="avg-card-cnt">
-        <mat-card style="display: flex;align-items: center;" class="dashboard-card expense-card">
+        <mat-card class="dashboard-card expense-card">
             <div>
-                <div class="incomes-title fw-500 title">
+                <div class="fw-500 title">
                     Expenses
                 </div>
                 <div class="total-incomes-container">
@@ -14,21 +14,16 @@
                     </div>
                 </div>
             </div>
-            <div style="height: 100%;display: flex;justify-content: center;align-items: center;">
-                <!-- <mat-icon>
-                    attach_money
-                </mat-icon> -->
-            </div>
             
         </mat-card>
 
-        <mat-card style="display: flex;align-items: center;" class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
+        <mat-card style="display: flex;align-items: center;" class="dashboard-card">
             <div>
-                <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+                <div class="card-color incomes-title fw-500">
                     Avg. daily expense
                 </div>
                 <div class="total-incomes-container">
-                    <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
+                    <div class="total-incomes card-color" style="position: relative;">
                         {{averageDailyExpenses | number:'1.2-2':'en-US'}} ALL
                         <span *ngIf="increaseInExpense>0" class="percentage-badge percentage-down">
                             <span>↑</span>{{increaseInExpense | number:'1.2-2':'en-US'}}%
@@ -40,16 +35,10 @@
                             {{increaseInExpense | absoluteValue | number:'1.2-2':'en-US'}}%
                         </span>
                     </div>
-                    <div *ngIf="breakpointService.screenSize != 'mobile'" class="total-incomes-description {{sharedService.theme}}-title">
+                    <div *ngIf="breakpointService.screenSize != 'mobile'" class="total-incomes-description card-color">
                         Average daily expenses so far.
                     </div>
                 </div>
-            </div>
-
-            <div style="height: 100%;display: flex;justify-content: center;align-items: center;">
-                <mat-icon>
-                    home
-                </mat-icon>
             </div>
 
         </mat-card>
@@ -57,26 +46,26 @@
 
     <div class="avg-card-cnt">
 
-        <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
-            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+        <mat-card class="dashboard-card">
+            <div class="incomes-title card-color fw-500">
                 Incomes
             </div>
             <div class="total-incomes-container">
-                <div class="total-incomes {{sharedService.theme}}-title">
+                <div class="total-incomes card-color">
                     {{incomes | number:'1.2-2':'en-US'}} ALL
                 </div>
-                <div *ngIf="breakpointService.screenSize != 'mobile'" class="total-incomes-description {{sharedService.theme}}-title">
+                <div *ngIf="breakpointService.screenSize != 'mobile'" class="total-incomes-description card-color">
                     Total Income so far.
                 </div>
             </div>
         </mat-card>
 
-        <mat-card class="{{sharedService.theme}}-table {{sharedService.theme}}-dashboard-card dashboard-card">
-            <div class="incomes-title fw-500 {{sharedService.theme}}-title">
+        <mat-card class="dashboard-card">
+            <div class="incomes-title fw-500 card-color">
                 Avg. daily income
             </div>
             <div class="total-incomes-container">
-                <div class="total-incomes {{sharedService.theme}}-title" style="position: relative;">
+                <div class="total-incomes card-color" style="position: relative;">
                     {{averageDailyIncome | number:'1.2-2':'en-US'}} ALL
                     <span *ngIf="increaseInIncome>0" class="percentage-badge percentage-up">
                         <span>↑</span>{{increaseInIncome | number:'1.2-2':'en-US'}}%
@@ -88,7 +77,7 @@
                         {{increaseInIncome | absoluteValue | number:'1.2-2':'en-US'}}%
                     </span>
                 </div>
-                <div *ngIf="breakpointService.screenSize != 'mobile'" class="total-incomes-description {{sharedService.theme}}-title">
+                <div *ngIf="breakpointService.screenSize != 'mobile'" class="total-incomes-description card-color">
                     Average daily income so far.
                 </div>
             </div>

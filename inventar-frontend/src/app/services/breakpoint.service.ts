@@ -1,4 +1,4 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -11,9 +11,9 @@ export class BreakpointService {
   constructor(
     private breakpointObserver: BreakpointObserver
   ) { 
-    if(this.breakpointObserver.isMatched('(max-width: 640px)')) {
+    if(this.breakpointObserver.isMatched(Breakpoints.Small)) {
       this.screenSize = "mobile";
-    } else if (this.breakpointObserver.isMatched('(max-width: 1007px)')) {
+    } else if (this.breakpointObserver.isMatched(Breakpoints.Tablet)) {
       this.screenSize = "tablet";
     } else {
       this.screenSize = "desktop";

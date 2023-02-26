@@ -58,7 +58,7 @@ export class AddCategoryComponent extends Unsubscribe implements OnInit {
       )
   }
 
-  add(): void {
+  add(): void {    
     if(this.categoryGroup.valid && !this.savingEntity){
       if(this.editMode) {
         this.loadingData = true;
@@ -99,10 +99,6 @@ export class AddCategoryComponent extends Unsubscribe implements OnInit {
 
   closeDialog(update: boolean): void {
     this.dialogRef.close(update);
-  }
-
-  onIconSelect(icon: string): void {
-    this.icon.setValue(icon);
   }
 
   get editMode() {

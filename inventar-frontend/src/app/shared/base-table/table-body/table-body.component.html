@@ -1,10 +1,8 @@
 <div class="body-container" [id]="tableId">
-    <!-- {{displayDrawer}} -->
     <div matRipple [matRippleColor]="'#80808014'" *ngFor="let element of data"
-        [ngClass]="{'hover-table-row pointer': (selectedId!=element.id), 'active-element': (selectedId==element.id)}" class="table-row"
-        (click)="viewDetails(element.id)">
+        [ngClass]="{'hover-table-row pointer': (selectedId!=element.id), 'active-element': (selectedId==element.id)}" class="table-row">
         <div *ngFor="let columnDef of columnDefinitions" class="table-row" [style.width.%]="getRequestedWidth(columnDefinitions?.length, columnDef.type)"
-            class="{{sharedService.theme}}-text text-center row-entry">
+            class="text-center row-entry" style="color: var(--card-title);">
             <span [ngSwitch]="columnDef.type">
                 <ng-container *ngSwitchCase="'date'">
                     {{element[columnDef.column] | customDate}}

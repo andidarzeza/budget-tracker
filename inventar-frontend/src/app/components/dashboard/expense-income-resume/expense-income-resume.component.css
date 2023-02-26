@@ -3,6 +3,10 @@
     padding-top: 0;
 }
 
+.card-color {
+    color: var(--card-title)
+}
+
 .total-incomes {
     font-size: 1.1rem;
     width: fit-content;

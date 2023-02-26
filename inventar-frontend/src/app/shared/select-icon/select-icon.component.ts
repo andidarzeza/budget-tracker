@@ -1,5 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -28,12 +29,15 @@ import { SharedService } from 'src/app/services/shared.service';
         )
       ]
     )
-  ]
+  ],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    multi: true,
+    useExisting: SelectIconComponent
+  }]
 })
-export class SelectIconComponent implements OnInit {
+export class SelectIconComponent implements ControlValueAccessor {
   showIconSelect = false;
-
-  @Output() onSelect = new EventEmitter();
 
   icons: string[] = [
     'fastfood',
@@ -66,13 +70,31 @@ export class SelectIconComponent implements OnInit {
     'next_week'
   ];
 
+  value: string;
+  disabled: boolean;
+
   constructor(
     public sharedService: SharedService
   ) { }
 
-  @Input() inputPlaceHolder: string;
+  onChange: (value: string) => void;
 
-  ngOnInit(): void {
+  onTouched: () => void;
+
+  writeValue(obj: any): void {
+    this.value = obj;
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 
   open(): void {
@@ -84,7 +106,8 @@ export class SelectIconComponent implements OnInit {
   }
 
   select(icon: string): void {
-    this.onSelect.emit(icon);
+    this.value = icon;
+    this.onChange(icon);    
     this.close();
   }
 

@@ -76,6 +76,9 @@ app-date-picker {
     // other
     --card: var(--primary);
     --card-shadow: none;
+    --card-title: #9F9F9F;
+    // table
+    --hover-table-row: #80808008;
 }
 
 .light-theme {
@@ -91,13 +94,20 @@ app-date-picker {
     // other
     --card: white;
     --card-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px !important;
+    --card-title: rgba(0, 0, 0, 0.67);
+    // table
+    --hover-table-row: #e8e8e8;
 }
 
 // transition
 
 .mat-toolbar, #application-body, .content-container, .mat-card, .main-action-container, 
-.settings-menu, .settings-view, .mat-menu-content, .balance-info, .table-header, .mat-paginator {
+.settings-menu, .settings-view, .mat-menu-content, .balance-info, .table-header, .mat-paginator, .no-data, .table-row {
     transition: background var(--background-animation-timing) !important;
+}
+
+.mat-paginator {
+    color: var(--primary-text);
 }
 
 .secondary-title {
@@ -106,7 +116,7 @@ app-date-picker {
 
 // background
 
-.mat-toolbar, #application-body, .main-action-container, .sidebar, 
+.mat-toolbar, #application-body, .sidebar, 
 .mat-menu-content, .balance-info {
     background: var(--primary);
 }
@@ -127,7 +137,7 @@ app-date-picker {
 }
 
 
-.content-container, .settings-view, .settings-menu, .table-header, .mat-paginator  {
+.content-container, .settings-view, .settings-menu, .table-header  {
     background: var(--secondary);
 }
 

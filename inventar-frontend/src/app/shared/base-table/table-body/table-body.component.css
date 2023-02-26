@@ -10,6 +10,7 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid rgba(0,0,0,.12);
+    background: var(--secondary);
 }
 
 .text-center {
@@ -24,7 +25,7 @@
 }
 
 .hover-table-row:hover{
-    background: #80808008 !important;
+    background: var(--hover-table-row) !important;
 }
 .pointer {
     cursor: pointer;

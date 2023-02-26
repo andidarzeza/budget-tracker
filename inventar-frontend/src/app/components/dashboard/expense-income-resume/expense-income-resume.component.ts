@@ -13,7 +13,6 @@ export class ExpenseIncomeResumeComponent {
   @Input() dashboardData: DashboardDTO;
 
   constructor(
-    public sharedService: SharedService,
     public breakpointService: BreakpointService
   ) { }
 
