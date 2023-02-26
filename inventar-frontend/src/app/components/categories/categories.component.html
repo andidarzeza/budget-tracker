@@ -8,7 +8,7 @@
 
     <base-table [data]="data" [columnDefinition]="columnDefinition"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
-        (onViewDetails)="viewDetails($event)" (onScroll)="onScroll()" [filterOptions]="filterOptions"
+        (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)" [filterOptions]="filterOptions"
         [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="resetAndQuery()"
         (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
         [displayEditAction]="true" [displayDeleteAction]="true"></base-table>

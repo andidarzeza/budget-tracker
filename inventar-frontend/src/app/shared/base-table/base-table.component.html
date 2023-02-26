@@ -10,14 +10,13 @@
             <table-body [displayDrawer]="displayDrawer" [displayEditAction]="displayEditAction"
                 [displayDeleteAction]="displayDeleteAction" [data]="data" [tableId]="tableId"
                 [columnDefinitions]="columnDefinition" (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
-                (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"
-                (onScroll)="onScroll.emit()" (onTopScroll)="onTopScroll.emit()"></table-body>
+                (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"></table-body>
 
             <mat-paginator class="base-table-paginator" [length]="200"
                 [pageSize]="20" [showFirstLastButtons]="true"
                 [pageSizeOptions]="[]"
                 [hidePageSize]="breakpointService.screenSize == 'mobile'"
-                [pageIndex]="0">
+                [pageIndex]="0" (page)="handlePageEvent($event)">
             </mat-paginator>
             <table-message [total]="data?.length"></table-message>
         </div>

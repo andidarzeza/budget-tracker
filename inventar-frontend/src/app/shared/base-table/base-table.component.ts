@@ -19,8 +19,6 @@ export class BaseTableComponent {
   @Output() onDeleteConfirmation = new EventEmitter();
   @Output() onAddEditForm = new EventEmitter();
   @Output() onViewDetails = new EventEmitter();
-  @Output() onScroll = new EventEmitter();
-  @Output() onTopScroll = new EventEmitter();
   
   @Input() tableActionInput: TableActionInput;
   @Input() filterOptions: FilterOptions[];
@@ -32,6 +30,7 @@ export class BaseTableComponent {
   @Output() onOpenDialog: EventEmitter<any> = new EventEmitter();
   @Output() onSearch: EventEmitter<any> = new EventEmitter();
   @Output() onReset: EventEmitter<any> = new EventEmitter();
+  @Output() nextPage: EventEmitter<number> = new EventEmitter();
   displayDrawer = false;
   constructor(
     public sharedService: SharedService,
@@ -50,5 +49,7 @@ export class BaseTableComponent {
     this.displayDrawer = true;
   }
 
-
+  handlePageEvent(event: {pageIndex: number}): void {
+    this.nextPage.emit(event.pageIndex)
+  }
 }

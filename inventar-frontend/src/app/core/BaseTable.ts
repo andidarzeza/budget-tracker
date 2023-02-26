@@ -60,26 +60,15 @@ export abstract class BaseTable<E> extends Unsubscribe implements AfterViewInit 
     }
 
     onQuerySuccess(response: ResponseWrapper): void {
-        this.displayData = this.resetData ? response.data : this.displayData.concat(response?.data);
-        // if (this.resetData) {
-        //     this.displayData = response?.data;
-        // } else {
-        //     if (this.displayData.length >= 60) {
-        //         this.displayData.splice(0, this.size);
-        //         this.currentIndex++;
-        //         this.displayData = this.displayData.concat(response.data);
-
-        //         const num = this.scrollElement.clientHeight;
-        //         const result = (num * 5) + 200;
-        //         this.scrollElement.scrollTo({ top: result });
-        //     } else {
-        //         this.displayData = this.displayData.concat(response.data);
-        //     }
-        // }
-
+        this.displayData = response.data;
         this.stopLoading = response.data.length < this.size;
         this.resetData = false;
         this.totalItems = response?.count;
+    }
+
+    onNextPage(page: number): void {
+        this.page = page;
+        this.query();
     }
 
     openAddEditForm(entity?: E): void {

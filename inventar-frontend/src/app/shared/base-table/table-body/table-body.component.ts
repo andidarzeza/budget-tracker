@@ -20,8 +20,6 @@ export class TableBodyComponent {
   @Output() onDeleteConfirmation = new EventEmitter();
   @Output() onAddEditForm = new EventEmitter();
   @Output() onViewDetails = new EventEmitter();
-  @Output() onScroll = new EventEmitter();
-  @Output() onTopScroll = new EventEmitter();
   selectedId: string;
 
   constructor() { }

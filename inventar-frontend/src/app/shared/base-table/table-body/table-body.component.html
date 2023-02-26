@@ -1,6 +1,7 @@
+<!-- [ngClass]="{'hover-table-row pointer': (selectedId!=element.id), 'active-element': (selectedId==element.id)}" -->
 <div class="body-container" [id]="tableId">
-    <div matRipple [matRippleColor]="'#80808014'" *ngFor="let element of data"
-        [ngClass]="{'hover-table-row pointer': (selectedId!=element.id), 'active-element': (selectedId==element.id)}" class="table-row">
+    <div *ngFor="let element of data"
+         class="table-row">
         <div *ngFor="let columnDef of columnDefinitions" class="table-row" [style.width.%]="getRequestedWidth(columnDefinitions?.length, columnDef.type)"
             class="text-center row-entry" style="color: var(--card-title);">
             <span [ngSwitch]="columnDef.type">
