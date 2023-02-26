@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -10,7 +10,7 @@ import { MenuItem, SideBarMode } from '../base-template.models';
   templateUrl: './side-bar.component.html',
   styleUrls: ['./side-bar.component.css']
 })
-export class SideBarComponent implements OnChanges {
+export class SideBarComponent implements OnChanges, AfterViewInit {
 
   @Input() navigation: MenuItem[];
   @Input() sideBarMode: SideBarMode;
@@ -22,6 +22,22 @@ export class SideBarComponent implements OnChanges {
     public sideBarService: SideBarService,
     public router: Router
   ) { }
+
+  ngAfterViewInit(): void {
+    const sideBarStatus = localStorage.getItem("fms-sidebar");
+    if(sideBarStatus) {
+      if(sideBarStatus == "true") {
+        this.sideBarService.isOpened = true;
+        this.sideBarService.openSideBar();
+      } else {
+        this.sideBarService.isOpened = false;
+        this.sideBarService.closeSideBar();
+      }
+    } else {
+      this.sideBarService.isOpened = false;
+      this.sideBarService.closeSideBar();
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.navigation?.forEach((item: MenuItem) => {

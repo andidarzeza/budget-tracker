@@ -15,6 +15,7 @@ import { TableActionInput } from './table-actions/TableActionInput';
 export class BaseTableComponent {
 
   @Input() data: any[];
+  @Input() total: number;
   @Input() columnDefinition: ColumnDefinition[];
   @Output() onDeleteConfirmation = new EventEmitter();
   @Output() onAddEditForm = new EventEmitter();

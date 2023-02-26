@@ -6,7 +6,7 @@ import { SharedService } from './shared.service';
   providedIn: 'root'
 })
 export class SideBarService {
-  public isOpened = true;
+  public isOpened = false;
   public sidebarWidth = SIDEBAR_WIDTH;
   public displaySidebar = false;
   constructor(public sharedService: SharedService) { }
@@ -16,11 +16,12 @@ export class SideBarService {
     this.isOpened = !this.isOpened;
   }
 
-  private openSideBar(): void {
+  openSideBar(): void {
     const sideBar: HTMLElement = document.getElementById('sidebar');
     const shadow: HTMLElement = document.getElementById('shadow');
     if (sideBar) {
       sideBar.style.width = `${this.sidebarWidth}px`;
+      localStorage.setItem("fms-sidebar", "true");
       if (shadow) {
         shadow.style.opacity = "0.4";
         shadow.style.pointerEvents = "auto";
@@ -29,11 +30,11 @@ export class SideBarService {
     }
   }
 
-  private closeSideBar(): void {
+  closeSideBar(): void {
     const sideBar: HTMLElement = document.getElementById('sidebar');
     const shadow: HTMLElement = document.getElementById('shadow');
-    if (this.sharedService.mobileView) sideBar.style.width = '0px';
-    else sideBar.style.width = '76px';
+    sideBar.style.width = '76px';
+    localStorage.setItem("fms-sidebar", "false");
     if (shadow) {
       shadow.style.opacity = "0";
       shadow.style.pointerEvents = "none";
