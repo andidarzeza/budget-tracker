@@ -7,7 +7,7 @@ export const filterAnimation = trigger(
         ':enter', 
         [
           style({ opacity: 0 }),
-          animate('100ms ease-out', 
+          animate('200ms ease-out', 
                   style({opacity: 1 }))
         ]
       ),
@@ -15,7 +15,7 @@ export const filterAnimation = trigger(
         ':leave', 
         [
           style({ opacity: 1 }),
-          animate('100ms ease-in', 
+          animate('200ms ease-in', 
                   style({ opacity: 0 }))
         ]
       )

@@ -5,7 +5,7 @@
         <span class="title">{{tableActionInput?.pageName}}</span>
     </div>
 
-    <div *ngIf="showSearchInput" style="height: 66px;max-height: 66px;"></div>
+    <div *ngIf="showSearchInput" style="height: 68px;max-height: 68px;"></div>
 
     <filter *ngIf="showSearchInput" (onReset)="reset()" (onSearch)="search($event)" [filterOptions]="filterOptions" [@filterAnimation] class="filter"></filter>
 

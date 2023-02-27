@@ -1,4 +1,4 @@
-<div style="width: 100%;" class="{{sharedService.theme + '-table'}}">
+<div style="width: 100%;" class="filter-container">
 
 
     <filter-header></filter-header>
@@ -8,20 +8,20 @@
     <form [formGroup]="formGroup" style="width: calc(100% - 250px);padding: 10px;display: grid;grid-template-columns: auto auto auto auto;grid-gap: 10px;">
         <ng-container *ngFor="let filterOption of filterOptions">
             <div [ngSwitch]="filterOption.type" style="width: 100%;">
-                <mat-form-field (keydown.enter)="onEnter()" class="{{sharedService.theme}}-text" *ngSwitchCase="'text'" class="my-form-field" [appearance]="'outline'">
-                    <mat-label class="{{sharedService.theme}}-text">{{filterOption.label}}</mat-label>
-                    <input formControlName="{{filterOption.field}}" matInput>
+                <mat-form-field (keydown.enter)="onEnter()" class="primary-text" *ngSwitchCase="'text'" class="my-form-field" [appearance]="'outline'">
+                    <mat-label class="primary-text">{{filterOption.label}}</mat-label>
+                    <input class="primary-text" formControlName="{{filterOption.field}}" matInput>
                 </mat-form-field>
 
-                <mat-form-field (keydown.enter)="onEnter()" class="{{sharedService.theme}}-text" *ngSwitchCase="'number'" class="my-form-field" [appearance]="'outline'">
-                    <mat-label class="{{sharedService.theme}}-text">{{filterOption.label}}</mat-label>
-                    <input formControlName="{{filterOption.field}}" type="number" matInput>
+                <mat-form-field (keydown.enter)="onEnter()" class="primary-text" *ngSwitchCase="'number'" class="my-form-field" [appearance]="'outline'">
+                    <mat-label class="primary-text">{{filterOption.label}}</mat-label>
+                    <input class="primary-text" formControlName="{{filterOption.field}}" type="number" matInput>
                 </mat-form-field>
 
-                <mat-form-field *ngSwitchCase="'select'" class="{{sharedService.theme}}-select my-form-field" [appearance]="'outline'">
-                    <mat-label class="{{sharedService.theme}}-text">{{filterOption.label}}</mat-label>
-                    <mat-select formControlName="{{filterOption.field}}" class="{{sharedService.theme}}-select">
-                      <mat-option class="{{sharedService.theme}}-text {{sharedService.theme}}-option {{sharedService.theme}}-body" *ngFor="let option of filterOption?.matSelectOptions?.options" [value]="option[filterOption?.matSelectOptions.valueBy]">
+                <mat-form-field *ngSwitchCase="'select'" class="my-form-field primary-text" [appearance]="'outline'">
+                    <mat-label class="primary-text">{{filterOption.label}}</mat-label>
+                    <mat-select formControlName="{{filterOption.field}}" class="primary-text">
+                      <mat-option class="primary-text filter-option" *ngFor="let option of filterOption?.matSelectOptions?.options" [value]="option[filterOption?.matSelectOptions.valueBy]">
                         {{option[filterOption?.matSelectOptions.displayBy]}}
                       </mat-option>
                     </mat-select>

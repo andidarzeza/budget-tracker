@@ -10,4 +10,5 @@
     height: calc(100% - 56px);
     background: var(--secondary);
     color: var(--card-title);
+    flex-direction: column;
 }

@@ -79,6 +79,8 @@ app-date-picker {
     --card-title: #9F9F9F;
     // table
     --hover-table-row: #80808008;
+    --filter-bg: var(--dark);
+    --option-hover: #1d252a;
 }
 
 .light-theme {
@@ -97,6 +99,16 @@ app-date-picker {
     --card-title: rgba(0, 0, 0, 0.67);
     // table
     --hover-table-row: #e8e8e8;
+    --filter-bg: white;
+    --option-hover: #e8e8e8;
+}
+
+.mat-option:hover:not(.mat-option-disabled), .mat-option:focus:not(.mat-option-disabled) {
+    background: var(--option-hover) !important;
+}
+
+.mat-select-panel {
+    background: var(--secondary);
 }
 
 // transition
