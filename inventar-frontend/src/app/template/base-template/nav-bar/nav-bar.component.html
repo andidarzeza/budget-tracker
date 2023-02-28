@@ -2,19 +2,13 @@
 
 
     <span>
-        <!-- <button *ngIf="this.breakpointService.screenSize == 'mobile' && !sidebarService.isOpened" class="menu-item" mat-icon-button
-            (click)="sidebarService.toggleSideBar()" style="margin-left: 18px;">
-            <mat-icon class="{{sharedService.theme}}-icon">
-                menu
-            </mat-icon>
-        </button> -->
     </span>
     <div class="menu-container">
 
         <div *ngIf="this.breakpointService.screenSize != 'mobile'" class="menu-item pointer" (click)="toggleDarkMode()">
-            <i *ngIf="!this.sharedService?.darkMode" style="font-size: 30px;"
+            <i *ngIf="themeService?.themeValue == 'light-theme'" style="font-size: 30px;"
                 class="material-icons primary-icon">nights_stay</i>
-            <mat-icon *ngIf="this.sharedService?.darkMode" class="fullscreen-icon primary-icon">wb_sunny
+            <mat-icon *ngIf="themeService?.themeValue == 'dark-theme'" class="fullscreen-icon primary-icon">wb_sunny
             </mat-icon>
         </div>
 

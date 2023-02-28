@@ -62,7 +62,7 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
     public authenticationService: AuthenticationService,
     public sidebarService: SideBarService,
     private configurationService: ConfigurationService,
-    private themeService: ThemeService,
+    public themeService: ThemeService,
     public accountService: AccountService,
     public router: Router,
     public breakpointService: BreakpointService

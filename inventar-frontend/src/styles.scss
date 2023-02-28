@@ -113,7 +113,7 @@ app-date-picker {
 
 // transition
 
-.mat-toolbar, #application-body, .content-container, .mat-card, .main-action-container, 
+.mat-toolbar, #application-body, .mat-card, .main-action-container, .content-container,
 .settings-menu, .settings-view, .mat-menu-content, .balance-info, .table-header, .mat-paginator, .no-data, .table-row {
     transition: background var(--background-animation-timing) !important;
 }

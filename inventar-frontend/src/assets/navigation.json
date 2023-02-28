@@ -1,6 +1,6 @@
 [
     {
-        "icon": "dashboard",
+        "icon": "space_dashboard",
         "text": "Dashboard",
         "link": "/dashboard"
     },
@@ -15,7 +15,7 @@
         "link": "/incomes"
     },
     {
-        "icon": "library_books",
+        "icon": "list_alt",
         "text": "Categories",
         "link": "/categories"
     },

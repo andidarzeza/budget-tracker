@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EntityType } from 'src/app/models/models';
-import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'create-header',
@@ -10,9 +9,7 @@ import { SharedService } from 'src/app/services/shared.service';
 export class CreateHeaderComponent implements OnInit {
   @Output() close = new EventEmitter();
 
-  constructor(
-    public sharedService: SharedService
-  ) { }
+  constructor() { }
 
   @Input() public editMode: boolean;
   @Input() public icon: string;
