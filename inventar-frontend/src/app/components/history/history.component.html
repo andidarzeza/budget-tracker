@@ -6,6 +6,7 @@
     </mat-drawer>
 
     <base-table [data]="displayData" [columnDefinition]="columnDefinition"
+        [total]="totalItems"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
         (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)"
         [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()"

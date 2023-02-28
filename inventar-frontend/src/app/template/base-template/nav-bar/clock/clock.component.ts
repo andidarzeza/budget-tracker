@@ -1,25 +1,23 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { timer } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'clock',
   templateUrl: './clock.component.html',
   styleUrls: ['./clock.component.css']
 })
-export class ClockComponent implements OnInit, OnDestroy {
-  interval: any;
+export class ClockComponent extends Unsubscribe implements OnInit {
   currentDate = new Date();
-  constructor() { }
-
-  ngOnInit(): void {
-    this.interval = setInterval(() => {
-      this.currentDate = new Date();
-    }, 1000);
+  constructor() { 
+    super();
   }
 
-  ngOnDestroy(): void {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
+  ngOnInit(): void {
+    timer(0, 1000)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => this.currentDate = new Date());
   }
 
 }

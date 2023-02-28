@@ -47,7 +47,7 @@ export class CategoriesComponent extends BaseTable<Category> {
   public categoriesType: CategoryType = CategoryType.EXPENSE;
   public tableActionInput: TableActionInput = {
     pageName: "Categories",
-    icon: 'library_books'
+    icon: 'list_alt'
   };
   resetData: boolean = false;
 
