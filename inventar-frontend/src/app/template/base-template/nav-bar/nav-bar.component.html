@@ -24,31 +24,31 @@
             </div>
 
             <mat-menu xPosition="before" class="user-menu" #userMenu="matMenu">
-                <button class="title" mat-menu-item>Logged in as
+                <button mat-menu-item>Logged in as
                     {{ firstName | titlecase }}
                     {{ lastName | titlecase }}</button>
                 <mat-divider style="width: 100%;"></mat-divider>
 
-                <button class="title" mat-menu-item [matMenuTriggerFor]="balance">
+                <!-- <button class="title" mat-menu-item [matMenuTriggerFor]="balance">
                     <mat-icon class="primary-icon">account_balance_wallet</mat-icon> Balance
+                </button> -->
+                <mat-divider style="width: 100%;"></mat-divider>
+                <button mat-menu-item [matMenuTriggerFor]="themes">
+                    <mat-icon>color_lens</mat-icon> Themes
                 </button>
                 <mat-divider style="width: 100%;"></mat-divider>
-                <button class="title" mat-menu-item [matMenuTriggerFor]="themes">
-                    <mat-icon class="primary-icon">color_lens</mat-icon> Themes
+                <button (click)="switchAccount()" mat-menu-item>
+                    <mat-icon>account_circle</mat-icon>Switch Account
                 </button>
                 <mat-divider style="width: 100%;"></mat-divider>
-                <button class="title" (click)="switchAccount()" mat-menu-item>
-                    <mat-icon class="primary-icon">account_circle</mat-icon>Switch Account
-                </button>
-                <mat-divider style="width: 100%;"></mat-divider>
-                <button class="title" (click)="logout()" mat-menu-item>
-                    <mat-icon class="primary-icon">exit_to_app</mat-icon>Logout
+                <button (click)="logout()" mat-menu-item>
+                    <mat-icon>exit_to_app</mat-icon>Logout
                 </button>
             </mat-menu>
 
             <mat-menu #themes="matMenu">
                 <button *ngFor="let theme of themesArray" mat-menu-item
-                    class="flex-centered title" style="justify-content: inherit; width: 200px;"
+                    class="flex-centered" style="justify-content: inherit; width: 200px;"
                     (click)="changeThemeColor(theme)">
                     <div class="round" [style.background-color]="theme.color"></div>
                     <span>{{theme.name}}</span>

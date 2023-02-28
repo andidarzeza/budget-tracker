@@ -4,11 +4,11 @@
     <form [formGroup]="formGroup" style="position: relative;">
 
         <div style="width: 100%; display: flex;justify-content: space-between;align-items: center;">
-            <mat-form-field appearance="outline" style="width: calc(50% - 5px);" class="{{sharedService.theme}}-select">
-                <mat-label class="{{sharedService.theme}}-text">Expense Category</mat-label>
-                <mat-select formControlName="categoryID" class="{{sharedService.theme}}-select">
+            <mat-form-field appearance="outline" style="width: calc(50% - 5px);">
+                <mat-label class="primary-text">Expense Category</mat-label>
+                <mat-select formControlName="categoryID">
                     <mat-option
-                        class="{{sharedService.theme}}-text {{sharedService.theme}}-option {{sharedService.theme}}-body"
+                    class="primary-text"
                         *ngFor="let category of categories" [value]="category.id">
                         {{category?.category}}
                     </mat-option>
@@ -16,17 +16,17 @@
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
 
-            <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: calc(30% - 5px);">
-                <mat-label class="{{sharedService.theme}}-text">Money Spent</mat-label>
-                <input type="number" autocomplete="off" matInput formControlName="moneySpent">
+            <mat-form-field appearance="outline" style="width: calc(30% - 5px);">
+                <mat-label class="primary-text">Money Spent</mat-label>
+                <input type="number" class="primary-text" autocomplete="off" matInput formControlName="moneySpent">
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline" style="width: calc(20% - 5px);" class="{{sharedService.theme}}-select">
-                <mat-label class="{{sharedService.theme}}-text">Currency</mat-label>
-                <mat-select formControlName="currency" class="{{sharedService.theme}}-select">
+            <mat-form-field appearance="outline" style="width: calc(20% - 5px);">
+                <mat-label class="primary-text">Currency</mat-label>
+                <mat-select formControlName="currency">
                     <mat-option
-                        class="{{sharedService.theme}}-text {{sharedService.theme}}-option {{sharedService.theme}}-body"
+                    class="primary-text"
                         *ngFor="let currency of currencies" [value]="currency">
                         {{currency | flag}} {{currency}}
                     </mat-option>
@@ -35,9 +35,9 @@
             </mat-form-field>
         </div>
 
-        <mat-form-field class="{{sharedService.theme}}-text" style="width: 100%;" appearance="outline">
-            <mat-label class="{{sharedService.theme}}-text">Description</mat-label>
-            <textarea style="max-height: 200px;min-height: 100px;" matInput formControlName="description"
+        <mat-form-field style="width: 100%;" appearance="outline">
+            <mat-label class="primary-text">Description</mat-label>
+            <textarea class="primary-text" style="max-height: 200px;min-height: 100px;" matInput formControlName="description"
                 placeholder="Write a note..."></textarea>
         </mat-form-field>
     </form>

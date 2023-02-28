@@ -1,9 +1,9 @@
 .shadow {
     position: absolute;
-    top: -10px;
+    top: 0px;
     left: 0;
     width: 100%;
-    height: calc(100% + 70px);
+    height: calc(100% + 60px);
     background: #00000061;
     z-index: 1;
 }
@@ -11,5 +11,5 @@
 .custom-progress-bar {
     position: absolute;
     left: 0;
-    top: -10px;
+    top: 0px;
 }

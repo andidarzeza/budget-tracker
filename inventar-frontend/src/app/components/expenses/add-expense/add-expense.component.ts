@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
-import { SharedService } from 'src/app/services/shared.service';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { filter, map, mergeMap, takeUntil } from 'rxjs/operators';
 import { Category, CategoryType, EntityType, Expense } from 'src/app/models/models';
@@ -30,7 +29,6 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   public baseCurrency = localStorage.getItem("baseCurrency");
   loadingData = false;
   constructor(
-    public sharedService: SharedService,
     private toaster: ToastrService,
     @Inject(MAT_DIALOG_DATA) public expense: Expense,
     public dialogRef: MatDialogRef<AddExpenseComponent>,

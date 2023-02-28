@@ -12,11 +12,7 @@
 .filter-container {
     background: var(--filter-bg);
     border-bottom: 2px solid rgba(0, 0, 0, .12);
-    border-radius: 0px 0px 10px 10px;
-}
-
-.primary-text {
-    color: var(--card-title);
+    /* border-radius: 0px 0px 10px 10px; */
 }
 
 .filter-option {

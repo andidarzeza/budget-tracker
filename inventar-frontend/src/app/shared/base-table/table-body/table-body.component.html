@@ -1,4 +1,3 @@
-<!-- [ngClass]="{'hover-table-row pointer': (selectedId!=element.id), 'active-element': (selectedId==element.id)}" -->
 <div class="body-container" [id]="tableId">
     <div *ngFor="let element of data"
          class="table-row">
@@ -10,7 +9,7 @@
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'string'">
-                    {{element[columnDef.column]}}
+                    {{element[columnDef.column] || '-'}}
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'currency'">

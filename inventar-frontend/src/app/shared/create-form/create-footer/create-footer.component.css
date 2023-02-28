@@ -3,4 +3,5 @@
     justify-content: flex-end;
     padding: 20px;
     padding-top: 0;
+    background: var(--secondary);
 }
