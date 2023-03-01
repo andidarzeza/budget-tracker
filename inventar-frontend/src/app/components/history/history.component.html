@@ -1,16 +1,16 @@
 <mat-drawer-container class="drawer-table-container" autosize>
-    <mat-drawer #drawer class="sidenav {{sharedService.theme}}-table" mode="over" position="end"
+    <mat-drawer #drawer class="sidenav" mode="over" position="end"
         (closed)="onSidenavClose()">
         <history-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()">
         </history-details>
     </mat-drawer>
 
-    <base-table [data]="data" [columnDefinition]="columnDefinition"
-        [total]="totalItems"
+    <base-table [data]="data$ | async" [columnDefinition]="columnDefinition"
+        [total]="totalItems$ | async"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
         (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)"
         [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()"
-        (onRefresh)="resetAndQuery()" (onSearch)="onSearch($event)" (onReset)="resetAndQuery()" [displayEditAction]="false" [tableId]="tableId">
+        (onRefresh)="resetAndQuery()" (onSearch)="onSearch($event)" (onReset)="resetAndQuery()" [displayEditAction]="false">
     </base-table>
 
 </mat-drawer-container>

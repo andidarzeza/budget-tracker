@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { filterAnimation } from './filter/filter.animations';
 import { FilterOptions } from './filter/filter.models';
 import { TableActionInput } from './TableActionInput';
@@ -9,7 +9,8 @@ import { TableActionInput } from './TableActionInput';
   styleUrls: ['./table-actions.component.css'],
   animations: [
     filterAnimation
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableActionsComponent {
 

@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ColumnWidthModule } from '../column-width/column-width.module';
 
 
 
@@ -21,7 +22,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ScrollingModule,
     MatIconModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ColumnWidthModule
   ],
   exports: [
     TableBodyComponent

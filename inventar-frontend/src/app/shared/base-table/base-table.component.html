@@ -8,7 +8,7 @@
         <div [ngClass]="displayDrawer ? 'table-opened' : 'table-closed'">
             <table-header [displayDrawer]="displayDrawer" [columnDefinitions]="columnDefinition"></table-header>
             <table-body [displayDrawer]="displayDrawer" [displayEditAction]="displayEditAction"
-                [displayDeleteAction]="displayDeleteAction" [data]="data" [tableId]="tableId"
+                [displayDeleteAction]="displayDeleteAction" [data]="data"
                 [columnDefinitions]="columnDefinition" (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
                 (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"></table-body>
 

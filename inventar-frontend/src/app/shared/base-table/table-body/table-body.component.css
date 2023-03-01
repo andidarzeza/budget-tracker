@@ -11,6 +11,7 @@
     align-items: center;
     border-bottom: 1px solid rgba(0,0,0,.12);
     background: var(--secondary);
+    color: var(--card-title);
 }
 
 .text-center {
@@ -40,8 +41,4 @@
 
 .active-element {
     background: #80808014;
-}
-
-.table-row {
-    transition: width 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
 }

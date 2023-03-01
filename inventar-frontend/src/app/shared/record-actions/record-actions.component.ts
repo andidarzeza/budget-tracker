@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
-  selector: 'app-record-actions',
+  selector: 'record-actions',
   templateUrl: './record-actions.component.html',
   styleUrls: ['./record-actions.component.css'],
   animations: [

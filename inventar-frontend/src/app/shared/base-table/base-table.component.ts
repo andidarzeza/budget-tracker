@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { inOutSlide } from 'src/app/animations';
 import { ColumnDefinition } from 'src/app/models/models';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -10,7 +10,8 @@ import { TableActionInput } from './table-actions/TableActionInput';
   selector: 'base-table',
   templateUrl: './base-table.component.html',
   styleUrls: ['./base-table.component.css'],
-  animations: [inOutSlide]
+  animations: [inOutSlide],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BaseTableComponent {
 
@@ -23,7 +24,6 @@ export class BaseTableComponent {
   
   @Input() tableActionInput: TableActionInput;
   @Input() filterOptions: FilterOptions[];
-  @Input() tableId: string;
   @Input() displayEditAction: boolean;
   @Input() displayDeleteAction: boolean;
 

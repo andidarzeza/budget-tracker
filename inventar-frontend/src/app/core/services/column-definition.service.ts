@@ -6,7 +6,7 @@ import { TableEntity } from '../models';
   providedIn: 'root'
 })
 export class ColumnDefinitionService {
-  categoryColumnDefinition: ColumnDefinition[] = [
+  private categoryColumnDefinition: ColumnDefinition[] = [
     {
       column: 'lastModifiedDate',
       label: 'Last Modified Date',
@@ -33,7 +33,7 @@ export class ColumnDefinitionService {
       type: 'actions'
     }
   ];
-  incomeColumnDefinition: ColumnDefinition[] = [
+  private incomeColumnDefinition: ColumnDefinition[] = [
     {
       column: 'createdTime',
       label: 'Created Time',
@@ -60,7 +60,7 @@ export class ColumnDefinitionService {
       type: 'actions'
     }
   ];
-  expenseColumnDefinition: ColumnDefinition[] = [
+  private expenseColumnDefinition: ColumnDefinition[] = [
     {
       column: 'createdTime',
       label: 'Created Time',
@@ -88,10 +88,15 @@ export class ColumnDefinitionService {
     }
   ];
 
-  columnDefinitions = new Map<TableEntity, any>()
+  private columnDefinitions = new Map<TableEntity, ColumnDefinition[]>()
     .set("EXPENSE", this.expenseColumnDefinition)
     .set("INCOME", this.incomeColumnDefinition)
     .set("CATEGORY", this.categoryColumnDefinition);
 
   constructor() { }
+
+  get(tableEntity: TableEntity): ColumnDefinition[] {
+    return this.columnDefinitions.get(tableEntity);
+  }
+
 }

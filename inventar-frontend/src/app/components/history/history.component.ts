@@ -1,8 +1,6 @@
 import { Component,  } from '@angular/core';
-import { SharedService } from 'src/app/services/shared.service';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
-import { takeUntil } from 'rxjs/operators';
 import { ColumnDefinition, ENTITIES, EntityAction, EntityType, ENTITY_ACTIONS, History, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { HistoryService } from 'src/app/services/pages/history.service';
@@ -87,7 +85,6 @@ export class HistoryComponent extends BaseTable<History>{
   resetData: boolean = false;
 
   constructor(
-    public sharedService: SharedService,
     private historyService: HistoryService,
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
@@ -96,7 +93,7 @@ export class HistoryComponent extends BaseTable<History>{
     protected toaster: ToastrService,
 
   ) {
-    super(sharedService, dialog, historyService, toaster, accountService);
+    super(dialog, historyService, toaster, accountService);
   }
 
   ngOnInit(): void {

@@ -1,7 +1,6 @@
 <div class="table-header">
-    <div class="header-column" *ngFor="let columnDef of columnDefinitions"
-        style="font-size: 12px;text-align: center;font-family: Roboto, 'Helvetica Neue', sans-serif;font-weight: 500;"
-        [style.width.%]="getRequestedWidth(columnDefinitions?.length, columnDef.type)">
-        {{columnDef.label}}
+    <div class="header-column" *ngFor="let c of columnDefinitions"
+        [style.width.%]="c?.type | columnWidth: columnDefinitions?.length:displayDrawer">
+        {{c.label}}
     </div>
 </div>

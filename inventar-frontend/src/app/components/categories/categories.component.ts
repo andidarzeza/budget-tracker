@@ -1,10 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { SharedService } from 'src/app/services/shared.service';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { DialogService } from 'src/app/services/dialog.service';
-import { takeUntil } from 'rxjs/operators';
-import { Category, CategoryType, ColumnDefinition, ResponseWrapper } from 'src/app/models/models';
+import { Category, CategoryType, ColumnDefinition } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
@@ -28,7 +26,7 @@ export class CategoriesComponent extends BaseTable<Category> {
   }
   
   createComponent = AddCategoryComponent;
-  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("CATEGORY");
+  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("CATEGORY");
 
   filterOptions: FilterOptions[] = [
     {
@@ -52,7 +50,6 @@ export class CategoriesComponent extends BaseTable<Category> {
   resetData: boolean = false;
 
   constructor(
-    public sharedService: SharedService,
     public categoriesService: CategoriesService,
     public dialog: DialogService, 
     public toaster: ToastrService,
@@ -61,7 +58,7 @@ export class CategoriesComponent extends BaseTable<Category> {
     public navBarService: NavBarService,
     public columnDefinitionService: ColumnDefinitionService
   ) {
-    super(sharedService, dialog, categoriesService, toaster, accountService);
+    super(dialog, categoriesService, toaster, accountService);
   }
 
   ngOnInit(): void {

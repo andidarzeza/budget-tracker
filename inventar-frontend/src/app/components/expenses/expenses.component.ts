@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { SharedService } from 'src/app/services/shared.service';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
-import { takeUntil } from 'rxjs/operators';
 import { DialogService } from 'src/app/services/dialog.service';
 import { CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
 import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
@@ -26,7 +24,7 @@ export class ExpensesComponent extends BaseTable<Expense> {
   
   createComponent = AddExpenseComponent;
   sort: string = "createdTime,desc";
-  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("EXPENSE");
+  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("EXPENSE");
   public tableActionInput: TableActionInput = {
     pageName: "Expenses",
     icon: 'attach_money'
@@ -52,7 +50,6 @@ export class ExpensesComponent extends BaseTable<Expense> {
   ];
 
   constructor(
-    public sharedService: SharedService,
     private expenseService: ExpenseService,
     public dialog: DialogService,
     private categoryService: CategoriesService,
@@ -62,7 +59,7 @@ export class ExpensesComponent extends BaseTable<Expense> {
     public navBarService: NavBarService,
     public columnDefinitionService: ColumnDefinitionService
   ) {
-    super(sharedService, dialog, expenseService, toaster, accountService);
+    super(dialog, expenseService, toaster, accountService);
   }
 
   ngOnInit(): void {

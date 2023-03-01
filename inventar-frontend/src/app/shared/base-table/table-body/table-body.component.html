@@ -1,8 +1,7 @@
-<div class="body-container" [id]="tableId">
-    <div *ngFor="let element of data" class="table-row">
-        <div *ngFor="let columnDef of columnDefinitions" class="table-row"
-            [style.width.%]="getRequestedWidth(columnDefinitions?.length, columnDef.type)" class="text-center row-entry"
-            style="color: var(--card-title);">
+<div class="body-container">
+    <div *ngFor="let element of data; trackBy: idTrackFn" class="table-row">
+        <div *ngFor="let columnDef of columnDefinitions" class="table-row text-center row-entry"
+        [style.width.%]="columnDef?.type | columnWidth: columnDefinitions?.length:displayDrawer">
             <ng-container [ngSwitch]="columnDef.type">
                 <ng-container *ngSwitchCase="'date'">
                     <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{element[columnDef.column] | customDate}}">
@@ -23,10 +22,10 @@
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'actions'">
-                    <app-record-actions (openViewDrawer)="viewDetails(element?.id)"
+                    <record-actions (openViewDrawer)="viewDetails(element?.id)"
                         [displayDeleteAction]="displayDeleteAction" [displayEditAction]="displayEditAction"
                         (openEditForm)="openAddEditForm(element)"
-                        (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></app-record-actions>
+                        (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></record-actions>
                 </ng-container>
             </ng-container>
         </div>

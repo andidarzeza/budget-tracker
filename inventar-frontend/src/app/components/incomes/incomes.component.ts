@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { SharedService } from 'src/app/services/shared.service';
 import { AddIncomeComponent } from './add-income/add-income.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
@@ -26,7 +25,7 @@ import { HttpParams } from '@angular/common/http';
 export class IncomesComponent extends BaseTable<Income>{
   sort: string = "createdTime,desc";
 
-  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.columnDefinitions.get("INCOME");
+  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("INCOME");
 
   createComponent = AddIncomeComponent;
   tableActionInput: TableActionInput = {
@@ -53,7 +52,6 @@ export class IncomesComponent extends BaseTable<Income>{
   ];
 
   constructor(
-    public sharedService: SharedService,
     public incomeService: IncomeService,
     public dialog: DialogService,
     public toaster: ToastrService,
@@ -63,7 +61,7 @@ export class IncomesComponent extends BaseTable<Income>{
     public accountService: AccountService,
     public columnDefinitionService: ColumnDefinitionService
   ) {
-    super(sharedService, dialog, incomeService, toaster, accountService);
+    super(dialog, incomeService, toaster, accountService);
   }
 
   getQueryParams(): HttpParams {

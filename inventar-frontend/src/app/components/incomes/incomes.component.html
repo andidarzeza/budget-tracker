@@ -1,15 +1,16 @@
-<mat-drawer-container class="drawer-table-container {{sharedService.theme}}-body" autosize>
-    <mat-drawer #drawer class="sidenav {{sharedService.theme}}-table" mode="over" position="end"
+<mat-drawer-container class="drawer-table-container" autosize>
+    <mat-drawer #drawer class="sidenav" mode="over" position="end"
         (closed)="onSidenavClose()">
         <app-income-details *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()" [incomeViewId]="entityViewId">
         </app-income-details>
     </mat-drawer>
 
-    <base-table [data]="data" [columnDefinition]="columnDefinition"
+    <base-table [data]="data$ | async" [columnDefinition]="columnDefinition"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
         (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)" [filterOptions]="filterOptions"
         [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="resetAndQuery()"
         (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
+        [total]="totalItems$ | async"
         [displayEditAction]="true" [displayDeleteAction]="true"></base-table>
 
 </mat-drawer-container>
