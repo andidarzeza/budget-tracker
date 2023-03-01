@@ -1,42 +1,13 @@
 <div class="action-container">
     <div style="display: flex;width: 120px;height: 48px;align-items: center;justify-content: center;">
-        <button matTooltip="View" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="!showConfirmActions" [@slideAnimation] mat-icon-button color="primary" (click)="emitViewAction($event)">
+        <button matTooltip="View" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" mat-icon-button color="primary" (click)="emitViewAction($event)">
             <mat-icon class="view-action">open_in_new</mat-icon>
         </button>
-        <button matTooltip="Edit" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayEditAction && !showConfirmActions" [@slideAnimation] mat-icon-button (click)="emitEditAction($event)">
+        <button matTooltip="Edit" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayEditAction" mat-icon-button (click)="emitEditAction($event)">
             <mat-icon>edit</mat-icon>
         </button>
-        <button matTooltip="Delete" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayDeleteAction && !showConfirmActions" [@slideAnimation] mat-icon-button color="warn" (click)="emitDeleteAction($event)">
+        <button matTooltip="Delete" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayDeleteAction" mat-icon-button color="warn" (click)="emitDeleteAction($event)">
             <mat-icon>delete</mat-icon>
         </button>
     </div>
-    <div class="confirm-actions" [style.left]="showConfirmActions ? '0%' : '115%'">
-        <button mat-icon-button (click)="confirmAction($event)">
-            <mat-icon>check</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="$event.stopPropagation();showConfirmActions = false;">
-            <mat-icon>cancel</mat-icon>
-        </button>
-    </div>    
 </div>
-
-
-
-<button class="mobile-action-container" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-    <mat-icon>more_vert</mat-icon>
-</button>
-    
-<mat-menu class="{{sharedService.theme}}-mobile-action-menu" #menu="matMenu">
-    <button mat-menu-item (click)="emitViewAction($event)">
-        <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-view-button">open_in_new</mat-icon>
-        <span class="{{sharedService.theme}}-text">View</span>
-    </button>
-    <button mat-menu-item (click)="emitEditAction($event)">
-        <mat-icon style="color: #9F9F9F !important;">edit</mat-icon>
-        <span class="{{sharedService.theme}}-text">Edit</span>
-    </button>
-    <button mat-menu-item (click)="emitDeleteAction($event)">
-        <mat-icon color="warn">delete</mat-icon>
-        <span class="{{sharedService.theme}}-text">Delete</span>
-    </button>
-</mat-menu>

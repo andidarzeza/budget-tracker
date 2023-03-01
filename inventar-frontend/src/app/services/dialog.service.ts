@@ -45,7 +45,7 @@ export class DialogService extends Unsubscribe {
 
   openConfirmDialog(): ConfirmDialogHandler {
     const configuration = {
-      panelClass: this.sharedService.theme + '-class',
+      panelClass: 'delete-confirmation',
       disableClose: CREATE_DIALOG_CONFIGURATION.disableClose,
     };
 

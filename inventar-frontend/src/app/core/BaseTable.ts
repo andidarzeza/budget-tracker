@@ -91,7 +91,7 @@ export abstract class BaseTable<E> extends Unsubscribe {
             .subscribe(() => {
                 this.accountService.findOne(this.accountService.getAccount()).subscribe();
                 this.resetAndQuery();
-                this.toaster.info("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
+                this.toaster.success("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
             })
     }
 

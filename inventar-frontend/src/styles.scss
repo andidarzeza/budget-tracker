@@ -618,6 +618,10 @@ button.toast-close-button {
     padding: 13px 25px;
 }
 
+.delete-confirmation > .mat-dialog-container{
+    background: var(--secondary);
+}
+
 .mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid .mat-form-field-outline-thick {
     color: #ff6347;
 }

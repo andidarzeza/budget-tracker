@@ -1,11 +1,15 @@
-<mat-icon class="pointer container actions {{sharedService.theme}}-icon" (click)="closeDialog()">close</mat-icon>
+<div class="container">
+    <button mat-icon-button (click)="closeDialog()">
+        <mat-icon style="color: var(--card-title);">close</mat-icon>
+    </button>
+</div>
+
 
 <div class="message">
     Are you sure you want to delete this item? This action is irreversible.
 </div>
 
 <div class="commands">
-    <button mat-raised-button class="mr-5px" (click)="confirm(false)">NO</button>
-    <button mat-raised-button color="warn" (click)="confirm(true)"
-        class="{{sharedService.theme}}-confirm-button">YES</button>
+    <button mat-raised-button class="mr-5px" (click)="closeDialog()">NO</button>
+    <button mat-raised-button color="warn" (click)="confirm()">YES</button>
 </div>
