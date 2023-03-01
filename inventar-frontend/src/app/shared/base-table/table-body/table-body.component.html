@@ -1,5 +1,5 @@
 <div class="body-container">
-    <div *ngFor="let element of data; trackBy: idTrackFn" class="table-row">
+    <div *ngFor="let element of data" class="table-row">
         <div *ngFor="let columnDef of columnDefinitions" class="table-row text-center row-entry"
         [style.width.%]="columnDef?.type | columnWidth: columnDefinitions?.length:displayDrawer">
             <ng-container [ngSwitch]="columnDef.type">

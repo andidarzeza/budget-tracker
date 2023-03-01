@@ -24,8 +24,6 @@ export class TableBodyComponent {
 
   constructor() { }
 
-  idTrackFn = (element: any) => element.id;
-
   openDeleteConfirmDialog(id: string): void {
     this.onDeleteConfirmation.emit(id);
   }
