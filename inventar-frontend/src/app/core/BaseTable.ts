@@ -37,7 +37,6 @@ export abstract class BaseTable<E> extends Unsubscribe implements AfterViewInit 
     size: number = PAGE_SIZE;
     totalItems: number = 0;
     data: E[] = [];
-    displayData: E[] = [];
     columnDefinition: ColumnDefinition[];
     @ViewChild('drawer') drawer: MatSidenav;
     previousFilters: HttpParams;
@@ -60,7 +59,7 @@ export abstract class BaseTable<E> extends Unsubscribe implements AfterViewInit 
     }
 
     onQuerySuccess(response: ResponseWrapper): void {
-        this.displayData = response.data;
+        this.data = response.data;
         this.stopLoading = response.data.length < this.size;
         this.resetData = false;
         this.totalItems = response?.count;
@@ -107,23 +106,6 @@ export abstract class BaseTable<E> extends Unsubscribe implements AfterViewInit 
         this.isSidenavOpened = true;
         this.entityViewId = id;
         this.drawer.toggle();
-    }
-
-    onScroll(): void {
-        if (!this.stopLoading) {
-            this.page++;
-            this.query();
-        }
-    }
-
-    onTopScroll(): void {
-        if (this.currentIndex != 0) {
-            const resu: E[] = this.data.slice((this.currentIndex - 1) * this.size, this.currentIndex * this.size);
-            this.currentIndex--;
-            this.displayData.splice(this.displayData.length - this.size, this.size);
-            this.displayData = resu.concat(this.displayData);
-            this.scrollElement.scrollTo({ top: 300 });
-        }
     }
 
     delete(id: string): void {

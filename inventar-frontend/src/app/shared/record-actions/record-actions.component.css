@@ -15,3 +15,7 @@
     overflow: hidden;
     position: relative;
 }
+
+.view-action {
+    color: var(--light);
+}

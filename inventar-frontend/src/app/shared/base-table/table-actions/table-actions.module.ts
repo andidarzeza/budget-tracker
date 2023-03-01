@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { TableActionsComponent } from './table-actions.component';
 import { FilterModule } from './filter/filter.module';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
@@ -11,7 +13,9 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule,
     FilterModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule
   ],
   exports: [TableActionsComponent]
 })

@@ -1,12 +1,12 @@
 <div class="action-container">
-    <div style="display: flex;width: 120px;height: 48px;align-items: center;">
-        <button *ngIf="!showConfirmActions" [@slideAnimation] mat-icon-button color="primary" (click)="emitViewAction($event)">
-            <mat-icon class="{{sharedService.theme}}-icon {{sharedService.theme}}-view-button">open_in_new</mat-icon>
+    <div style="display: flex;width: 120px;height: 48px;align-items: center;justify-content: center;">
+        <button matTooltip="View" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="!showConfirmActions" [@slideAnimation] mat-icon-button color="primary" (click)="emitViewAction($event)">
+            <mat-icon class="view-action">open_in_new</mat-icon>
         </button>
-        <button *ngIf="displayEditAction && !showConfirmActions" [@slideAnimation] mat-icon-button (click)="emitEditAction($event)">
+        <button matTooltip="Edit" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayEditAction && !showConfirmActions" [@slideAnimation] mat-icon-button (click)="emitEditAction($event)">
             <mat-icon>edit</mat-icon>
         </button>
-        <button *ngIf="displayDeleteAction && !showConfirmActions" [@slideAnimation] mat-icon-button color="warn" (click)="emitDeleteAction($event)">
+        <button matTooltip="Delete" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayDeleteAction && !showConfirmActions" [@slideAnimation] mat-icon-button color="warn" (click)="emitDeleteAction($event)">
             <mat-icon>delete</mat-icon>
         </button>
     </div>

@@ -72,6 +72,7 @@ app-date-picker {
     // icon
     --primary-icon: var(--light) !important;
     --secondary-icon: red;
+    --filter-icon: var(--light);
     // text
     --primary-text: #9f9f9f;
     --secondary-text: white;
@@ -83,7 +84,8 @@ app-date-picker {
     --hover-table-row: #80808008;
     --filter-bg: var(--dark);
     --option-hover: #1d252a;
-    --field-outline: #9f9f9f;
+    --field-outline-hover: #9f9f9f;
+    --field-outline: #ffffff87;
     --arrow-color: #9f9f9f;
     --search-confirm: #111619;
     --logo-background: var(--light);
@@ -97,6 +99,7 @@ app-date-picker {
     // icon
     --primary-icon: white !important;
     --secondary-icon: red;
+    --filter-icon: var(--card-title);
     // text
     --primary-text: white;
     --secondary-text: black;
@@ -108,11 +111,16 @@ app-date-picker {
     --hover-table-row: #e8e8e8;
     --filter-bg: white;
     --option-hover: #e8e8e8;
-    --field-outline: rgba(0, 0, 0, 0.87);
+    --field-outline-hover: rgba(0, 0, 0, 0.87);
+    --field-outline: rgba(0,0,0,.12);
     --arrow-color: rgba(0, 0, 0, 0.54);
     --search-confirm: var(--light);
     --logo-background: white;
     --logo-color: var(--light);
+}
+
+.filter-icon {
+    color: var(--filter-icon);
 }
 
 .mat-select-arrow,
@@ -124,6 +132,10 @@ app-date-picker {
 .mat-option:hover:not(.mat-option-disabled),
 .mat-option:focus:not(.mat-option-disabled) {
     background: var(--option-hover) !important;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+    color: var(--field-outline);
 }
 
 .mat-select-panel {
@@ -144,7 +156,8 @@ app-date-picker {
 .table-header,
 .mat-paginator,
 .no-data,
-.table-row {
+.table-row,
+.filter-container {
     transition: background var(--background-animation-timing) !important;
 }
 
@@ -602,7 +615,7 @@ button.toast-close-button {
 }
 
 .table-actions {
-    padding: 21px 25px;
+    padding: 13px 25px;
 }
 
 .mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid .mat-form-field-outline-thick {
@@ -832,7 +845,7 @@ mat-footer-row,
 }
 
 .mat-form-field-appearance-outline .mat-form-field-outline-thick {
-    color: var(--field-outline);
+    color: var(--field-outline-hover);
 }
 
 .mat-select-value {

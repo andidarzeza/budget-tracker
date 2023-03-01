@@ -24,6 +24,13 @@
     justify-content: center;
 }
 
+.table-data {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .hover-table-row:hover{
     background: var(--hover-table-row) !important;
 }

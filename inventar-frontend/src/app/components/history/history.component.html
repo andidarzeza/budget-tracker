@@ -5,7 +5,7 @@
         </history-details>
     </mat-drawer>
 
-    <base-table [data]="displayData" [columnDefinition]="columnDefinition"
+    <base-table [data]="data" [columnDefinition]="columnDefinition"
         [total]="totalItems"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
         (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)"

@@ -1,19 +1,25 @@
 <div class="body-container" [id]="tableId">
-    <div *ngFor="let element of data"
-         class="table-row">
-        <div *ngFor="let columnDef of columnDefinitions" class="table-row" [style.width.%]="getRequestedWidth(columnDefinitions?.length, columnDef.type)"
-            class="text-center row-entry" style="color: var(--card-title);">
-            <span [ngSwitch]="columnDef.type">
+    <div *ngFor="let element of data" class="table-row">
+        <div *ngFor="let columnDef of columnDefinitions" class="table-row"
+            [style.width.%]="getRequestedWidth(columnDefinitions?.length, columnDef.type)" class="text-center row-entry"
+            style="color: var(--card-title);">
+            <ng-container [ngSwitch]="columnDef.type">
                 <ng-container *ngSwitchCase="'date'">
-                    {{element[columnDef.column] | customDate}}
+                    <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{element[columnDef.column] | customDate}}">
+                        {{element[columnDef.column] | customDate}}
+                    </span>
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'string'">
-                    {{element[columnDef.column] || '-'}}
+                    <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{element[columnDef.column] || '-'}}">
+                        {{element[columnDef.column] || '-'}}
+                    </span>
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'currency'">
-                    {{element[columnDef.column] | number:'1.0':'en-US' }} {{element?.currency}}
+                    <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{element[columnDef.column] | number:'1.0':'en-US' }} {{element?.currency}}">
+                        {{element[columnDef.column] | number:'1.0':'en-US' }} {{element?.currency}}
+                    </span>
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'actions'">
@@ -22,7 +28,7 @@
                         (openEditForm)="openAddEditForm(element)"
                         (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></app-record-actions>
                 </ng-container>
-            </span>
+            </ng-container>
         </div>
     </div>
 </div>

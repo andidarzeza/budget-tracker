@@ -3,7 +3,7 @@
     <side-bar *ngIf="authenticationService.currentUserValue && sideBarService.displaySidebar" [navigation]="navigation"
         [sideBarMode]="sideBarMode"></side-bar>
 
-    <div class="application {{sharedService.theme}}" id="application-body"
+    <div class="application" id="application-body"
         style="position: relative;overflow: hidden;"
         [ngStyle]="{'margin-left': (sideBarMode!='over' || !authenticationService.currentUserValue) ? '0' : '76px' }"
         [ngClass]="authenticationService.currentUserValue ? 'app-width' : 'app-full-width'">

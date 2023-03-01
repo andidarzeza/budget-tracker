@@ -1,5 +1,5 @@
 <!-- TABLE - ACTIONS: CREATE, REFRESH, SEARCH -->
-<div class="main-action-container" style="position: relative;" [id]="containerId">
+<div class="main-action-container" [id]="containerId">
     <div class="title-container" *ngIf="!showSearchInput">
         <mat-icon class="primary-icon">{{tableActionInput?.icon}}</mat-icon>
         <span class="title">{{tableActionInput?.pageName}}</span>
@@ -11,12 +11,14 @@
 
     <div class="table-actions title action-container"
         *ngIf="!showSearchInput">
-        <mat-icon (click)="refresh()" class="pointer no-select"
-            style="float: right;margin-left: 10px">refresh</mat-icon>
-        <mat-icon *ngIf="!tableActionInput?.extra?.hideInsertButton" (click)="openDialog()"
-            class="pointer no-select" style="float: right;">add</mat-icon>
-        <mat-icon class="pointer no-select" style="float: right;margin-right: 9px"
-            [id]="searchIconId"
-            (click)="openSearchInput()">search</mat-icon>
+        <button matTooltip="Search" matTooltipClass="sidebar-tooltip" matTooltipPosition="above" mat-icon-button (click)="openSearchInput()">
+            <mat-icon [id]="searchIconId">search</mat-icon>
+        </button>
+        <button matTooltip="Insert" matTooltipClass="sidebar-tooltip" *ngIf="!tableActionInput?.extra?.hideInsertButton" matTooltipPosition="above" mat-icon-button (click)="openDialog()">
+            <mat-icon>add</mat-icon>
+        </button>
+        <button matTooltip="Refresh" matTooltipClass="sidebar-tooltip" matTooltipPosition="above" mat-icon-button (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+        </button>
     </div>
 </div>
