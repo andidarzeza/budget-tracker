@@ -4,7 +4,6 @@ import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
 import { CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
-import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
@@ -14,6 +13,7 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { BaseTable } from 'src/app/core/BaseTable';
 import { HttpParams } from '@angular/common/http';
+import { FilterService } from 'src/app/core/services/filter.service';
 
 @Component({
   selector: 'app-expenses',
@@ -25,29 +25,12 @@ export class ExpensesComponent extends BaseTable<Expense> {
   createComponent = AddExpenseComponent;
   sort: string = "createdTime,desc";
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("EXPENSE");
+  filterOptions = this.filterService.select("EXPENSE");
   public tableActionInput: TableActionInput = {
     pageName: "Expenses",
     icon: 'attach_money'
   };
 
-  filterOptions: FilterOptions[] = [
-    {
-      field: "category",
-      label: "Category",
-      type: "select",
-      matSelectOptions: undefined
-    },
-    {
-      field: "description",
-      label: "Description",
-      type: "text"
-    },
-    {
-      field: "expense",
-      label: "Expense",
-      type: "number"
-    }
-  ];
 
   constructor(
     private expenseService: ExpenseService,
@@ -57,7 +40,8 @@ export class ExpensesComponent extends BaseTable<Expense> {
     protected accountService: AccountService,
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
-    public columnDefinitionService: ColumnDefinitionService
+    public columnDefinitionService: ColumnDefinitionService,
+    public filterService: FilterService
   ) {
     super(dialog, expenseService, toaster, accountService);
   }

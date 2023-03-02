@@ -51,6 +51,8 @@ export abstract class BaseTable<E> extends Unsubscribe {
     }
 
     openAddEditForm(entity?: E): void {
+        console.log(entity);
+        
         this.dialog.openDialog(this.createComponent, entity).onSuccess(() => this.resetAndQuery());
     }
 
@@ -66,7 +68,7 @@ export abstract class BaseTable<E> extends Unsubscribe {
         this.dialog.openConfirmDialog().onSuccess(() => this.delete(id));
     }
 
-    onSearch(payload: any): void {
+    onSearch(payload: {params: HttpParams}): void {        
         this.previousFilters = payload.params;
         this.page = 0;
         this.query();

@@ -626,6 +626,10 @@ button.toast-close-button {
     color: #ff6347;
 }
 
+mat-dialog-container {
+    overflow-x: hidden !important;
+}
+
 .mat-form-field-subscript-wrapper {
     font-size: 80% !important;
 }

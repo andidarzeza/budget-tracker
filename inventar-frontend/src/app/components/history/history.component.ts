@@ -1,7 +1,6 @@
 import { Component,  } from '@angular/core';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
-import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
-import { ColumnDefinition, ENTITIES, EntityAction, EntityType, ENTITY_ACTIONS, History, ResponseWrapper } from 'src/app/models/models';
+import { ColumnDefinition, History } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { HistoryService } from 'src/app/services/pages/history.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
@@ -11,6 +10,8 @@ import { BaseTable } from 'src/app/core/BaseTable';
 import { DialogService } from 'src/app/services/dialog.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpParams } from '@angular/common/http';
+import { FilterService } from 'src/app/core/services/filter.service';
+import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 
 @Component({
   selector: 'app-history',
@@ -21,39 +22,7 @@ export class HistoryComponent extends BaseTable<History>{
   sort: string = "date,desc";
   createComponent: any;
 
-
-  columnDefinition: ColumnDefinition[] = [
-    {
-      column: 'date',
-      label: 'Date',
-      type: 'date'
-    },
-    {
-      column: 'action',
-      label: 'Action',
-      type: 'string'
-    },
-    {
-      column: 'entity',
-      label: 'Entity',
-      type: 'string'
-    },
-    {
-      column: 'message',
-      label: 'Message',
-      type: 'string'
-    },
-    {
-      column: 'user',
-      label: 'User',
-      type: 'string'
-    },
-    {
-      column: 'actions',
-      label: 'Actions',
-      type: 'actions'
-    }
-  ];
+  columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("HISTORY");
 
   public tableActionInput: TableActionInput = {
     pageName: "History",
@@ -63,26 +32,7 @@ export class HistoryComponent extends BaseTable<History>{
     }
   };
 
-  filterOptions: FilterOptions[] = [
-    {
-      field: "action",
-      label: "Action",
-      type: "select",
-      matSelectOptions: this.getActions()
-    },
-    {
-      field: "entity",
-      label: "Entity",
-      type: "select",
-      matSelectOptions: this.getEntities()
-    },
-    {
-      field: "message",
-      label: "Message",
-      type: "text"
-    }
-  ];
-  resetData: boolean = false;
+  filterOptions = this.filterService.select("HISTORY");
 
   constructor(
     private historyService: HistoryService,
@@ -91,7 +41,8 @@ export class HistoryComponent extends BaseTable<History>{
     public accountService: AccountService,
     public dialog: DialogService,
     protected toaster: ToastrService,
-
+    public filterService: FilterService,
+    public columnDefinitionService: ColumnDefinitionService
   ) {
     super(dialog, historyService, toaster, accountService);
   }
@@ -100,32 +51,6 @@ export class HistoryComponent extends BaseTable<History>{
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
     this.query();
-  }
-
-  private getActions() {
-    return {
-      options: ENTITY_ACTIONS.map((action: EntityAction) => {
-        return {
-          display: action.toUpperCase(),
-          value: action.toUpperCase()
-        }
-      }),
-      displayBy: "display",
-      valueBy: "value"
-    }
-  }
-
-  private getEntities() {
-    return {
-      options: ENTITIES.map((action: EntityType) => {
-        return {
-          display: action.toUpperCase(),
-          value: action.toUpperCase()
-        }
-      }),
-      displayBy: "display",
-      valueBy: "value"
-    }
   }
 
   getQueryParams(): HttpParams {

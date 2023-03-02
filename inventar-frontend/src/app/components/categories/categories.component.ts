@@ -9,10 +9,10 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { AccountService } from 'src/app/services/account.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { BaseTable } from 'src/app/core/BaseTable';
-import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { HttpParams } from '@angular/common/http';
+import { FilterService } from 'src/app/core/services/filter.service';
 
 @Component({
   selector: 'app-categories',
@@ -22,27 +22,14 @@ import { HttpParams } from '@angular/common/http';
 export class CategoriesComponent extends BaseTable<Category> {
   sort: string = "lastModifiedDate,desc";
   getQueryParams(): HttpParams {
-    return buildParams(this.page, this.size, this.sort, this.previousFilters).append("categoryType", this.categoriesType).append("account", this.accountService?.getAccount())
+    return buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount())
   }
   
   createComponent = AddCategoryComponent;
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("CATEGORY");
 
-  filterOptions: FilterOptions[] = [
-    {
-      field: "category",
-      label: "Category",
-      type: "text"
-    },
-    {
-      field: "description",
-      label: "Description",
-      type: "text"
-    }
-  ];
-    
+  filterOptions = this.filterService.select("CATEGORY");
 
-  public categoriesType: CategoryType = CategoryType.EXPENSE;
   public tableActionInput: TableActionInput = {
     pageName: "Categories",
     icon: 'list_alt'
@@ -56,7 +43,8 @@ export class CategoriesComponent extends BaseTable<Category> {
     public sideBarService: SideBarService,
     public accountService: AccountService,
     public navBarService: NavBarService,
-    public columnDefinitionService: ColumnDefinitionService
+    public columnDefinitionService: ColumnDefinitionService,
+    public filterService: FilterService
   ) {
     super(dialog, categoriesService, toaster, accountService);
   }

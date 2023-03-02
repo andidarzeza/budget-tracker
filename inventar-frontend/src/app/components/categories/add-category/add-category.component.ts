@@ -33,14 +33,17 @@ export class AddCategoryComponent extends Unsubscribe implements OnInit {
   ) {
     super();
   }
+
+  categoryTypes = ["INCOME", "EXPENSE"];
   
   categoryGroup: FormGroup = this.formBuilder.group({
     category:     ['', Validators.required],
     description:  ['', Validators.required],
-    icon:         ['', Validators.required]
+    icon:         ['', Validators.required],
+    categoryType: ['', Validators.required]
   });
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     if(this.editMode) {
       this.loadingData = true;
       this.getCategory().subscribe();
@@ -62,13 +65,11 @@ export class AddCategoryComponent extends Unsubscribe implements OnInit {
     if(this.categoryGroup.valid && !this.savingEntity){
       if(this.editMode) {
         this.loadingData = true;
-        this.data.spendingCategory.category = this.category.value;
-        this.data.spendingCategory.description = this.description.value;
-        this.data.spendingCategory.icon = this.icon.value;
-        const payload = this.data.spendingCategory;
-        // payload['categoryType'] = this.data.categoriesType;
-        payload['categoryType'] = 'EXPENSE';
-        
+        this.data.category = this.category.value;
+        this.data.description = this.description.value;
+        this.data.icon = this.icon.value;
+        this.data.categoryType = this.categoryType.value;
+        const payload = this.data;
         payload.account = this.accountService.getAccount();
         this.savingEntity = true;
         this.categoriesService
@@ -78,8 +79,6 @@ export class AddCategoryComponent extends Unsubscribe implements OnInit {
       } else if(!this.savingEntity){
         this.loadingData = true;
         const payload = this.categoryGroup.value;
-        // payload['categoryType'] = this.data.categoriesType;
-        payload['categoryType'] = 'EXPENSE';
         payload.account = this.accountService.getAccount();
         this.savingEntity = true;
         this.categoriesService
@@ -101,8 +100,8 @@ export class AddCategoryComponent extends Unsubscribe implements OnInit {
     this.dialogRef.close(update);
   }
 
-  get editMode() {
-    return this.data?.spendingCategory !== undefined;
+  get editMode() {    
+    return this.data?.id !== undefined;
   }
 
   get category(){
@@ -114,10 +113,14 @@ export class AddCategoryComponent extends Unsubscribe implements OnInit {
   }
 
   get id() {
-    return this.data?.spendingCategory?.id
+    return this.data?.id;
   }
 
   get icon(){
     return this.categoryGroup.controls['icon'];
+  }
+
+  get categoryType() {
+    return this.categoryGroup.controls['categoryType'];
   }
 }

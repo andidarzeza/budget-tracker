@@ -16,13 +16,13 @@
         background: rgba(0, 0, 0, 0.411);
     }
   </style>
-<mat-form-field  (click)="open()" class="{{sharedService.theme}}-text" appearance="outline" style="width: 100%;cursor: pointer;">
-    <mat-label style="display: flex;align-items: center;" class="{{sharedService.theme}}-text">
-        <mat-icon class="selected-icon" *ngIf="value">
+<mat-form-field  (click)="open()" class="primary-text" appearance="outline" style="width: 100%;cursor: pointer;">
+    <mat-label style="display: flex;align-items: center;" class="">
+        <mat-icon class="selected-icon primary-text" *ngIf="value">
             {{value}}
         </mat-icon>
 
-        <span style="padding-top: 3px;">
+        <span style="padding-top: 3px;" class="primary-text">
             {{value ? value : 'Select Icon'}}
         </span>
     </mat-label>
@@ -30,30 +30,29 @@
     <mat-error>This field is required.</mat-error>
 </mat-form-field>
 
-<div *ngIf="showIconSelect" [@slideAnimation] class="icon-select {{sharedService.theme}}-table {{sharedService.theme}}-icon">
-    <!-- <div class="actions">
+<div *ngIf="showIconSelect" [@slideAnimation] class="icon-select">
+    <div class="actions">
         <button mat-icon-button (click)="close()">
-            <mat-icon>
+            <mat-icon style="color: var(--card-title);">
                 keyboard_arrow_left
             </mat-icon>
         </button>
 
-        <span (click)="close()" style="font-size: 16px;padding-top: 4px;cursor: pointer;">
+        <span (click)="close()" style="font-size: 16px;padding-top: 4px;cursor: pointer;color: var(--card-title);">
             Back
         </span>
-    </div> -->
+    </div>
 
 
     <mat-divider></mat-divider>
 
     <div class="icons">
 
-    {{value}}
-        <div *ngFor="let icon of icons" [ngStyle]="{'background': value==icon ? 'var(--light)' : 'default' }" class="icon {{sharedService.theme}}-body" (click)="select(icon)">
-            <mat-icon [ngStyle]="{'color': value==icon ? 'white' : 'var(--light)' }">
+        <div *ngFor="let icon of icons" [ngStyle]="{'background': value==icon ? 'var(--light)' : 'default' }" class="icon" (click)="select(icon)">
+            <mat-icon [ngStyle]="{'color': value==icon ? 'white' : 'var(--primary-text)' }">
                 {{icon}}
             </mat-icon>
-            <span style="margin-top: 5px;" class="{{sharedService.theme}}-title" [ngStyle]="{'color': value==icon ? 'white' : 'default' }">
+            <span style="margin-top: 5px;" [ngStyle]="{'color': value==icon ? 'white' : 'var(--primary-text)' }">
                 {{icon}}
             </span>
         </div>

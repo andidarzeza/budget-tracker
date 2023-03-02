@@ -4,8 +4,7 @@ import { AddIncomeComponent } from './add-income/add-income.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
 import { takeUntil } from 'rxjs/operators';
-import { CategoryType, ColumnDefinition, Income, ResponseWrapper } from 'src/app/models/models';
-import { FilterOptions } from 'src/app/shared/base-table/table-actions/filter/filter.models';
+import { ColumnDefinition, Income, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
@@ -15,6 +14,7 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { HttpParams } from '@angular/common/http';
+import { FilterService } from 'src/app/core/services/filter.service';
 
 
 @Component({
@@ -26,6 +26,7 @@ export class IncomesComponent extends BaseTable<Income>{
   sort: string = "createdTime,desc";
 
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("INCOME");
+  filterOptions = this.filterService.select("INCOME");
 
   createComponent = AddIncomeComponent;
   tableActionInput: TableActionInput = {
@@ -33,23 +34,6 @@ export class IncomesComponent extends BaseTable<Income>{
     icon: 'transit_enterexit'
   };
 
-  filterOptions: FilterOptions[] = [
-    {
-      field: "category",
-      label: "Category",
-      type: "select",
-      matSelectOptions: undefined
-    }, {
-      field: "description",
-      label: "Description",
-      type: "text"
-    },
-    {
-      field: "income",
-      label: "Income",
-      type: "number"
-    }
-  ];
 
   constructor(
     public incomeService: IncomeService,
@@ -59,7 +43,8 @@ export class IncomesComponent extends BaseTable<Income>{
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
     public accountService: AccountService,
-    public columnDefinitionService: ColumnDefinitionService
+    public columnDefinitionService: ColumnDefinitionService,
+    public filterService: FilterService
   ) {
     super(dialog, incomeService, toaster, accountService);
   }
@@ -77,12 +62,11 @@ export class IncomesComponent extends BaseTable<Income>{
 
   private getCategories(): void {
     this.categoryService
-      .findAll(buildParams(0, 9999).append("categoryType", CategoryType.INCOME).append("account", this.accountService?.getAccount()))
+      .incomeCategories(buildParams(0, 9999).append("account", this.accountService?.getAccount()))
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((res: ResponseWrapper) => {
         const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
-        const index = this.filterOptions.indexOf(item);
-        this.filterOptions[index].matSelectOptions = {
+        item.matSelectOptions = {
           options: res.data,
           displayBy: "category",
           valueBy: "id"

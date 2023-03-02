@@ -15,7 +15,7 @@ import { SharedService } from 'src/app/services/shared.service';
           ':enter', 
           [
             style({ left: '100%' }),
-            animate('400ms cubic-bezier(0.25, 0.8, 0.25, 1)', 
+            animate('300ms cubic-bezier(0.25, 0.8, 0.25, 1)', 
                     style({left: 0 }))
           ]
         ),
@@ -23,7 +23,7 @@ import { SharedService } from 'src/app/services/shared.service';
           ':leave', 
           [
             style({ left: 0 }),
-            animate('400ms cubic-bezier(0.25, 0.8, 0.25, 1)', 
+            animate('300ms cubic-bezier(0.25, 0.8, 0.25, 1)', 
                     style({ left: '100%' }))
           ]
         )

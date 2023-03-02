@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
         BooleanBuilder booleanBuilder = new BooleanBuilder()
                 .and(QCategory.category1.user.eq(securityContextService.username()))
                 .and(QCategory.category1.account.eq(params.get("account")))
-                .and(QCategory.category1.categoryType.eq(params.get("categoryType")))
+//                .and(QCategory.category1.categoryType.eq(params.get("categoryType")))
                 .and(QCategory.category1.description.containsIgnoreCase(Objects.nonNull(description) ? description : ""))
                 .and(QCategory.category1.category.containsIgnoreCase(Objects.nonNull(category) ? category : ""));
 

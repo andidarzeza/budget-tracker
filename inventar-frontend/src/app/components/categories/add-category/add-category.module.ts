@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CreateFormModule } from 'src/app/shared/create-form/create-form.module';
 import { SelectIconModule } from 'src/app/shared/select-icon/select-icon.module';
+import { MatSelectModule } from '@angular/material/select';
 
 
 
@@ -19,7 +20,8 @@ import { SelectIconModule } from 'src/app/shared/select-icon/select-icon.module'
     MatFormFieldModule,
     MatInputModule,
     SelectIconModule,
-    CreateFormModule
+    CreateFormModule,
+    MatSelectModule
   ]
 })
 export class AddCategoryModule { }

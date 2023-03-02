@@ -1,24 +1,33 @@
-<create-form [loadingData]="loadingData" icon="list_alt" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()" style="position: relative;
-width: 100%;
-height: 100%;
-display: block;">
+<create-form [loadingData]="loadingData" icon="list_alt" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()">
     <form [formGroup]="categoryGroup">
         
         <div style="width: 100%;display: flex;justify-content: space-between;align-items: center;">
-            <mat-form-field class="{{sharedService.theme}}-text" appearance="outline" style="width: 60%;">
-                <mat-label class="{{sharedService.theme}}-text">Category</mat-label>
+            <mat-form-field class="primary-text" appearance="outline" style="width: calc(40% - 5px);">
+                <mat-label class="primary-text">Category</mat-label>
                 <input type="text" autocomplete="off" matInput formControlName="category">
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
 
-            <div style="width: 39%;">
+            <mat-form-field class="primary-text" appearance="outline" style="width: calc(40% - 5px);">
+                <mat-label class="primary-text">Category Type</mat-label>
+                <mat-select formControlName="categoryType">
+                    <mat-option
+                    class="primary-text"
+                        *ngFor="let type of categoryTypes" [value]="type">
+                        {{type}}
+                    </mat-option>
+                </mat-select>
+                <mat-error>This field is required.</mat-error>
+            </mat-form-field>
+
+            <div style="width: calc(20% - 5px);">
                 <select-icon formControlName="icon"></select-icon>
             </div>
         </div>
         
 
-        <mat-form-field class="{{sharedService.theme}}-text" style="width: 100%;" appearance="outline">
-            <mat-label class="{{sharedService.theme}}-text">Description</mat-label>
+        <mat-form-field class="primary-text" style="width: 100%;" appearance="outline">
+            <mat-label class="primary-text">Description</mat-label>
             <textarea style="max-height: 200px;min-height: 100px;" matInput formControlName="description"
                 placeholder="Write a note..."></textarea>
         </mat-form-field>

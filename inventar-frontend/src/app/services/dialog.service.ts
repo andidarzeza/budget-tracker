@@ -1,15 +1,13 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ComponentType } from 'ngx-toastr';
-import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CREATE_DIALOG_CONFIGURATION } from 'src/environments/environment';
 import { ConfirmComponent } from '../shared/confirm/confirm.component';
 import { Unsubscribe } from '../shared/unsubscribe';
-import { SharedService } from './shared.service';
 
 export interface ConfirmDialogHandler {
-  onSuccess: any;
+  onSuccess: Function;
 }
 
 @Injectable({
@@ -19,8 +17,7 @@ export class DialogService extends Unsubscribe {
 
 
   constructor(
-    public dialog: MatDialog,
-    private sharedService: SharedService
+    public dialog: MatDialog
   ) {
     super();
   }
@@ -28,7 +25,7 @@ export class DialogService extends Unsubscribe {
   openDialog(component: ComponentType<any>, data?: any): ConfirmDialogHandler {
     const configuration = {
       data: data,
-      panelClass: [this.sharedService.theme + '-class', 'create-dialog'],
+      panelClass: ['create-dialog'],
       ...CREATE_DIALOG_CONFIGURATION
     };
 
@@ -50,11 +47,11 @@ export class DialogService extends Unsubscribe {
     };
 
     return {
-      onSuccess: (callable: any) => {
+      onSuccess: (callable: Function) => {
         this.dialog.open(ConfirmComponent, configuration)
           .afterClosed()
           .pipe(takeUntil(this.unsubscribe$), filter((update) => update))
-          .subscribe(() => callable.call());
+          .subscribe(() => callable.call(this));
       }
     }
   }

@@ -88,10 +88,44 @@ export class ColumnDefinitionService {
     }
   ];
 
+  private historyColumnDefinition: ColumnDefinition[] = [
+    {
+      column: 'date',
+      label: 'Date',
+      type: 'date'
+    },
+    {
+      column: 'action',
+      label: 'Action',
+      type: 'string'
+    },
+    {
+      column: 'entity',
+      label: 'Entity',
+      type: 'string'
+    },
+    {
+      column: 'message',
+      label: 'Message',
+      type: 'string'
+    },
+    {
+      column: 'user',
+      label: 'User',
+      type: 'string'
+    },
+    {
+      column: 'actions',
+      label: 'Actions',
+      type: 'actions'
+    }
+  ];
+
   private columnDefinitions = new Map<TableEntity, ColumnDefinition[]>()
     .set("EXPENSE", this.expenseColumnDefinition)
     .set("INCOME", this.incomeColumnDefinition)
-    .set("CATEGORY", this.categoryColumnDefinition);
+    .set("CATEGORY", this.categoryColumnDefinition)
+    .set("HISTORY", this.historyColumnDefinition);
 
   constructor() { }
 
