@@ -112,9 +112,11 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
             this.accountService.findOne(this.accountService.getAccount()).pipe(takeUntil(this.unsubscribe$)).subscribe();
             this.closeDialog(true);  
             this.savingEntity = false;
-            this.toaster.success("A new Expense has been inserted", "Success", TOASTER_CONFIGURATION);    
+            this.toaster.success("A new Expense has been inserted", "Success", TOASTER_CONFIGURATION);
           });
       }
+    } else if(this.formGroup.invalid) {
+      this.toaster.error("Please, fill in all required fields.", "Error", TOASTER_CONFIGURATION);
     }
   }
 

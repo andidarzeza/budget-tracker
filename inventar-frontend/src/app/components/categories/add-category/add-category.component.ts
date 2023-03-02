@@ -86,6 +86,8 @@ export class AddCategoryComponent extends Unsubscribe implements OnInit {
           .pipe(takeUntil(this.unsubscribe$))
           .subscribe(() => this.onSaveSuccess("A new Category has been inserted"));
       }
+    } else if(this.categoryGroup.invalid) {
+      this.toaster.error("Please, fill in all required fields.", "Error", TOASTER_CONFIGURATION);
     }
   }
 

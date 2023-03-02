@@ -6,7 +6,7 @@
         <div style="width: 100%; display: flex;justify-content: space-between;align-items: center;">
             <mat-form-field appearance="outline" style="width: calc(50% - 5px);">
                 <mat-label class="primary-text">Expense Category</mat-label>
-                <mat-select formControlName="categoryID">
+                <mat-select required formControlName="categoryID">
                     <mat-option
                     class="primary-text"
                         *ngFor="let category of categories" [value]="category.id">
@@ -18,7 +18,7 @@
 
             <mat-form-field appearance="outline" style="width: calc(30% - 5px);">
                 <mat-label class="primary-text">Money Spent</mat-label>
-                <input type="number" class="primary-text" autocomplete="off" matInput formControlName="moneySpent">
+                <input required type="number" class="primary-text" autocomplete="off" matInput formControlName="moneySpent">
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
 

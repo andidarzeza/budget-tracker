@@ -124,6 +124,8 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
             this.onSaveSuccess("A new Income has been inserted")
           });
       }
+    } else if(this.formGroup.invalid) {
+      this.toaster.error("Please, fill in all required fields.", "Error", TOASTER_CONFIGURATION);
     }
   }
 
