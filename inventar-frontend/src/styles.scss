@@ -67,8 +67,8 @@ app-date-picker {
 
 .dark-theme {
     // background
-    --primary: var(--dark);
-    --secondary: #111619;
+    --primary: #111619;
+    --secondary: var(--dark);
     // icon
     --primary-icon: var(--light) !important;
     --secondary-icon: red;
@@ -157,6 +157,8 @@ app-date-picker {
 .mat-paginator,
 .no-data,
 .table-row,
+.table-opened,
+.table-closed,
 .filter-container {
     transition: background var(--background-animation-timing) !important;
 }

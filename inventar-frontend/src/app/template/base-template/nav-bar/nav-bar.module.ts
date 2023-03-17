@@ -9,6 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { ClockModule } from './clock/clock.module';
 import { FlagPipeModule } from '../../pipes/flag-pipe/flag-pipe.module';
 import { CurrencySymbolModule } from '../../pipes/currency-symbol/currency-symbol.module';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
@@ -23,6 +24,7 @@ import { CurrencySymbolModule } from '../../pipes/currency-symbol/currency-symbo
     ClockModule,
     MatDividerModule,
     FlagPipeModule,
+    MatTooltipModule,
     CurrencySymbolModule
   ], exports: [NavBarComponent]
 })

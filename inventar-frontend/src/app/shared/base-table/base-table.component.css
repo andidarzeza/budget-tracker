@@ -1,9 +1,11 @@
 .table-closed {
     width: 100%;
+    background: var(--card);
 }
 
 .table-opened {
     width: 100%;
+    background: var(--card);
 }
 
 .data-table {

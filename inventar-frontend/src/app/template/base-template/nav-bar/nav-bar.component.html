@@ -5,12 +5,16 @@
     </span>
     <div class="menu-container">
 
-        <div *ngIf="this.breakpointService.screenSize != 'mobile'" class="menu-item pointer" (click)="toggleDarkMode()">
-            <i *ngIf="themeService?.themeValue == 'light-theme'" style="font-size: 30px;"
+        <button mat-icon-button *ngIf="this.breakpointService.screenSize != 'mobile'"
+            [matTooltip]="themeService?.themeValue == 'dark-theme'
+            ? 'Switch to Light Theme'
+            : 'Switch to Dark Theme'"
+        class="menu-item pointer" (click)="toggleDarkMode()">
+            <i *ngIf="themeService?.themeValue == 'light-theme'" style="font-size: 24px;"
                 class="material-icons primary-icon">nights_stay</i>
             <mat-icon *ngIf="themeService?.themeValue == 'dark-theme'" class="fullscreen-icon primary-icon">wb_sunny
             </mat-icon>
-        </div>
+        </button>
 
         <div class="flex-centered">
             <button class="user-name-button" mat-icon-button color="primary" [matMenuTriggerFor]="userMenu">

@@ -10,7 +10,7 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid rgba(0,0,0,.12);
-    background: var(--secondary);
+    background: var(--card);
     color: var(--card-title);
 }
 
