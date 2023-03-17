@@ -1,11 +1,38 @@
-<div style="padding: 20px;max-height: 100%;overflow-y: auto;height: calc(100% - 64px);">
-    <div style="background: var(--filter-bg);height: calc(100% - 42px);border-radius: 10px;">
+<div style="padding: 20px;max-height: 100%;overflow-y: auto;height: calc(100% - 106px);display: flex;">
+
+    <div style="width: 300px;height: 100%;">
+        <mat-card style="height: 250px;border-radius: 10px;padding: 0;padding-bottom: 16px;">
+            <month-picker></month-picker>
+            
+            <div style="height: 216px;
+            display: flex;justify-content: center;align-items: center;">
+                <canvas id="category-chart" style="max-width: 150px;max-height: 150px;"></canvas>
+            </div>
+
+            <div style="    margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        ">
+            </div>
+        </mat-card>
+
+        <mat-card style="margin-top:20px;height: calc(100% - 334px);border-radius: 10px;">
+            test
+        </mat-card>
+    </div>
+
+    
+    <mat-card style="margin-left: 20px;width: calc(100% - 320px);height: calc(100% - 32px);border-radius: 10px;">
+
+    </mat-card>
+    <!-- <div style="background: var(--filter-bg);height: calc(100% - 42px);border-radius: 10px;">
         <expense-income-resume [dashboardData]="dashboardData"></expense-income-resume>
     
         <expenses-chart [dailyExpensesLabels]="dailyExpensesLabels" [dailyExpenses]="dailyExpenses"></expenses-chart>
     
         <expense-categories [expenseCategoriesData]="expenseCategoriesData"></expense-categories>
-    </div>
+    </div> -->
 
     <!-- <floating-menu [floatingMenu]="floatingMenu"></floating-menu> -->
 </div>

@@ -9,7 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 20px;
+    margin-right: 10px;
     color: white;
 }
 
@@ -28,9 +28,9 @@
 }
 
 .fullscreen-icon {
-    width: 28px;
-    height: 28px;
-    font-size: 28px;
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
 }
 
 .user-name {

@@ -9,6 +9,8 @@ import { BudgetInfoModule } from './budget-info/budget-info.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MonthPickerModule } from './month-picker/month-picker.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { MatButtonModule } from '@angular/material/button';
     ExpenseIncomeResumeModule,
     ExpensesChartModule,
     SharedModule,
-    MatButtonModule
+    MatButtonModule,
+    MatCardModule,
+    MonthPickerModule
   ]
 })
 export class DashboardModule { }

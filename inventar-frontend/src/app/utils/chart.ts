@@ -33,6 +33,34 @@ export class ChartUtils {
                 responsive: true,
                 maintainAspectRatio: true
             }
-        });;
+        });
+    }
+
+    public createDoughnutChart(context: string): Chart {
+        return new Chart(context, {
+            type: 'doughnut',
+            data: {
+                labels: ['Red', 'Blue', 'Yellow'],
+                datasets: [{
+                  label: 'My First Dataset',
+                  data: [300, 50, 100],
+                  backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)'
+                  ],
+                  borderColor: 'transparent',
+                  spacing: 1
+                }]
+            },
+            options: {
+                cutout: 40,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
     }
 }

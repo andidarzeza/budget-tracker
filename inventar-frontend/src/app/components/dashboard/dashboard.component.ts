@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
 import { DateUtil, Day, Month, Year } from 'src/app/utils/DateUtil';
@@ -15,13 +15,23 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { FormControl } from '@angular/forms';
+import { MatDatepicker } from '@angular/material/datepicker';
+import { Chart, registerables } from 'chart.js';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent extends Unsubscribe {
+export class DashboardComponent extends Unsubscribe implements AfterViewInit {
+
+  date = new Date();
+
+  from = new Date(this.date.getFullYear(), this.date.getMonth(), 1);
+  to = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 1);
+  
+
 
 
   selectedRange: RangeType = "Monthly";
@@ -44,6 +54,19 @@ export class DashboardComponent extends Unsubscribe {
       }
     ]
   };
+
+  ngAfterViewInit(): void {
+    // this.to.setMonth(this.date.getMonth()+1, 1);
+    // this.to.setHours(0);
+    // this.to.setMinutes(0);
+    // this.to.setSeconds(0);
+    console.log(this.from, this.to);
+    
+    
+    this.getDashboardData();
+    Chart.register(...registerables);
+    this.chartUtil.createDoughnutChart("category-chart");
+  }
 
   dashboardData: DashboardDTO;
   dailyExpensesLabels: string[] = [];
@@ -80,8 +103,8 @@ export class DashboardComponent extends Unsubscribe {
     const to = this.getToDate(currentYear, currentMonth);
 
     this.dashboardService.getDashboardData(
-      from,
-      to,
+      this.from,
+      this.to,
       this.selectedRange
     )
     .pipe(takeUntil(this.unsubscribe$))
@@ -139,5 +162,6 @@ export class DashboardComponent extends Unsubscribe {
     this.selectedDate = event.dateFrom;
     this.getDashboardData();
   }
+
 
 }
