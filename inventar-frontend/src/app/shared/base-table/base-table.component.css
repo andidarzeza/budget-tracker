@@ -45,6 +45,6 @@
 }
 
 .base-table-paginator {
-    border-top: 1px solid rgba(0, 0, 0, .12);
+    border-top: 1px solid #8080802e;
     background: var(--primary);
 }

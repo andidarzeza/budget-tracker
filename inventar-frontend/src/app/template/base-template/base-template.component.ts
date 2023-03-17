@@ -6,6 +6,7 @@ import { slider } from 'src/app/animations';
 import { inOutAnimation } from 'src/app/components/settings/dynamic-dropdown/animations';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
@@ -30,7 +31,8 @@ export class BaseTemplateComponent extends Unsubscribe implements OnInit {
     public sharedService: SharedService,
     public sideBarService: SideBarService,
     private http: HttpClient,
-    public navBarService: NavBarService
+    public navBarService: NavBarService,
+    public routeSpinnerService: RouteSpinnerService
   ) {
     super();
   }

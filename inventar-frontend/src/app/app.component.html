@@ -1,3 +1,3 @@
 <base-template [outlet]="outlet">
-    <router-outlet #outlet="outlet"></router-outlet>
+    <router-outlet #outlet="outlet" (activate)="onActivate()"></router-outlet>
 </base-template>

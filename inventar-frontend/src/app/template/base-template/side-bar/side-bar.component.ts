@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { MenuItem, SideBarMode } from '../base-template.models';
@@ -20,7 +21,8 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
     public sharedService: SharedService,
     public authenticationService: AuthenticationService,
     public sideBarService: SideBarService,
-    public router: Router
+    public router: Router,
+    private routeSpinnerService: RouteSpinnerService
   ) { }
 
   ngAfterViewInit(): void {
@@ -49,7 +51,11 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
     });
   }
 
-  animateSelectedOption(index: number): void {
+  activateSpinner(): void {
+    this.routeSpinnerService.startLoading();
+  }
+
+  animateSelectedOption(index: number): void {    
     const activeItem = document.getElementById("active-item") as HTMLElement;
     if (activeItem) {
       const margin = index + 1;

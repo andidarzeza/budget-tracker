@@ -1,4 +1,4 @@
-import { Component,  } from '@angular/core';
+import { Component, OnInit,  } from '@angular/core';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { ColumnDefinition, History } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
@@ -12,13 +12,14 @@ import { ToastrService } from 'ngx-toastr';
 import { HttpParams } from '@angular/common/http';
 import { FilterService } from 'src/app/core/services/filter.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
+import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.css']
 })
-export class HistoryComponent extends BaseTable<History>{
+export class HistoryComponent extends BaseTable<History> implements OnInit{
   sort: string = "date,desc";
   createComponent: any;
 
@@ -42,12 +43,14 @@ export class HistoryComponent extends BaseTable<History>{
     public dialog: DialogService,
     protected toaster: ToastrService,
     public filterService: FilterService,
-    public columnDefinitionService: ColumnDefinitionService
+    public columnDefinitionService: ColumnDefinitionService,
+    private routeSpinnerService: RouteSpinnerService
   ) {
     super(dialog, historyService, toaster, accountService);
   }
 
   ngOnInit(): void {
+    this.routeSpinnerService.stopLoading();
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
     this.query();

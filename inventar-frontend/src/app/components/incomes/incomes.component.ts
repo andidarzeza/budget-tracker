@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { AddIncomeComponent } from './add-income/add-income.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
@@ -15,6 +15,7 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { HttpParams } from '@angular/common/http';
 import { FilterService } from 'src/app/core/services/filter.service';
+import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 
 
 @Component({
@@ -22,7 +23,7 @@ import { FilterService } from 'src/app/core/services/filter.service';
   templateUrl: './incomes.component.html',
   styleUrls: ['./incomes.component.css']
 })
-export class IncomesComponent extends BaseTable<Income>{
+export class IncomesComponent extends BaseTable<Income> implements OnInit, AfterViewInit {
   sort: string = "createdTime,desc";
 
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("INCOME");
@@ -44,16 +45,22 @@ export class IncomesComponent extends BaseTable<Income>{
     public navBarService: NavBarService,
     public accountService: AccountService,
     public columnDefinitionService: ColumnDefinitionService,
-    public filterService: FilterService
+    public filterService: FilterService,
+    private routeSpinnerService: RouteSpinnerService
   ) {
     super(dialog, incomeService, toaster, accountService);
+  }
+  
+  ngAfterViewInit(): void {
+    this.routeSpinnerService.stopLoading();   
+
   }
 
   getQueryParams(): HttpParams {
     return buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount());
   }
   
-  ngOnInit(): void {        
+  ngOnInit(): void {     
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
     this.getCategories();

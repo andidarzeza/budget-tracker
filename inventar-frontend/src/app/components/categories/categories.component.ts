@@ -13,6 +13,7 @@ import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableA
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { HttpParams } from '@angular/common/http';
 import { FilterService } from 'src/app/core/services/filter.service';
+import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 
 @Component({
   selector: 'app-categories',
@@ -44,12 +45,14 @@ export class CategoriesComponent extends BaseTable<Category> {
     public accountService: AccountService,
     public navBarService: NavBarService,
     public columnDefinitionService: ColumnDefinitionService,
-    public filterService: FilterService
+    public filterService: FilterService,
+    private routeSpinnerService: RouteSpinnerService
   ) {
     super(dialog, categoriesService, toaster, accountService);
   }
 
   ngOnInit(): void {
+    this.routeSpinnerService.stopLoading();
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
     this.query();

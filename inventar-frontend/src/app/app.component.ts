@@ -53,4 +53,14 @@ export class AppComponent extends Unsubscribe implements OnInit {
     }
   }
 
+  onActivate(): void {
+    const spinner = document.getElementById("application-loader");
+    setTimeout(() => {
+      if(spinner) {
+        spinner.style.opacity = '0';
+      }
+    }, 0);
+    
+  }
+
 }

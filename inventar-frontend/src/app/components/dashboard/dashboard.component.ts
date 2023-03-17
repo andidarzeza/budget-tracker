@@ -18,6 +18,7 @@ import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { FormControl } from '@angular/forms';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { Chart, registerables } from 'chart.js';
+import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -56,13 +57,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   };
 
   ngAfterViewInit(): void {
-    // this.to.setMonth(this.date.getMonth()+1, 1);
-    // this.to.setHours(0);
-    // this.to.setMinutes(0);
-    // this.to.setSeconds(0);
-    console.log(this.from, this.to);
-    
-    
+    this.routeSpinnerService.stopLoading();
     this.getDashboardData();
     Chart.register(...registerables);
     this.chartUtil.createDoughnutChart("category-chart");
@@ -81,7 +76,8 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
     public router: Router,  
-    public accountService: AccountService
+    public accountService: AccountService,
+    private routeSpinnerService: RouteSpinnerService
   ) {
     super();
     this.sideBarService.displaySidebar = true;

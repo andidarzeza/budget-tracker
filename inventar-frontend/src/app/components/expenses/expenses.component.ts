@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
@@ -14,13 +14,14 @@ import { ColumnDefinitionService } from 'src/app/core/services/column-definition
 import { BaseTable } from 'src/app/core/BaseTable';
 import { HttpParams } from '@angular/common/http';
 import { FilterService } from 'src/app/core/services/filter.service';
+import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 
 @Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css']
 })
-export class ExpensesComponent extends BaseTable<Expense> {
+export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
   
   createComponent = AddExpenseComponent;
   sort: string = "createdTime,desc";
@@ -41,12 +42,14 @@ export class ExpensesComponent extends BaseTable<Expense> {
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
     public columnDefinitionService: ColumnDefinitionService,
-    public filterService: FilterService
+    public filterService: FilterService,
+    private routeSpinnerService: RouteSpinnerService
   ) {
     super(dialog, expenseService, toaster, accountService);
   }
 
   ngOnInit(): void {
+    this.routeSpinnerService.stopLoading();
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
     this.categoryService.findAll(buildParams(0, 9999).append("categoryType", CategoryType.EXPENSE).append("account", this.accountService?.getAccount())).subscribe((res: ResponseWrapper) => {
