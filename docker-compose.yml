@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  budget-frontend:
+    container_name: budget-frontend
+    build: ./inventar-frontend
+    ports:
+      - '4000:4000'
+  budget-backend:
+    container_name: budget-backend
+    build: ./inventar-backend
+    ports:
+      - '8084:8084'

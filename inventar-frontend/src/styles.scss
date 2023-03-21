@@ -90,6 +90,7 @@ app-date-picker {
     --search-confirm: #111619;
     --logo-background: var(--light);
     --logo-color: white;
+    --gradient-logo: linear-gradient(to right, var(--lightShadowed), var(--light));
 }
 
 .light-theme {
@@ -872,4 +873,9 @@ mat-footer-row,
 
 .drawer-table-container {
     background: transparent;
+}
+
+/* width */
+.hide-scroll::-webkit-scrollbar{
+    width: 0px;
 }

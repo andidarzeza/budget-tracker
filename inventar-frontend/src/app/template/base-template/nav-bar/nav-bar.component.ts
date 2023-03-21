@@ -51,8 +51,8 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
     },
     {
       name: "Deep Amber",
-      color: 'rgba(255, 133, 3, 1)',
-      shadowedColor: 'rgba(255, 133, 3, 0.5)'
+      color: 'rgba(242,126,51, 1)',
+      shadowedColor: 'rgba(242,126,51, 0.5)'
     }
 
   ]
@@ -84,7 +84,11 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
 
   private setInitialTheme(): void {
     const theme: string = localStorage.getItem("themeColor");
-    if(theme) this.changeThemeColor({color: theme} as Theme);
+    if(theme) this.changeThemeColor({color: theme, shadowedColor: this.getShadowedColor(theme)} as Theme);
+  }
+
+  getShadowedColor(themeColor: string): string {
+    return this.themesArray.filter((theme: Theme) => theme.color == themeColor)[0].shadowedColor;
   }
 
   logout(): void {

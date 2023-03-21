@@ -13,7 +13,7 @@
         <div class="shadow" id="shadow" *ngIf="sideBarMode=='over'" (click)="toggleSidebar()"></div>
         <nav-bar *ngIf="navBarService.displayNavBar"></nav-bar>
         <div class="content-container">
-            <spinner *ngIf="routeSpinnerService.loading" style="z-index: 2;"></spinner>
+            <!-- <spinner *ngIf="routeSpinnerService.loading" style="z-index: 2;"></spinner> -->
             <ng-content></ng-content>
         </div>
     </div>

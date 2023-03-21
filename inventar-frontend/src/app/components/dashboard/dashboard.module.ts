@@ -7,10 +7,11 @@ import { ExpensesChartModule } from './expenses-chart/expenses-chart.module';
 import { ExpenseIncomeResumeModule } from './expense-income-resume/expense-income-resume.module';
 import { BudgetInfoModule } from './budget-info/budget-info.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MonthPickerModule } from './month-picker/month-picker.module';
+import { MatIconModule } from '@angular/material/icon';
+import { SpinnerModule } from 'src/app/template/shared/spinner/spinner.module';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,9 @@ import { MonthPickerModule } from './month-picker/month-picker.module';
     SharedModule,
     MatButtonModule,
     MatCardModule,
-    MonthPickerModule
+    MonthPickerModule,
+    MatIconModule,
+    SpinnerModule
   ]
 })
 export class DashboardModule { }

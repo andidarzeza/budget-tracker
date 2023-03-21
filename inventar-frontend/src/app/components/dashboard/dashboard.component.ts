@@ -15,28 +15,24 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
-import { FormControl } from '@angular/forms';
-import { MatDatepicker } from '@angular/material/datepicker';
 import { Chart, registerables } from 'chart.js';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
+import { inOutAnimation } from 'src/app/animations';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
+  animations: [inOutAnimation]
 })
 export class DashboardComponent extends Unsubscribe implements AfterViewInit {
 
-  date = new Date();
+  from: Date;
+  to: Date;
+  loading = true;
 
-  from = new Date(this.date.getFullYear(), this.date.getMonth(), 1);
-  to = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 1);
-  
-
-
-
-  selectedRange: RangeType = "Monthly";
-  ranges: RangeType[] = ["Monthly", "Yearly"];
+  selectedRange: RangeType = "1D";
+  ranges: RangeType[] = ["1D", "1W", "1M", "1Y", "MAX"];
   selectedDate = new Date();
   dateUtil = new DateUtil();
   currentMonth = this.selectedDate.getMonth();
@@ -58,7 +54,6 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.routeSpinnerService.stopLoading();
-    this.getDashboardData();
     Chart.register(...registerables);
     this.chartUtil.createDoughnutChart("category-chart");
   }
@@ -86,25 +81,14 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
 
 
 
-  // fires only from onDateSelected function below
   private getDashboardData(): void {
     
-    const currentYear: Year = this.dateUtil.fromYear(this.selectedDate.getFullYear());
-    const currentMonth: Month = currentYear.getMonthByValue(this.selectedDate.getMonth());
-    const days: Day[] = currentMonth.getDaysOfMonth();
-
-    this.dailyExpensesLabels = this.getMonthlyLabels(days, currentYear, currentMonth);
-    
-    const from = this.getFromDate(currentYear, currentMonth);
-    const to = this.getToDate(currentYear, currentMonth);
-
     this.dashboardService.getDashboardData(
-      this.from,
-      this.to,
-      this.selectedRange
+      this.from, this.to, this.selectedRange
     )
     .pipe(takeUntil(this.unsubscribe$))
     .subscribe((dashboardData: DashboardDTO) => {
+      this.loading = false;
       this.dashboardData = dashboardData;
     }, () => {
       this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION);
@@ -115,36 +99,6 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     this.selectedRange = range;
     this.getDashboardData();
   }
-
-  private getMonthlyLabels(days: Day[], currentYear: Year, currentMonth: Month): string[] {
-    if(this.selectedRange === "Monthly") {
-      return days.map(day => {
-        const dayString: string = (day?.getDayNumber() <= 9) ? "0" + day?.getDayNumber().toString() : day?.getDayNumber().toString();
-        const monthString: string = (currentMonth.getMonth() + 1 <= 9) ? "0" + (currentMonth.getMonth() + 1).toString() : (currentMonth.getMonth() + 1).toString();
-        return dayString + "-" + monthString + "-" + currentYear.getYear().toString()
-      });
-    } else {
-      return currentYear.getYearMonths().map((month: Month) => {
-        const m = month.getMonth() + 1; 
-        return (m <=9 ? "0" + m.toString() : m.toString()) + "-" + currentYear.getYear().toString();
-      });
-    }
-    
-  }
-
-  private getFromDate(year: Year, month: Month): Date {
-    if(this.selectedRange =="Monthly") {
-      return new Date(year.getYear(), month.getMonth());
-    }
-    return new Date(year.getYear(), 0);
-  }
-
-  private getToDate(year: Year, month: Month): Date {
-    if(this.selectedRange =="Monthly") {
-      return new Date(year.getYear(), month.getMonth()+1);
-    }
-    return new Date(year.getYear(), 12);
-  }
   
   get expenseCategoriesData() {
     return this.dashboardData?.expensesInfo ?? [];
@@ -154,8 +108,10 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     return this.dashboardData?.dailyExpenses;
   }
 
-  onDateSelected(event: any): void {
-    this.selectedDate = event.dateFrom;
+  onDateSelected(dateRange: {from: Date, to: Date}): void {
+    this.loading = true;
+    this.from = dateRange.from;
+    this.to = dateRange.to;
     this.getDashboardData();
   }
 

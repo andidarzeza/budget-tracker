@@ -1,19 +1,11 @@
-# FROM node:latest as builder
-# WORKDIR /app
-# COPY . .
-# RUN npm install
-# RUN npm run ng build
-# FROM nginx:1.17.1-alpine
-# WORKDIR /usr/share/nginx/html
-# RUN rm -rf ./*
-# COPY --from=builder /app/dist/budget-calculator .
-# ENTRYPOINT ["nginx", "-g", "daemon off;"]
-# # COPY ./nginx.conf /etc/nginx/nginx.conf
-# ## Remove default nginx index page
-# # RUN rm -rf /usr/share/nginx/html/*
-# # COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-# # COPY /dist/inventar-front-end /usr/share/nginx/html
+FROM node:14 as node
+WORKDIR /app
+COPY . .
+RUN npm install --legacy-peer-deps
+RUN npm run build --prod
+# RUN ls
 
+# stage 2
 FROM nginx:1.17.1-alpine
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY /dist/inventar-front-end /usr/share/nginx/html
+COPY --from=node app/dist/inventar-frontend /usr/share/nginx/html

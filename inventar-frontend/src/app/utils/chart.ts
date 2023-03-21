@@ -49,12 +49,13 @@ export class ChartUtils {
                     'rgb(54, 162, 235)',
                     'rgb(255, 205, 86)'
                   ],
+                  borderRadius: 10,
                   borderColor: 'transparent',
                   spacing: 1
                 }]
             },
             options: {
-                cutout: 40,
+                cutout: 60,
                 plugins: {
                     legend: {
                         display: false

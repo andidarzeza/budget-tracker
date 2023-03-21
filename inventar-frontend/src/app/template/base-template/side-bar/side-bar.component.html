@@ -1,8 +1,16 @@
 <div id="sidebar" [ngStyle]="{'position': sideBarMode!='over' ? 'relative' : 'absolute', 'width': sideBarMode!='over' ? '250px' : '76px' }" class="sidebar grad" style="position: absolute;height: 100%;z-index: 2;" *ngIf="authenticationService.currentUserValue">
     <div class="logo-container">
         <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;">
-            <div style="background-color: var(--primary-icon);padding: 10px 20px;border-radius: 4px;font-size: 20px;">
-                {{sideBarService.isOpened ? 'FMS': 'F'}}
+            <div style="border-radius: 50%;
+            width: 30px;
+            background: var(--gradient-logo);
+            height: 30px;
+            position: relative;">
+
+                <div style="position: absolute;height: 27px;width: 27px;border-radius: 50%;left: 50%;top: 50%;transform: translate(-50%, -50%);
+                background: var(--primary);">
+
+                </div>
             </div>
         </div>
         <span *ngIf="sideBarService.isOpened">
