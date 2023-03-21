@@ -1,37 +1,35 @@
 import { Injectable } from '@angular/core';
 import { Chart } from 'chart.js';
 import { ChartOptions } from '../models/models';
+import { ThemeService } from '../services/theme.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ChartUtils {
-    public createChart(context: string, options: ChartOptions): Chart {
+    constructor() { }
+
+    public createChart(context: string): Chart {
+        const color = localStorage.getItem("themeColor");
+        const chartBackgoundColor = this.getChartBackgroundColor(color);
         return new Chart(context, {
-            type: options.type,
+            type: "line",
             data: {
-                labels: options.labels,
-                datasets: options.datasets
+                labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                datasets: [{
+                    data: [10, 20, 30, 10, 20, 25, 30, 35, 40, 22, 23, 10],
+                    tension: .4,
+                    backgroundColor: chartBackgoundColor,
+                    borderColor: color,
+                    fill: true
+                }],
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        display: options.showGridLines
-                    },
-                    x: {
-                        display: options.showGridLines
-                    }
-                },
-                plugins: {
-                    legend: {
-                        maxHeight: 50,
-                        display: true,
-                        position: 'bottom'
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: true
+             plugins: {
+                 legend: {
+                     display: false
+                 }
+             }
             }
         });
     }
@@ -63,5 +61,9 @@ export class ChartUtils {
                 }
             }
         });
+    }
+
+    private getChartBackgroundColor(color: string): string {
+        return color.substring(0, color.length - 2) + '0.3)';
     }
 }

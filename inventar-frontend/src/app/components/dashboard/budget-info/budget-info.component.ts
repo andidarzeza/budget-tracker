@@ -44,6 +44,7 @@ export class BudgetInfoComponent extends Unsubscribe implements OnInit, OnDestro
     document.addEventListener('click', this.offClickHandler.bind(this)); // bind on doc
   }
 
+
   ranges: RangeType[] = []
   selectedRange: RangeType = "1W";
   public showDatePicker: boolean = false;

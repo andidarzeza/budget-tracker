@@ -42,32 +42,32 @@ export class ExpensesChartComponent extends Unsubscribe implements OnInit, OnCha
     }
     const color = localStorage.getItem("themeColor");
     const chartBackgoundColor = this.getChartBackgroundColor(color);
-    this.chart = this.chartUtil.createChart("daily-chart", {
-      type: 'line',
-      colors: ['#ff6347'],
-      labels: this.dailyExpensesLabels?.map(label => {
+    // this.chart = this.chartUtil.createChart("daily-chart", {
+    //   type: 'line',
+    //   colors: ['#ff6347'],
+    //   labels: this.dailyExpensesLabels?.map(label => {
         
-        const array = label.split("-");
-        if (array.length == 3) {
-          return array[0] + "/" + array[1] + "/" + array[2].slice(-2);
-        } else {
-          return array[0] + "/" + array[1].slice(-2);
-        }
+    //     const array = label.split("-");
+    //     if (array.length == 3) {
+    //       return array[0] + "/" + array[1] + "/" + array[2].slice(-2);
+    //     } else {
+    //       return array[0] + "/" + array[1].slice(-2);
+    //     }
 
 
-      }),
-      showGridLines: true,
-      datasets: [{
-        label: 'Money Spent',
-        data: this.getDailyExpensesData(),
-        fill: true,
-        tension: 0.2,
-        backgroundColor: [chartBackgoundColor],
-        borderColor: [color],
-        pointBackgroundColor: color,
-        borderWidth: 1
-      }]
-    });
+    //   }),
+    //   showGridLines: true,
+    //   datasets: [{
+    //     label: 'Money Spent',
+    //     data: this.getDailyExpensesData(),
+    //     fill: true,
+    //     tension: 0.2,
+    //     backgroundColor: [chartBackgoundColor],
+    //     borderColor: [color],
+    //     pointBackgroundColor: color,
+    //     borderWidth: 1
+    //   }]
+    // });
   }
 
   private listenForColorChange(): void {

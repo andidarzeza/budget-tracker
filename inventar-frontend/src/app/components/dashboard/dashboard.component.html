@@ -1,110 +1,68 @@
 <div style="padding: 20px;max-height: 100%;overflow-y: auto;height: calc(100% - 106px);display: flex;">
 
-    <mat-card style="margin-right: 20px;width: calc(100% - 420px);height: calc(100% - 32px);border-radius: 10px;">
-        <div class="title" style="padding: 15px 10px;">
-            Overall Porfolio
-        </div>
+    <mat-card class="left-container">
+        <div class="title overall-portfolio-title">Overall Portfolio</div>
 
-        <div style="display: flex;">
-            <div class="dashboard-card">
-                <div class="subtitle">
-                    Incomes
-                </div>
-                <div class="title monetary-value">
-                    $13,000
-                </div>
-            </div>
-
-            <div class="dashboard-card">
-                <div class="subtitle">
-                    Incomes
-                </div>
-                <div class="title monetary-value">
-                    $13,000
-                </div>
-            </div>
-
-            <div class="dashboard-card">
-                <div class="subtitle">
-                    Incomes
-                </div>
-                <div class="title monetary-value">
-                    $13,000
-                </div>
-            </div>
-
-            <div class="dashboard-card">
-                <div class="subtitle">
-                    Incomes
-                </div>
-                <div class="title monetary-value">
-                    $13,000
-                </div>
+        <div class="overall-portfolio">
+            <div class="dashboard-card" *ngFor="let p of portfolio">
+                <div class="subtitle">{{p.title}}</div>
+                <div class="title monetary-value">$ {{dashboardData[p.value]}}</div>
             </div>
         </div>
 
-        <div class="title" style="padding: 15px 10px;margin-top: 16px;">
-            Overview Statistics
+        <div class="overview-statistics">
+            <div class="title overview-statistics-title">Overview Statistics</div>
+
+            <div class="range-container">
+                <div *ngFor="let range of ranges"
+                    [style.background]="range == selectedRange ? 'var(--light)' : 'var(--card)'"
+                    [style.color]="range == selectedRange ? 'white' : 'var(--card-title)'"
+                    [style.margin-left]="range == '1D' ? '0px' : '10px'" (click)="selectedRange = range"
+                    class="mat-elevation-z2 pointer no-select range-option">{{range}}</div>
+            </div>
         </div>
-        
-        <div style="float:right;background: var(--secondary);border: 2px solid rgba(0, 0, 0, .12);border-radius: 10px;padding: 10px 15px;display: flex;align-items: center;">
-            <div *ngFor="let range of ranges" [style.background]="range == selectedRange ? 'var(--light)' : 'var(--card)'" [style.color]="range == selectedRange ? 'white' : 'var(--card-title)'" (click)="selectedRange = range" [style.margin-left]="range == '1D' ? '0px' : '10px'" class="mat-elevation-z2 pointer no-select range-option">{{range}}</div>
+
+        <div class="line-chart">
+            <canvas id="line-chart"></canvas>
         </div>
+
     </mat-card>
 
-    <div style="width: 400px;height: 100%;">
-        <mat-card style="height: 250px;border-radius: 10px;padding: 0;padding-bottom: 16px;">
+    <div class="right-side">
+        <mat-card class="doughnut-chart-container">
             <month-picker (onChange)="onDateSelected($event)"></month-picker>
-            
-            <div style="height: 216px;
-            display: flex;justify-content: center;align-items: center;">
-                <canvas id="category-chart" style="max-width: 150px;max-height: 150px;"></canvas>
-            </div>
 
-            <div style="    margin-top: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        ">
+            <div class="category-chart">
+                <canvas id="category-chart"></canvas>
             </div>
         </mat-card>
 
-        <mat-card style="margin-top:20px;height: calc(100% - 317px);border-radius: 10px;">
+        <mat-card class="categories">
             <spinner *ngIf="loading" [@inOutAnimation]></spinner>
-            <div class="title">
-                Expenses
-            </div>
+            <div class="title category-title">Expenses</div>
+
             <ng-container *ngIf="(expenseCategoriesData?.length == 0 || !expenseCategoriesData) && !loading">
-                <div style="width: 100%;height: 100%;display: flex;flex-direction: column;justify-content: center;align-items: center;color: var(--card-title);">
-                    <mat-icon style="width: 30px;height: 30px;font-size: 30px;">
-                        info
-                    </mat-icon>
-                    <span style="margin-top: 5px;">
-                        No data available to display.
-                    </span>
+                <div class="no-data-container">
+                    <mat-icon class="no-data-icon">info</mat-icon>
+                    <span class="no-data-message">No data available to display.</span>
                 </div>
             </ng-container>
-            <div style="height: calc(100% - 27px);overflow: auto;margin-top: 7px;" class="hide-scroll" *ngIf="!(expenseCategoriesData?.length == 0 || !expenseCategoriesData)">
-                <div *ngFor="let data of expenseCategoriesData" style="padding: 10px;">
 
-                    <div style="display: flex;justify-content: space-between;align-items: center;">
-                        <div style="display: flex;align-items: center;">
-                            <mat-icon style="color: var(--primary);width: 30px;height: 30px;font-size: 30px;">{{data.icon}}</mat-icon>
-                            <div style="margin-left: 13px">
-                                <div style="font-size: 14px;font-weight: 400;">
-                                    {{data._id}}
-                                </div>
-                                <div style="font-size: 13px;">
-                                    details
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div>
-                            {{data.total}} ALL
+            <div class="hide-scroll categories-list"
+                *ngIf="!(expenseCategoriesData?.length == 0 || !expenseCategoriesData)">
+                <div *ngFor="let category of expenseCategoriesData" class="category-data">
+
+                    <div class="category-details">
+                        <mat-icon class="category-icon">{{category.icon}}</mat-icon>
+                        <div class="category-details-data">
+                            <div class="category-row-title">{{category._id}}</div>
+                            <div class="category-description">details</div>
                         </div>
                     </div>
+
+                    <div class="category-value">{{category.total}} ALL</div>
                 </div>
+
             </div>
 
         </mat-card>

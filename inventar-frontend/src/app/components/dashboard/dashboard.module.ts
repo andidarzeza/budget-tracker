@@ -12,6 +12,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MonthPickerModule } from './month-picker/month-picker.module';
 import { MatIconModule } from '@angular/material/icon';
 import { SpinnerModule } from 'src/app/template/shared/spinner/spinner.module';
+import { TableMessageModule } from 'src/app/shared/table-message/table-message.module';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { SpinnerModule } from 'src/app/template/shared/spinner/spinner.module';
     MatCardModule,
     MonthPickerModule,
     MatIconModule,
-    SpinnerModule
+    SpinnerModule,
+    TableMessageModule
   ]
 })
 export class DashboardModule { }

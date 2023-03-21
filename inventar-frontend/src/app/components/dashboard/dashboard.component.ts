@@ -31,6 +31,13 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   to: Date;
   loading = true;
 
+  portfolio: {title: string, value: string}[] = [
+    {"title": "Incomes", "value": "incomes"},
+    {"title": "Average Income", "value": "averageDailyIncome"},
+    {"title": "Expenses", "value": "expenses"},
+    {"title": "Average Expense", "value": "averageDailyExpenses"}
+  ];
+
   selectedRange: RangeType = "1D";
   ranges: RangeType[] = ["1D", "1W", "1M", "1Y", "MAX"];
   selectedDate = new Date();
@@ -56,6 +63,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     this.routeSpinnerService.stopLoading();
     Chart.register(...registerables);
     this.chartUtil.createDoughnutChart("category-chart");
+    this.chartUtil.createChart("line-chart");
   }
 
   dashboardData: DashboardDTO;
@@ -106,6 +114,14 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
 
   get dailyExpenses() {
     return this.dashboardData?.dailyExpenses;
+  }
+
+  get incomes() {
+    return this.dashboardData?.incomes;
+  }
+
+  get averageDailyIncome() {
+    return this.dashboardData?.averageDailyIncome;
   }
 
   onDateSelected(dateRange: {from: Date, to: Date}): void {

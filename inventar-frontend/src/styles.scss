@@ -118,6 +118,7 @@ app-date-picker {
     --search-confirm: var(--light);
     --logo-background: white;
     --logo-color: var(--light);
+    --gradient-logo: linear-gradient(to right, var(--lightShadowed), var(--light));
 }
 
 .filter-icon {
