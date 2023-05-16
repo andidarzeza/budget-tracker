@@ -125,3 +125,8 @@
 .category-value {
     color: white;
 }
+
+.dashboard-container {
+    padding: 20px;max-height: 100%;overflow-y: auto;
+    height: calc(100% - 106px);display: flex;
+}

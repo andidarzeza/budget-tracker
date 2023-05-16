@@ -3,7 +3,6 @@ package com.adprod.inventar.aggregations;
 
 import com.adprod.inventar.models.*;
 import com.adprod.inventar.repositories.CategoryRepository;
-import com.adprod.inventar.services.SecurityContextService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,7 +10,6 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.*;
@@ -21,14 +19,10 @@ import java.util.*;
 public class IncomesInfoAggregation {
     private final MongoTemplate mongoTemplate;
     private final CategoryRepository categoryRepository;
-    private final SecurityContextService securityContextService;
+    private final BaseAggregation baseAggregation;
 
     public List<IncomeInfoDTO> getIncomesInfo(Instant from, Instant to, String account) {
-        List<AggregationOperation> aggregationResult = new ArrayList<>();
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
-        aggregationResult.add(Aggregation.match(Criteria.where("user").is(securityContextService.username())));
-        aggregationResult.add(Aggregation.match(Criteria.where("account").is(account)));
+        List<AggregationOperation> aggregationResult = baseAggregation.baseAggregation(from, to, account);
         aggregationResult.add(Aggregation.group("$categoryID").sum(AggregationExpression.from(MongoExpression.create("$sum: '$incoming'"))).as("total"));
         TypedAggregation<Income> tempAgg = Aggregation.newAggregation(Income.class, aggregationResult);
         List<IncomeInfoDTO> resultSR = mongoTemplate.aggregate(tempAgg, "incomes", IncomeInfoDTO.class).getMappedResults();

@@ -3,16 +3,8 @@ package com.adprod.inventar.services.implementations;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.List;
-
-import com.adprod.inventar.models.DailyExpenseDTO;
-import com.adprod.inventar.models.DashboardDTO;
-import com.adprod.inventar.models.ExpenseInfoDTO;
 import com.adprod.inventar.services.DashboardService;
 import com.adprod.inventar.services.ExportService;
 import com.lowagie.text.*;
@@ -92,29 +84,29 @@ public class ExportServiceImpl implements ExportService {
     }
 
     private void writeTableData(PdfPTable table, Instant from, Instant to, String range) {
-        DashboardDTO dashboardDTO = this.dashboardService.getDashboardData(from, to, range, "").getBody();
-        List<DailyExpenseDTO> dailyExpenseDTOList = dashboardDTO.getDailyExpenses();
-        List<DailyExpenseDTO> modifiableList = new ArrayList(dailyExpenseDTOList);
-        Collections.sort(modifiableList, new Comparator<DailyExpenseDTO>(){
-            public int compare(DailyExpenseDTO o1, DailyExpenseDTO o2){
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                LocalDate l1 = LocalDate.parse(o1.get_id(), formatter); //2015-12-22
-                LocalDate l2 = LocalDate.parse(o2.get_id(), formatter); //2015-12-22
-
-                return l1.compareTo(l2);
-            }
-        });
-//        Collections.reverse(response);
-        modifiableList.forEach(dailyExpenseDTO -> {
-            table.addCell(dailyExpenseDTO.get_id());
-            table.addCell(df.format(dashboardDTO.getAverageDailyIncome()) + " ALL");
-            table.addCell(df.format(dailyExpenseDTO.getDailyExpense()) + " ALL");
-            table.addCell(df.format(dashboardDTO.getAverageDailyIncome() - dailyExpenseDTO.getDailyExpense()) + " ALL");
-        });
-        table.addCell("Total");
-        table.addCell(df.format(dashboardDTO.getDailyExpenses().size() * dashboardDTO.getAverageDailyIncome()) + " ALL");
-        table.addCell(df.format(dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get()) + " ALL");
-        table.addCell(df.format((dashboardDTO.getDailyExpenses().size() * dashboardDTO.getAverageDailyIncome()) - dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get()) + " ALL");
+//        DashboardDTO dashboardDTO = this.dashboardService.getDashboardData(from, to, range, "").getBody();
+//        List<DailyExpenseDTO> dailyExpenseDTOList = dashboardDTO.getDailyExpenses();
+//        List<DailyExpenseDTO> modifiableList = new ArrayList(dailyExpenseDTOList);
+//        Collections.sort(modifiableList, new Comparator<DailyExpenseDTO>(){
+//            public int compare(DailyExpenseDTO o1, DailyExpenseDTO o2){
+//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+//                LocalDate l1 = LocalDate.parse(o1.get_id(), formatter); //2015-12-22
+//                LocalDate l2 = LocalDate.parse(o2.get_id(), formatter); //2015-12-22
+//
+//                return l1.compareTo(l2);
+//            }
+//        });
+////        Collections.reverse(response);
+//        modifiableList.forEach(dailyExpenseDTO -> {
+//            table.addCell(dailyExpenseDTO.get_id());
+//            table.addCell(df.format(dashboardDTO.getAverageDailyIncome()) + " ALL");
+//            table.addCell(df.format(dailyExpenseDTO.getDailyExpense()) + " ALL");
+//            table.addCell(df.format(dashboardDTO.getAverageDailyIncome() - dailyExpenseDTO.getDailyExpense()) + " ALL");
+//        });
+//        table.addCell("Total");
+//        table.addCell(df.format(dashboardDTO.getDailyExpenses().size() * dashboardDTO.getAverageDailyIncome()) + " ALL");
+//        table.addCell(df.format(dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get()) + " ALL");
+//        table.addCell(df.format((dashboardDTO.getDailyExpenses().size() * dashboardDTO.getAverageDailyIncome()) - dashboardDTO.getDailyExpenses().stream().map(dailyExpenseDTO -> dailyExpenseDTO.getDailyExpense()).reduce((a, b) -> a+b).get()) + " ALL");
     }
 
 }

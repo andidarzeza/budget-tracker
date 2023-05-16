@@ -18,7 +18,7 @@ public class AccountResource {
     }
 
     @GetMapping("/simplified")
-    public ResponseEntity findUserAccountsSimplified(){
+    public ResponseEntity findUserAccountsSimplified() {
         return accountService.findUserAccountsSimplified();
     }
 }

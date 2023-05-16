@@ -1,4 +1,4 @@
-<div style="padding: 20px;max-height: 100%;overflow-y: auto;height: calc(100% - 106px);display: flex;">
+<div class="dashboard-container" *ngIf="{dashboardData: dashboardData$ | async} as observables">
 
     <mat-card class="left-container">
         <div class="title overall-portfolio-title">Overall Portfolio</div>
@@ -6,7 +6,10 @@
         <div class="overall-portfolio">
             <div class="dashboard-card" *ngFor="let p of portfolio">
                 <div class="subtitle">{{p.title}}</div>
-                <div class="title monetary-value">$ {{dashboardData[p.value]}}</div>
+                <div class="title monetary-value" *ngIf="observables.dashboardData;else noValue">€ {{observables.dashboardData[p.value] | number : '1.0-2'}}</div>
+                <ng-template #noValue>
+                    <div class="title monetary-value">€ 0</div>
+                </ng-template>
             </div>
         </div>
 
@@ -17,7 +20,7 @@
                 <div *ngFor="let range of ranges"
                     [style.background]="range == selectedRange ? 'var(--light)' : 'var(--card)'"
                     [style.color]="range == selectedRange ? 'white' : 'var(--card-title)'"
-                    [style.margin-left]="range == '1D' ? '0px' : '10px'" (click)="selectedRange = range"
+                    [style.margin-left]="range == '1D' ? '0px' : '10px'" (click)="onRangeSelect(range)"
                     class="mat-elevation-z2 pointer no-select range-option">{{range}}</div>
             </div>
         </div>
@@ -30,18 +33,23 @@
 
     <div class="right-side">
         <mat-card class="doughnut-chart-container">
-            <month-picker (onChange)="onDateSelected($event)"></month-picker>
+            <month-picker *ngIf="selectedRange == 'MONTH'" (onChange)="onDateSelected($event)"></month-picker>
+            <day-picker *ngIf="selectedRange == 'DAY'" (onChange)="onDateSelected($event)"></day-picker>
 
             <div class="category-chart">
                 <canvas id="category-chart"></canvas>
             </div>
         </mat-card>
 
+        <!-- <div *ngIf="timeline$ | async; let timeline">
+            {{timeline | json}}
+        </div> -->
+
         <mat-card class="categories">
-            <spinner *ngIf="loading" [@inOutAnimation]></spinner>
+            <!-- <spinner *ngIf="loading" [@inOutAnimation]></spinner> -->
             <div class="title category-title">Expenses</div>
 
-            <ng-container *ngIf="(expenseCategoriesData?.length == 0 || !expenseCategoriesData) && !loading">
+            <ng-container *ngIf="(observables.dashboardData?.expensesInfo?.length == 0 || !observables.dashboardData?.expensesInfo)">
                 <div class="no-data-container">
                     <mat-icon class="no-data-icon">info</mat-icon>
                     <span class="no-data-message">No data available to display.</span>
@@ -49,8 +57,8 @@
             </ng-container>
 
             <div class="hide-scroll categories-list"
-                *ngIf="!(expenseCategoriesData?.length == 0 || !expenseCategoriesData)">
-                <div *ngFor="let category of expenseCategoriesData" class="category-data">
+                *ngIf="!(observables.dashboardData?.expensesInfo?.length == 0 || !observables.dashboardData?.expensesInfo)">
+                <div *ngFor="let category of observables.dashboardData?.expensesInfo" class="category-data">
 
                     <div class="category-details">
                         <mat-icon class="category-icon">{{category.icon}}</mat-icon>
@@ -60,9 +68,8 @@
                         </div>
                     </div>
 
-                    <div class="category-value">{{category.total}} ALL</div>
+                    <div class="category-value">€ {{category.total}}</div>
                 </div>
-
             </div>
 
         </mat-card>

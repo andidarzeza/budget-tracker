@@ -1,23 +1,17 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
-import { DateUtil, Day, Month, Year } from 'src/app/utils/DateUtil';
-import { SharedService } from 'src/app/services/shared.service';
-import { FloatingMenuConfig } from 'src/app/shared/floating-menu/FloatingMenuConfig';
-import { ExportService } from 'src/app/services/export.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
-import { PdfExporterService } from 'src/app/services/pdf-exporter.service';
-import { DashboardDTO, RangeType } from 'src/app/models/models';
+import { catchError, takeUntil } from 'rxjs/operators';
+import { DashboardDTO, RangeType, TimelineExpenseDTO, TimelineIncomeDTO } from 'src/app/models/models';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
-import { Router } from '@angular/router';
-import { AccountService } from 'src/app/services/account.service';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { Chart, registerables } from 'chart.js';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { inOutAnimation } from 'src/app/animations';
+import { Observable, of } from 'rxjs';
+import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,35 +23,18 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
 
   from: Date;
   to: Date;
-  loading = true;
 
   portfolio: {title: string, value: string}[] = [
-    {"title": "Incomes", "value": "incomes"},
-    {"title": "Average Income", "value": "averageDailyIncome"},
-    {"title": "Expenses", "value": "expenses"},
-    {"title": "Average Expense", "value": "averageDailyExpenses"}
+    {"title": "Incomes", "value": "incomesEUR"},
+    {"title": "Average Income", "value": "averageIncomesEUR"},
+    {"title": "Expenses", "value": "expensesEUR"},
+    {"title": "Average Expense", "value": "averageExpensesEUR"}
   ];
 
-  selectedRange: RangeType = "1D";
-  ranges: RangeType[] = ["1D", "1W", "1M", "1Y", "MAX"];
-  selectedDate = new Date();
-  dateUtil = new DateUtil();
-  currentMonth = this.selectedDate.getMonth();
-  public floatingMenu: FloatingMenuConfig = {
-    position: "above",
-    buttons: [
-      {
-        tooltip: "Export as PDF",
-        icon: "picture_as_pdf",
-        action: () => {
-          this.exportService.exportDashboardPDF(
-            new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth()),
-            new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth() + 1)
-          ).subscribe((pdfDocument: Blob) => this.pdfExporter.exportToPDF(pdfDocument))
-        }
-      }
-    ]
-  };
+  selectedRange: RangeType = "MONTH";
+  ranges: RangeType[] = ["DAY", "WEEK", "MONTH", "YEAR", "MAX"];
+
+  dashboardData$: Observable<DashboardDTO>;
 
   ngAfterViewInit(): void {
     this.routeSpinnerService.stopLoading();
@@ -66,20 +43,12 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     this.chartUtil.createChart("line-chart");
   }
 
-  dashboardData: DashboardDTO;
-  dailyExpensesLabels: string[] = [];
-
   constructor(
     public dashboardService: DashboardService,
     public chartUtil: ChartUtils,
-    public sharedService: SharedService,
-    public exportService: ExportService,
     private toasterService: ToastrService,
-    private pdfExporter: PdfExporterService,
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
-    public router: Router,  
-    public accountService: AccountService,
     private routeSpinnerService: RouteSpinnerService
   ) {
     super();
@@ -87,49 +56,101 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     this.navBarService.displayNavBar = true;
   }
 
-
-
   private getDashboardData(): void {
-    
-    this.dashboardService.getDashboardData(
-      this.from, this.to, this.selectedRange
-    )
-    .pipe(takeUntil(this.unsubscribe$))
-    .subscribe((dashboardData: DashboardDTO) => {
-      this.loading = false;
-      this.dashboardData = dashboardData;
-    }, () => {
-      this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION);
-    });
+    this.dashboardData$ = this.dashboardService
+      .getDashboardData(this.from, this.to, this.selectedRange)
+      .pipe(catchError(this.catchError));
+  }
+
+  private expensesTimeline(): void {
+    this.dashboardService
+      .expensesTimeline(this.period, this.selectedRange)
+      .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
+      .subscribe((timeline: TimelineExpenseDTO[]) => {
+        this.updateLineChartLabels();
+        this.updateTimelineData(timeline);
+      });
+  }
+
+  catchError = () => {
+    this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION);
+    return of(null);
   }
 
   onRangeSelect(range: RangeType): void {
     this.selectedRange = range;
+    this.updateLineChartLabels();
     this.getDashboardData();
-  }
-  
-  get expenseCategoriesData() {
-    return this.dashboardData?.expensesInfo ?? [];
+    this.expensesTimeline();
   }
 
-  get dailyExpenses() {
-    return this.dashboardData?.dailyExpenses;
-  }
-
-  get incomes() {
-    return this.dashboardData?.incomes;
-  }
-
-  get averageDailyIncome() {
-    return this.dashboardData?.averageDailyIncome;
+  private updateLineChartLabels(): void {
+    this.chartUtil.updateTimelineLabels(this.selectedRange, "line", {year: this.from.getFullYear(), month: this.from.getMonth() + 1});
   }
 
   onDateSelected(dateRange: {from: Date, to: Date}): void {
-    this.loading = true;
     this.from = dateRange.from;
     this.to = dateRange.to;
     this.getDashboardData();
+    this.expensesTimeline();
   }
 
+
+  private updateTimelineData(timeline: any[]): void {
+    if(this.selectedRange == "MONTH") {
+      const currentDaysInSelectedMonth = this.getDaysInMonth(this.from.getFullYear(), this.from.getMonth() + 1);
+      const data = [];
+      const nonEmptyDays = timeline?.map(t => +t?._id);
+      const mappingField = "dailyExpense";
+      for(let i = 1;i <= currentDaysInSelectedMonth; i++) {
+        
+        if(nonEmptyDays.includes(i)) {
+          data.push(timeline[nonEmptyDays.indexOf(i)][mappingField])
+        } else {
+          data.push(0);
+        }
+      }
+      console.log(data);
+      
+      this.chartUtil.updateTimelineData(data);
+      
+    }
+
+    if(this.selectedRange == "DAY") {
+      const currentHours = this.getHourLabels();
+      const data = [];
+      const nonEmptyHours = timeline?.map(t => +t?._id);
+      const mappingField = "dailyExpense";
+      for(let i = 1;i <= currentHours.length; i++) {
+        
+        if(nonEmptyHours.includes(i)) {
+          data.push(timeline[nonEmptyHours.indexOf(i)][mappingField])
+        } else {
+          data.push(0);
+        }
+      }
+      this.chartUtil.updateTimelineData(data);
+    }
+
+
+  }
+
+  private getHourLabels(): string[] {
+    return [
+      "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+      "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"
+    ]
+  }
+  
+  private getDaysInMonth(year: number, month): number {
+    return new Date(year, month, 0).getDate();
+  }
+
+  get period() {
+    return {
+      from: this.from,
+      to: this.to
+    }
+  }
 
 }

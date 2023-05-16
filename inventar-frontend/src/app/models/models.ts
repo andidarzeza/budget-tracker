@@ -24,15 +24,20 @@ export interface ChartOptions {
     showGridLines?: boolean;
 }
 export interface DashboardDTO {
-	dailyExpenses: DailyExpenseDTO[];
-	averageDailyIncome: number;
-	averageDailyExpenses: number;
-	incomes: number;
-	expenses: number;
-	expensesInfo: ExpenseInfoDTO[];
-	incomesInfo: IncomeInfoDTO[];
-    increaseInIncome: number;
-    increaseInExpense: number;
+    expensesEUR: number;
+    incomesEUR: number;
+}
+
+export interface TimelineIncomeDTO {
+    _id: string;
+    income: number;
+    currency: string;
+}
+
+export interface TimelineExpenseDTO {
+    _id: string;
+    dailyExpense: number;
+    currency: string;
 }
 
 export interface ExpenseInfoDTO {
@@ -142,7 +147,7 @@ export interface UserRequest {
     lastName: string
 }
 
-export type RangeType = "1D" | "1W" | "1M" | "1Y" | "MAX";
+export type RangeType = "DAY" | "WEEK" | "MONTH" | "YEAR" | "MAX";
 
 export interface SimplifiedAccount {
     id: string;
@@ -155,4 +160,9 @@ export interface ColumnDefinition {
     column: string;
     label: string;
     type: ColumnType;
+}
+
+export type Period = {
+    from: Date,
+    to: Date
 }

@@ -2,7 +2,6 @@ package com.adprod.inventar.aggregations;
 
 import com.adprod.inventar.models.ExpenseAggregationDTO;
 import com.adprod.inventar.models.Expense;
-import com.adprod.inventar.services.SecurityContextService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,14 +9,12 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,16 +22,12 @@ import java.util.List;
 public class ExpenseIncreaseAggregation {
 
     private final MongoTemplate mongoTemplate;
-    private final SecurityContextService securityContextService;
+    private final BaseAggregation baseAggregation;
 
     public Double getExpenseIncreaseValue(Instant from, Instant to, Double currentExpense, String range, String account) {
         from = from.atZone(ZoneId.systemDefault()).minusMonths(1).toInstant();
         to = to.atZone(ZoneId.systemDefault()).minusMonths(1).toInstant();
-        List<AggregationOperation> aggregationResult = new ArrayList<>();
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
-        aggregationResult.add(Aggregation.match(Criteria.where("user").is(securityContextService.username())));
-        aggregationResult.add(Aggregation.match(Criteria.where("account").is(account)));
+        List<AggregationOperation> aggregationResult = baseAggregation.baseAggregation(from, to, account);
         aggregationResult.add(Aggregation.group("$user").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("expenses"));
         TypedAggregation<Expense> tempAgg = Aggregation.newAggregation(Expense.class, aggregationResult);
         List<ExpenseAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", ExpenseAggregationDTO.class).getMappedResults();

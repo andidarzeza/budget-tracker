@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -100,7 +102,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         accountService.addToBalance(expense.getAccount(), expense.getCurrency(), removeAndAddAmount);
         spending.setId(id);
         spending.setCreatedTime(expense.getCreatedTime());
-        spending.setLastModifiedDate(new Date());
+        spending.setLastModifiedDate(LocalDateTime.now());
         expenseRepository.save(spending);
         historyService.save(historyService.from(EntityAction.UPDATE, EXPENSE, spending.getAccount()));
         return ResponseEntity.ok(spending);

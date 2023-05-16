@@ -1,23 +1,32 @@
 import { Injectable } from '@angular/core';
 import { Chart } from 'chart.js';
-import { ChartOptions } from '../models/models';
+import { ChartOptions, RangeType } from '../models/models';
 import { ThemeService } from '../services/theme.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ChartUtils {
+
+    private lineChart: Chart;
+    private hourLabels: string[] =[
+        "00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00",
+        "12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"
+    ];
+    private weekLabels: string[] = [
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+    ];
     constructor() { }
 
-    public createChart(context: string): Chart {
+    public createChart(context: string): void {
         const color = localStorage.getItem("themeColor");
         const chartBackgoundColor = this.getChartBackgroundColor(color);
-        return new Chart(context, {
+        this.lineChart = new Chart(context, {
             type: "line",
             data: {
-                labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                labels: [],
                 datasets: [{
-                    data: [10, 20, 30, 10, 20, 25, 30, 35, 40, 22, 23, 10],
+                    data: [],
                     tension: .4,
                     backgroundColor: chartBackgoundColor,
                     borderColor: color,
@@ -25,11 +34,16 @@ export class ChartUtils {
                 }],
             },
             options: {
-             plugins: {
-                 legend: {
-                     display: false
-                 }
-             }
+                scales: {
+                    y: {
+                        min: 0
+                    }
+                },
+                plugins: {
+                     legend: {
+                         display: false
+                    }
+                }
             }
         });
     }
@@ -65,5 +79,32 @@ export class ChartUtils {
 
     private getChartBackgroundColor(color: string): string {
         return color.substring(0, color.length - 2) + '0.3)';
+    }
+
+    public updateTimelineLabels(range: RangeType, type: "doughnut" | "line", selectedTimeline: {year: number, month: number}): void {
+        if(type == "line") {
+            switch(range) {
+                case 'DAY':
+                    this.lineChart.data.labels = this.hourLabels;
+                    break;
+                case 'WEEK':
+                    this.lineChart.data.labels = this.weekLabels;
+                case 'MONTH':
+                    // needs current selected month do get the days
+                    
+                    this.lineChart.data.labels = Array.from(Array(this.getDaysInMonth(selectedTimeline.year, selectedTimeline.month)).keys()).map(x => x + 1);;
+            }
+            
+            this.lineChart.update();
+        }
+    }
+
+    public updateTimelineData(data: number[]): void {
+        this.lineChart.data.datasets[0].data = data;
+        this.lineChart.update();
+    }
+
+    private getDaysInMonth(year: number, month): number {
+        return new Date(year, month, 0).getDate();
     }
 }

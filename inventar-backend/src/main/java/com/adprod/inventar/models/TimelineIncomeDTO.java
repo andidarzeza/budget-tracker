@@ -5,15 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-public class DashboardDTO {
-    private Double expensesEUR;
-    private Double averageExpensesEUR;
-    private Double incomesEUR;
-    private Double averageIncomesEUR;
+public class TimelineIncomeDTO {
+    private String _id;
+    private Double income;
+    private String currency;
 }
