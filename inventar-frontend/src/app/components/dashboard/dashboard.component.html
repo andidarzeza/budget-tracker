@@ -33,8 +33,10 @@
 
     <div class="right-side">
         <mat-card class="doughnut-chart-container">
-            <month-picker *ngIf="selectedRange == 'MONTH'" (onChange)="onDateSelected($event)"></month-picker>
             <day-picker *ngIf="selectedRange == 'DAY'" (onChange)="onDateSelected($event)"></day-picker>
+            <month-picker *ngIf="selectedRange == 'MONTH'" (onChange)="onDateSelected($event)"></month-picker>
+            <year-picker *ngIf="selectedRange == 'YEAR'" (onChange)="onDateSelected($event)"></year-picker>
+            
 
             <div class="category-chart">
                 <canvas id="category-chart"></canvas>

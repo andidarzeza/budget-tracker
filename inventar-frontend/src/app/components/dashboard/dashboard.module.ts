@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SpinnerModule } from 'src/app/template/shared/spinner/spinner.module';
 import { TableMessageModule } from 'src/app/shared/table-message/table-message.module';
 import { DayPickerModule } from './day-picker/day-picker.module';
+import { YearPickerModule } from './year-picker/year-picker.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { DayPickerModule } from './day-picker/day-picker.module';
     MatCardModule,
     MonthPickerModule,
     DayPickerModule,
+    YearPickerModule,
     MatIconModule,
     SpinnerModule,
     TableMessageModule

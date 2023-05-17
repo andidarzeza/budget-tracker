@@ -13,8 +13,9 @@ export class ChartUtils {
         "00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00",
         "12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"
     ];
-    private weekLabels: string[] = [
-        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+    private yearLabels: string[] = [
+        "January", "February", "March", "April", "May", "June", "July",
+        "August", "September", "October", "November", "December"
     ];
     constructor() { }
 
@@ -87,12 +88,13 @@ export class ChartUtils {
                 case 'DAY':
                     this.lineChart.data.labels = this.hourLabels;
                     break;
-                case 'WEEK':
-                    this.lineChart.data.labels = this.weekLabels;
                 case 'MONTH':
                     // needs current selected month do get the days
-                    
-                    this.lineChart.data.labels = Array.from(Array(this.getDaysInMonth(selectedTimeline.year, selectedTimeline.month)).keys()).map(x => x + 1);;
+                    this.lineChart.data.labels = Array.from(Array(this.getDaysInMonth(selectedTimeline.year, selectedTimeline.month)).keys()).map(x => x + 1);
+                    break;
+                case 'YEAR':
+                    this.lineChart.data.labels = this.yearLabels;
+                    break;
             }
             
             this.lineChart.update();

@@ -32,6 +32,10 @@ public class TimelineAggregation {
         if(range.equals("DAY")) {
             dateFormat = "'%H'";
         }
+
+        if(range.equals("YEAR")) {
+            dateFormat = "'%m'";
+        }
 //        dateFormat = range.equals("Monthly") ? "'%d-%m-%Y'" : "'%m-%Y'";
         List<AggregationOperation> aggregationResult = baseAggregation.baseAggregation(from, to, account);
         ZoneId zoneId = ZoneId.systemDefault();

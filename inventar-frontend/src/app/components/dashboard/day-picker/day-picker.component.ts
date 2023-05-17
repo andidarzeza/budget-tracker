@@ -8,8 +8,8 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 export class DayPickerComponent implements OnInit {
   
   date = new Date();
-  from = new Date(this.date.getFullYear(), this.date.getMonth(), 1);
-  to = new Date(this.date.getFullYear(), this.date.getMonth(), 2);
+  from = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate());
+  to = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
 
   @Output() onChange = new EventEmitter<{from: Date, to: Date}>();
   

@@ -32,7 +32,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   ];
 
   selectedRange: RangeType = "MONTH";
-  ranges: RangeType[] = ["DAY", "WEEK", "MONTH", "YEAR", "MAX"];
+  ranges: RangeType[] = ["DAY", "MONTH", "YEAR", "MAX"];
 
   dashboardData$: Observable<DashboardDTO>;
 
@@ -110,10 +110,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
           data.push(0);
         }
       }
-      console.log(data);
-      
       this.chartUtil.updateTimelineData(data);
-      
     }
 
     if(this.selectedRange == "DAY") {
@@ -122,9 +119,23 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
       const nonEmptyHours = timeline?.map(t => +t?._id);
       const mappingField = "dailyExpense";
       for(let i = 1;i <= currentHours.length; i++) {
-        
         if(nonEmptyHours.includes(i)) {
           data.push(timeline[nonEmptyHours.indexOf(i)][mappingField])
+        } else {
+          data.push(0);
+        }
+      }
+      this.chartUtil.updateTimelineData(data);
+    }
+
+    if(this.selectedRange == "YEAR") {
+      const currentYears = this.getYearLabels();
+      const data = [];
+      const nonEmptyYears = timeline?.map(t => +t?._id);
+      const mappingField = "dailyExpense";
+      for(let i = 1;i <= currentYears.length; i++) {
+        if(nonEmptyYears.includes(i)) {
+          data.push(timeline[nonEmptyYears.indexOf(i)][mappingField])
         } else {
           data.push(0);
         }
@@ -139,6 +150,12 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     return [
       "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
       "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"
+    ]
+  }
+
+  private getYearLabels(): string[] {
+    return [
+      "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
     ]
   }
   
