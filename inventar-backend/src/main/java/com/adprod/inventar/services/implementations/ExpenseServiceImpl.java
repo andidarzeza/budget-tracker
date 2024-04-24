@@ -57,6 +57,9 @@ public class ExpenseServiceImpl implements ExpenseService {
             if(data.isPresent()) {
                 Category sc = data.get();
                 response.add(new ExpenseDTO(item.getId(), sc.getCategory(), sc.getId(), item.getCreatedTime(), item.getLastModifiedDate(), item.getMoneySpent(), item.getDescription(), item.getCurrency()));
+            } else {
+                response.add(new ExpenseDTO(item.getId(), "unknown", "unknown", item.getCreatedTime(), item.getLastModifiedDate(), item.getMoneySpent(), item.getDescription(), item.getCurrency()));
+
             }
         });
         spendingWrapper.setData(response);

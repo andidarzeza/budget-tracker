@@ -11,7 +11,7 @@ import { DropdownOption } from './models';
   animations: [slideDownUp]
 })
 export class DropdownComponent {
-  showOptions = true;
+  @Input() showOptions = false;
   @Input() title: string;
   @Input() selectedTab: string;
   @Input() options: DropdownOption[];

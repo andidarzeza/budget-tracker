@@ -161,8 +161,14 @@ app-date-picker {
 .table-row,
 .table-opened,
 .table-closed,
-.filter-container {
+.filter-container,
+.range-container,
+.range-option {
     transition: background var(--background-animation-timing) !important;
+}
+
+.title {
+    transition: color var(--background-animation-timing) !important;
 }
 
 .mat-paginator {

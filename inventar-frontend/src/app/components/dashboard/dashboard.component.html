@@ -5,7 +5,7 @@
 
         <div class="overall-portfolio">
             <div class="dashboard-card" *ngFor="let p of portfolio">
-                <div class="subtitle">{{p.title}}</div>
+                <div class="title subtitle">{{p.title}}</div>
                 <div class="title monetary-value" *ngIf="observables.dashboardData;else noValue">€ {{observables.dashboardData[p.value] | number : '1.0-2'}}</div>
                 <ng-template #noValue>
                     <div class="title monetary-value">€ 0</div>
@@ -20,8 +20,8 @@
                 <div *ngFor="let range of ranges"
                     [style.background]="range == selectedRange ? 'var(--light)' : 'var(--card)'"
                     [style.color]="range == selectedRange ? 'white' : 'var(--card-title)'"
-                    [style.margin-left]="range == '1D' ? '0px' : '10px'" (click)="onRangeSelect(range)"
-                    class="mat-elevation-z2 pointer no-select range-option">{{range}}</div>
+                    [style.margin-left]="range == 'DAY' ? '0px' : '10px'" (click)="onRangeSelect(range)"
+                    class="mat-elevation-z2 pointer no-select range-option">{{range | titlecase}}</div>
             </div>
         </div>
 

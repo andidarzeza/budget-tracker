@@ -55,8 +55,9 @@
     display: flex;
     /* justify-content: space-between; */
     align-items: center;
-    border-radius: 10px 10px 0 0;
+    border-radius: 9px 9px 0 0;
     position: relative;
+    background: var(--primary);
 }
 
 .settings-content {
@@ -65,11 +66,11 @@
 }
 
 .settings-menu {
-    border-radius: 0 0 0 10px;
+    border-radius: 0 0 0 9px;
     overflow-y: auto;
     width: 300px;
     height: 100%;
-    border-right: 1px solid rgba(0, 0, 0, .12);
+    background: var(--primary);
 }
 
 .title {

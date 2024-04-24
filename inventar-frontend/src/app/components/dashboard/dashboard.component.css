@@ -6,17 +6,7 @@
 }
 
 .title {
-    font-size: 24px;
-    font-weight: 500;
-    color: white;
-}
-
-.card-title {
-    color: white;
-}
-
-.subtitle {
-    color: var(--card-title)
+    color: var(--card-title);
 }
 
 .monetary-value  {
@@ -28,8 +18,16 @@
     width: 25%;
 }
 
+
+.overall-portfolio-title {
+    font-size: 24px;
+    font-weight: 500;
+}
+
 .overall-portfolio-title, .overview-statistics-title, .category-title {
     padding: 15px 10px;
+    font-size: 24px;
+    font-weight: 500;
 }
 
 .overall-portfolio {
@@ -47,7 +45,7 @@
 .range-container {
     float:right;background: var(--secondary);
     border: 2px solid rgba(0, 0, 0, .12);border-radius: 10px;
-    padding: 10px 15px;display: flex;align-items: center;
+    padding: 8px 12px;display: flex;align-items: center;
 }
 
 .line-chart {
@@ -129,4 +127,10 @@
 .dashboard-container {
     padding: 20px;max-height: 100%;overflow-y: auto;
     height: calc(100% - 106px);display: flex;
+}
+
+
+
+.dashboard-container {
+    display: flex !important;
 }

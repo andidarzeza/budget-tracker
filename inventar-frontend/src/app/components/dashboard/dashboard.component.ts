@@ -25,7 +25,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   to: Date;
 
   portfolio: {title: string, value: string}[] = [
-    {"title": "Incomes", "value": "incomesEUR"},
+    {"title": "Income", "value": "incomesEUR"},
     {"title": "Average Income", "value": "averageIncomesEUR"},
     {"title": "Expenses", "value": "expensesEUR"},
     {"title": "Average Expense", "value": "averageExpensesEUR"}
