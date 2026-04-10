@@ -1,7 +1,7 @@
 <mat-drawer-container class="drawer-table-container" autosize>
     <mat-drawer #drawer class="sidenav" mode="over" position="end"
         (closed)="onSidenavClose()">
-        <app-expense-detail *ngIf="isSidenavOpened" (onCloseAction)="drawer.toggle()">
+        <app-expense-detail *ngIf="isSidenavOpened" [expenseViewId]="entityViewId" (onCloseAction)="drawer.toggle()">
         </app-expense-detail>
     </mat-drawer>
     
@@ -10,12 +10,16 @@
         (onAddEditForm)="openAddEditForm($event)"
         (onViewDetails)="viewDetails($event)"
         (nextPage)="onNextPage($event)"
+        (loadMore)="loadMore()"
+        [pageIndex]="page"
+        [loadingMore]="loadingMore"
         [filterOptions]="filterOptions"
         [tableActionInput]="tableActionInput"
         (onOpenDialog)="openAddEditForm()"
         (onRefresh)="resetAndQuery()"
         (onSearch)="onSearch($event)"
         (onReset)="resetAndQuery()"
+        (layoutModeChange)="resetAndQuery()"
         [total]="totalItems$ | async"
         [displayEditAction]="true" 
         [displayDeleteAction]="true"

@@ -1,5 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { SharedService } from 'src/app/services/shared.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'create-footer',
@@ -8,17 +7,21 @@ import { SharedService } from 'src/app/services/shared.service';
 })
 export class CreateFooterComponent implements OnInit {
 
+  @Input() editMode: boolean;
   @Output() create = new EventEmitter();
+  @Output() cancel = new EventEmitter();
 
-  constructor(
-    public sharedService: SharedService
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
 
   add(): void {
     this.create.emit();
+  }
+
+  onCancel(): void {
+    this.cancel.emit();
   }
 
 }

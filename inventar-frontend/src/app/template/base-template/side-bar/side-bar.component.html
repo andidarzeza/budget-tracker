@@ -1,21 +1,29 @@
-<div id="sidebar" [ngStyle]="{'position': sideBarMode!='over' ? 'relative' : 'absolute', 'width': sideBarMode!='over' ? '250px' : '76px' }" class="sidebar grad" style="position: absolute;height: 100%;z-index: 2;" *ngIf="authenticationService.currentUserValue">
+<div id="sidebar"
+    [ngClass]="{
+        'sidebar--mobile-drawer': mobileDrawer,
+        'sidebar--mobile-drawer--open': mobileDrawer && (sideBarService.mobileMenuOpen$ | async)
+    }"
+    [ngStyle]="mobileDrawer ? {} : {'position': sideBarMode!='over' ? 'relative' : 'absolute', 'width': sideBarMode!='over' ? '250px' : '76px' }"
+    class="sidebar grad"
+    [style.height]="'100%'"
+    [style.z-index]="mobileDrawer ? 13 : 2"
+    *ngIf="authenticationService.currentUserValue">
     <div class="logo-container">
-        <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;">
-            <div style="border-radius: 50%;
-            width: 30px;
-            background: var(--gradient-logo);
-            height: 30px;
-            position: relative;">
-
-                <div style="position: absolute;height: 27px;width: 27px;border-radius: 50%;left: 50%;top: 50%;transform: translate(-50%, -50%);
-                background: var(--primary);">
-
+        <a routerLink="/dashboard" class="sidebar-brand"
+            (click)="onBrandClick()"
+            [matTooltip]="sideBarService.isOpened ? '' : 'Budget Tracker'"
+            matTooltipPosition="below"
+            aria-label="Budget Tracker — Home">
+            <div class="sidebar-brand-mark">
+                <div class="sidebar-brand-ring">
+                    <div class="sidebar-brand-core"></div>
                 </div>
             </div>
-        </div>
-        <span *ngIf="sideBarService.isOpened">
-            
-        </span>
+            <div *ngIf="sideBarService.isOpened" class="sidebar-brand-text">
+                <span class="sidebar-brand-title">Budget</span>
+                <span class="sidebar-brand-accent">Tracker</span>
+            </div>
+        </a>
     </div>
 
     <div class="menu-items">
@@ -25,7 +33,7 @@
             *ngFor="let item of navigation;let i = index" 
             [routerLink]="[item.link]" 
             routerLinkActive="router-link-active"
-            (click)="activateSpinner();animateSelectedOption(i)"
+            (click)="onNavItemClick(i)"
             [matTooltip]="item.text"
             matTooltipPosition="below"
             matTooltipClass="sidebar-tooltip"
@@ -35,7 +43,7 @@
         </div>
     </div>
 
-    <div style="position: absolute; bottom: 30px;left: 50%;transform: translateX(-50%);">
+    <div *ngIf="!mobileDrawer" style="position: absolute; bottom: 30px;left: 50%;transform: translateX(-50%);">
         <button class="menu-item" mat-icon-button (click)="sideBarService.toggleSideBar()">
             <mat-icon class="primary-icon">
                 compare_arrows

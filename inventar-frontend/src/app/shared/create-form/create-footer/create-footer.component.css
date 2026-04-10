@@ -1,7 +1,14 @@
-.create-footer-container {
+.dialog-footer {
     display: flex;
     justify-content: flex-end;
-    padding: 20px;
-    padding-top: 0;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 18px 22px 22px;
     background: var(--secondary);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark-theme .dialog-footer {
+    border-top-color: rgba(255, 255, 255, 0.08);
 }

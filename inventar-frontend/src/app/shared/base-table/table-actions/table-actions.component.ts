@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
 import { filterAnimation } from './filter/filter.animations';
 import { FilterOptions } from './filter/filter.models';
 import { TableActionInput } from './TableActionInput';
@@ -14,8 +14,17 @@ import { TableActionInput } from './TableActionInput';
 })
 export class TableActionsComponent {
 
+  @HostBinding('class.table-actions--mobile-search-open')
+  get mobileSearchPanelOpen(): boolean {
+    return this.mobileToolbar && this.showSearchInput;
+  }
+
   @Input() tableActionInput: TableActionInput;
   @Input() filterOptions: FilterOptions[];
+  /** Hide icon + page title (e.g. when the page shows a dedicated title above the toolbar). */
+  @Input() hideEmbeddedTitle = false;
+  /** No primary-colored bar; actions sit on the page background (mobile list pages). */
+  @Input() mobileToolbar = false;
 
   @Output() onRefresh: EventEmitter<any> = new EventEmitter();
   @Output() onOpenDialog: EventEmitter<any> = new EventEmitter();

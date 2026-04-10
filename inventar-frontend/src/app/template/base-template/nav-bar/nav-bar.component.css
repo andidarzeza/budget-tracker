@@ -2,7 +2,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 10px;
     margin-right: 1.0%;
+    padding: 0 4px 0 8px;
 }
 
 .menu-item {
@@ -11,6 +13,10 @@
     align-items: center;
     margin-right: 10px;
     color: white;
+}
+
+.toolbar .menu-item {
+    margin-right: 0;
 }
 
 .balance-info {
@@ -22,9 +28,18 @@
     top: 0 !important;
     display: flex !important;
     justify-content: space-between !important;
+    align-items: center !important;
     position: sticky !important;
-    z-index: 2 !important;
-    padding: 0;
+    z-index: 14 !important;
+    min-height: var(--app-toolbar-height, 76px) !important;
+    height: auto !important;
+    padding: 10px 16px !important;
+    box-sizing: border-box !important;
+}
+
+.nav-menu-button {
+    margin-left: 2px;
+    margin-right: 6px;
 }
 
 .fullscreen-icon {
@@ -60,7 +75,8 @@
 
 .vertical-divider {
     width: 1px;
-    height: 50px;
-    margin: 0 11px;
+    height: calc(var(--app-toolbar-height, 76px) - 28px);
+    min-height: 40px;
+    margin: 0 6px 0 10px;
     background-color: rgba(241, 245, 249, 0.12);
 }

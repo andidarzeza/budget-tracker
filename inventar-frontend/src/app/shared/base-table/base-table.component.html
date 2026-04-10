@@ -1,34 +1,57 @@
-<div class="base-table-container">
-    <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
-        (onOpenDialog)="onOpenDialog.emit()" (onRefresh)="onRefresh.emit()" (onSearch)="onSearch.emit($event)"
-        (onReset)="onReset.emit()">
-    </table-actions>
+<ng-container *ngIf="{ mobile: (breakpointService.useTableCardLayout$ | async) === true } as layout">
+    <!-- Desktop: bordered table shell + paginator -->
+    <div *ngIf="!layout.mobile" class="base-table-container">
+        <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
+            [hideEmbeddedTitle]="false"
+            (onOpenDialog)="onOpenDialog.emit()" (onRefresh)="onRefresh.emit()" (onSearch)="onSearch.emit($event)"
+            (onReset)="onReset.emit()">
+        </table-actions>
 
-    <div style="display: flex;height: calc(100% - 126px);position: relative;">
-        <div [ngClass]="displayDrawer ? 'table-opened' : 'table-closed'">
-            <table-header [displayDrawer]="displayDrawer" [columnDefinitions]="columnDefinition"></table-header>
-            <table-body [displayDrawer]="displayDrawer" [displayEditAction]="displayEditAction"
-                [displayDeleteAction]="displayDeleteAction" [data]="data"
-                [columnDefinitions]="columnDefinition" (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
-                (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"></table-body>
+        <div class="base-table-scroll-area">
+            <div class="table-closed">
+                <table-header [columnDefinitions]="columnDefinition"></table-header>
+                <table-body [displayEditAction]="displayEditAction"
+                    [displayDeleteAction]="displayDeleteAction" [data]="data"
+                    [columnDefinitions]="columnDefinition" [infiniteScrollEnabled]="false"
+                    (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
+                    (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"></table-body>
 
-            <mat-paginator class="base-table-paginator" [length]="total"
-                [pageSize]="20" [showFirstLastButtons]="true"
-                [pageSizeOptions]="[]"
-                [hidePageSize]="breakpointService.screenSize == 'mobile'"
-                [pageIndex]="0" (page)="handlePageEvent($event)">
-            </mat-paginator>
-            <table-message [total]="data?.length"></table-message>
-        </div>
-
-        <div [@inOutSlide] class="details-sidebar-container" *ngIf="displayDrawer">
-            <div class="details-sidebar-actions">
-                <button mat-icon-button (click)="displayDrawer=false">
-                    <mat-icon class="">
-                        close
-                    </mat-icon>
-                </button>
+                <mat-paginator class="base-table-paginator" [length]="total"
+                    [pageSize]="pageSize" [showFirstLastButtons]="true"
+                    [pageSizeOptions]="[]"
+                    [hidePageSize]="breakpointService.screenSize == 'mobile'"
+                    [pageIndex]="pageIndex" (page)="handlePageEvent($event)">
+                </mat-paginator>
+                <table-message [total]="data?.length"></table-message>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Mobile: title + actions one row (shared inset), then cards -->
+    <div *ngIf="layout.mobile" class="base-table-mobile">
+        <div class="mobile-page-toolbar-row">
+            <header class="mobile-page-head" *ngIf="tableActionInput">
+                <mat-icon class="mobile-page-head-icon" aria-hidden="true">{{ tableActionInput.icon }}</mat-icon>
+                <h1 class="mobile-page-title">{{ tableActionInput.pageName }}</h1>
+            </header>
+            <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
+                [hideEmbeddedTitle]="true"
+                [mobileToolbar]="true"
+                (onOpenDialog)="onOpenDialog.emit()" (onRefresh)="onRefresh.emit()" (onSearch)="onSearch.emit($event)"
+                (onReset)="onReset.emit()">
+            </table-actions>
+        </div>
+        <div class="mobile-cards-viewport">
+            <table-body [displayEditAction]="displayEditAction"
+                [displayDeleteAction]="displayDeleteAction" [data]="data"
+                [columnDefinitions]="columnDefinition"
+                [infiniteScrollEnabled]="true"
+                [hasMore]="hasMoreData"
+                [loadingMore]="loadingMore"
+                (loadMore)="emitLoadMore()"
+                (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
+                (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"></table-body>
+            <table-message [total]="data?.length"></table-message>
+        </div>
+    </div>
+</ng-container>

@@ -1,11 +1,13 @@
 <mat-toolbar class="toolbar" *ngIf="authenticationService.currentUserValue">
 
-
-    <span>
-    </span>
+    <button *ngIf="isMobileLayout" type="button" mat-icon-button class="nav-menu-button"
+        (click)="sidebarService.toggleMobileMenu()" aria-label="Open navigation menu">
+        <mat-icon class="primary-icon">menu</mat-icon>
+    </button>
+    <span *ngIf="!isMobileLayout"></span>
     <div class="menu-container">
 
-        <button mat-icon-button *ngIf="this.breakpointService.screenSize != 'mobile'"
+        <button mat-icon-button
             [matTooltip]="themeService?.themeValue == 'dark-theme'
             ? 'Switch to Light Theme'
             : 'Switch to Dark Theme'"

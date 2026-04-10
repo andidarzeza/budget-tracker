@@ -1,7 +1,7 @@
-<div class="body-container">
-    <div *ngFor="let element of data" class="table-row">
-        <div *ngFor="let columnDef of columnDefinitions" class="table-row text-center row-entry"
-        [style.width.%]="columnDef?.type | columnWidth: columnDefinitions?.length:displayDrawer">
+<div class="body-container" *ngIf="(breakpointService.useTableCardLayout$ | async) !== true; else cardLayout">
+    <div *ngFor="let element of (data || [])" class="data-row">
+        <div *ngFor="let columnDef of columnDefinitions" class="data-cell text-center row-entry"
+            [style.width.%]="columnDef?.type | columnWidth: columnDefinitions?.length">
             <ng-container [ngSwitch]="columnDef.type">
                 <ng-container *ngSwitchCase="'date'">
                     <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{element[columnDef.column] | customDate}}">
@@ -10,8 +10,8 @@
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'string'">
-                    <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{element[columnDef.column] || '-'}}">
-                        {{element[columnDef.column] || '-'}}
+                    <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{ displayString(element, columnDef.column) }}">
+                        {{ displayString(element, columnDef.column) }}
                     </span>
                 </ng-container>
 
@@ -31,3 +31,47 @@
         </div>
     </div>
 </div>
+
+<ng-template #cardLayout>
+    <div class="table-cards-scroll">
+        <article *ngFor="let element of (data || [])" class="table-data-card">
+            <div class="table-card-body">
+                <div class="table-card-main-fields">
+                    <div *ngFor="let columnDef of cardMainFieldColumns" class="table-card-field"
+                        [class.table-card-field--money]="columnDef.type === 'currency'"
+                        [class.table-card-field--note]="columnDef.column === 'description' || columnDef.column === 'message'">
+                        <span class="table-card-field-label">{{ columnDef.label }}</span>
+                        <div class="table-card-field-value">
+                            <ng-container [ngSwitch]="columnDef.type">
+                                <ng-container *ngSwitchCase="'string'">
+                                    <mat-icon *ngIf="columnDef.column === 'icon' && displayString(element, columnDef.column)" class="table-card-icon">{{ displayString(element, columnDef.column) }}</mat-icon>
+                                    <span *ngIf="columnDef.column !== 'icon'">{{ displayString(element, columnDef.column) }}</span>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'currency'">
+                                    <span class="table-card-amount">{{ element[columnDef.column] | number:'1.0':'en-US' }}</span>
+                                    <span class="table-card-currency">{{ element?.currency }}</span>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-card-dates" *ngIf="cardDateColumns.length">
+                    <div *ngFor="let columnDef of cardDateColumns" class="table-card-field table-card-field--meta">
+                        <span class="table-card-field-label">{{ columnDef.label }}</span>
+                        <div class="table-card-field-value">
+                            <span>{{ element[columnDef.column] | customDate }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="table-card-footer">
+                <record-actions (openViewDrawer)="viewDetails(element?.id)"
+                    [displayDeleteAction]="displayDeleteAction" [displayEditAction]="displayEditAction"
+                    (openEditForm)="openAddEditForm(element)"
+                    (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></record-actions>
+            </footer>
+        </article>
+        <div #loadSentinel class="table-cards-load-sentinel" *ngIf="infiniteScrollEnabled && hasMore"></div>
+        <div *ngIf="loadingMore" class="table-cards-loading" aria-hidden="true">Loading more…</div>
+    </div>
+</ng-template>

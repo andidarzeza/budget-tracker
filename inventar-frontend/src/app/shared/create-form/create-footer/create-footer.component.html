@@ -1,6 +1,8 @@
-<div class="create-footer-container">
-    <button mat-raised-button color="primary" style="padding: 2px;background: var(--primary) !important;"
-        (click)="add()">
-        <mat-icon>done</mat-icon>
+<footer class="dialog-footer">
+    <button type="button" class="dialog-btn dialog-btn--secondary" (click)="onCancel()">
+        Cancel
     </button>
-</div>
+    <button type="button" class="dialog-btn dialog-btn--primary" (click)="add()">
+        {{ editMode ? 'Save changes' : 'Save' }}
+    </button>
+</footer>

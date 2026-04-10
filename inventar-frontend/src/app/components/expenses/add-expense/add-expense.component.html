@@ -1,44 +1,37 @@
 <create-form [loadingData]="loadingData" icon="attach_money" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()">
 
-
-    <form [formGroup]="formGroup" style="position: relative;">
-
-        <div style="width: 100%; display: flex;justify-content: space-between;align-items: center;">
-            <mat-form-field appearance="outline" style="width: calc(50% - 5px);">
+    <form [formGroup]="formGroup" class="dialog-form">
+        <div class="dialog-form__row">
+            <mat-form-field appearance="outline" class="dialog-form__field">
                 <mat-label class="primary-text">Expense Category</mat-label>
                 <mat-select required formControlName="categoryID">
-                    <mat-option
-                    class="primary-text"
-                        *ngFor="let category of categories" [value]="category.id">
-                        {{category?.category}}
+                    <mat-option class="primary-text" *ngFor="let category of categories" [value]="category.id">
+                        {{ category?.category }}
                     </mat-option>
                 </mat-select>
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline" style="width: calc(30% - 5px);">
+            <mat-form-field appearance="outline" class="dialog-form__field">
                 <mat-label class="primary-text">Money Spent</mat-label>
                 <input required type="number" class="primary-text" autocomplete="off" matInput formControlName="moneySpent">
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline" style="width: calc(20% - 5px);">
+            <mat-form-field appearance="outline" class="dialog-form__field">
                 <mat-label class="primary-text">Currency</mat-label>
                 <mat-select formControlName="currency">
-                    <mat-option
-                    class="primary-text"
-                        *ngFor="let currency of currencies" [value]="currency">
-                        {{currency | flag}} {{currency}}
+                    <mat-option class="primary-text" *ngFor="let currency of currencies" [value]="currency">
+                        {{ currency | flag }} {{ currency }}
                     </mat-option>
                 </mat-select>
                 <mat-error>This field is required.</mat-error>
             </mat-form-field>
         </div>
 
-        <mat-form-field style="width: 100%;" appearance="outline">
+        <mat-form-field appearance="outline" class="dialog-form__field dialog-form__textarea">
             <mat-label class="primary-text">Description</mat-label>
-            <textarea class="primary-text" style="max-height: 200px;min-height: 100px;" matInput formControlName="description"
-                placeholder="Write a note..."></textarea>
+            <textarea class="primary-text" matInput formControlName="description" placeholder="Write a note..."></textarea>
         </mat-form-field>
     </form>
 </create-form>

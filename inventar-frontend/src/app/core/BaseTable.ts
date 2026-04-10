@@ -2,16 +2,15 @@ import { HttpParams } from "@angular/common/http";
 import { ViewChild } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
+import { BehaviorSubject, Observable } from "rxjs";
 import { PAGE_SIZE, TOASTER_CONFIGURATION } from "src/environments/environment";
 import { ColumnDefinition, ResponseWrapper } from "../models/models";
 import { DialogService } from "../services/dialog.service";
 import { TableActionInput } from "../shared/base-table/table-actions/TableActionInput";
-import { map, shareReplay, takeUntil } from "rxjs/operators";
+import { takeUntil } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
 import { AccountService } from "../services/account.service";
 import { Unsubscribe } from "../shared/unsubscribe";
-import { Observable } from "rxjs";
-
 export abstract class BaseTable<E> extends Unsubscribe {
     public constructor(
         protected dialog: DialogService,
@@ -28,8 +27,14 @@ export abstract class BaseTable<E> extends Unsubscribe {
 
     page: number = 0;
     size: number = PAGE_SIZE;
-    totalItems$: Observable<number>;
-    data$: Observable<E[]>;
+    loadingMore = false;
+
+    private dataSubject = new BehaviorSubject<E[]>([]);
+    private totalSubject = new BehaviorSubject<number>(0);
+
+    data$: Observable<E[]> = this.dataSubject.asObservable();
+    totalItems$: Observable<number> = this.totalSubject.asObservable();
+
     columnDefinition: ColumnDefinition[];
     @ViewChild('drawer') drawer: MatSidenav;
     previousFilters: HttpParams;
@@ -39,20 +44,55 @@ export abstract class BaseTable<E> extends Unsubscribe {
     abstract tableActionInput: TableActionInput;
     abstract getQueryParams(): HttpParams;
 
-    query(): void {
-        const response = this.entityService.findAll(this.getQueryParams()).pipe(shareReplay());
-        this.data$ = response.pipe(map((response: ResponseWrapper) => response.data));
-        this.totalItems$ = response.pipe(map((response: ResponseWrapper) => response.count));
+    query(append: boolean = false): void {
+        this.entityService
+            .findAll(this.getQueryParams())
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe({
+                next: (res: ResponseWrapper) => {
+                    const rows = res?.data ?? [];
+                    const total = res?.count ?? 0;
+                    if (append) {
+                        if (rows.length === 0) {
+                            this.page = Math.max(0, this.page - 1);
+                            this.loadingMore = false;
+                            return;
+                        }
+                        this.dataSubject.next([...this.dataSubject.getValue(), ...rows]);
+                    } else {
+                        this.dataSubject.next([...rows]);
+                    }
+                    this.totalSubject.next(total);
+                    this.loadingMore = false;
+                },
+                error: () => {
+                    if (append) {
+                        this.page = Math.max(0, this.page - 1);
+                    }
+                    this.loadingMore = false;
+                }
+            });
     }
 
+    /** Desktop paginator: jump to page (replaces list). */
     onNextPage(page: number): void {
         this.page = page;
-        this.query();
+        this.query(false);
+    }
+
+    /** Mobile infinite scroll: next page appended. */
+    loadMore(): void {
+        const loaded = this.dataSubject.getValue().length;
+        const total = this.totalSubject.getValue();
+        if (this.loadingMore || total === 0 || loaded >= total) {
+            return;
+        }
+        this.loadingMore = true;
+        this.page++;
+        this.query(true);
     }
 
     openAddEditForm(entity?: E): void {
-        console.log(entity);
-        
         this.dialog.openDialog(this.createComponent, entity).onSuccess(() => this.resetAndQuery());
     }
 
@@ -61,7 +101,8 @@ export abstract class BaseTable<E> extends Unsubscribe {
     }
 
     announceSortChange(sort: Sort): void {
-        this.query();
+        this.page = 0;
+        this.query(false);
     }
 
     openDeleteConfirmDialog(id: string): void {
@@ -71,13 +112,13 @@ export abstract class BaseTable<E> extends Unsubscribe {
     onSearch(payload: {params: HttpParams}): void {        
         this.previousFilters = payload.params;
         this.page = 0;
-        this.query();
+        this.query(false);
     }
 
     resetAndQuery(): void {
         this.previousFilters = null;
         this.page = 0;
-        this.query();
+        this.query(false);
     }
 
     viewDetails(id: string): void {

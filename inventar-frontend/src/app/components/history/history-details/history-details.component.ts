@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Observable } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { History } from 'src/app/models/models';
 import { HistoryService } from 'src/app/services/pages/history.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -10,7 +11,7 @@ import { Unsubscribe } from 'src/app/shared/unsubscribe';
   templateUrl: './history-details.component.html',
   styleUrls: ['./history-details.component.css']
 })
-export class HistoryDetailsComponent extends Unsubscribe {
+export class HistoryDetailsComponent extends Unsubscribe implements OnInit, OnChanges {
 
   @Input() historyId: string;
   public history$: Observable<History>;
@@ -21,7 +22,25 @@ export class HistoryDetailsComponent extends Unsubscribe {
     public sharedService: SharedService
   ) {
     super();
-    this.history$ = this.historyService.findOne(this.historyId);
+  }
+
+  ngOnInit(): void {
+    this.loadHistory();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.historyId && !changes.historyId.firstChange) {
+      this.loadHistory();
+    }
+  }
+
+  private loadHistory(): void {
+    if (!this.historyId) {
+      return;
+    }
+    this.history$ = this.historyService.findOne(this.historyId).pipe(
+      takeUntil(this.unsubscribe$)
+    );
   }
 
   closeDrawer(): void {

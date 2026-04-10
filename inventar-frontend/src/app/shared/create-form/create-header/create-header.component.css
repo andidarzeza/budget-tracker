@@ -1,35 +1,70 @@
-.header-icon {
-    color: #ffffff87;
-    position: absolute;
-    z-index: 123;
-    top: 50%;
-    left: 50%;
-    width: 85px;
-    font-size: 85px;
-    transform: translate(-50%, -50%);
-    height: 85px;
+.dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 20px 18px 22px;
+    background: var(--primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    box-sizing: border-box;
 }
 
-.header-title {
-    margin-left: 13px;
-    font-size: 25px;
-    font-weight: 200;
-}
-
-.header {
-    text-transform: uppercase;
+.dialog-header-leading {
     display: flex;
     align-items: center;
+    gap: 16px;
+    min-width: 0;
 }
 
-.container {
-    width: 100%;
+.dialog-header-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
-    justify-content: space-between;
-    /* margin-bottom: 10px; */
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.actions {
+.dialog-header-icon mat-icon {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+}
+
+.dialog-header-text {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.dialog-header-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.dialog-header-title {
+    margin: 0;
+    font-family: "Raleway", "Source Sans Pro", Roboto, sans-serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #ffffff;
+    line-height: 1.25;
+}
+
+.dialog-header-close mat-icon {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.dialog-header-close:hover mat-icon {
+    color: #ffffff;
 }

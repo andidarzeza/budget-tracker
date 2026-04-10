@@ -1,17 +1,24 @@
 <div [@routeAnimations]="prepareRoute()" class="application-container">
 
     <side-bar *ngIf="authenticationService.currentUserValue && sideBarService.displaySidebar" [navigation]="navigation"
-        [sideBarMode]="sideBarMode"></side-bar>
+        [sideBarMode]="sideBarMode"
+        [mobileDrawer]="(breakpointService.useTableCardLayout$ | async) === true"></side-bar>
 
     <div class="application" id="application-body"
         style="position: relative;overflow: hidden;"
-        [ngStyle]="{'margin-left': (sideBarMode!='over' || !authenticationService.currentUserValue) ? '0' : '76px' }"
+        [ngStyle]="{'margin-left': applicationLeftMargin }"
         [ngClass]="authenticationService.currentUserValue ? 'app-width' : 'app-full-width'">
 
-        
-
         <div class="shadow" id="shadow" *ngIf="sideBarMode=='over'" (click)="toggleSidebar()"></div>
+
         <nav-bar *ngIf="navBarService.displayNavBar"></nav-bar>
+
+        <div class="mobile-nav-backdrop"
+            *ngIf="(breakpointService.useTableCardLayout$ | async) && authenticationService.currentUserValue && sideBarService.displaySidebar"
+            [class.mobile-nav-backdrop--open]="(sideBarService.mobileMenuOpen$ | async) === true"
+            (click)="sideBarService.closeMobileMenu()"
+            aria-hidden="true"></div>
+
         <div class="content-container">
             <!-- <spinner *ngIf="routeSpinnerService.loading" style="z-index: 2;"></spinner> -->
             <ng-content></ng-content>

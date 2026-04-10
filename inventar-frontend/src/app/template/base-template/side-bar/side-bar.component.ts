@@ -15,6 +15,8 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
 
   @Input() navigation: MenuItem[];
   @Input() sideBarMode: SideBarMode;
+  /** Slides in from the left as a half-width overlay (narrow screens). */
+  @Input() mobileDrawer = false;
 
   selIndex = 1;
   constructor(
@@ -26,9 +28,32 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
   ) { }
 
   ngAfterViewInit(): void {
-    const sideBarStatus = localStorage.getItem("fms-sidebar");
-    if(sideBarStatus) {
-      if(sideBarStatus == "true") {
+    if (this.mobileDrawer) {
+      return;
+    }
+    this.applyStoredSidebarWidth();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.mobileDrawer) {
+      this.sideBarService.setDesktopSidebarLayout(!this.mobileDrawer);
+      if (!this.mobileDrawer && !changes.mobileDrawer.firstChange) {
+        this.applyStoredSidebarWidth();
+      }
+    }
+    this.navigation?.forEach((item: MenuItem) => {
+      if (item.link === window.location.pathname || window.location.pathname.includes(item.link)) {
+        setTimeout(() => {
+          this.animateSelectedOption(this.navigation.indexOf(item));
+        }, 0);
+      }
+    });
+  }
+
+  private applyStoredSidebarWidth(): void {
+    const sideBarStatus = localStorage.getItem('fms-sidebar');
+    if (sideBarStatus) {
+      if (sideBarStatus === 'true') {
         this.sideBarService.isOpened = true;
         this.sideBarService.openSideBar();
       } else {
@@ -41,45 +66,30 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.navigation?.forEach((item: MenuItem) => {
-      if (item.link === window.location.pathname || window.location.pathname.includes(item.link)) {
-        setTimeout(() => {
-          this.animateSelectedOption(this.navigation.indexOf(item));
-        }, 0)
-      }
-    });
-  }
-
   activateSpinner(): void {
     this.routeSpinnerService.startLoading();
   }
 
-  animateSelectedOption(index: number): void {    
-    const activeItem = document.getElementById("active-item") as HTMLElement;
+  onBrandClick(): void {
+    if (this.mobileDrawer) {
+      this.sideBarService.closeMobileMenu();
+    }
+  }
+
+  onNavItemClick(index: number): void {
+    this.activateSpinner();
+    this.animateSelectedOption(index);
+    if (this.mobileDrawer) {
+      this.sideBarService.closeMobileMenu();
+    }
+  }
+
+  animateSelectedOption(index: number): void {
+    const activeItem = document.getElementById('active-item') as HTMLElement;
     if (activeItem) {
       const margin = index + 1;
       activeItem.style.transform = `translate(0%, calc(${index * 100}% + ${(index * 3) + (margin * 3)}px))`;
     }
   }
-
-
-  // @HostListener('keydown', ['$event'])
-  // onKeyUp(event: KeyboardEvent): void {
-  //       // if (event.keyCode === 13) {
-  //         console.log(event);
-  //         if(event.code === "ArrowDown") {
-  //           // this.router.navigate([this.navigation[this.selIndex].link]);
-  //           this.animateSelectedOption(this.selIndex);
-  //           this.selIndex++;
-  //         } else if(event.code === "ArrowUp") {
-  //           this.selIndex--;
-  //           // this.router.navigate([this.navigation[this.selIndex].link]);
-  //           this.animateSelectedOption(this.selIndex);
-
-  //         }
-
-  //       // }
-  // }
 
 }

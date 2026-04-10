@@ -3,4 +3,4 @@
     <form-spinner [loadingData]="loadingData"></form-spinner>
     <ng-content></ng-content>
 </div>
-<create-footer (create)="add()"></create-footer>
+<create-footer [editMode]="editMode" (create)="add()" (cancel)="closeDialog(false)"></create-footer>

@@ -46,10 +46,34 @@
     border-bottom: none;
 }
 
+@media only screen and (max-width: 767px) {
+    .content-container {
+        border-radius: 0;
+    }
+}
+
 @media only screen and (max-width: 600px) {
     .app-width {
         width: 100%;
         margin-left: 0px;
     }
+}
+
+.mobile-nav-backdrop {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: var(--app-toolbar-height, 76px);
+    bottom: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+    z-index: 11;
+}
+
+.mobile-nav-backdrop--open {
+    opacity: 0.4;
+    pointer-events: auto;
 }
 

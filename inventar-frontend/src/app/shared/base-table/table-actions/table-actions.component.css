@@ -16,6 +16,42 @@
     position: relative;
 }
 
+.main-action-container--toolbar-only {
+    justify-content: flex-end;
+}
+
+.main-action-container--mobile {
+    background: transparent;
+    border-bottom: none;
+    /* Horizontal inset comes from parent `.mobile-page-toolbar-row` */
+    padding: 0;
+    box-sizing: border-box;
+    align-items: center;
+    min-height: 0;
+}
+
+/* Toolbar uses white icons on --primary; on transparent bar use accent color */
+.main-action-container--mobile .primary-icon {
+    color: var(--light) !important;
+}
+
+.main-action-container--mobile .table-actions.table-toolbar-buttons {
+    padding: 0;
+}
+
+:host(.table-actions--mobile-search-open) .main-action-container--mobile {
+    width: 100%;
+    min-width: 0;
+}
+
+.table-toolbar-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    gap: 4px;
+}
+
 .title {
     margin-left: 10px;
     margin-top: 1.5px;

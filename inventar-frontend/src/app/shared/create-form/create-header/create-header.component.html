@@ -1,31 +1,15 @@
-<div class="container" style="position: relative;">
-    <div class="circular-container" style="border-radius: 0px;height: 100px;">
-        <div class="circle-3" style="transform: translate(40%, 45%);">
-            <div class="circle-2">
-                <div class="circle-1" style="width: 180px;height: 180px;">
-                    <mat-icon class="header-icon">
-                        {{icon}}
-                    </mat-icon>
-                </div>
-            </div>
+<header class="dialog-header">
+    <div class="dialog-header-leading">
+        <div class="dialog-header-icon" aria-hidden="true">
+            <mat-icon>{{ icon }}</mat-icon>
         </div>
-
-        <div style="display: flex;justify-content: space-between;">
-            <span class="header">
-                <!-- <mat-icon class="header-icon">{{icon}}</mat-icon> -->
-                <span class="header-title" style="color: #ffffff87;position: absolute;bottom: 20px;">
-                    {{editMode ? "Update " + entity : "Insert new " + entity}}
-                </span>
-            </span>
-            <div class="actions">
-                <button mat-icon-button (click)="closeDialog(false)">
-                    <mat-icon style="color: var(--primary-text) !important" class="">close</mat-icon>
-                </button>
-            </div>
+        <div class="dialog-header-text">
+            <span class="dialog-header-eyebrow">{{ editMode ? 'Edit' : 'Create new' }}</span>
+            <h2 class="dialog-header-title">{{ entity | titlecase }}</h2>
         </div>
-        
     </div>
-    
-
-
-</div>
+    <button type="button" mat-icon-button class="dialog-header-close" (click)="closeDialog(false)"
+        aria-label="Close dialog">
+        <mat-icon>close</mat-icon>
+    </button>
+</header>

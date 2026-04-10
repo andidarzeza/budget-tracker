@@ -2,9 +2,145 @@
     color: white;
     height: 83px;
     display: flex;
-    /* justify-content: center; */
     align-items: center;
-    /* border-bottom: 1px solid rgba(0, 0, 0, .12); */
+    padding: 0 12px 0 18px;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    outline: none;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar-brand:hover {
+    opacity: 0.9;
+}
+
+.sidebar-brand:focus-visible {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+}
+
+.sidebar-brand-mark {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-brand-ring {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background: var(--gradient-logo);
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-brand-core {
+    position: absolute;
+    height: 27px;
+    width: 27px;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--primary);
+}
+
+.sidebar-brand-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.05;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.sidebar-brand-title {
+    font-family: "Raleway", "Source Sans Pro", Roboto, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--primary-icon);
+}
+
+.sidebar-brand-accent {
+    font-family: "Raleway", "Source Sans Pro", Roboto, sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    background: var(--gradient-logo);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/*
+ * Light theme: sidebar uses --primary (brand green). Gradient-filled “TRACKER” is also green,
+ * so it disappears. Force high-contrast white wordmark and a clearer mark.
+ */
+:host-context(.light-theme) .sidebar-brand-title {
+    color: #ffffff;
+}
+
+:host-context(.light-theme) .sidebar-brand-accent {
+    background: none;
+    background-clip: unset;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: #ffffff;
+    color: rgba(255, 255, 255, 0.88);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+:host-context(.light-theme) .sidebar-brand-ring {
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.5),
+        0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+:host-context(.light-theme) .sidebar-brand-core {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+/*
+ * Dark theme: wordmark used brand green via --primary-icon; gradient “TRACKER” is subtle on rgb(18,19,28).
+ * The mark’s inner disc matches --primary so the orb vanishes. Match nav labels (white) and define the ring.
+ */
+:host-context(.dark-theme) .sidebar-brand-title {
+    color: #ffffff;
+}
+
+:host-context(.dark-theme) .sidebar-brand-accent {
+    background: none;
+    background-clip: unset;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: #ffffff;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+:host-context(.dark-theme) .sidebar-brand-ring {
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.28),
+        0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+:host-context(.dark-theme) .sidebar-brand-core {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+:host-context(.dark-theme) .sidebar-brand:focus-visible {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
 }
 
 .logo-container > button {
@@ -53,6 +189,28 @@
     width: 76px;
     z-index: 3;
     transition: width 300ms cubic-bezier(0.25, 0.8, 0.25, 1), background var(--background-animation-timing);
+}
+
+/* Overlay drawer: half (max 320px), off-screen until open */
+.sidebar--mobile-drawer {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    width: min(50vw, 320px) !important;
+    max-width: min(100vw, 320px);
+    z-index: 13;
+    transform: translate3d(-100%, 0, 0);
+    transition: transform 320ms cubic-bezier(0.25, 0.8, 0.25, 1), background var(--background-animation-timing);
+    box-shadow: none;
+}
+
+.sidebar--mobile-drawer.sidebar--mobile-drawer--open {
+    transform: translate3d(0, 0, 0);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.18);
+}
+
+.dark-theme .sidebar--mobile-drawer.sidebar--mobile-drawer--open {
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.45);
 }
 
 .custom-icon-size {

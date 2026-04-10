@@ -1,8 +1,8 @@
 .input-container {
     display: flex;
     align-items: center;
-    border: 1px solid #d6d6d6;
-    background: white;
+    border: 1px solid var(--field-outline);
+    background: var(--card);
     border-radius: 6px;
     height: 41px;
     max-height: 41px;
@@ -13,7 +13,7 @@
     padding-left: 0px;
     padding-right: 0px;
     outline: none;
-    color: #494949;
+    color: var(--card-title);
     border: none;
     background: none;
     height: calc(100% - 20px);
@@ -34,11 +34,11 @@
 }
 
 .prefix-icon > mat-icon {
-    color: #494949;
+    color: var(--card-title);
 }
 
 .prefix-icon {
-    color: #494949b3;
+    color: var(--primary-text);
     display: flex;
     justify-content: center;
     align-items: center;

@@ -31,6 +31,7 @@ export class AppComponent extends Unsubscribe implements OnInit {
   ) {
     super();
     this.themeService.initTheme();
+    this.sharedService.applyBodyTheme(this.themeService.themeValue);
   }
 
   ngOnInit(): void {
@@ -39,7 +40,7 @@ export class AppComponent extends Unsubscribe implements OnInit {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((configuration: IConfiguration) => {
         localStorage.setItem("baseCurrency", configuration.baseCurrency);
-        this.sharedService.theme = configuration.darkMode? 'dark' : 'light'
+        this.sharedService.applyBodyTheme(this.themeService.themeValue);
       });
     this.sharedService.listenForThemeChange();
       

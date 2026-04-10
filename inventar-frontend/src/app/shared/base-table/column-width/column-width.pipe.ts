@@ -5,14 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ColumnWidthPipe implements PipeTransform {
 
-  transform(type: string, columnsSize: number, displayDrawer: boolean): number {    
-    if(displayDrawer) {
-      if(type == 'Actions') {
-        return 0;
-      } else {
-        return 60/(columnsSize - 1);
-      }
-    }
+  transform(_type: string, columnsSize: number): number {
     return 100 / columnsSize;
   }
 

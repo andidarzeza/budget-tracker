@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { IConfiguration, Theme } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
@@ -19,7 +18,10 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./nav-bar.component.css']
 })
 export class NavBarComponent extends Unsubscribe implements OnInit {
-  
+
+  /** Same breakpoint as mobile table cards (≤767px). */
+  isMobileLayout = false;
+
   configuration: IConfiguration;
   public EXPERIMENTAL_MODE = environment.experimentalMode;
 
@@ -72,13 +74,15 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
 
   ngOnInit(): void {
     this.setInitialTheme();
+    this.breakpointService.useTableCardLayout$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((mobile) => (this.isMobileLayout = mobile));
     this.configurationService
       .getConfiguration()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((configuration: IConfiguration) => {
         this.configuration = configuration;
-        this.sharedService.darkMode = configuration.darkMode;
-        this.sharedService.theme = configuration.darkMode? 'dark' : 'light';
+        this.sharedService.applyBodyTheme(this.themeService.themeValue);
       });
   }
 
@@ -101,8 +105,8 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
   }
 
   toggleDarkMode(): void {
-    
     this.themeService.changeTheme();
+    this.sharedService.applyBodyTheme(this.themeService.themeValue);
     // this.configuration.darkMode = !this.sharedService.darkMode;
     // this.configurationService
     //   .updateConfiguration()

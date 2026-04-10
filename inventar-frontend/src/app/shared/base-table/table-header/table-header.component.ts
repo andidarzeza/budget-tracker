@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinition } from 'src/app/models/models';
 
 @Component({
@@ -9,9 +10,8 @@ import { ColumnDefinition } from 'src/app/models/models';
 })
 export class TableHeaderComponent {
 
-  constructor() { }
+  constructor(public breakpointService: BreakpointService) { }
 
-  @Input() displayDrawer: boolean;
   @Input() columnDefinitions: ColumnDefinition[];
 
 
