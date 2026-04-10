@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/budget-calculator.iml" filepath="$PROJECT_DIR$/.idea/budget-calculator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/inventar-backend/inventar.iml" filepath="$PROJECT_DIR$/inventar-backend/inventar.iml" />
     </modules>
   </component>
 </project>

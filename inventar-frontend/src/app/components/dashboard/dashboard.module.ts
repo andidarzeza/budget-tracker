@@ -9,6 +9,7 @@ import { SpinnerModule } from 'src/app/template/shared/spinner/spinner.module';
 import { TableMessageModule } from 'src/app/shared/table-message/table-message.module';
 import { DayPickerModule } from './day-picker/day-picker.module';
 import { YearPickerModule } from './year-picker/year-picker.module';
+import { AllTimeHeaderModule } from './all-time-header/all-time-header.module';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { YearPickerModule } from './year-picker/year-picker.module';
     YearPickerModule,
     MatIconModule,
     SpinnerModule,
-    TableMessageModule
+    TableMessageModule,
+    AllTimeHeaderModule
   ]
 })
 export class DashboardModule { }

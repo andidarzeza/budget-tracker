@@ -36,7 +36,7 @@
             <day-picker *ngIf="selectedRange == 'DAY'" (onChange)="onDateSelected($event)"></day-picker>
             <month-picker *ngIf="selectedRange == 'MONTH'" (onChange)="onDateSelected($event)"></month-picker>
             <year-picker *ngIf="selectedRange == 'YEAR'" (onChange)="onDateSelected($event)"></year-picker>
-            
+            <all-time-header *ngIf="selectedRange == 'MAX'" (onChange)="onDateSelected($event)"></all-time-header>
 
             <div class="category-chart">
                 <canvas id="category-chart"></canvas>

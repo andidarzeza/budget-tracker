@@ -1,0 +1,14 @@
+.month-picker-container {
+    width: calc(100% - 32px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 16px;
+    background: var(--light);
+    border-radius: 10px 10px 0px 0px;
+}
+
+.text-color {
+    color: white;
+    /* color: var(--primary-text); */
+}
