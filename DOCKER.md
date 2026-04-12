@@ -19,7 +19,7 @@ Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports. I
 ## Quick start
 
 1. On the server, clone this repository and `cd` into it.
-2. `cp .env.example .env` and set **`CORS_ORIGIN`** to your SPA origin (same URL you type in the browser), for example `http://31.97.79.96:4001`. Without this, the browser will block calls from port **4001** to port **9000**.
+2. `cp .env.example .env` and set **`CORS_ORIGIN`** to your SPA origin (same URL you type in the browser), for example `http://31.97.79.96:4001` (no trailing slash). The file **must** live next to `docker-compose.yml` because the backend service uses `env_file: .env`. Never use `CORS_ORIGIN=` with an empty value—omit the line or set a full URL; an empty value disables CORS for your deploy.
 3. Build and run:
 
    ```bash

@@ -24,13 +24,14 @@ services:
       context: ./inventar-backend
       dockerfile: Dockerfile
     restart: unless-stopped
+    env_file:
+      - .env
     depends_on:
       mongo:
         condition: service_healthy
     environment:
-      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI:-mongodb://mongo:27017/inventar}
-      # Required when SPA and API use different ports: list the SPA origin(s), e.g. http://IP:4001
-      CORS_ORIGIN: ${CORS_ORIGIN:-}
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI:-mongodb://mongo:27017/inventar?connectTimeoutMS=10000&serverSelectionTimeoutMS=10000&socketTimeoutMS=30000}
+      # Set CORS_ORIGIN only in .env (not here). Using CORS_ORIGIN: ${CORS_ORIGIN:-} forces an empty value and breaks CORS.
     ports:
       - "${BACKEND_PORT:-9000}:9000"
 

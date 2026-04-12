@@ -1,33 +1,50 @@
 package com.adprod.inventar.configuration;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+/**
+ * CORS for the REST API. Reads {@code cors_origin} from {@code application.properties} or the
+ * same value from the environment (e.g. {@code CORS_ORIGIN} in Docker {@code .env}).
+ */
 @Configuration
-@AllArgsConstructor
-public class SpringConfiguration implements WebMvcConfigurer {
+public class SpringConfiguration {
 
     private final Environment environment;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public SpringConfiguration(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
         String raw = environment.getProperty("cors_origin", "");
-        String[] origins = Arrays.stream(raw.split(","))
+        List<String> origins = Arrays.stream(raw.split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
-                .toArray(String[]::new);
-        if (origins.length == 0) {
-            return;
+                .collect(Collectors.toList());
+
+        CorsConfiguration configuration = new CorsConfiguration();
+        if (!origins.isEmpty()) {
+            configuration.setAllowedOrigins(origins);
         }
-        registry.addMapping("/**")
-                .allowedOrigins(origins)
-                .allowedMethods("*")
-                .allowedHeaders("*")
-                .allowCredentials(true);
+        configuration.setAllowedMethods(
+                Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"));
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

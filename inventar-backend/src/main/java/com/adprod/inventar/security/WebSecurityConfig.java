@@ -15,7 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final JwtManager jwtManager;
     private final ITokenValidator iTokenValidator;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -35,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+        http.cors().configurationSource(corsConfigurationSource);
         http.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/api/user/register").permitAll()
                 .antMatchers("/api/configuration").permitAll()
@@ -42,12 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .apply(new TokenFilterConfig(jwtManager, iTokenValidator))
-                .and()
-//                .csrf()
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                .and()
-                .cors();
+                .apply(new TokenFilterConfig(jwtManager, iTokenValidator));
     }
 
     @Bean
