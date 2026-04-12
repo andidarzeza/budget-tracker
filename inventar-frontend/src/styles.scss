@@ -1,10 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import url("https://fonts.googleapis.com/css2?family=Lato&family=Raleway&family=Source+Sans+Pro&family=Ubuntu&display=swap");
-@import "../../inventar-frontend/src/app/template/light-theme.scss";
-@import "../../inventar-frontend/src/app/template/dark-theme.scss";
-@import "../../inventar-frontend/src/app/template/shared.scss";
+@import "./app/template/light-theme.scss";
+@import "./app/template/dark-theme.scss";
+@import "./app/template/shared.scss";
 
-@import "../../inventar-frontend/src/app/components/settings/dynamic-dropdown/custom-dropdown.scss";
+@import "./app/components/settings/dynamic-dropdown/custom-dropdown.scss";
 @import "./assets/fonts/fonts.scss";
 @tailwind base;
 @tailwind components;
