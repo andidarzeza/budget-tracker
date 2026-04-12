@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.adprod.inventar.models.CurrencyTotalDTO;
 
 @Service
 @AllArgsConstructor
@@ -30,5 +33,18 @@ public class ExpenseAggregation {
         TypedAggregation<Expense> tempAgg = Aggregation.newAggregation(Expense.class, aggregationResult);
         List<ExpenseAggregationDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", ExpenseAggregationDTO.class).getMappedResults();
         return resultSR.size() > 0 ? resultSR.get(0).getExpenses() : 0.0;
+    }
+
+    /**
+     * Sum {@code moneySpent} grouped by {@code currency}. Entries with null or zero total are removed.
+     */
+    public List<CurrencyTotalDTO> getTotalExpensesByCurrency(Instant from, Instant to, String account) {
+        List<AggregationOperation> ops = baseAggregation.baseAggregation(from, to, account);
+        ops.add(Aggregation.group("$currency").sum("$moneySpent").as("total"));
+        TypedAggregation<Expense> agg = Aggregation.newAggregation(Expense.class, ops);
+        List<CurrencyTotalDTO> rows = mongoTemplate.aggregate(agg, "spending", CurrencyTotalDTO.class).getMappedResults();
+        return rows.stream()
+                .filter(r -> r.getTotal() != null && r.getTotal() != 0.0)
+                .collect(Collectors.toList());
     }
 }

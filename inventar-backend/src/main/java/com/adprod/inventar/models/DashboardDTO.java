@@ -12,8 +12,8 @@ import java.util.List;
 @Setter
 @Getter
 public class DashboardDTO {
-    private Double expensesEUR;
-    private Double averageExpensesEUR;
-    private Double incomesEUR;
-    private Double averageIncomesEUR;
+    /** Per-currency income totals for the period; zeros omitted. */
+    private List<CurrencyTotalDTO> incomeTotalsByCurrency;
+    /** Per-currency expense totals for the period; zeros omitted. */
+    private List<CurrencyTotalDTO> expenseTotalsByCurrency;
 }

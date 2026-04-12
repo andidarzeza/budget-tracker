@@ -23,9 +23,16 @@ export interface ChartOptions {
     datasets?: any[];
     showGridLines?: boolean;
 }
+export interface CurrencyTotalDTO {
+    _id: string;
+    total: number;
+}
+
 export interface DashboardDTO {
-    expensesEUR: number;
-    incomesEUR: number;
+    /** Per-currency income totals; backend omits zero amounts. */
+    incomeTotalsByCurrency?: CurrencyTotalDTO[];
+    /** Per-currency expense totals; backend omits zero amounts. */
+    expenseTotalsByCurrency?: CurrencyTotalDTO[];
 }
 
 export interface TimelineIncomeDTO {

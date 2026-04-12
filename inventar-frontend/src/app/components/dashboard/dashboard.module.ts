@@ -10,6 +10,7 @@ import { TableMessageModule } from 'src/app/shared/table-message/table-message.m
 import { DayPickerModule } from './day-picker/day-picker.module';
 import { YearPickerModule } from './year-picker/year-picker.module';
 import { AllTimeHeaderModule } from './all-time-header/all-time-header.module';
+import { FlagPipeModule } from 'src/app/template/pipes/flag-pipe/flag-pipe.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { AllTimeHeaderModule } from './all-time-header/all-time-header.module';
     MatIconModule,
     SpinnerModule,
     TableMessageModule,
-    AllTimeHeaderModule
+    AllTimeHeaderModule,
+    FlagPipeModule,
   ]
 })
 export class DashboardModule { }

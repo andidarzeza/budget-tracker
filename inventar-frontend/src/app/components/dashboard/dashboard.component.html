@@ -1,20 +1,60 @@
 <div class="dashboard-container" *ngIf="{dashboardData: dashboardData$ | async} as observables">
 
     <mat-card class="left-container">
-        <div class="title overall-portfolio-title">Overall Portfolio</div>
+        <header class="period-summary-header">
+            <h2 class="period-summary-header__title">Period summary</h2>
+            <p class="period-summary-header__subtitle">Totals for the selected range and account, shown separately per currency.</p>
+        </header>
 
-        <div class="overall-portfolio">
-            <div class="dashboard-card" *ngFor="let p of portfolio">
-                <div class="title subtitle">{{p.title}}</div>
-                <div class="title monetary-value" *ngIf="observables.dashboardData;else noValue">€ {{observables.dashboardData[p.value] | number : '1.0-2'}}</div>
-                <ng-template #noValue>
-                    <div class="title monetary-value">€ 0</div>
+        <div class="period-summary-grid">
+            <section class="summary-panel summary-panel--income" aria-labelledby="summary-income-heading">
+                <h3 id="summary-income-heading" class="summary-panel__heading">Income</h3>
+                <ng-container *ngIf="observables.dashboardData as incomeDash; else incomeUnavailable">
+                    <div class="currency-breakdown" *ngIf="incomeDash.incomeTotalsByCurrency?.length">
+                        <ul class="currency-breakdown__list">
+                            <li class="currency-breakdown__row" *ngFor="let c of incomeDash.incomeTotalsByCurrency">
+                                <span class="currency-breakdown__label">
+                                    <span class="currency-breakdown__flag" aria-hidden="true">{{ c._id | flag }}</span>
+                                    <span class="currency-breakdown__code">{{ c._id }}</span>
+                                </span>
+                                <span class="currency-breakdown__amount">{{ c.total | number : '1.0-2' }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="summary-panel__empty" *ngIf="!incomeDash.incomeTotalsByCurrency?.length">No income in this period.</p>
+                </ng-container>
+                <ng-template #incomeUnavailable>
+                    <p class="summary-panel__empty">Summary unavailable.</p>
                 </ng-template>
-            </div>
+            </section>
+
+            <section class="summary-panel summary-panel--expense" aria-labelledby="summary-expense-heading">
+                <h3 id="summary-expense-heading" class="summary-panel__heading">Expenses</h3>
+                <ng-container *ngIf="observables.dashboardData as expenseDash; else expenseUnavailable">
+                    <div class="currency-breakdown" *ngIf="expenseDash.expenseTotalsByCurrency?.length">
+                        <ul class="currency-breakdown__list">
+                            <li class="currency-breakdown__row" *ngFor="let c of expenseDash.expenseTotalsByCurrency">
+                                <span class="currency-breakdown__label">
+                                    <span class="currency-breakdown__flag" aria-hidden="true">{{ c._id | flag }}</span>
+                                    <span class="currency-breakdown__code">{{ c._id }}</span>
+                                </span>
+                                <span class="currency-breakdown__amount">{{ c.total | number : '1.0-2' }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="summary-panel__empty" *ngIf="!expenseDash.expenseTotalsByCurrency?.length">No expenses in this period.</p>
+                </ng-container>
+                <ng-template #expenseUnavailable>
+                    <p class="summary-panel__empty">Summary unavailable.</p>
+                </ng-template>
+            </section>
         </div>
 
         <div class="overview-statistics">
-            <div class="title overview-statistics-title">Overview Statistics</div>
+            <div class="overview-statistics-text">
+                <div class="title overview-statistics-title">Expense trend</div>
+                <div class="overview-statistics-hint">The chart shows one line per currency for the selected range.</div>
+            </div>
 
             <div class="range-container">
                 <div *ngFor="let range of ranges"
@@ -49,7 +89,7 @@
 
         <mat-card class="categories">
             <!-- <spinner *ngIf="loading" [@inOutAnimation]></spinner> -->
-            <div class="title category-title">Expenses</div>
+            <div class="title category-title">Spending by category</div>
 
             <ng-container *ngIf="(observables.dashboardData?.expensesInfo?.length == 0 || !observables.dashboardData?.expensesInfo)">
                 <div class="no-data-container">

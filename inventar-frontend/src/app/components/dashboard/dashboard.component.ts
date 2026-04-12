@@ -4,7 +4,7 @@ import { ChartUtils } from 'src/app/utils/chart';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, takeUntil } from 'rxjs/operators';
-import { DashboardDTO, RangeType, TimelineExpenseDTO, TimelineIncomeDTO } from 'src/app/models/models';
+import { DashboardDTO, RangeType, TimelineExpenseDTO } from 'src/app/models/models';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { Chart, registerables } from 'chart.js';
@@ -23,13 +23,6 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
 
   from: Date;
   to: Date;
-
-  portfolio: {title: string, value: string}[] = [
-    {"title": "Income", "value": "incomesEUR"},
-    {"title": "Average Income", "value": "averageIncomesEUR"},
-    {"title": "Expenses", "value": "expensesEUR"},
-    {"title": "Average Expense", "value": "averageExpensesEUR"}
-  ];
 
   selectedRange: RangeType = "MONTH";
   ranges: RangeType[] = ["DAY", "MONTH", "YEAR", "MAX"];
@@ -72,9 +65,9 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     this.dashboardService
       .expensesTimeline(this.period, this.selectedRange)
       .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
-      .subscribe((timeline: TimelineExpenseDTO[]) => {
+      .subscribe((timeline: TimelineExpenseDTO[] | null) => {
         this.updateLineChartLabels();
-        this.updateTimelineData(timeline);
+        this.updateTimelineData(timeline ?? undefined);
       });
   }
 
@@ -102,67 +95,65 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   }
 
 
-  private updateTimelineData(timeline: any[]): void {
-    if(this.selectedRange == "MONTH") {
-      const currentDaysInSelectedMonth = this.getDaysInMonth(this.from.getFullYear(), this.from.getMonth() + 1);
-      const data = [];
-      const nonEmptyDays = timeline?.map(t => +t?._id);
-      const mappingField = "dailyExpense";
-      for(let i = 1;i <= currentDaysInSelectedMonth; i++) {
-        
-        if(nonEmptyDays.includes(i)) {
-          data.push(timeline[nonEmptyDays.indexOf(i)][mappingField])
-        } else {
-          data.push(0);
-        }
-      }
-      this.chartUtil.updateTimelineData(data);
+  private updateTimelineData(timeline: TimelineExpenseDTO[] | null | undefined): void {
+    if (this.selectedRange === 'MAX') {
+      this.chartUtil.updateTimelineDataByCurrency([]);
+      return;
     }
 
-    if(this.selectedRange == "DAY") {
-      const currentHours = this.getHourLabels();
-      const data = [];
-      const nonEmptyHours = timeline?.map(t => +t?._id);
-      const mappingField = "dailyExpense";
-      for(let i = 1;i <= currentHours.length; i++) {
-        if(nonEmptyHours.includes(i)) {
-          data.push(timeline[nonEmptyHours.indexOf(i)][mappingField])
-        } else {
-          data.push(0);
-        }
-      }
-      this.chartUtil.updateTimelineData(data);
+    const rows = Array.isArray(timeline) ? timeline : [];
+    const currencyLabel = (c: string | null | undefined): string =>
+      c && String(c).trim() ? String(c).trim() : 'Other';
+
+    const currencies = [...new Set(rows.map(r => currencyLabel(r.currency)))].sort((a, b) => a.localeCompare(b));
+
+    const valueByKey = new Map<string, number>();
+    for (const r of rows) {
+      const bucket = this.normalizeTimelineBucketId(r._id);
+      const cur = currencyLabel(r.currency);
+      valueByKey.set(`${bucket}|${cur}`, r.dailyExpense ?? 0);
     }
 
-    if(this.selectedRange == "YEAR") {
-      const currentYears = this.getYearLabels();
-      const data = [];
-      const nonEmptyYears = timeline?.map(t => +t?._id);
-      const mappingField = "dailyExpense";
-      for(let i = 1;i <= currentYears.length; i++) {
-        if(nonEmptyYears.includes(i)) {
-          data.push(timeline[nonEmptyYears.indexOf(i)][mappingField])
-        } else {
-          data.push(0);
+    const datasets = currencies.map((cur, idx) => {
+      const color = this.chartUtil.lineColorForDatasetIndex(idx);
+      const data: number[] = [];
+      if (this.selectedRange === 'MONTH') {
+        const dim = this.getDaysInMonth(this.from.getFullYear(), this.from.getMonth() + 1);
+        for (let day = 1; day <= dim; day++) {
+          const key = String(day).padStart(2, '0');
+          data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
+        }
+      } else if (this.selectedRange === 'DAY') {
+        for (let h = 0; h < 24; h++) {
+          const key = String(h).padStart(2, '0');
+          data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
+        }
+      } else if (this.selectedRange === 'YEAR') {
+        for (let m = 1; m <= 12; m++) {
+          const key = String(m).padStart(2, '0');
+          data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
         }
       }
-      this.chartUtil.updateTimelineData(data);
-    }
+      return { label: cur, data, borderColor: color, backgroundColor: color };
+    });
 
-
+    this.chartUtil.updateTimelineDataByCurrency(datasets);
   }
 
-  private getHourLabels(): string[] {
-    return [
-      "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
-      "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"
-    ]
-  }
-
-  private getYearLabels(): string[] {
-    return [
-      "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
-    ]
+  /** Aligns API bucket ids (day/hour/month strings) with padded keys used in the chart. */
+  private normalizeTimelineBucketId(raw: string | number | undefined | null): string {
+    if (raw === undefined || raw === null) {
+      return '';
+    }
+    const s = String(raw).trim();
+    if (!s) {
+      return '';
+    }
+    const n = parseInt(s, 10);
+    if (!Number.isNaN(n)) {
+      return String(n).padStart(2, '0');
+    }
+    return s;
   }
   
   private getDaysInMonth(year: number, month): number {

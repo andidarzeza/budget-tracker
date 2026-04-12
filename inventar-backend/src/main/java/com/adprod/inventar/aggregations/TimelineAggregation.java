@@ -7,9 +7,11 @@ import com.adprod.inventar.models.TimelineIncomeDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.stereotype.Service;
 
@@ -41,10 +43,22 @@ public class TimelineAggregation {
         ZoneId zoneId = ZoneId.systemDefault();
         aggregationResult.add(
                 Aggregation
-                        .project("$moneySpent")
+                        .project("moneySpent", "currency")
                         .andExpression("{$dateToString: { timezone: '" + zoneId.getId() + "', format: " + dateFormat + ", date: '$createdTime'}}").as("date")
         );
-        aggregationResult.add(Aggregation.group("$date").sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'"))).as("dailyExpense"));
+        aggregationResult.add(
+                Aggregation.group(
+                                Fields.fields()
+                                        .and("date", "$date")
+                                        .and("currency", "$currency"))
+                        .sum(AggregationExpression.from(MongoExpression.create("$sum: '$moneySpent'")))
+                        .as("dailyExpense"));
+        // Flatten compound _id so clients get { _id: "<bucket>", currency: "<code>", dailyExpense }
+        aggregationResult.add(ctx -> new Document(
+                "$project",
+                new Document("dailyExpense", 1)
+                        .append("_id", "$_id.date")
+                        .append("currency", "$_id.currency")));
         TypedAggregation<Expense> tempAgg = Aggregation.newAggregation(Expense.class, aggregationResult);
         List<TimelineExpenseDTO> resultSR = mongoTemplate.aggregate(tempAgg, "spending", TimelineExpenseDTO.class).getMappedResults();
         return resultSR;

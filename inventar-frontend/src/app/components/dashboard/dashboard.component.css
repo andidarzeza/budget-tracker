@@ -26,28 +26,148 @@
     margin-top: 15px;
 }
 
-.dashboard-card {
-    padding: 10px;
-    width: 25%;
+.period-summary-header {
+    padding: 8px 0 16px;
+    border-bottom: 1px solid var(--field-outline, rgba(0, 0, 0, 0.08));
+    margin-bottom: 16px;
+}
+
+.period-summary-header__title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--card-title);
+    letter-spacing: -0.02em;
+}
+
+.period-summary-header__subtitle {
+    margin: 8px 0 0;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--card-title);
+    opacity: 0.75;
+    max-width: 52rem;
+}
+
+.period-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    align-items: stretch;
     min-width: 0;
+    margin-bottom: 8px;
+}
+
+.summary-panel {
+    min-width: 0;
+    padding: 16px 16px 18px;
+    border-radius: 12px;
+    background: var(--secondary, rgba(0, 0, 0, 0.04));
+    border: 1px solid var(--field-outline, rgba(0, 0, 0, 0.08));
     box-sizing: border-box;
 }
 
-.overall-portfolio-title {
-    font-size: 24px;
+.summary-panel--income {
+    border-left: 4px solid #059669;
+}
+
+.summary-panel--expense {
+    border-left: 4px solid #dc2626;
+}
+
+.summary-panel__heading {
+    margin: 0 0 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--card-title);
+}
+
+.summary-panel__empty {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--card-title);
+    opacity: 0.65;
+}
+
+.currency-breakdown {
+    margin-top: 0;
+}
+
+.currency-breakdown__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.currency-breakdown__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--card, rgba(255, 255, 255, 0.04));
+    margin-bottom: 6px;
+    border: 1px solid var(--field-outline, rgba(0, 0, 0, 0.06));
+}
+
+.currency-breakdown__row:last-child {
+    margin-bottom: 0;
+}
+
+.currency-breakdown__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: var(--card-title);
+    font-size: 14px;
+}
+
+.currency-breakdown__flag {
+    font-size: 1.25rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.currency-breakdown__code {
     font-weight: 500;
 }
 
-.overall-portfolio-title,
-.overview-statistics-title,
+.currency-breakdown__amount {
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--card-title);
+}
+
 .category-title {
     padding: 15px 10px;
     font-size: 24px;
     font-weight: 500;
 }
 
-.overall-portfolio {
-    display: flex;
+.overview-statistics-title {
+    padding: 15px 0 0;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--card-title);
+}
+
+.overview-statistics-text {
+    min-width: 0;
+}
+
+.overview-statistics-hint {
+    font-size: 0.8125rem;
+    color: var(--card-title);
+    opacity: 0.7;
+    margin-top: 4px;
+    padding: 0 0 8px;
+    line-height: 1.4;
 }
 
 .left-container {
@@ -60,6 +180,8 @@
     height: auto;
     border-radius: 10px;
     box-sizing: border-box;
+    /* Inset content from mat-card edges (Material may zero default padding when not using mat-card-content). */
+    padding: 16px 20px 24px;
 }
 
 .overview-statistics {
@@ -263,6 +385,7 @@
         height: auto;
         min-height: 0;
         flex: 0 0 auto;
+        padding: 14px 16px 20px;
     }
 
     .right-side {
@@ -274,19 +397,24 @@
         flex: 0 0 auto;
     }
 
-    .overall-portfolio {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+    .period-summary-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
 
-    .dashboard-card {
-        width: 100%;
-        min-width: 0;
+    .period-summary-header__title {
+        font-size: 1.2rem;
     }
 
-    .overall-portfolio-title,
-    .overview-statistics-title,
+    .period-summary-header__subtitle {
+        font-size: 0.8125rem;
+    }
+
+    .overview-statistics-title {
+        font-size: 1.15rem;
+        padding: 10px 0 0;
+    }
+
     .category-title {
         font-size: 1.15rem;
         padding: 10px 8px;
