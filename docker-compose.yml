@@ -1,5 +1,5 @@
 # Budget tracker: MongoDB + Spring Boot API + Angular (nginx) on one host.
-# Default host ports: web (SPA + /api proxy) → 4001, backend (direct API) → 9000.
+# Default host ports: web (SPA) → 4001, backend (API for browser) → 9000.
 # Override with HTTP_PORT / BACKEND_PORT in .env if those ports are taken.
 #
 # Copy .env.example → .env and adjust before first start.
@@ -31,7 +31,7 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI:-mongodb://mongo:27017/inventar?connectTimeoutMS=10000&serverSelectionTimeoutMS=10000&socketTimeoutMS=30000}
-      # Set CORS_ORIGIN only in .env (not here). Using CORS_ORIGIN: ${CORS_ORIGIN:-} forces an empty value and breaks CORS.
+      # CORS is permissive in SpringConfiguration; do not inject empty CORS_* vars here.
     ports:
       - "${BACKEND_PORT:-9000}:9000"
 

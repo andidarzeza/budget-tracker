@@ -1,13 +1,18 @@
 /**
- * Docker / VPS: nginx serves the SPA and proxies `/api/` to the Spring Boot service
- * (`backend:9000` on the Compose network). The browser uses relative URLs (`/api/...`)
- * on the same origin as the page (e.g. `http://YOUR_SERVER:4001`), so no CORS or
- * mixed-content issues for normal use.
- *
- * For a split deploy (SPA and API on different origins), rebuild with a full
- * `serverAPIURL` and set `CORS_ORIGIN` on the backend — see DOCKER.md.
+ * Docker / VPS: SPA on HTTP_PORT (e.g. 4001), API on BACKEND_PORT (default 9000).
+ * Must match BACKEND_PORT published for `backend` in docker-compose / .env.
  */
-export const serverAPIURL = '';
+const DOCKER_API_PORT = 9000;
+
+function resolveDockerApiOrigin(): string {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+  const { protocol, hostname } = window.location;
+  return `${protocol}//${hostname}:${DOCKER_API_PORT}`;
+}
+
+export const serverAPIURL = resolveDockerApiOrigin();
 
 export const environment = {
   production: true,
