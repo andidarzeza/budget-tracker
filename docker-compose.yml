@@ -1,5 +1,5 @@
 # Budget tracker: MongoDB + Spring Boot API + Angular (nginx) on one host.
-# Default host ports: web (SPA + /api proxy) → 4000, backend (direct API) → 9000.
+# Default host ports: web (SPA + /api proxy) → 4001, backend (direct API) → 9000.
 # Override with HTTP_PORT / BACKEND_PORT in .env if those ports are taken.
 #
 # Copy .env.example → .env and adjust before first start.
@@ -42,7 +42,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "${HTTP_PORT:-4000}:80"
+      - "${HTTP_PORT:-4001}:80"
 
 volumes:
   mongo_data:

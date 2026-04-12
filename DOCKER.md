@@ -6,8 +6,8 @@ This stack runs **MongoDB**, the **Spring Boot** API, and the **Angular** app be
 
 | Service   | Host port | Use |
 |-----------|-----------|-----|
-| **web** (nginx + Angular) | **4000** | Open the app at `http://YOUR_SERVER:4000` |
-| **backend** (Spring Boot) | **9000** | Direct API at `http://YOUR_SERVER:9000/api/...` (optional; the SPA normally uses port 4000 only) |
+| **web** (nginx + Angular) | **4001** | Open the app at `http://YOUR_SERVER:4001` |
+| **backend** (Spring Boot) | **9000** | Direct API at `http://YOUR_SERVER:9000/api/...` (optional; the SPA normally uses port 4001 only) |
 
 Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports.
 
@@ -27,16 +27,16 @@ Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports.
    docker compose up -d
    ```
 
-4. Open `http://YOUR_SERVER_IP:4000` (or `http://YOUR_DOMAIN:4000`). Open firewall rules for **4000** (and **9000** only if you need the API directly from outside).
+4. Open `http://YOUR_SERVER_IP:4001` (or `http://YOUR_DOMAIN:4001`). Open firewall rules for **4001** (and **9000** only if you need the API directly from outside).
 
 Data is stored in the **`mongo_data`** Docker volume. Back it up with your provider’s snapshot tools or `docker run` backup procedures.
 
 ## HTTPS
 
-Compose publishes **HTTP on port 4000** (web) and **9000** (backend). For HTTPS you can:
+Compose publishes **HTTP on port 4001** (web) and **9000** (backend). For HTTPS you can:
 
 - Terminate TLS on **Hostinger** (if they offer a reverse proxy in front of your VPS), or  
-- Install **Caddy** / **Traefik** / **Certbot** on the VPS and proxy to `127.0.0.1:4000` (and optionally `127.0.0.1:9000` if you expose the API under TLS), or  
+- Install **Caddy** / **Traefik** / **Certbot** on the VPS and proxy to `127.0.0.1:4001` (and optionally `127.0.0.1:9000` if you expose the API under TLS), or  
 - Change the `web` service to publish `443:443` and use a custom nginx image with TLS certificates mounted as files.
 
 ## Split frontend and API (optional)
