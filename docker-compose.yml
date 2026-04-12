@@ -2,7 +2,7 @@
 # Default host ports: web (SPA) → 4001, backend (API for browser) → 9000.
 # Override with HTTP_PORT / BACKEND_PORT in .env if those ports are taken.
 #
-# Copy .env.example → .env and adjust before first start.
+# Copy .env.example → .env for HTTP_PORT / BACKEND_PORT (optional). Backend does not read .env.
 
 services:
   mongo:
@@ -24,15 +24,14 @@ services:
       context: ./inventar-backend
       dockerfile: Dockerfile
     restart: unless-stopped
-    env_file:
-      - .env
+    # Do not use env_file: .env here — any empty SPRING_DATA_MONGODB_* / SPRING_DATA_MONGODB_URI
+    # line in .env would override application.properties and break Mongo (see application-docker.properties).
     depends_on:
       mongo:
         condition: service_healthy
     environment:
-      # Hardcoded so an empty SPRING_DATA_MONGODB_URI in .env cannot wipe Mongo config (Spring would then fail to start).
+      SPRING_PROFILES_ACTIVE: docker
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/inventar?connectTimeoutMS=10000&serverSelectionTimeoutMS=10000&socketTimeoutMS=30000
-      # CORS is permissive in SpringConfiguration; do not inject empty CORS_* vars here.
     ports:
       - "${BACKEND_PORT:-9000}:9000"
 

@@ -19,7 +19,7 @@ Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports. I
 ## Quick start
 
 1. On the server, clone this repository and `cd` into it.
-2. `cp .env.example .env`. The file **must** live next to `docker-compose.yml` because the backend service uses `env_file: .env`. Do **not** add `SPRING_DATA_MONGODB_URI=` with an empty value; Mongo is configured in `docker-compose.yml` for Compose.
+2. Optionally `cp .env.example .env` to set **`HTTP_PORT`** / **`BACKEND_PORT`**. The **backend** container does **not** load `.env` (so stray `SPRING_DATA_MONGODB_URI=` or `CORS_*` lines cannot override Mongo). Mongo uses **`SPRING_PROFILES_ACTIVE=docker`** and `docker-compose.yml` / `application-docker.properties`.
 3. Build and run:
 
    ```bash
