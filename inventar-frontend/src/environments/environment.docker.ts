@@ -1,14 +1,27 @@
 /**
- * Used for container / reverse-proxy deployments (same origin as the API).
- * Nginx (or another proxy) forwards `/api/*` to the Spring Boot service.
+ * Docker / VPS: SPA is served on HTTP_PORT (e.g. 4001), API on BACKEND_PORT (default 9000).
+ * Must match BACKEND_PORT in docker-compose / .env (default 9000).
  */
+const DOCKER_API_PORT = 9000;
+
+function resolveDockerApiOrigin(): string {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+  const { protocol, hostname } = window.location;
+  return `${protocol}//${hostname}:${DOCKER_API_PORT}`;
+}
+
+/**
+ * Full origin for Spring Boot (e.g. http://31.97.79.96:9000).
+ * Set CORS_ORIGIN on the backend to this SPA origin (e.g. http://31.97.79.96:4001).
+ */
+export const serverAPIURL = resolveDockerApiOrigin();
+
 export const environment = {
   production: true,
   experimentalMode: false
 };
-
-/** Empty: browser calls `/api/...` on the same host as the static app. */
-export const serverAPIURL = '';
 
 export const TOASTER_CONFIGURATION = {
   timeOut: 7000,

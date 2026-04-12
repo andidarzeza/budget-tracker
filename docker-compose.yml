@@ -29,7 +29,7 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI:-mongodb://mongo:27017/inventar}
-      # Optional: comma-separated browser origins if the SPA is on another host (see SpringConfiguration)
+      # Required when SPA and API use different ports: list the SPA origin(s), e.g. http://IP:4001
       CORS_ORIGIN: ${CORS_ORIGIN:-}
     ports:
       - "${BACKEND_PORT:-9000}:9000"

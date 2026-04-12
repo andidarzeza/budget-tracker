@@ -1,15 +1,15 @@
 # Docker deployment (e.g. Hostinger VPS)
 
-This stack runs **MongoDB**, the **Spring Boot** API, and the **Angular** app behind **nginx** on one machine. The production build uses `environment.docker.ts`: the browser calls **`/api/...` on the same host and port as the SPA**, and nginx forwards those requests to the backend.
+This stack runs **MongoDB**, the **Spring Boot** API, and the **Angular** app behind **nginx** on one machine. The Docker build uses `environment.docker.ts`: the browser calls the API on **the same host as the page, port `9000`** (e.g. `http://YOUR_IP:9000/api/...`), while the SPA is served on **port `4001`**. That is cross-origin, so you **must** set **`CORS_ORIGIN`** in `.env` to your SPA URL (see below).
 
 **Default published ports**
 
 | Service   | Host port | Use |
 |-----------|-----------|-----|
 | **web** (nginx + Angular) | **4001** | Open the app at `http://YOUR_SERVER:4001` |
-| **backend** (Spring Boot) | **9000** | Direct API at `http://YOUR_SERVER:9000/api/...` (optional; the SPA normally uses port 4001 only) |
+| **backend** (Spring Boot) | **9000** | API base the SPA uses: `http://YOUR_SERVER:9000/api/...` |
 
-Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports.
+Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports. If you change **`BACKEND_PORT`**, also change **`DOCKER_API_PORT`** in `inventar-frontend/src/environments/environment.docker.ts` to match, then rebuild the **web** image.
 
 ## Requirements
 
@@ -19,7 +19,7 @@ Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports.
 ## Quick start
 
 1. On the server, clone this repository and `cd` into it.
-2. `cp .env.example .env` and edit if needed (defaults work for a single-server compose).
+2. `cp .env.example .env` and set **`CORS_ORIGIN`** to your SPA origin (same URL you type in the browser), for example `http://31.97.79.96:4001`. Without this, the browser will block calls from port **4001** to port **9000**.
 3. Build and run:
 
    ```bash
@@ -27,7 +27,7 @@ Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports.
    docker compose up -d
    ```
 
-4. Open `http://YOUR_SERVER_IP:4001` (or `http://YOUR_DOMAIN:4001`). Open firewall rules for **4001** (and **9000** only if you need the API directly from outside).
+4. Open `http://YOUR_SERVER_IP:4001` (or `http://YOUR_DOMAIN:4001`). Open firewall rules for **4001** and **9000** (the SPA talks to the API on **9000** from the browser).
 
 Data is stored in the **`mongo_data`** Docker volume. Back it up with your provider’s snapshot tools or `docker run` backup procedures.
 
