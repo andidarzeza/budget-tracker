@@ -53,3 +53,7 @@ docker compose logs -f web backend
 docker compose down
 docker compose pull && docker compose build --no-cache && docker compose up -d
 ```
+
+## `npm ci` / lock file errors in Docker
+
+If you switch the frontend Dockerfile back to `npm ci`, the lock file must match what Linux resolves (optional native deps). Regenerate it on your machine with `npm install` in `inventar-frontend`, commit the updated `package-lock.json`, or leave the Dockerfile using `npm install`, which is more tolerant when the lock was created on macOS or Windows.

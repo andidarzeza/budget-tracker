@@ -3,7 +3,9 @@ FROM node:22-bookworm-slim AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+# `npm ci` fails if the lock was produced on another OS (optional Linux deps e.g. @emnapi/*).
+# `npm install` respects the lock but can fill gaps for the current platform.
+RUN npm install --no-audit --no-fund
 
 COPY . .
 RUN npx ng build --configuration=docker
