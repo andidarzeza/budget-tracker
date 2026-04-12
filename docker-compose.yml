@@ -22,18 +22,16 @@ services:
   backend:
     build:
       context: ./inventar-backend
-      dockerfile: Dockerfile
     restart: unless-stopped
-    # Do not use env_file: .env here — any empty SPRING_DATA_MONGODB_* / SPRING_DATA_MONGODB_URI
-    # line in .env would override application.properties and break Mongo (see application-docker.properties).
     depends_on:
       mongo:
         condition: service_healthy
     environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/inventar
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/inventar?connectTimeoutMS=10000&serverSelectionTimeoutMS=10000&socketTimeoutMS=30000
+      SPRING_CONFIG_LOCATION: file:/app/config/
     ports:
-      - "${BACKEND_PORT:-9000}:9000"
+      - "9000:9000"
 
   web:
     build:
