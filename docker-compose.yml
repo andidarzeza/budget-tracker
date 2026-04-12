@@ -1,12 +1,48 @@
-version: '3.3'
+# Budget tracker: MongoDB + Spring Boot API + Angular (nginx) on one host.
+# Default host ports: web (SPA + /api proxy) → 4000, backend (direct API) → 9000.
+# Override with HTTP_PORT / BACKEND_PORT in .env if those ports are taken.
+#
+# Copy .env.example → .env and adjust before first start.
+
 services:
-  budget-frontend:
-    container_name: budget-frontend
-    build: ./inventar-frontend
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: inventar
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "mongodb://localhost:27017", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+
+  backend:
+    build:
+      context: ./inventar-backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI:-mongodb://mongo:27017/inventar}
+      # Optional: comma-separated browser origins if the SPA is on another host (see SpringConfiguration)
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
     ports:
-      - '4000:4000'
-  budget-backend:
-    container_name: budget-backend
-    build: ./inventar-backend
+      - "${BACKEND_PORT:-9000}:9000"
+
+  web:
+    build:
+      context: ./inventar-frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
     ports:
-      - '8084:8084'
+      - "${HTTP_PORT:-4000}:80"
+
+volumes:
+  mongo_data:

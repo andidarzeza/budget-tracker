@@ -1,11 +1,19 @@
-FROM node:14 as node
+# Build Angular app with same-origin API URLs (see environment.docker.ts)
+FROM node:22-bookworm-slim AS build
 WORKDIR /app
-COPY . .
-RUN npm install --legacy-peer-deps
-RUN npm run build --prod
-# RUN ls
 
-# stage 2
-FROM nginx:1.17.1-alpine
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=node app/dist/inventar-frontend /usr/share/nginx/html
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+COPY . .
+RUN npx ng build --configuration=docker
+
+# Resolve output folder (Angular may emit `browser/` or flat `dist/...`)
+RUN STATIC_DIR="$(dirname "$(find dist -name index.html | head -1)")" \
+    && mkdir -p /static \
+    && cp -a "${STATIC_DIR}/." /static/
+
+FROM nginx:1.27-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /static/ /usr/share/nginx/html/
+EXPOSE 80
