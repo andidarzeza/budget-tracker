@@ -1,15 +1,15 @@
 # Docker deployment (e.g. Hostinger VPS)
 
-This stack runs **MongoDB**, the **Spring Boot** API, and the **Angular** app behind **nginx** on one machine. The Docker build uses `environment.docker.ts`: the browser calls the API on **the same host as the page, port `9000`** (e.g. `http://YOUR_IP:9000/api/...`), while the SPA is served on **port `4001`**. That is cross-origin, so you **must** set **`CORS_ORIGIN`** in `.env` to your SPA URL (see below).
+This stack runs **MongoDB**, the **Spring Boot** API, and the **Angular** app behind **nginx** on one machine. The Docker build uses `environment.docker.ts` with **`serverAPIURL` empty**: the browser calls **`/api/...` on the same origin** as the SPA (e.g. `http://YOUR_SERVER:4001/api/...`). **nginx** proxies those requests to the **`backend`** service on the Compose network (`backend:9000`). You do **not** need **`CORS_ORIGIN`** for that default setup (it is only required if something loads the SPA from one origin and calls the API from another — see “Split frontend and API” below).
 
 **Default published ports**
 
 | Service   | Host port | Use |
 |-----------|-----------|-----|
-| **web** (nginx + Angular) | **4001** | Open the app at `http://YOUR_SERVER:4001` |
-| **backend** (Spring Boot) | **9000** | API base the SPA uses: `http://YOUR_SERVER:9000/api/...` |
+| **web** (nginx + Angular + `/api` proxy) | **4001** | Open the app at `http://YOUR_SERVER:4001` |
+| **backend** (Spring Boot) | **9000** | Optional direct API access: `http://YOUR_SERVER:9000/api/...` (mobile apps, debugging) |
 
-Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports. If you change **`BACKEND_PORT`**, also change **`DOCKER_API_PORT`** in `inventar-frontend/src/environments/environment.docker.ts` to match, then rebuild the **web** image.
+Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports. Changing **`BACKEND_PORT`** only remaps the **published** host port; nginx still talks to the container on **9000** internally.
 
 ## Requirements
 
@@ -19,7 +19,8 @@ Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports. I
 ## Quick start
 
 1. On the server, clone this repository and `cd` into it.
-2. `cp .env.example .env` and set **`CORS_ORIGIN`** to your SPA origin (same URL you type in the browser), for example `http://31.97.79.96:4001` (no trailing slash). The file **must** live next to `docker-compose.yml` because the backend service uses `env_file: .env`. Never use `CORS_ORIGIN=` with an empty value—omit the line or set a full URL; an empty value disables CORS for your deploy.
+2. `cp .env.example .env`. The file **must** live next to `docker-compose.yml` because the backend service uses `env_file: .env`.  
+   - **`CORS_ORIGIN`** is optional for the default same-origin SPA; set it only if you use a split frontend/API (see below). Never use `CORS_ORIGIN=` with an empty value—omit the line or set a full URL.
 3. Build and run:
 
    ```bash
@@ -27,13 +28,13 @@ Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports. I
    docker compose up -d
    ```
 
-4. Open `http://YOUR_SERVER_IP:4001` (or `http://YOUR_DOMAIN:4001`). Open firewall rules for **4001** and **9000** (the SPA talks to the API on **9000** from the browser).
+4. Open `http://YOUR_SERVER_IP:4001` (or `http://YOUR_DOMAIN:4001`). Open the firewall for **4001** for end users. **9000** is optional (direct API only).
 
 Data is stored in the **`mongo_data`** Docker volume. Back it up with your provider’s snapshot tools or `docker run` backup procedures.
 
 ## HTTPS
 
-Compose publishes **HTTP on port 4001** (web) and **9000** (backend). For HTTPS you can:
+Compose publishes **HTTP on port 4001** (web) and **9000** (backend, optional). For HTTPS you can:
 
 - Terminate TLS on **Hostinger** (if they offer a reverse proxy in front of your VPS), or  
 - Install **Caddy** / **Traefik** / **Certbot** on the VPS and proxy to `127.0.0.1:4001` (and optionally `127.0.0.1:9000` if you expose the API under TLS), or  
