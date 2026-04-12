@@ -29,7 +29,6 @@ services:
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/inventar
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_CONFIG_LOCATION: file:/app/config/
     ports:
       - "9000:9000"
 
