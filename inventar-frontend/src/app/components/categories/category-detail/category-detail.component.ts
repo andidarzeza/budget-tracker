@@ -6,7 +6,7 @@ import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-category-detail',
   templateUrl: './category-detail.component.html',
   styleUrls: ['./category-detail.component.css']

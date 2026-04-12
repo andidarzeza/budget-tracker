@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-@Component({
+@Component({ standalone: false,
   selector: 'create-footer',
   templateUrl: './create-footer.component.html',
   styleUrls: ['./create-footer.component.css']

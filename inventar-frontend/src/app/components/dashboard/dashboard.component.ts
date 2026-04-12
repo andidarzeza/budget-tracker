@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, HostListener } from '@angular/core';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -13,7 +13,7 @@ import { inOutAnimation } from 'src/app/animations';
 import { Observable, of } from 'rxjs';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
@@ -41,6 +41,12 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     Chart.register(...registerables);
     this.chartUtil.createDoughnutChart("category-chart");
     this.chartUtil.createChart("line-chart");
+    this.chartUtil.resizeDashboardCharts();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.chartUtil.resizeDashboardCharts();
   }
 
   constructor(

@@ -1,10 +1,10 @@
 import { HttpParams } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 import { FilterOptions } from './filter.models';
 
-@Component({
+@Component({ standalone: false,
   selector: 'filter',
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.css']
@@ -13,16 +13,16 @@ export class FilterComponent implements OnInit {
   @Output() public onReset = new EventEmitter(); 
   @Output() public onSearch = new EventEmitter();
   @Input() filterOptions: FilterOptions[];
-  public formGroup: FormGroup = this.formBuilder.group({});
+  public formGroup: UntypedFormGroup = this.formBuilder.group({});
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
     this.filterOptions?.forEach((filterOption: FilterOptions) => {
-      this.formGroup.addControl(filterOption.field, new FormControl());
+      this.formGroup.addControl(filterOption.field, new UntypedFormControl());
     })
   }
 

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinition } from 'src/app/models/models';
 
-@Component({
+@Component({ standalone: false,
   selector: 'table-header',
   templateUrl: './table-header.component.html',
   styleUrls: ['./table-header.component.css'],

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { inOutAnimation } from '../animations';
 
-@Component({
+@Component({ standalone: false,
   selector: 'delete-confirmation',
   templateUrl: './delete-confirmation.component.html',
   styleUrls: ['./delete-confirmation.component.css'],

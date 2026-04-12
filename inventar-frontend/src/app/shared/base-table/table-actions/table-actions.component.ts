@@ -3,7 +3,7 @@ import { filterAnimation } from './filter/filter.animations';
 import { FilterOptions } from './filter/filter.models';
 import { TableActionInput } from './TableActionInput';
 
-@Component({
+@Component({ standalone: false,
   selector: 'table-actions',
   templateUrl: './table-actions.component.html',
   styleUrls: ['./table-actions.component.css'],

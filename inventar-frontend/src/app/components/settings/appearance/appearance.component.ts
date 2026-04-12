@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-appearance',
   templateUrl: './appearance.component.html',
   styleUrls: ['./appearance.component.css']

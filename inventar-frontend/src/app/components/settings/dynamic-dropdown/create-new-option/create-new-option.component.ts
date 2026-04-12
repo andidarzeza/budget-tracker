@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { inAnimation } from '../animations';
 import { CommunicationService } from '../services/communication.service';
 
-@Component({
+@Component({ standalone: false,
   selector: 'create-new-option',
   templateUrl: './create-new-option.component.html',
   styleUrls: ['./create-new-option.component.css'],
@@ -16,7 +16,7 @@ export class CreateNewOptionComponent implements OnInit{
   createMode = false;
   editMode = false;
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private communicationService: CommunicationService
   ) { }
   
@@ -27,7 +27,7 @@ export class CreateNewOptionComponent implements OnInit{
     });
   }
   
-  public formGroup: FormGroup = this.formBuilder.group({
+  public formGroup: UntypedFormGroup = this.formBuilder.group({
     item: ["", Validators.required]
   });
 

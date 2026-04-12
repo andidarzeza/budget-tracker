@@ -20,8 +20,12 @@
 }
 
 .application {
-    overflow-y: auto;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .app-width {
@@ -39,11 +43,15 @@
 }
 
 .content-container {
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
     border-radius: 10px 0px 0px 0px;
     border: 2px solid rgba(0, 0, 0, .12);
     border-right: none;
     border-bottom: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 @media only screen and (max-width: 767px) {

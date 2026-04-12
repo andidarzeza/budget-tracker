@@ -6,7 +6,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { MenuItem, SideBarMode } from '../base-template.models';
 
-@Component({
+@Component({ standalone: false,
   selector: 'side-bar',
   templateUrl: './side-bar.component.html',
   styleUrls: ['./side-bar.component.css']

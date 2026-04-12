@@ -1,2 +1,12 @@
-<mat-progress-bar *ngIf="loadingData" class="progress-bar custom-progress-bar" mode="indeterminate" [@inOutAnimation]></mat-progress-bar>
-<div [@inOutAnimation] *ngIf="loadingData" class="shadow"></div>
+<div *ngIf="loadingData" class="form-loading-root" [@inOutAnimation]>
+    <div class="form-loading-backdrop" aria-hidden="true"></div>
+    <div class="form-loading-center" role="status" aria-live="polite" aria-busy="true">
+        <div class="form-loading-card">
+            <div class="form-loading-spinner" aria-hidden="true">
+                <div class="form-loading-spinner__track"></div>
+                <div class="form-loading-spinner__arc"></div>
+            </div>
+            <p class="form-loading-text">{{ displayMessage }}</p>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
-@Component({
+@Component({ standalone: false,
   selector: 'year-picker',
   templateUrl: './year-picker.component.html',
   styleUrls: ['./year-picker.component.css']

@@ -1,6 +1,6 @@
 <create-header [icon]="icon" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)"></create-header>
 <div class="content-container">
-    <form-spinner [loadingData]="loadingData"></form-spinner>
+    <form-spinner [loadingData]="loadingData" [message]="loadingMessage"></form-spinner>
     <ng-content></ng-content>
 </div>
-<create-footer [editMode]="editMode" (create)="add()" (cancel)="closeDialog(false)"></create-footer>
+<create-footer *ngIf="!hideDefaultFooter" [editMode]="editMode" (create)="add()" (cancel)="closeDialog(false)"></create-footer>

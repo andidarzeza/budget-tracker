@@ -12,3 +12,24 @@
     color: white;
     /* color: var(--primary-text); */
 }
+
+@media only screen and (max-width: 767px) {
+    .month-picker-container {
+        width: 100%;
+        box-sizing: border-box;
+        flex-wrap: wrap;
+        justify-content: center;
+        row-gap: 4px;
+        column-gap: 8px;
+        padding: 8px 12px;
+    }
+
+    .month-picker-container .text-color {
+        flex: 1 1 100%;
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.35;
+        word-break: break-word;
+        margin-top: 0;
+    }
+}

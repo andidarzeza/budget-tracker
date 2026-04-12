@@ -9,7 +9,7 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { DropdownOption } from 'src/app/template/shared/dropdown/models';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']

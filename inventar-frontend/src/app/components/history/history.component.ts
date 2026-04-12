@@ -14,7 +14,7 @@ import { FilterService } from 'src/app/core/services/filter.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.css']

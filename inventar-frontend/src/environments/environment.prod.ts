@@ -30,12 +30,20 @@ export const TOASTER_CONFIGURATION = {
   positionClass: 'toast-bottom-right'
 }
 
-export const CREATE_DIALOG_CONFIGURATION = {
+export const CREATE_DIALOG_DESKTOP_CONFIGURATION = {
   width: '800px',
   maxWidth: '96vw',
   maxHeight: '92vh',
-  disableClose: true
-}
+  disableClose: true,
+};
+
+export const CREATE_DIALOG_MOBILE_CONFIGURATION = {
+  width: '100vw',
+  maxWidth: '100vw',
+  height: '100vh',
+  maxHeight: '100vh',
+  disableClose: true,
+};
 
 export const CURRENCIES = ["ALL", "EUR", "USD", "CAD", "GBP"];
 
@@ -53,4 +61,4 @@ export const PAGE_SIZE = 50;
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

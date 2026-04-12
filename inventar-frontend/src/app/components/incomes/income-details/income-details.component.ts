@@ -6,7 +6,7 @@ import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-income-details',
   templateUrl: './income-details.component.html',
   styleUrls: ['./income-details.component.css']

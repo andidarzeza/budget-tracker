@@ -11,6 +11,13 @@ export class BreakpointService {
   public screenSize: ScreenSize;
 
   /**
+   * Same breakpoint as `useTableCardLayout$`: add/create dialogs use fullscreen + keypad wizard on mobile.
+   */
+  matchesMobileCreateLayout(): boolean {
+    return this.breakpointObserver.isMatched('(max-width: 767px)');
+  }
+
+  /**
    * When true, data tables render as stacked cards instead of row columns (phones / narrow screens).
    */
   readonly useTableCardLayout$: Observable<boolean> = this.breakpointObserver

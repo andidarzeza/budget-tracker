@@ -1,15 +1,102 @@
-.shadow {
+.form-loading-root {
     position: absolute;
-    top: 0px;
-    left: 0;
-    width: 100%;
-    height: calc(100% + 60px);
-    background: #00000061;
-    z-index: 1;
+    inset: 0;
+    z-index: 24;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
 }
 
-.custom-progress-bar {
+.form-loading-backdrop {
     position: absolute;
-    left: 0;
-    top: 0px;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.form-loading-center {
+    position: relative;
+    z-index: 1;
+    padding: 16px;
+    max-width: calc(100% - 32px);
+}
+
+.form-loading-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 36px 26px;
+    border-radius: 16px;
+    background: var(--card);
+    box-shadow:
+        var(--card-shadow, 0 12px 40px rgba(0, 0, 0, 0.12)),
+        0 0 0 1px rgba(0, 0, 0, 0.04);
+    animation: form-loading-card-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.form-loading-spinner {
+    position: relative;
+    width: 52px;
+    height: 52px;
+}
+
+.form-loading-spinner__track,
+.form-loading-spinner__arc {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid transparent;
+}
+
+.form-loading-spinner__track {
+    border-color: var(--field-outline);
+    opacity: 0.55;
+}
+
+.form-loading-spinner__arc {
+    border-top-color: var(--light);
+    border-right-color: var(--light);
+    animation: form-loading-spin 0.9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    filter: drop-shadow(0 0 10px rgba(0, 105, 92, 0.35));
+}
+
+.form-loading-text {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--card-title);
+    text-align: center;
+    line-height: 1.45;
+    max-width: 220px;
+}
+
+@keyframes form-loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes form-loading-card-enter {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .form-loading-card {
+        animation: none;
+    }
+
+    .form-loading-spinner__arc {
+        animation-duration: 1.6s;
+    }
 }

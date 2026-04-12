@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 // import { outAnimation } from './animations';
 import { CommunicationService } from './services/communication.service';
 
 
-@Component({
+@Component({ standalone: false,
   selector: 'dynamic-dropdown',
   templateUrl: './dynamic-dropdown.component.html',
   styleUrls: ['./dynamic-dropdown.component.css'],
@@ -21,7 +21,7 @@ export class DynamicDropdownComponent {
   public selectedItems: string[] = [];
   public allSelected = false;
 
-  matSelectFormControl: FormControl = new FormControl();
+  matSelectFormControl: UntypedFormControl = new UntypedFormControl();
   showDeleteModal: boolean = false;
 
   constructor(

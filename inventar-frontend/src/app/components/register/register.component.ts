@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { mergeMap } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
@@ -43,7 +43,7 @@ export class RegisterComponent {
   constructor(
     private toasterService: ToastrService, 
     public sharedService: SharedService, 
-    private formBuilder: FormBuilder, 
+    private formBuilder: UntypedFormBuilder, 
     public authenticationService: AuthenticationService, 
     private router: Router
   ) { 
@@ -55,7 +55,7 @@ export class RegisterComponent {
 
   showPassword: boolean = false;
   
-  registerGroup: FormGroup = this.formBuilder.group({
+  registerGroup: UntypedFormGroup = this.formBuilder.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
     firstName: ['', Validators.required],

@@ -12,7 +12,7 @@ import { ThemeService } from './services/theme.service';
 import { Unsubscribe } from './shared/unsubscribe';
 
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],

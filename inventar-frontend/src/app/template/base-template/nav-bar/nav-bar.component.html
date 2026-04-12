@@ -19,8 +19,9 @@
         </button>
 
         <div class="flex-centered">
-            <button class="user-name-button" mat-icon-button color="primary" [matMenuTriggerFor]="userMenu">
-                <div class="user-name fw-500 title">
+            <button type="button" class="user-name-button" mat-icon-button [matMenuTriggerFor]="userMenu"
+                aria-label="Account menu">
+                <div class="user-name fw-500">
                     {{ firstName?.charAt(0) | uppercase }}{{ lastName?.charAt(0) | uppercase }}
                 </div>
             </button>

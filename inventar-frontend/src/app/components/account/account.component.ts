@@ -9,7 +9,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-account',
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.css'],

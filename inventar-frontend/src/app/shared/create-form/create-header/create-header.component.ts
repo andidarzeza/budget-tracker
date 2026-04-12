@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EntityType } from 'src/app/models/models';
 
-@Component({
+@Component({ standalone: false,
   selector: 'create-header',
   templateUrl: './create-header.component.html',
   styleUrls: ['./create-header.component.css']

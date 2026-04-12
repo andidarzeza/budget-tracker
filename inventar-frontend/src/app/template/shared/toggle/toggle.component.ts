@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 
-@Component({
+@Component({ standalone: false,
   selector: 'toggle',
   templateUrl: './toggle.component.html',
   styleUrls: ['./toggle.component.css']

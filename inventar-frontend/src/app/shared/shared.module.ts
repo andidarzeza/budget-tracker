@@ -23,32 +23,31 @@ import { TableActionsModule } from './base-table/table-actions/table-actions.mod
 
 
 @NgModule({
-  declarations: [NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, CustomDatePipe, RecordActionsComponent],
-  imports: [
-    CommonModule,
-    MatIconModule,
-    TableMessageModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatMenuModule,
-    MatTooltipModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    TableActionsModule,
-    ConfirmModule,
-    FilterModule
-  ],
-  exports: [
-    CommonModule,
-    FormsModule,
-    TableMessageModule,
-    FloatingMenuComponent,
-    AbsoluteValuePipe,
-    CustomDatePipe,
-    TableActionsComponent,
-    RecordActionsComponent
-  ],
-  providers: [DialogService],
-  entryComponents: [AddExpenseComponent]
+    declarations: [NotFoundComponent, FloatingMenuComponent, AbsoluteValuePipe, CustomDatePipe, RecordActionsComponent],
+    imports: [
+        CommonModule,
+        MatIconModule,
+        TableMessageModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatMenuModule,
+        MatTooltipModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        TableActionsModule,
+        ConfirmModule,
+        FilterModule
+    ],
+    exports: [
+        CommonModule,
+        FormsModule,
+        TableMessageModule,
+        FloatingMenuComponent,
+        AbsoluteValuePipe,
+        CustomDatePipe,
+        TableActionsComponent,
+        RecordActionsComponent
+    ],
+    providers: [DialogService]
 })
 export class SharedModule { }

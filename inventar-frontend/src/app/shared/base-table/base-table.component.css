@@ -87,6 +87,7 @@
     column-gap: 16px;
     padding: 12px 16px;
     box-sizing: border-box;
+    background: var(--secondary);
 }
 
 .mobile-page-toolbar-row:has(table-actions.table-actions--mobile-search-open) .mobile-page-head {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-account',
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.css']

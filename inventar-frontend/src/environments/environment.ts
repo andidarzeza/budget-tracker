@@ -23,7 +23,7 @@ export const environment = {
 // export const serverAPIURL = 'http://192.168.100.206:9000';
 
 // LAN (phone + same machine): use your Mac IP
-export const serverAPIURL = 'http://192.168.1.4:9000';
+export const serverAPIURL = 'http://192.168.1.6:9000';
 
 // LOCALHOST
 // export const serverAPIURL = 'http://localhost:9000';
@@ -33,12 +33,22 @@ export const TOASTER_CONFIGURATION = {
   positionClass: 'toast-bottom-right'
 }
 
-export const CREATE_DIALOG_CONFIGURATION = {
+/** Create / add dialogs on tablet & desktop (classic centered dialog). */
+export const CREATE_DIALOG_DESKTOP_CONFIGURATION = {
   width: '800px',
   maxWidth: '96vw',
   maxHeight: '92vh',
-  disableClose: true
-}
+  disableClose: true,
+};
+
+/** Create / add dialogs on narrow viewports (matches `BreakpointService` card layout ≤767px). */
+export const CREATE_DIALOG_MOBILE_CONFIGURATION = {
+  width: '100vw',
+  maxWidth: '100vw',
+  height: '100vh',
+  maxHeight: '100vh',
+  disableClose: true,
+};
 
 export const CURRENCIES = ["ALL", "EUR", "USD", "CAD", "GBP"];
 
@@ -55,4 +65,4 @@ export const PAGE_SIZE = 20;
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

@@ -1,30 +1,46 @@
 /* NEW CSS */
 
+:host {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
 .range-option {
-    padding: 8px 25px;border-radius: 10px;font-weight: 500;
+    padding: 8px 25px;
+    border-radius: 10px;
+    font-weight: 500;
     transition: color 0.2s, background 0.2s;
+}
+
+.range-container .range-option {
+    margin-left: 0 !important;
 }
 
 .title {
     color: var(--card-title);
 }
 
-.monetary-value  {
+.monetary-value {
     margin-top: 15px;
 }
 
 .dashboard-card {
     padding: 10px;
     width: 25%;
+    min-width: 0;
+    box-sizing: border-box;
 }
-
 
 .overall-portfolio-title {
     font-size: 24px;
     font-weight: 500;
 }
 
-.overall-portfolio-title, .overview-statistics-title, .category-title {
+.overall-portfolio-title,
+.overview-statistics-title,
+.category-title {
     padding: 15px 10px;
     font-size: 24px;
     font-weight: 500;
@@ -35,56 +51,128 @@
 }
 
 .left-container {
-    margin-right: 20px;width: calc(100% - 420px);height: calc(100% - 32px);border-radius: 10px;
+    flex: 1 1 320px;
+    min-width: 0;
+    max-width: 100%;
+    width: auto;
+    margin-right: 0;
+    min-height: 0;
+    height: auto;
+    border-radius: 10px;
+    box-sizing: border-box;
 }
 
 .overview-statistics {
-    display: flex;align-items: center;justify-content: space-between;margin-top: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 25px;
+    min-width: 0;
 }
 
 .range-container {
-    float:right;background: var(--secondary);
-    border: 2px solid rgba(0, 0, 0, .12);border-radius: 10px;
-    padding: 8px 12px;display: flex;align-items: center;
+    float: right;
+    max-width: 100%;
+    box-sizing: border-box;
+    background: var(--secondary);
+    border: 2px solid rgba(0, 0, 0, .12);
+    border-radius: 10px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .line-chart {
-    margin-top: 32px;height: calc(100% - 242px);
-    display: flex;justify-content: center;align-items: center;
+    margin-top: 32px;
+    height: auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 280px;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 #line-chart {
+    display: block;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
     max-height: 400px;
+    box-sizing: border-box;
 }
 
 .right-side {
-    width: 400px;height: 100%;
+    flex: 0 1 400px;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    align-self: flex-start;
+    box-sizing: border-box;
 }
 
 .doughnut-chart-container {
-    height: 250px;border-radius: 10px;padding: 0;padding-bottom: 16px;
+    height: 250px;
+    max-width: 100%;
+    border-radius: 10px;
+    padding: 0;
+    padding-bottom: 16px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .category-chart {
-    height: 216px;display: flex;
-    justify-content: center;align-items: center;
+    height: 216px;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 #category-chart {
-    max-width: 150px;max-height: 150px;
+    display: block;
+    max-width: min(150px, 100%) !important;
+    max-height: 150px;
+    width: auto !important;
+    height: auto !important;
+    box-sizing: border-box;
 }
 
 .categories {
-    margin-top:20px;height: calc(100% - 317px);border-radius: 10px;
+    margin-top: 20px;
+    min-height: 200px;
+    height: auto;
+    max-width: 100%;
+    border-radius: 10px;
+    box-sizing: border-box;
 }
 
 .no-data-container {
-    width: 100%;height: calc(100% - 50px);display: flex;flex-direction: column;
-    justify-content: center;align-items: center;color: var(--card-title);
+    width: 100%;
+    min-height: 200px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--card-title);
 }
 
 .no-data-icon {
-    width: 30px;height: 30px;font-size: 30px;
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
 }
 
 .no-data-message {
@@ -92,45 +180,194 @@
 }
 
 .categories-list {
-    height: calc(100% - 58px);overflow: auto;margin-top: 7px;
+    max-height: min(50vh, 420px);
+    overflow: auto;
+    margin-top: 7px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .category-data {
     padding: 10px;
-    display: flex;justify-content: space-between;align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
 }
 
 .category-icon {
-    color: var(--light);width: 30px;height: 30px;font-size: 30px;
+    color: var(--light);
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    flex-shrink: 0;
 }
 
 .category-details {
-    display: flex;align-items: center;
+    display: flex;
+    align-items: center;
+    min-width: 0;
 }
 
 .category-details-data {
     margin-left: 13px;
+    min-width: 0;
 }
 
 .category-row-title {
-    font-size: 14px;font-weight: 500;color: white;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
 }
 
 .category-description {
-    font-size: 13px;color: var(--card-title);
+    font-size: 13px;
+    color: var(--card-title);
 }
 
 .category-value {
     color: white;
+    flex-shrink: 0;
 }
 
 .dashboard-container {
-    padding: 20px;max-height: 100%;overflow-y: auto;
-    height: calc(100% - 106px);display: flex;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-height: 0;
+    min-width: 0;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: visible;
 }
 
+/* —— Mobile (matches app drawer / table breakpoint) —— */
+@media only screen and (max-width: 767px) {
+    .dashboard-container {
+        flex-direction: column;
+        align-items: stretch;
+        height: auto;
+        max-height: none;
+        min-height: 0;
+        padding: 12px;
+        gap: 16px;
+    }
 
+    .left-container {
+        width: 100%;
+        margin-right: 0;
+        height: auto;
+        min-height: 0;
+        flex: 0 0 auto;
+    }
 
-.dashboard-container {
-    display: flex !important;
+    .right-side {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        flex: 0 0 auto;
+    }
+
+    .overall-portfolio {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .dashboard-card {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .overall-portfolio-title,
+    .overview-statistics-title,
+    .category-title {
+        font-size: 1.15rem;
+        padding: 10px 8px;
+    }
+
+    .overview-statistics {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .overview-statistics-title {
+        padding-bottom: 0;
+    }
+
+    .range-container {
+        float: none;
+        width: 100%;
+        box-sizing: border-box;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px 10px;
+    }
+
+    .range-container .range-option {
+        margin-left: 0 !important;
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+
+    .line-chart {
+        margin-top: 20px;
+        height: 240px;
+        min-height: 220px;
+    }
+
+    #line-chart {
+        max-height: none;
+        width: 100% !important;
+        height: 220px !important;
+    }
+
+    .doughnut-chart-container {
+        height: auto;
+        min-height: 280px;
+        padding-bottom: 12px;
+    }
+
+    .category-chart {
+        height: 200px;
+    }
+
+    #category-chart {
+        max-width: 180px;
+        max-height: 180px;
+    }
+
+    .categories {
+        margin-top: 0;
+        height: auto;
+        min-height: 200px;
+        max-height: none;
+    }
+
+    .categories-list {
+        height: auto;
+        max-height: 45vh;
+        min-height: 120px;
+    }
+
+    .no-data-container {
+        height: auto;
+        min-height: 160px;
+        padding: 24px 12px;
+    }
+
+    .category-row-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }

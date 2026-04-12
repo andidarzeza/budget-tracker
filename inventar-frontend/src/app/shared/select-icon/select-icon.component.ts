@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 
-@Component({
+@Component({ standalone: false,
   selector: 'select-icon',
   templateUrl: './select-icon.component.html',
   styleUrls: ['./select-icon.component.css'],

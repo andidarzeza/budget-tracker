@@ -48,9 +48,31 @@
     font-size: 24px;
 }
 
+/* MDC icon buttons only stack `.mat-icon` / `.mdc-button__label` above the ripple; initials need the same. */
+.user-name-button.mat-mdc-icon-button {
+    background-color: var(--logo-background);
+    box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%);
+    /* Anchor initials; MDC padding + inline-block makes percentage-height flex children sit low. */
+    position: relative;
+}
+
 .user-name {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    box-sizing: border-box;
     border-radius: 50%;
     color: var(--logo-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    line-height: 1;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    -webkit-font-smoothing: antialiased;
+    pointer-events: none;
 }
 
 .round {
@@ -66,11 +88,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.user-name-button {
-    background: var(--logo-background);
-    box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%);
 }
 
 .vertical-divider {

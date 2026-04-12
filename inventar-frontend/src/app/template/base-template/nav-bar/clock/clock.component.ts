@@ -3,7 +3,7 @@ import { timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({
+@Component({ standalone: false,
   selector: 'clock',
   templateUrl: './clock.component.html',
   styleUrls: ['./clock.component.css']

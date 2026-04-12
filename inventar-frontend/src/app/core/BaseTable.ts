@@ -1,5 +1,5 @@
 import { HttpParams } from "@angular/common/http";
-import { ViewChild } from "@angular/core";
+import { Directive, ViewChild } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -11,6 +11,8 @@ import { takeUntil } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
 import { AccountService } from "../services/account.service";
 import { Unsubscribe } from "../shared/unsubscribe";
+
+@Directive({ standalone: false })
 export abstract class BaseTable<E> extends Unsubscribe {
     public constructor(
         protected dialog: DialogService,

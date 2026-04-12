@@ -12,7 +12,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { environment } from 'src/environments/environment';
 
-@Component({
+@Component({ standalone: false,
   selector: 'nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css']

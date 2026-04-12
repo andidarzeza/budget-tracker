@@ -6,7 +6,7 @@ import { HistoryService } from 'src/app/services/pages/history.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({
+@Component({ standalone: false,
   selector: 'history-details',
   templateUrl: './history-details.component.html',
   styleUrls: ['./history-details.component.css']

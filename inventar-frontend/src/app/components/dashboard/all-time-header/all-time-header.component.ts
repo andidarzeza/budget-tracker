@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
-@Component({
+@Component({ standalone: false,
   selector: 'all-time-header',
   templateUrl: './all-time-header.component.html',
   styleUrls: ['./all-time-header.component.css']

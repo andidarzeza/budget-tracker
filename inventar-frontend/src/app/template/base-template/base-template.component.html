@@ -5,7 +5,7 @@
         [mobileDrawer]="(breakpointService.useTableCardLayout$ | async) === true"></side-bar>
 
     <div class="application" id="application-body"
-        style="position: relative;overflow: hidden;"
+        style="position: relative;"
         [ngStyle]="{'margin-left': applicationLeftMargin }"
         [ngClass]="authenticationService.currentUserValue ? 'app-width' : 'app-full-width'">
 

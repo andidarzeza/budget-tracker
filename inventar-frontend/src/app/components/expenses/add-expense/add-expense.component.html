@@ -1,37 +1,191 @@
-<create-form [loadingData]="loadingData" icon="attach_money" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()">
+<create-form [loadingData]="loadingData()" [loadingMessage]="loadingMessage()" icon="attach_money" [entity]="entity"
+    [editMode]="isEditMode" [hideDefaultFooter]="!isEditMode" (close)="closeDialog($event)" (create)="add()">
 
     <form [formGroup]="formGroup" class="dialog-form">
-        <div class="dialog-form__row">
-            <mat-form-field appearance="outline" class="dialog-form__field">
-                <mat-label class="primary-text">Expense Category</mat-label>
-                <mat-select required formControlName="categoryID">
-                    <mat-option class="primary-text" *ngFor="let category of categories" [value]="category.id">
-                        {{ category?.category }}
-                    </mat-option>
-                </mat-select>
-                <mat-error>This field is required.</mat-error>
-            </mat-form-field>
+        <!-- Edit: single screen + default create-form footer -->
+        <ng-container *ngIf="isEditMode">
+            <div class="dialog-form__row">
+                <mat-form-field appearance="outline" class="dialog-form__field">
+                    <mat-label class="primary-text">Expense Category</mat-label>
+                    <mat-select required formControlName="categoryID">
+                        <mat-option class="primary-text" *ngFor="let category of categories()" [value]="category.id">
+                            {{ category?.category }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>This field is required.</mat-error>
+                </mat-form-field>
 
-            <mat-form-field appearance="outline" class="dialog-form__field">
-                <mat-label class="primary-text">Money Spent</mat-label>
-                <input required type="number" class="primary-text" autocomplete="off" matInput formControlName="moneySpent">
-                <mat-error>This field is required.</mat-error>
-            </mat-form-field>
+                <mat-form-field appearance="outline" class="dialog-form__field">
+                    <mat-label class="primary-text">Money Spent</mat-label>
+                    <input required type="number" class="primary-text" autocomplete="off" matInput
+                        formControlName="moneySpent">
+                    <mat-error>This field is required.</mat-error>
+                </mat-form-field>
 
-            <mat-form-field appearance="outline" class="dialog-form__field">
-                <mat-label class="primary-text">Currency</mat-label>
-                <mat-select formControlName="currency">
-                    <mat-option class="primary-text" *ngFor="let currency of currencies" [value]="currency">
-                        {{ currency | flag }} {{ currency }}
-                    </mat-option>
-                </mat-select>
-                <mat-error>This field is required.</mat-error>
+                <mat-form-field appearance="outline" class="dialog-form__field">
+                    <mat-label class="primary-text">Currency</mat-label>
+                    <mat-select formControlName="currency">
+                        <mat-option class="primary-text" *ngFor="let currency of currencies" [value]="currency">
+                            {{ currency | flag }} {{ currency }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>This field is required.</mat-error>
+                </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="dialog-form__field dialog-form__textarea">
+                <mat-label class="primary-text">Description</mat-label>
+                <textarea class="primary-text" matInput formControlName="description"
+                    placeholder="Write a note..."></textarea>
             </mat-form-field>
+        </ng-container>
+
+        <!-- Add: stepped flow + custom footer -->
+        <div *ngIf="!isEditMode" class="create-wizard">
+            <nav class="create-wizard__rail" aria-label="Steps">
+                <div *ngFor="let label of wizardStepLabels; let i = index" class="create-wizard__stop"
+                    [class.create-wizard__stop--active]="wizardStep() === i"
+                    [class.create-wizard__stop--complete]="wizardStep() > i">
+                    <span class="create-wizard__bubble" [attr.aria-current]="wizardStep() === i ? 'step' : null">{{ i + 1 }}</span>
+                    <span class="create-wizard__stop-label">{{ label }}</span>
+                </div>
+            </nav>
+
+            <div class="create-wizard__panel" [ngSwitch]="wizardStep()">
+                <ng-container *ngSwitchCase="0">
+                    <ng-container *ngIf="isWizardMobile(); else expenseWizardStep0Desktop">
+                        <p class="create-wizard__intro">Pick the category this expense belongs to.</p>
+                        <div class="category-pick-list" role="listbox" aria-label="Expense categories">
+                            <button type="button" *ngFor="let category of categories()" class="category-pick-list__item"
+                                role="option"
+                                [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
+                                [class.category-pick-list__item--selected]="formGroup.get('categoryID')?.value == category.id"
+                                (click)="selectWizardCategory(category.id)">
+                                <span class="category-pick-list__label">{{ category?.category }}</span>
+                                <span class="category-pick-list__check" aria-hidden="true"
+                                    *ngIf="formGroup.get('categoryID')?.value == category.id">✓</span>
+                            </button>
+                        </div>
+                        <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">
+                            No categories available yet.
+                        </p>
+                        <p *ngIf="formGroup.get('categoryID')?.invalid && formGroup.get('categoryID')?.touched"
+                            class="create-wizard__field-error">Please choose a category.</p>
+                    </ng-container>
+                    <ng-template #expenseWizardStep0Desktop>
+                        <p class="create-wizard__intro">Pick the category this expense belongs to.</p>
+                        <mat-form-field appearance="outline" class="dialog-form__field">
+                            <mat-label class="primary-text">Expense Category</mat-label>
+                            <mat-select required formControlName="categoryID">
+                                <mat-option class="primary-text" *ngFor="let category of categories()" [value]="category.id">
+                                    {{ category?.category }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error>This field is required.</mat-error>
+                        </mat-form-field>
+                        <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">
+                            No categories available yet.
+                        </p>
+                        <p *ngIf="formGroup.get('categoryID')?.invalid && formGroup.get('categoryID')?.touched"
+                            class="create-wizard__field-error">Please choose a category.</p>
+                    </ng-template>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="1">
+                    <ng-container *ngIf="isWizardMobile(); else expenseWizardStep1Desktop">
+                        <div class="wizard-amount-layout">
+                            <p class="create-wizard__intro">Choose currency and enter the amount on the keypad.</p>
+                            <div class="wizard-amount-display-row">
+                                <div class="wizard-amount-currency-panel">
+                                    <span class="wizard-amount-currency-panel__label">Currency</span>
+                                    <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="wizardCurrencyMenu"
+                                        aria-haspopup="menu" aria-label="Currency, tap to change">
+                                        <ng-container *ngIf="formGroup.get('currency')?.value as cur; else pickCurrency">
+                                            <span class="wizard-amount-currency-trigger__inner">
+                                                <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ cur | flag }}</span>
+                                                <span class="wizard-amount-currency-chip__code">{{ cur }}</span>
+                                            </span>
+                                        </ng-container>
+                                        <ng-template #pickCurrency>
+                                            <span class="wizard-amount-currency-trigger__placeholder">Choose…</span>
+                                        </ng-template>
+                                        <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
+                                    </button>
+                                    <mat-menu #wizardCurrencyMenu="matMenu" class="wizard-amount-currency-menu">
+                                        <button mat-menu-item type="button" *ngFor="let c of currencies"
+                                            class="wizard-amount-currency-menu-item"
+                                            [class.wizard-amount-currency-menu-item--active]="formGroup.get('currency')?.value === c"
+                                            (click)="selectWizardCurrency(c)">
+                                            <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ c | flag }}</span>
+                                            <span>{{ c }}</span>
+                                        </button>
+                                    </mat-menu>
+                                </div>
+                                <div class="amount-keypad-display amount-keypad-display--in-row" aria-live="polite">
+                                    <span class="amount-keypad-display__value">{{ amountDisplay() }}</span>
+                                </div>
+                            </div>
+                            <app-amount-keypad [value]="amountEntry()"
+                                (valueChange)="onAmountEntryChange($event)"></app-amount-keypad>
+                            <p *ngIf="formGroup.get('moneySpent')?.invalid && formGroup.get('moneySpent')?.touched"
+                                class="create-wizard__field-error">Enter a valid amount.</p>
+                        </div>
+                    </ng-container>
+                    <ng-template #expenseWizardStep1Desktop>
+                        <p class="create-wizard__intro">Enter how much you spent and pick a currency.</p>
+                        <div class="dialog-form__row dialog-form__row--wizard-amount">
+                            <mat-form-field appearance="outline" class="dialog-form__field">
+                                <mat-label class="primary-text">Money spent</mat-label>
+                                <input required type="number" class="primary-text" autocomplete="off" matInput
+                                    formControlName="moneySpent">
+                                <mat-error>This field is required.</mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="dialog-form__field">
+                                <mat-label class="primary-text">Currency</mat-label>
+                                <mat-select formControlName="currency">
+                                    <mat-option class="primary-text" *ngFor="let currency of currencies" [value]="currency">
+                                        {{ currency | flag }} {{ currency }}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>This field is required.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <p *ngIf="formGroup.get('moneySpent')?.invalid && formGroup.get('moneySpent')?.touched"
+                            class="create-wizard__field-error">Enter a valid amount.</p>
+                    </ng-template>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="2">
+                    <p class="create-wizard__intro">Add an optional note so you remember this expense later.</p>
+                    <mat-form-field appearance="outline" class="dialog-form__field dialog-form__textarea">
+                        <mat-label class="primary-text">Description</mat-label>
+                        <textarea class="primary-text" matInput formControlName="description"
+                            placeholder="Write a note…"></textarea>
+                    </mat-form-field>
+                </ng-container>
+            </div>
+
+            <footer class="dialog-footer create-wizard__footer">
+                <div class="create-wizard__footer-row">
+                    <button type="button" class="dialog-btn dialog-btn--secondary" (click)="closeDialog(false)">
+                        Cancel
+                    </button>
+                    <div class="create-wizard__footer-actions">
+                        <button *ngIf="wizardStep() > 0" type="button" class="dialog-btn dialog-btn--secondary"
+                            (click)="wizardBack()">
+                            Back
+                        </button>
+                        <button *ngIf="wizardStep() < 2" type="button" class="dialog-btn dialog-btn--primary"
+                            (click)="wizardNext()">
+                            Next
+                        </button>
+                        <button *ngIf="wizardStep() === 2" type="button" class="dialog-btn dialog-btn--primary"
+                            (click)="add()">
+                            Save expense
+                        </button>
+                    </div>
+                </div>
+            </footer>
         </div>
-
-        <mat-form-field appearance="outline" class="dialog-form__field dialog-form__textarea">
-            <mat-label class="primary-text">Description</mat-label>
-            <textarea class="primary-text" matInput formControlName="description" placeholder="Write a note..."></textarea>
-        </mat-form-field>
     </form>
 </create-form>

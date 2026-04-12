@@ -8,7 +8,8 @@ import { ThemeService } from '../services/theme.service';
 })
 export class ChartUtils {
 
-    private lineChart: Chart;
+    private lineChart!: Chart;
+    private doughnutChart!: Chart;
     private hourLabels: string[] =[
         "00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00",
         "12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"
@@ -35,6 +36,9 @@ export class ChartUtils {
                 }],
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
                 scales: {
                     y: {
                         min: 0
@@ -50,7 +54,7 @@ export class ChartUtils {
     }
 
     public createDoughnutChart(context: string): Chart {
-        return new Chart(context, {
+        this.doughnutChart = new Chart(context, {
             type: 'doughnut',
             data: {
                 labels: ['Red', 'Blue', 'Yellow'],
@@ -68,6 +72,9 @@ export class ChartUtils {
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1,
                 cutout: 60,
                 plugins: {
                     legend: {
@@ -75,6 +82,14 @@ export class ChartUtils {
                     }
                 }
             }
+        }) as Chart;
+        return this.doughnutChart;
+    }
+
+    public resizeDashboardCharts(): void {
+        requestAnimationFrame(() => {
+            this.lineChart?.resize();
+            this.doughnutChart?.resize();
         });
     }
 

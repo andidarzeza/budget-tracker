@@ -4,7 +4,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { slideDownUp } from './animations';
 import { DropdownOption } from './models';
 
-@Component({
+@Component({ standalone: false,
   selector: 'dropdown',
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.css'],

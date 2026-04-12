@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-@Component({
+@Component({ standalone: false,
   selector: 'record-actions',
   templateUrl: './record-actions.component.html',
   styleUrls: ['./record-actions.component.css']

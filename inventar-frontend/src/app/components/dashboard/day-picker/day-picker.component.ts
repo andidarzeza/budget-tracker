@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
-@Component({
+@Component({ standalone: false,
   selector: 'day-picker',
   templateUrl: './day-picker.component.html',
   styleUrls: ['./day-picker.component.css']

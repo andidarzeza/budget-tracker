@@ -8,7 +8,7 @@ import { FilterOptions } from './table-actions/filter/filter.models';
 import { TableActionInput } from './table-actions/TableActionInput';
 import { PAGE_SIZE } from 'src/environments/environment';
 
-@Component({
+@Component({ standalone: false,
   selector: 'base-table',
   templateUrl: './base-table.component.html',
   styleUrls: ['./base-table.component.css'],

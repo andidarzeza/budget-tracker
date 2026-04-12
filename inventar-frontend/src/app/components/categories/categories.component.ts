@@ -15,7 +15,7 @@ import { HttpParams } from '@angular/common/http';
 import { FilterService } from 'src/app/core/services/filter.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-categories',
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css']

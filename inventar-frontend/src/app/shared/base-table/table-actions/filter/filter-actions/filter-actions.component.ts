@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 
-@Component({
+@Component({ standalone: false,
   selector: 'filter-actions',
   templateUrl: './filter-actions.component.html',
   styleUrls: ['./filter-actions.component.css']

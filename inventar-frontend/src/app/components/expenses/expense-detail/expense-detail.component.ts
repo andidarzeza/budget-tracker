@@ -6,7 +6,7 @@ import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-expense-detail',
   templateUrl: './expense-detail.component.html',
   styleUrls: ['./expense-detail.component.css']

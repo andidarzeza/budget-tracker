@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 
-@Component({
+@Component({ standalone: false,
   selector: 'and-input',
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.css']

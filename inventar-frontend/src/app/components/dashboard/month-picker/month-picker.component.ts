@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
-@Component({
+@Component({ standalone: false,
   selector: 'month-picker',
   templateUrl: './month-picker.component.html',
   styleUrls: ['./month-picker.component.css']

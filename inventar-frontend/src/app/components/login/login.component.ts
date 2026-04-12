@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { IConfiguration } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
-@Component({
+@Component({ standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
@@ -45,7 +45,7 @@ export class LoginComponent {
     private toasterService: ToastrService,
     private configurationSevice: ConfigurationService,
     public sharedService: SharedService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public authenticationService: AuthenticationService,
     private accountService: AccountService,
     private router: Router,
@@ -63,7 +63,7 @@ export class LoginComponent {
   showSpinner = false;
   showPassword: boolean = false;
 
-  loginGroup: FormGroup = this.formBuilder.group({
+  loginGroup: UntypedFormGroup = this.formBuilder.group({
     username: ['', Validators.required],
     password: ['', Validators.required]
   });

@@ -1,4 +1,4 @@
-<create-form [loadingData]="loadingData" icon="list_alt" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)" (create)="add()">
+<create-form [loadingData]="loadingData" [loadingMessage]="loadingMessage" icon="list_alt" [entity]="entity" [editMode]="isEditMode" (close)="closeDialog($event)" (create)="add()">
 
     <form [formGroup]="categoryGroup" class="dialog-form">
         <div class="dialog-form__row dialog-form__row--category">

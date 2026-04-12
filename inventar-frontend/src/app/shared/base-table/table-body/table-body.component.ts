@@ -15,7 +15,7 @@ import { inOutAnimation } from 'src/app/animations';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinition } from 'src/app/models/models';
 
-@Component({
+@Component({ standalone: false,
   selector: 'table-body',
   templateUrl: './table-body.component.html',
   styleUrls: ['./table-body.component.css'],

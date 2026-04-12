@@ -14,7 +14,7 @@ import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { MenuItem, SideBarMode } from './base-template.models';
 
 
-@Component({
+@Component({ standalone: false,
   selector: 'base-template',
   templateUrl: './base-template.component.html',
   styleUrls: ['./base-template.component.css'],

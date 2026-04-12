@@ -1,0 +1,19 @@
+<div class="amount-keypad" role="group" aria-label="Number keypad">
+  <div class="amount-keypad__grid">
+    <button type="button" class="amount-keypad__key" (click)="onDigit('7')">7</button>
+    <button type="button" class="amount-keypad__key" (click)="onDigit('8')">8</button>
+    <button type="button" class="amount-keypad__key" (click)="onDigit('9')">9</button>
+    <button type="button" class="amount-keypad__key" (click)="onDigit('4')">4</button>
+    <button type="button" class="amount-keypad__key" (click)="onDigit('5')">5</button>
+    <button type="button" class="amount-keypad__key" (click)="onDigit('6')">6</button>
+    <button type="button" class="amount-keypad__key" (click)="onDigit('1')">1</button>
+    <button type="button" class="amount-keypad__key" (click)="onDigit('2')">2</button>
+    <button type="button" class="amount-keypad__key" (click)="onDigit('3')">3</button>
+    <button type="button" class="amount-keypad__key amount-keypad__key--muted" (click)="onDecimal()">.</button>
+    <button type="button" class="amount-keypad__key" (click)="onDigit('0')">0</button>
+    <button type="button" class="amount-keypad__key amount-keypad__key--wide" (click)="onBackspace()" aria-label="Delete last digit">
+      ⌫
+    </button>
+  </div>
+  <button type="button" class="amount-keypad__clear" (click)="onClear()">Clear</button>
+</div>

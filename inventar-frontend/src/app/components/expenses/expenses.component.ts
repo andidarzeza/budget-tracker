@@ -16,7 +16,7 @@ import { HttpParams } from '@angular/common/http';
 import { FilterService } from 'src/app/core/services/filter.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 
-@Component({
+@Component({ standalone: false,
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css']
