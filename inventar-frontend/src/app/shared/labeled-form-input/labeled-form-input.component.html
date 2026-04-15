@@ -1,0 +1,46 @@
+<div class="form-field" [style.gap]="label() ? '.25rem' : ''">
+  <label [for]="inputId() || null">
+    {{ label() }}
+    @if (required) {
+      *
+    }
+  </label>
+  <div class="input-wrapper relative" [class.required-field]="displayError">
+    @if (icon()) {
+      <mat-icon class="input-icon">{{ icon() }}</mat-icon>
+    }
+    @if (type() === "tel") {
+      <span class="phone-prefix" [class.required-text]="displayError">+355</span>
+    }
+    <input
+      [id]="inputId() || null"
+      [type]="type()"
+      [placeholder]="placeholder()"
+      [formControl]="control()"
+      [readonly]="readonly()"
+      (keypress)="onKeyPress($event)"
+      (blur)="onBlur()"
+    />
+    @if (displayError) {
+      <div class="error-message">
+        @if (control().errors?.["required"]) {
+          This field is required.
+        } @else if (control().errors?.["email"]) {
+          Please enter a valid email address.
+        } @else if (control().errors?.["passwordStrength"]) {
+          Password does not meet strength requirements.
+        } @else if (control().errors?.["passwordMismatch"]) {
+          Passwords do not match.
+        } @else if (control().errors?.["min"] && minErrorKey()) {
+          {{ minErrorKey()! }}
+        } @else if (
+          control().errors?.["maxlength"] || control().errors?.["minlength"]
+        ) {
+          Please enter a valid phone number.
+        } @else if (control().errors?.["albanianPhone"]) {
+          Please enter a valid phone number.
+        }
+      </div>
+    }
+  </div>
+</div>

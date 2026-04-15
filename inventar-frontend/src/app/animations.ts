@@ -55,7 +55,7 @@ export const inOutSlide = trigger(
 
 export const slider =
   trigger('routeAnimations', [
-    transition('loginPage => accountPage', slideTo('right')),
+    // Keep route animation trigger active, but skip login -> account transition.
     // transition('* => loginPage', slideTo('right') ),
     // transition('accountPage => *', slideTo('right') ),
     // transition('* => accountPage', slideTo('right') ),

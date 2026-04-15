@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -8,13 +8,13 @@ import { ConfigurationService } from 'src/app/services/configuration.service';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ToastrService } from 'ngx-toastr';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
-import { IConfiguration } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 @Component({ standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger(
       'inOutAnimation',
@@ -60,8 +60,7 @@ export class LoginComponent {
       this.router.navigate(['/dashboard']);
     }
   }
-  showSpinner = false;
-  showPassword: boolean = false;
+  showSpinner = signal(false);
 
   loginGroup: UntypedFormGroup = this.formBuilder.group({
     username: ['', Validators.required],
@@ -70,41 +69,34 @@ export class LoginComponent {
 
 
   login(): void {
-    this.showSpinner = true;
-    if (this.loginGroup.valid) {
-      this.authenticationService
-        .login(this.loginGroup.value).pipe(
-          mergeMap(() => this.configurationSevice.getConfiguration())
-        )
-        .pipe(
-          map(() => this.sharedService.changeTheme()),
-          mergeMap(() => this.accountService.findAllAccountsSimplified())
-        )
-        .subscribe((response: any) => {
-          
-          this.showSpinner = false;
-          this.router.navigateByUrl('/account', {
-            state: {
-              accounts: response
-            }
-          });
-        },
-          (error: any) => {
-            this.showSpinner = false;
-            if (error?.status === 403) {
-              this.toasterService.error("Authentication Failed", "Failed", TOASTER_CONFIGURATION)
-            }
-          });
+    if (!this.loginGroup.valid) {
+      this.loginGroup.markAllAsTouched();
+      return;
     }
-  }
 
-  togglePasswordVisibility(passwordInput: HTMLInputElement): void {
-    if (passwordInput.type == "text") {
-      passwordInput.type = "password";
-    } else {
-      passwordInput.type = "text";
-    }
-    this.showPassword = !this.showPassword;
+    this.showSpinner.set(true);
+    this.authenticationService
+      .login(this.loginGroup.value).pipe(
+        mergeMap(() => this.configurationSevice.getConfiguration())
+      )
+      .pipe(
+        map(() => this.sharedService.changeTheme()),
+        mergeMap(() => this.accountService.findAllAccountsSimplified())
+      )
+      .subscribe((response: any) => {
+        this.showSpinner.set(false);
+        this.router.navigateByUrl('/account', {
+          state: {
+            accounts: response
+          }
+        });
+      },
+        (error: any) => {
+          this.showSpinner.set(false);
+          if (error?.status === 403) {
+            this.toasterService.error("Authentication Failed", "Failed", TOASTER_CONFIGURATION)
+          }
+        });
   }
 
   navigate(url: string): void {

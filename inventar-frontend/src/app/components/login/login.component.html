@@ -1,59 +1,51 @@
 <div class="login-container">
-    
-    <mat-card class="form-container">
+    <section class="visual-panel">
+        <img class="visual-image" src="assets/login-hero.svg" alt="Budget overview illustration">
+    </section>
 
-        <div>
-            test
-        </div>
+    <section class="form-panel">
+        <mat-card class="form-container">
+            <mat-progress-bar class="progress-bar" mode="indeterminate" [@inOutAnimation] *ngIf="showSpinner()"></mat-progress-bar>
 
-        <div>
-            <mat-progress-bar class="progress-bar" mode="indeterminate" [@inOutAnimation]
-            *ngIf="showSpinner" style="position: absolute;left:0;z-index: 2;"></mat-progress-bar>
-        <form [formGroup]="loginGroup" autocomplete="off">
-            <mat-form-field appearance="outline" style="width: 100%;">
-                <mat-label>Username</mat-label>
-                <input type="text" autocomplete="off" matInput formControlName="username">
-                <mat-error>This field is required.</mat-error>
-            </mat-form-field>
+            <div class="form-header">
+                <span class="form-header-badge">Budget Tracker</span>
+                <h1>Welcome back</h1>
+                <p>Sign in to continue to your dashboard and manage your finances.</p>
+            </div>
 
-            <mat-form-field appearance="outline" style="width: 100%;">
-                <mat-label>Password</mat-label>
-                <input #passwordInput type="password" autocomplete="off" matInput formControlName="password"
-                    style="width: calc(100% - 30px)">
-                <div class="show-hide-password" (click)="togglePasswordVisibility(passwordInput)">
-                    <mat-icon *ngIf="!showPassword">remove_red_eye</mat-icon>
-                    <mat-icon *ngIf="showPassword">visibility_off</mat-icon>
+            <form [formGroup]="loginGroup" autocomplete="off" class="login-form">
+                <cb-labeled-form-input class="full-width"
+                    [inputId]="'login-username'"
+                    [label]="'Username'"
+                    [placeholder]="'Enter username'"
+                    [control]="$any(loginGroup.get('username'))"
+                    [type]="'text'">
+                </cb-labeled-form-input>
+
+                <cb-labeled-form-input class="full-width password-field"
+                    [inputId]="'login-password'"
+                    [label]="'Password'"
+                    [placeholder]="'Enter password'"
+                    [control]="$any(loginGroup.get('password'))"
+                    [type]="'password'">
+                </cb-labeled-form-input>
+
+                <div class="actions">
+                    <button [disabled]="showSpinner()" class="primary-action" mat-raised-button color="primary" (click)="login()">
+                        Sign in
+                    </button>
+                    <span class="divider-label">or</span>
+
+                    <button [disabled]="showSpinner()" class="secondary-action" mat-raised-button color="primary"
+                        (click)="navigate('/register')">
+                        Create account
+                    </button>
+
                 </div>
-                <mat-error>This field is required.</mat-error>
-            </mat-form-field>
-
-            <div class="remember-me">
-                <mat-checkbox class="login-checkbox">Remember me</mat-checkbox>
-                <span class="forgot-password">
-                    Forgot password?
-                </span>
-            </div>
-
-            <div class="actions">
-                <button [disabled]="showSpinner ? 'disabled' : null" style="height: 3rem;background: #3560AD !important;" mat-raised-button color="primary" (click)="login()">
-                    Login
-                </button>
-                <span>or</span>
-
-                <button [disabled]="showSpinner ? 'disabled' : null" style="height: 3rem;background: #20328A !important" mat-raised-button color="primary"
-                    (click)="navigate('/register')">
-                    Register
-                </button>
-
-            </div>
-            <div class="caps-lock" appCapsLock>
-                <span style="display: block;height: 10px;width: 10px;background: rgb(255,130,67);border-radius: 50%;
-                margin-top: 6px;margin-right: 3px;">
-                </span> Caps lock is on.
-            </div>
-        </form>
-        </div>
-        
-
-    </mat-card>
+                <div class="caps-lock" appCapsLock>
+                    <span class="caps-lock-dot"></span> Caps lock is on.
+                </div>
+            </form>
+        </mat-card>
+    </section>
 </div>

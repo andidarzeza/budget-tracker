@@ -12,6 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CapsLockModule } from 'src/app/directives/caps-lock/caps-lock.module';
 import { SpinnerModule } from 'src/app/template/shared/spinner/spinner.module';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     SpinnerModule,
     MatIconModule,
     MatCheckboxModule,
-    MatButtonModule
+    MatButtonModule,
+    LabeledFormInputComponent
   ]
 })
 export class LoginModule { }

@@ -19,7 +19,7 @@
             (click)="sideBarService.closeMobileMenu()"
             aria-hidden="true"></div>
 
-        <div class="content-container">
+        <div class="content-container" [class.content-container--public]="!authenticationService.currentUserValue">
             <!-- <spinner *ngIf="routeSpinnerService.loading" style="z-index: 2;"></spinner> -->
             <ng-content></ng-content>
         </div>

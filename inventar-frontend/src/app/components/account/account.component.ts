@@ -1,6 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SimplifiedAccount } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
@@ -13,6 +14,7 @@ import { Unsubscribe } from 'src/app/shared/unsubscribe';
   selector: 'app-account',
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger(
       'inOutAnimation',
@@ -49,44 +51,67 @@ export class AccountComponent extends Unsubscribe implements OnInit {
     super();
   }
 
-  accounts: SimplifiedAccount[];
-  showSpinner = true;
+  accounts = signal<SimplifiedAccount[]>([]);
+  showSpinner = signal(true);
+
   ngOnInit(): void {
     this.navBarService.displayNavBar = false;
     this.sideBarService.displaySidebar = false;
-    const accounts = history?.state?.accounts;
+    const accounts = history?.state?.accounts as SimplifiedAccount[] | undefined;
     if (!accounts) {
       this.accountService
         .findAllAccountsSimplified()
-        .pipe(takeUntil(this.unsubscribe$))
+        .pipe(
+          finalize(() => this.showSpinner.set(false)),
+          takeUntil(this.unsubscribe$)
+        )
         .subscribe((simplifiedAccounts: SimplifiedAccount[]) => {
-          this.accounts = simplifiedAccounts
-          this.showSpinner = false;
-        },
-        ()=>{
-          this.showSpinner = false;
+          this.accounts.set(simplifiedAccounts);
+        }, () => {
+          this.accounts.set([]);
         });
     } else {
-      this.accounts = accounts;
-      this.showSpinner = false;
+      this.accounts.set(accounts);
+      this.showSpinner.set(false);
     }
-
-
   }
 
   selectAccount(account: SimplifiedAccount): void {
-    this.accountService.findOne(account.id).subscribe(() => {
-      localStorage.setItem("account", account.id);
-      this.router.navigate(["/dashboard"]);
-    });
+    this.showSpinner.set(true);
+    this.accountService.findOne(account.id)
+      .pipe(finalize(() => this.showSpinner.set(false)))
+      .subscribe(() => {
+        localStorage.setItem("account", account.id);
+        this.router.navigate(["/dashboard"]);
+      });
   }
 
-  editAccount(account: SimplifiedAccount): void {
-
+  getAccountLabel(account: SimplifiedAccount): string {
+    const value = account?.title?.trim();
+    if (!value || value.toLowerCase() === 'titl') {
+      return 'My Profile';
+    }
+    return value;
   }
 
-  deleteAccount(account: SimplifiedAccount): void {
+  getAccountInitials(account: SimplifiedAccount): string {
+    const label = this.getAccountLabel(account);
+    const tokens = label.split(/\s+/).filter(Boolean);
+    if (!tokens.length) {
+      return 'MP';
+    }
+    if (tokens.length === 1) {
+      return tokens[0].slice(0, 2).toUpperCase();
+    }
+    return `${tokens[0][0]}${tokens[1][0]}`.toUpperCase();
+  }
 
+  profileCountLabel(): string {
+    const count = this.accounts().length;
+    if (count === 1) {
+      return '1 profile';
+    }
+    return `${count} profiles`;
   }
 
 }

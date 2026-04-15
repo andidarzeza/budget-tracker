@@ -4,9 +4,8 @@ import { AccountComponent } from './account.component';
 import { AccountRoutingModule } from './account-routing.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatCardModule } from '@angular/material/card';
 
 
 
@@ -17,9 +16,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     AccountRoutingModule,
     MatButtonModule,
     MatRippleModule,
-    MatMenuModule,
     MatProgressBarModule,
-    MatIconModule
+    MatCardModule
   ],
   exports: [AccountComponent]
 })

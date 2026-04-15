@@ -742,7 +742,8 @@ mat-dialog-container {
 }
 
 .mat-drawer-container {
-    height: calc(100% - var(--app-toolbar-height, 76px));
+    height: 100%;
+    // height: calc(100% - var(--app-toolbar-height, 76px));
     background: var(--secondary);
 }
 
