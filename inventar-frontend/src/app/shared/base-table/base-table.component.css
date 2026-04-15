@@ -2,8 +2,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-    flex: 1;
-    height: calc(100% - 126px);
+    flex: 1 1 auto;
     position: relative;
 }
 
@@ -15,6 +14,7 @@
     display: flex;
     flex-direction: column;
     background: var(--card);
+    overflow: hidden;
 }
 
 .table-opened {
@@ -49,6 +49,7 @@
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
+    height: 100%;
     min-height: 0;
     min-width: 0;
     width: 100%;
@@ -58,6 +59,7 @@
     width: var(--table-width);
     max-width: 100%;
     height: calc(100% - 40px);
+    min-height: 0;
     border-radius: 10px;
     overflow: hidden;
     margin: auto;
@@ -67,7 +69,6 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
-    transition: background var(--background-animation-timing);
 }
 
 .base-table-mobile {
@@ -150,6 +151,7 @@
 }
 
 .mobile-cards-viewport {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;

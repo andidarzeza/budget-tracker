@@ -11,7 +11,6 @@
     padding: 8px 25px;
     border-radius: 10px;
     font-weight: 500;
-    transition: color 0.2s, background 0.2s;
 }
 
 .range-container .range-option {
@@ -50,35 +49,55 @@
 }
 
 .period-summary-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
+    display: block;
     align-items: stretch;
     min-width: 0;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .summary-panel {
     min-width: 0;
-    padding: 16px 16px 18px;
-    border-radius: 12px;
-    background: var(--secondary, rgba(0, 0, 0, 0.04));
-    border: 1px solid var(--field-outline, rgba(0, 0, 0, 0.08));
+    padding: 18px 16px 16px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--card) 90%, var(--secondary) 10%);
+    border: 1px solid color-mix(in srgb, var(--field-outline) 70%, transparent);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
     box-sizing: border-box;
+    transition: box-shadow 140ms ease;
 }
 
 .summary-panel--income {
-    border-left: 4px solid #059669;
+    background: color-mix(in srgb, var(--card) 94%, #effaf6 6%);
 }
 
 .summary-panel--expense {
-    border-left: 4px solid #dc2626;
+    background: color-mix(in srgb, var(--card) 94%, #fdf3f3 6%);
+}
+
+.summary-panel--combined {
+    background: color-mix(in srgb, var(--card) 92%, var(--secondary) 8%);
+}
+
+.summary-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.summary-column + .summary-column {
+    border-left: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+    padding-left: 14px;
+}
+
+.summary-panel:hover {
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
 }
 
 .summary-panel__heading {
-    margin: 0 0 12px;
-    font-size: 1rem;
-    font-weight: 600;
+    margin: 0 0 14px;
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
     color: var(--card-title);
 }
 
@@ -105,11 +124,16 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    background: var(--card, rgba(255, 255, 255, 0.04));
-    margin-bottom: 6px;
-    border: 1px solid var(--field-outline, rgba(0, 0, 0, 0.06));
+    padding: 10px 11px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--secondary) 72%, transparent);
+    margin-bottom: 8px;
+    border: 1px solid color-mix(in srgb, var(--field-outline) 58%, transparent);
+    transition: background 140ms ease;
+}
+
+.currency-breakdown__row:hover {
+    background: color-mix(in srgb, var(--secondary) 88%, transparent);
 }
 
 .currency-breakdown__row:last-child {
@@ -122,24 +146,34 @@
     gap: 8px;
     min-width: 0;
     color: var(--card-title);
-    font-size: 14px;
+    font-size: 0.9rem;
 }
 
 .currency-breakdown__flag {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     line-height: 1;
     flex-shrink: 0;
 }
 
 .currency-breakdown__code {
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.02em;
 }
 
 .currency-breakdown__amount {
     flex-shrink: 0;
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
-    font-size: 0.9375rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--card-title);
+    letter-spacing: 0.01em;
+}
+
+.summary-panel--income .currency-breakdown__amount {
+    color: var(--card-title);
+}
+
+.summary-panel--expense .currency-breakdown__amount {
     color: var(--card-title);
 }
 
@@ -180,6 +214,8 @@
     height: auto;
     border-radius: 10px;
     box-sizing: border-box;
+    background: var(--card) !important;
+    color: var(--card-title);
     /* Inset content from mat-card edges (Material may zero default padding when not using mat-card-content). */
     padding: 16px 20px 24px;
 }
@@ -246,6 +282,8 @@
     height: 250px;
     max-width: 100%;
     border-radius: 10px;
+    background: var(--card) !important;
+    color: var(--card-title);
     padding: 0;
     padding-bottom: 16px;
     box-sizing: border-box;
@@ -277,6 +315,8 @@
     height: auto;
     max-width: 100%;
     border-radius: 10px;
+    background: var(--card) !important;
+    color: var(--card-title);
     box-sizing: border-box;
 }
 
@@ -397,9 +437,38 @@
         flex: 0 0 auto;
     }
 
-    .period-summary-grid {
+    .summary-panel {
+        padding: 14px 12px 13px;
+    }
+
+    .summary-columns {
         grid-template-columns: 1fr;
         gap: 12px;
+    }
+
+    .summary-column + .summary-column {
+        border-left: none;
+        border-top: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+        padding-left: 0;
+        padding-top: 12px;
+    }
+
+    .summary-panel__heading {
+        margin-bottom: 11px;
+        font-size: 0.96rem;
+    }
+
+    .currency-breakdown__row {
+        padding: 9px 10px;
+        margin-bottom: 6px;
+    }
+
+    .currency-breakdown__label {
+        font-size: 0.84rem;
+    }
+
+    .currency-breakdown__amount {
+        font-size: 0.88rem;
     }
 
     .period-summary-header__title {

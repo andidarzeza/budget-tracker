@@ -1,12 +1,9 @@
 .dark {
     background: var(--dark);
-
-    transition: background var(--background-animation-timing);
 }
 
 .dark-body {
     background: #111619;
-    transition: background var(--background-animation-timing);
 }
 
 .dark-sb9:before {
@@ -44,7 +41,6 @@
 
 .dark-table {
     background: var(--dark);
-    transition: background var(--background-animation-timing) !important;
 }
 
 .dark-text {
@@ -59,7 +55,6 @@
 
 .dark-settings {
     background: var(--dark);
-    transition: background var(--background-animation-timing);
 }
 
 

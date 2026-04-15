@@ -9,7 +9,8 @@
         [total]="totalItems$ | async"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
         (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)" (loadMore)="loadMore()"
-        [pageIndex]="page" [loadingMore]="loadingMore"
+        [loading]="loading()"
+        [pageIndex]="page" [loadingMore]="loadingMore()"
         [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()"
         (onRefresh)="resetAndQuery()" (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
         (layoutModeChange)="resetAndQuery()" [displayEditAction]="false">

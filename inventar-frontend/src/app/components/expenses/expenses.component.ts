@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
@@ -19,7 +19,8 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 @Component({ standalone: false,
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
-  styleUrls: ['./expenses.component.css']
+  styleUrls: ['./expenses.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
   

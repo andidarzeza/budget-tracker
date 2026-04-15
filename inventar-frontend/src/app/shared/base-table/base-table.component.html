@@ -1,6 +1,11 @@
 <ng-container *ngIf="{ mobile: (breakpointService.useTableCardLayout$ | async) === true } as layout">
     <!-- Desktop: bordered table shell + paginator -->
     <div *ngIf="!layout.mobile" class="base-table-container">
+        <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading">
+            <mat-spinner class="app-loading-spinner" diameter="42" strokeWidth="4"></mat-spinner>
+            <p class="app-loading-label">Loading data...</p>
+        </div>
+
         <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
             [hideEmbeddedTitle]="false"
             (onOpenDialog)="onOpenDialog.emit()" (onRefresh)="onRefresh.emit()" (onSearch)="onSearch.emit($event)"
@@ -42,6 +47,10 @@
             </table-actions>
         </div>
         <div class="mobile-cards-viewport">
+            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading">
+                <mat-spinner class="app-loading-spinner" diameter="38" strokeWidth="4"></mat-spinner>
+                <p class="app-loading-label">Loading data...</p>
+            </div>
             <table-body [displayEditAction]="displayEditAction"
                 [displayDeleteAction]="displayDeleteAction" [data]="data"
                 [columnDefinitions]="columnDefinition"

@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -12,7 +13,30 @@ import { PAGE_SIZE } from 'src/environments/environment';
   selector: 'base-table',
   templateUrl: './base-table.component.html',
   styleUrls: ['./base-table.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger(
+      'inOutAnimation',
+      [
+        transition(
+          ':enter',
+          [
+            style({ opacity: 0 }),
+            animate('400ms ease-out',
+              style({ opacity: 1 }))
+          ]
+        ),
+        transition(
+          ':leave',
+          [
+            style({ opacity: 1 }),
+            animate('400ms ease-in',
+              style({ opacity: 0 }))
+          ]
+        )
+      ]
+    )
+  ]
 })
 export class BaseTableComponent implements OnInit, OnDestroy {
 
@@ -30,6 +54,7 @@ export class BaseTableComponent implements OnInit, OnDestroy {
 
   /** Current page index for server-side mat-paginator (0-based). */
   @Input() pageIndex = 0;
+  @Input() loading = false;
   @Input() loadingMore = false;
 
   @Output() onRefresh: EventEmitter<any> = new EventEmitter();

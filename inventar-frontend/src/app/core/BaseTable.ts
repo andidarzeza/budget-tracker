@@ -1,5 +1,5 @@
 import { HttpParams } from "@angular/common/http";
-import { Directive, ViewChild } from "@angular/core";
+import { Directive, ViewChild, signal } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -14,6 +14,10 @@ import { Unsubscribe } from "../shared/unsubscribe";
 
 @Directive({ standalone: false })
 export abstract class BaseTable<E> extends Unsubscribe {
+    private readonly minLoadingMs = 500;
+    private loadingStartedAt = 0;
+    private loadingTimeout: ReturnType<typeof setTimeout> | null = null;
+
     public constructor(
         protected dialog: DialogService,
         protected entityService: any,
@@ -29,7 +33,8 @@ export abstract class BaseTable<E> extends Unsubscribe {
 
     page: number = 0;
     size: number = PAGE_SIZE;
-    loadingMore = false;
+    loadingMore = signal(false);
+    loading = signal(false);
 
     private dataSubject = new BehaviorSubject<E[]>([]);
     private totalSubject = new BehaviorSubject<number>(0);
@@ -47,6 +52,9 @@ export abstract class BaseTable<E> extends Unsubscribe {
     abstract getQueryParams(): HttpParams;
 
     query(append: boolean = false): void {
+        if (!append) {
+            this.startLoading();
+        }
         this.entityService
             .findAll(this.getQueryParams())
             .pipe(takeUntil(this.unsubscribe$))
@@ -57,7 +65,7 @@ export abstract class BaseTable<E> extends Unsubscribe {
                     if (append) {
                         if (rows.length === 0) {
                             this.page = Math.max(0, this.page - 1);
-                            this.loadingMore = false;
+                            this.loadingMore.set(false);
                             return;
                         }
                         this.dataSubject.next([...this.dataSubject.getValue(), ...rows]);
@@ -65,13 +73,19 @@ export abstract class BaseTable<E> extends Unsubscribe {
                         this.dataSubject.next([...rows]);
                     }
                     this.totalSubject.next(total);
-                    this.loadingMore = false;
+                    if (!append) {
+                        this.stopLoading();
+                    }
+                    this.loadingMore.set(false);
                 },
                 error: () => {
                     if (append) {
                         this.page = Math.max(0, this.page - 1);
                     }
-                    this.loadingMore = false;
+                    if (!append) {
+                        this.stopLoading();
+                    }
+                    this.loadingMore.set(false);
                 }
             });
     }
@@ -86,10 +100,10 @@ export abstract class BaseTable<E> extends Unsubscribe {
     loadMore(): void {
         const loaded = this.dataSubject.getValue().length;
         const total = this.totalSubject.getValue();
-        if (this.loadingMore || total === 0 || loaded >= total) {
+        if (this.loadingMore() || total === 0 || loaded >= total) {
             return;
         }
-        this.loadingMore = true;
+        this.loadingMore.set(true);
         this.page++;
         this.query(true);
     }
@@ -138,6 +152,24 @@ export abstract class BaseTable<E> extends Unsubscribe {
                 this.resetAndQuery();
                 this.toaster.success("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
             })
+    }
+
+    private startLoading(): void {
+        if (this.loadingTimeout) {
+            clearTimeout(this.loadingTimeout);
+            this.loadingTimeout = null;
+        }
+        this.loadingStartedAt = Date.now();
+        this.loading.set(true);
+    }
+
+    private stopLoading(): void {
+        const elapsed = Date.now() - this.loadingStartedAt;
+        const remaining = Math.max(0, this.minLoadingMs - elapsed);
+        this.loadingTimeout = setTimeout(() => {
+            this.loading.set(false);
+            this.loadingTimeout = null;
+        }, remaining);
     }
 
 }

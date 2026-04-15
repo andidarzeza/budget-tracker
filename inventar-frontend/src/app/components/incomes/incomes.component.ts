@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { AddIncomeComponent } from './add-income/add-income.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
@@ -21,7 +21,8 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 @Component({ standalone: false,
   selector: 'app-incomes',
   templateUrl: './incomes.component.html',
-  styleUrls: ['./incomes.component.css']
+  styleUrls: ['./incomes.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IncomesComponent extends BaseTable<Income> implements OnInit, AfterViewInit {
   sort: string = "createdTime,desc";

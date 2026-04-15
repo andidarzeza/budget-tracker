@@ -1,4 +1,4 @@
-<div class="dashboard-container" *ngIf="{dashboardData: dashboardData$ | async} as observables">
+<div class="dashboard-container">
 
     <mat-card class="left-container">
         <header class="period-summary-header">
@@ -7,46 +7,50 @@
         </header>
 
         <div class="period-summary-grid">
-            <section class="summary-panel summary-panel--income" aria-labelledby="summary-income-heading">
-                <h3 id="summary-income-heading" class="summary-panel__heading">Income</h3>
-                <ng-container *ngIf="observables.dashboardData as incomeDash; else incomeUnavailable">
-                    <div class="currency-breakdown" *ngIf="incomeDash.incomeTotalsByCurrency?.length">
-                        <ul class="currency-breakdown__list">
-                            <li class="currency-breakdown__row" *ngFor="let c of incomeDash.incomeTotalsByCurrency">
-                                <span class="currency-breakdown__label">
-                                    <span class="currency-breakdown__flag" aria-hidden="true">{{ c._id | flag }}</span>
-                                    <span class="currency-breakdown__code">{{ c._id }}</span>
-                                </span>
-                                <span class="currency-breakdown__amount">{{ c.total | number : '1.0-2' }}</span>
-                            </li>
-                        </ul>
+            <section class="summary-panel summary-panel--combined" aria-label="Income and expenses summary">
+                <div class="summary-columns">
+                    <div class="summary-column" aria-labelledby="summary-income-heading">
+                        <h3 id="summary-income-heading" class="summary-panel__heading">Income</h3>
+                        <ng-container *ngIf="dashboardData() as incomeDash; else incomeUnavailable">
+                            <div class="currency-breakdown" *ngIf="incomeDash.incomeTotalsByCurrency?.length">
+                                <ul class="currency-breakdown__list">
+                                    <li class="currency-breakdown__row" *ngFor="let c of incomeDash.incomeTotalsByCurrency">
+                                        <span class="currency-breakdown__label">
+                                            <span class="currency-breakdown__flag" aria-hidden="true">{{ c._id | flag }}</span>
+                                            <span class="currency-breakdown__code">{{ c._id }}</span>
+                                        </span>
+                                        <span class="currency-breakdown__amount">{{ c.total | number : '1.0-2' }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <p class="summary-panel__empty" *ngIf="!incomeDash.incomeTotalsByCurrency?.length">No income in this period.</p>
+                        </ng-container>
+                        <ng-template #incomeUnavailable>
+                            <p class="summary-panel__empty">Summary unavailable.</p>
+                        </ng-template>
                     </div>
-                    <p class="summary-panel__empty" *ngIf="!incomeDash.incomeTotalsByCurrency?.length">No income in this period.</p>
-                </ng-container>
-                <ng-template #incomeUnavailable>
-                    <p class="summary-panel__empty">Summary unavailable.</p>
-                </ng-template>
-            </section>
 
-            <section class="summary-panel summary-panel--expense" aria-labelledby="summary-expense-heading">
-                <h3 id="summary-expense-heading" class="summary-panel__heading">Expenses</h3>
-                <ng-container *ngIf="observables.dashboardData as expenseDash; else expenseUnavailable">
-                    <div class="currency-breakdown" *ngIf="expenseDash.expenseTotalsByCurrency?.length">
-                        <ul class="currency-breakdown__list">
-                            <li class="currency-breakdown__row" *ngFor="let c of expenseDash.expenseTotalsByCurrency">
-                                <span class="currency-breakdown__label">
-                                    <span class="currency-breakdown__flag" aria-hidden="true">{{ c._id | flag }}</span>
-                                    <span class="currency-breakdown__code">{{ c._id }}</span>
-                                </span>
-                                <span class="currency-breakdown__amount">{{ c.total | number : '1.0-2' }}</span>
-                            </li>
-                        </ul>
+                    <div class="summary-column" aria-labelledby="summary-expense-heading">
+                        <h3 id="summary-expense-heading" class="summary-panel__heading">Expenses</h3>
+                        <ng-container *ngIf="dashboardData() as expenseDash; else expenseUnavailable">
+                            <div class="currency-breakdown" *ngIf="expenseDash.expenseTotalsByCurrency?.length">
+                                <ul class="currency-breakdown__list">
+                                    <li class="currency-breakdown__row" *ngFor="let c of expenseDash.expenseTotalsByCurrency">
+                                        <span class="currency-breakdown__label">
+                                            <span class="currency-breakdown__flag" aria-hidden="true">{{ c._id | flag }}</span>
+                                            <span class="currency-breakdown__code">{{ c._id }}</span>
+                                        </span>
+                                        <span class="currency-breakdown__amount">{{ c.total | number : '1.0-2' }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <p class="summary-panel__empty" *ngIf="!expenseDash.expenseTotalsByCurrency?.length">No expenses in this period.</p>
+                        </ng-container>
+                        <ng-template #expenseUnavailable>
+                            <p class="summary-panel__empty">Summary unavailable.</p>
+                        </ng-template>
                     </div>
-                    <p class="summary-panel__empty" *ngIf="!expenseDash.expenseTotalsByCurrency?.length">No expenses in this period.</p>
-                </ng-container>
-                <ng-template #expenseUnavailable>
-                    <p class="summary-panel__empty">Summary unavailable.</p>
-                </ng-template>
+                </div>
             </section>
         </div>
 
@@ -58,8 +62,8 @@
 
             <div class="range-container">
                 <div *ngFor="let range of ranges"
-                    [style.background]="range == selectedRange ? 'var(--light)' : 'var(--card)'"
-                    [style.color]="range == selectedRange ? 'white' : 'var(--card-title)'"
+                    [style.background]="range == selectedRange() ? 'var(--light)' : 'var(--card)'"
+                    [style.color]="range == selectedRange() ? 'white' : 'var(--card-title)'"
                     [style.margin-left]="range == 'DAY' ? '0px' : '10px'" (click)="onRangeSelect(range)"
                     class="mat-elevation-z2 pointer no-select range-option">{{range | titlecase}}</div>
             </div>
@@ -73,10 +77,10 @@
 
     <div class="right-side">
         <mat-card class="doughnut-chart-container">
-            <day-picker *ngIf="selectedRange == 'DAY'" (onChange)="onDateSelected($event)"></day-picker>
-            <month-picker *ngIf="selectedRange == 'MONTH'" (onChange)="onDateSelected($event)"></month-picker>
-            <year-picker *ngIf="selectedRange == 'YEAR'" (onChange)="onDateSelected($event)"></year-picker>
-            <all-time-header *ngIf="selectedRange == 'MAX'" (onChange)="onDateSelected($event)"></all-time-header>
+            <day-picker *ngIf="selectedRange() == 'DAY'" (onChange)="onDateSelected($event)"></day-picker>
+            <month-picker *ngIf="selectedRange() == 'MONTH'" (onChange)="onDateSelected($event)"></month-picker>
+            <year-picker *ngIf="selectedRange() == 'YEAR'" (onChange)="onDateSelected($event)"></year-picker>
+            <all-time-header *ngIf="selectedRange() == 'MAX'" (onChange)="onDateSelected($event)"></all-time-header>
 
             <div class="category-chart">
                 <canvas id="category-chart"></canvas>
@@ -91,7 +95,7 @@
             <!-- <spinner *ngIf="loading" [@inOutAnimation]></spinner> -->
             <div class="title category-title">Spending by category</div>
 
-            <ng-container *ngIf="(observables.dashboardData?.expensesInfo?.length == 0 || !observables.dashboardData?.expensesInfo)">
+            <ng-container *ngIf="(dashboardData()?.expensesInfo?.length == 0 || !dashboardData()?.expensesInfo)">
                 <div class="no-data-container">
                     <mat-icon class="no-data-icon">info</mat-icon>
                     <span class="no-data-message">No data available to display.</span>
@@ -99,8 +103,8 @@
             </ng-container>
 
             <div class="hide-scroll categories-list"
-                *ngIf="!(observables.dashboardData?.expensesInfo?.length == 0 || !observables.dashboardData?.expensesInfo)">
-                <div *ngFor="let category of observables.dashboardData?.expensesInfo" class="category-data">
+                *ngIf="!(dashboardData()?.expensesInfo?.length == 0 || !dashboardData()?.expensesInfo)">
+                <div *ngFor="let category of dashboardData()?.expensesInfo" class="category-data">
 
                     <div class="category-details">
                         <mat-icon class="category-icon">{{category.icon}}</mat-icon>

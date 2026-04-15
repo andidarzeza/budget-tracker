@@ -168,33 +168,6 @@ app-date-picker {
     background: var(--secondary);
 }
 
-// transition
-
-.mat-toolbar,
-#application-body,
-.mat-card,
-.main-action-container,
-.content-container,
-.settings-menu,
-.settings-view,
-.mat-menu-content,
-.balance-info,
-.table-header,
-.mat-paginator,
-.no-data,
-.table-row,
-.table-opened,
-.table-closed,
-.filter-container,
-.range-container,
-.range-option {
-    transition: background var(--background-animation-timing) !important;
-}
-
-.title {
-    transition: color var(--background-animation-timing) !important;
-}
-
 .mat-paginator {
     color: var(--primary-text);
 }
@@ -566,8 +539,15 @@ button.toast-close-button {
     background-color: var(--light) !important;
 }
 
-.sidenav {
-    width: 50%;
+.sidenav,
+.mat-drawer.sidenav {
+    width: min(68vw, 760px);
+    min-width: min(56vw, 620px);
+    max-width: 100vw;
+}
+
+.mat-drawer.sidenav .mat-drawer-inner-container {
+    width: 100%;
 }
 
 /* Responsive Design */
@@ -859,12 +839,16 @@ mat-footer-row,
         margin-top: 20px;
     }
 
-    .sidenav {
-        width: 100%;
-    }
 }
 
 @media only screen and (max-width: 990px) {
+    .sidenav,
+    .mat-drawer.sidenav {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+
     .mobile-action-container {
         display: inline-block !important;
     }

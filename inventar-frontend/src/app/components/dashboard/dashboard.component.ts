@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, signal } from '@angular/core';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -10,24 +10,25 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { Chart, registerables } from 'chart.js';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { inOutAnimation } from 'src/app/animations';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({ standalone: false,
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  animations: [inOutAnimation]
+  animations: [inOutAnimation],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent extends Unsubscribe implements AfterViewInit {
 
-  from: Date;
-  to: Date;
+  from!: Date;
+  to!: Date;
 
-  selectedRange: RangeType = "MONTH";
+  selectedRange = signal<RangeType>("MONTH");
   ranges: RangeType[] = ["DAY", "MONTH", "YEAR", "MAX"];
 
-  dashboardData$: Observable<DashboardDTO>;
+  dashboardData = signal<DashboardDTO | null>(null);
 
   ngAfterViewInit(): void {
     this.routeSpinnerService.stopLoading();
@@ -56,14 +57,17 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   }
 
   private getDashboardData(): void {
-    this.dashboardData$ = this.dashboardService
-      .getDashboardData(this.from, this.to, this.selectedRange)
-      .pipe(catchError(this.catchError));
+    this.dashboardService
+      .getDashboardData(this.from, this.to, this.selectedRange())
+      .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
+      .subscribe((data: DashboardDTO | null) => {
+        this.dashboardData.set(data);
+      });
   }
 
   private expensesTimeline(): void {
     this.dashboardService
-      .expensesTimeline(this.period, this.selectedRange)
+      .expensesTimeline(this.period, this.selectedRange())
       .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
       .subscribe((timeline: TimelineExpenseDTO[] | null) => {
         this.updateLineChartLabels();
@@ -77,14 +81,14 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   }
 
   onRangeSelect(range: RangeType): void {
-    this.selectedRange = range;
+    this.selectedRange.set(range);
     this.updateLineChartLabels();
     this.getDashboardData();
     this.expensesTimeline();
   }
 
   private updateLineChartLabels(): void {
-    this.chartUtil.updateTimelineLabels(this.selectedRange, "line", {year: this.from.getFullYear(), month: this.from.getMonth() + 1});
+    this.chartUtil.updateTimelineLabels(this.selectedRange(), "line", {year: this.from.getFullYear(), month: this.from.getMonth() + 1});
   }
 
   onDateSelected(dateRange: {from: Date, to: Date}): void {
@@ -96,7 +100,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
 
 
   private updateTimelineData(timeline: TimelineExpenseDTO[] | null | undefined): void {
-    if (this.selectedRange === 'MAX') {
+    if (this.selectedRange() === 'MAX') {
       this.chartUtil.updateTimelineDataByCurrency([]);
       return;
     }
@@ -117,18 +121,18 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     const datasets = currencies.map((cur, idx) => {
       const color = this.chartUtil.lineColorForDatasetIndex(idx);
       const data: number[] = [];
-      if (this.selectedRange === 'MONTH') {
+      if (this.selectedRange() === 'MONTH') {
         const dim = this.getDaysInMonth(this.from.getFullYear(), this.from.getMonth() + 1);
         for (let day = 1; day <= dim; day++) {
           const key = String(day).padStart(2, '0');
           data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
         }
-      } else if (this.selectedRange === 'DAY') {
+      } else if (this.selectedRange() === 'DAY') {
         for (let h = 0; h < 24; h++) {
           const key = String(h).padStart(2, '0');
           data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
         }
-      } else if (this.selectedRange === 'YEAR') {
+      } else if (this.selectedRange() === 'YEAR') {
         for (let m = 1; m <= 12; m++) {
           const key = String(m).padStart(2, '0');
           data.push(valueByKey.get(`${key}|${cur}`) ?? 0);

@@ -1,4 +1,4 @@
-import { Component, OnInit,  } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit,  } from '@angular/core';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { ColumnDefinition, History } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
@@ -17,7 +17,8 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 @Component({ standalone: false,
   selector: 'app-history',
   templateUrl: './history.component.html',
-  styleUrls: ['./history.component.css']
+  styleUrls: ['./history.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HistoryComponent extends BaseTable<History> implements OnInit{
   sort: string = "date,desc";

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { DialogService } from 'src/app/services/dialog.service';
@@ -18,7 +18,8 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 @Component({ standalone: false,
   selector: 'app-categories',
   templateUrl: './categories.component.html',
-  styleUrls: ['./categories.component.css']
+  styleUrls: ['./categories.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriesComponent extends BaseTable<Category> {
   sort: string = "lastModifiedDate,desc";
