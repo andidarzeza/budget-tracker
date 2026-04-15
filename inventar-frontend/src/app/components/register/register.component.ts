@@ -1,12 +1,9 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { mergeMap } from 'rxjs/operators';
-import { IConfiguration } from 'src/app/models/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
@@ -14,6 +11,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger(
       'inOutAnimation', 
@@ -39,6 +37,9 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   ]
 })
 export class RegisterComponent {
+  private readonly minSpinnerMs = 500;
+  private spinnerStartedAt = 0;
+  private spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private toasterService: ToastrService, 
@@ -53,7 +54,7 @@ export class RegisterComponent {
     }
   }
 
-  showPassword: boolean = false;
+  showSpinner = signal(false);
   
   registerGroup: UntypedFormGroup = this.formBuilder.group({
     username: ['', Validators.required],
@@ -71,25 +72,45 @@ export class RegisterComponent {
   }
 
   login(): void {
-    if(this.registerGroup.valid) {
-      this.authenticationService
-        .register(this.registerGroup.value)
-        .subscribe(() => this.router.navigate(['/login']),
-      (error: any) => {
-        if(error?.status === 409) {
-          this.toasterService.error("Username already taken", "Failed", TOASTER_CONFIGURATION)
-        }
-      });
+    if (!this.registerGroup.valid) {
+      this.registerGroup.markAllAsTouched();
+      return;
     }
+
+    this.startSpinner();
+    this.authenticationService
+      .register(this.registerGroup.value)
+      .subscribe(() => this.stopSpinner(() => this.router.navigate(['/login'])),
+        (error: any) => {
+          this.stopSpinner(() => {
+            if (error?.status === 409) {
+              this.toasterService.error("Username already taken", "Failed", TOASTER_CONFIGURATION);
+            }
+          });
+        });
   }
 
-  togglePasswordVisibility(passwordInput: HTMLInputElement): void {
-    if(passwordInput.type == "text") {
-      passwordInput.type = "password";
-    } else {
-      passwordInput.type = "text";
+  navigate(url: string): void {
+    this.router.navigate([url]);
+  }
+
+  private startSpinner(): void {
+    if (this.spinnerTimeout) {
+      clearTimeout(this.spinnerTimeout);
+      this.spinnerTimeout = null;
     }
-    this.showPassword = !this.showPassword;
+    this.spinnerStartedAt = Date.now();
+    this.showSpinner.set(true);
+  }
+
+  private stopSpinner(onHidden?: () => void): void {
+    const elapsed = Date.now() - this.spinnerStartedAt;
+    const remaining = Math.max(0, this.minSpinnerMs - elapsed);
+    this.spinnerTimeout = setTimeout(() => {
+      this.showSpinner.set(false);
+      this.spinnerTimeout = null;
+      onHidden?.();
+    }, remaining);
   }
 
 }

@@ -271,6 +271,44 @@ app-date-picker {
     text-align: center !important;
 }
 
+.app-loading-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+    border-radius: inherit;
+    background: rgba(255, 255, 255, 0.76);
+    backdrop-filter: blur(1.5px);
+}
+
+.app-loading-spinner {
+    --mdc-circular-progress-active-indicator-color: #3560ad;
+}
+
+.app-loading-label {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: #3f5481;
+}
+
+.dark-theme .app-loading-overlay {
+    background: rgba(17, 22, 32, 0.72);
+}
+
+.dark-theme .app-loading-spinner {
+    --mdc-circular-progress-active-indicator-color: #8fb5ff;
+}
+
+.dark-theme .app-loading-label {
+    color: #b5c4e7;
+}
+
 .mat-table tbody {
     display: block !important;
     max-height: 100% !important;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -12,28 +12,28 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class LabeledFormInputComponent {
   /** Form control to bind; value stays in sync when user types or when parent updates the control. */
-  readonly control = input.required<FormControl<string | number | null>>();
+  @Input({ required: true }) control!: FormControl<string | number | null>;
   /** Optional explicit input id. */
-  readonly inputId = input<string>('');
-  readonly label = input<string>('Label');
-  readonly placeholder = input<string>('');
-  readonly type = input<'text' | 'number' | 'tel' | 'password' | 'email'>('text');
+  @Input() inputId = '';
+  @Input() label = 'Label';
+  @Input() placeholder = '';
+  @Input() type: 'text' | 'number' | 'tel' | 'password' | 'email' = 'text';
   /** Optional custom message for min-value validation errors. */
-  readonly minErrorKey = input<string | null>(null);
+  @Input() minErrorKey: string | null = null;
   /** Optional Material icon name to show at the start of the input. */
-  readonly icon = input<string | null>(null);
-  readonly readonly = input<boolean>(false);
+  @Input() icon: string | null = null;
+  @Input() readonly = false;
 
   get required(): boolean {
-    return this.control().hasValidator(Validators.required);
+    return this.control?.hasValidator(Validators.required) ?? false;
   }
 
   get displayError(): boolean {
-    return this.control().invalid && (this.control().touched || this.control().dirty);
+    return this.control?.invalid && (this.control?.touched || this.control?.dirty);
   }
 
   onKeyPress(event: KeyboardEvent): void {
-    if(this.type() === "tel") {
+    if (this.type === "tel") {
       const charCode = event.charCode || event.keyCode;
       if (charCode < 48 || charCode > 57) {
         event.preventDefault(); // Prevent non-numeric character input
@@ -42,8 +42,8 @@ export class LabeledFormInputComponent {
   }
 
   onBlur(): void {
-    if(this.type() === "tel") {
-      const control = this.control() as any;
+    if (this.type === "tel") {
+      const control = this.control as any;
       if (control?.value) {
         // Remove all non-numeric characters
         if (control?.value?.startsWith("0")) {

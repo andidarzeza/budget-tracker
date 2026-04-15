@@ -5,7 +5,10 @@
 
     <section class="form-panel">
         <mat-card class="form-container">
-            <mat-progress-bar class="progress-bar" mode="indeterminate" [@inOutAnimation] *ngIf="showSpinner()"></mat-progress-bar>
+            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="showSpinner()">
+                <mat-spinner class="app-loading-spinner" diameter="46" strokeWidth="4"></mat-spinner>
+                <p class="app-loading-label">Signing you in...</p>
+            </div>
 
             <div class="form-header">
                 <span class="form-header-badge">Budget Tracker</span>

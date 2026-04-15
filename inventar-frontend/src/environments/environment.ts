@@ -22,11 +22,8 @@ export const environment = {
 // BAR NETWORK
 // export const serverAPIURL = 'http://192.168.100.206:9000';
 
-// LAN (phone + same machine): use your Mac IP
-export const serverAPIURL = 'http://192.168.1.6:9000';
-
-// LOCALHOST
-// export const serverAPIURL = 'http://localhost:9000';
+// LOCALHOST (default for local development)
+export const serverAPIURL = 'http://localhost:9000';
 
 export const TOASTER_CONFIGURATION = {
   timeOut: 7000, 

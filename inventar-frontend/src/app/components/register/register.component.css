@@ -1,110 +1,200 @@
 .register-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(145deg, #f3f6fb 0%, #e9effa 100%);
 }
 
+.visual-panel,
+.form-panel {
+    width: 50%;
+    min-height: 100vh;
+}
+
+.visual-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(155deg, #183472 0%, #264b97 45%, #3d6aca 100%);
+}
+
+.visual-image {
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+    max-height: 92vh;
+    object-fit: contain;
+}
+
+.form-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
 
 .form-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(540px, 100%);
+    padding: 2rem 1.75rem 1.5rem;
+    border-radius: 22px;
+    border: 1px solid rgba(53, 96, 173, 0.14);
+    box-shadow: 0 22px 50px rgba(24, 39, 75, 0.14) !important;
+}
+
+.form-header {
+    margin-bottom: 1.15rem;
+}
+
+.form-header-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(53, 96, 173, 0.1);
+    color: #365ba4;
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+}
+
+.form-header h1 {
+    margin: 0 0 0.45rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1f2c46;
+}
+
+.form-header p {
+    margin: 0;
+    font-size: 0.94rem;
+    color: #62708c;
+    line-height: 1.45;
+}
+
+.register-form {
     width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    z-index: 2;
-    background: #f7f7f7;
+    flex-direction: column;
+    gap: 0.9rem;
 }
 
-.remember-me {
-    padding-bottom: 17px;
-    padding-left: 2px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #525252;
+.name-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
 }
 
-.forgot-password {
-    cursor: pointer;
-    font-weight: 400;
+.full-width {
+    width: 100%;
 }
 
-button {
-    
-    background: rgba(103, 58, 183, 1) !important;
+.password-field {
+    margin-top: 0.25rem;
 }
 
 .actions {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    height: 3rem;
+    gap: 0.55rem;
+    margin-top: 1rem;
 }
 
 .actions > button {
     width: 100%;
-    height: 50px;
-    border-radius: 10px;
+    min-height: 50px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.96rem;
 }
 
-input {
-    color: #525252;
-    font-size: 14px;
+.primary-action {
+    background: linear-gradient(130deg, #3560ad 0%, #294d94 100%) !important;
+}
+
+.secondary-action {
+    border-color: rgba(53, 96, 173, 0.38) !important;
+    color: #2e4e91 !important;
 }
 
 .caps-lock {
     width: 100%;
     display: flex;
     justify-content: center;
-    color: #9F9F9F;
+    color: #9f9f9f;
     font-family: 'Source Sans Pro', sans-serif;
     overflow: hidden;
     height: 0;
     transition: height 200ms ease;
-    margin-top: 5px;
+    margin-top: 6px;
 }
 
-.show-hide-password {
-    position: absolute;
-    cursor: pointer;
-    color: #9F9F9F;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    user-select: none;
-}
-
-.icon-slash {
-    width: 31px;
-    height: 2px;
-    position: absolute;
-    background: #9F9F9F;
-    top: 83%;
-    left: 31%;
-    transform: rotate(46deg) translate(-50%, -50%);
-    border-radius: 58px;
-    opacity: 1;
-    transition: opacity 200ms;
+.caps-lock-dot {
+    display: block;
+    height: 10px;
+    width: 10px;
+    background: rgb(255, 130, 67);
+    border-radius: 50%;
+    margin-top: 6px;
+    margin-right: 3px;
 }
 
 @media only screen and (max-width: 1000px) {
-
-    .register-card {
-        width: 50%;
+    .visual-panel {
+        width: 45%;
+        padding: 1.5rem;
     }
 
-    .logo-container {
+    .form-panel {
+        width: 55%;
+    }
+
+    .form-container {
+        width: min(500px, 100%);
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    .register-container {
+        display: block;
+    }
+
+    .visual-panel {
         display: none;
+    }
+
+    .form-panel {
+        width: 100%;
+        min-height: 100vh;
+        padding: 1rem 0.9rem 1.25rem;
     }
 
     .form-container {
         width: 100%;
+        padding: 1.4rem 1rem 1rem;
+        border-radius: 16px;
     }
-}
 
-@media only screen and (max-width: 500px) {
-    .register-card {
-        width: calc(100% - 50px);
+    .form-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .form-header p {
+        font-size: 0.86rem;
+    }
+
+    .name-row {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+    }
+
+    .actions > button {
+        min-height: 48px;
     }
 }

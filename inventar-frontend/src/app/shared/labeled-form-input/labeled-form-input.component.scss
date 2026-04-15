@@ -79,3 +79,41 @@
     opacity: 1;
   }
 }
+
+/* Theme styles affecting labeled-form-input */
+:host-context(.dark-theme) {
+  .form-field {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .input-wrapper {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+
+    input {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  .mat-icon {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+:host-context(.light-theme) {
+  .form-field {
+    color: #1a1a1a;
+  }
+
+  .input-wrapper {
+    background-color: #f9fafb;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+
+    input {
+      color: rgba(0, 0, 0, 0.9);
+    }
+  }
+
+  .mat-icon {
+    color: rgba(0, 0, 0, 0.6);
+  }
+}

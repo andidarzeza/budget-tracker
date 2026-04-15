@@ -16,14 +16,6 @@
     box-shadow: 0 22px 50px rgba(24, 39, 75, 0.14) !important;
 }
 
-.progress-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    border-radius: 18px 18px 0 0;
-}
-
 .account-header {
     display: flex;
     align-items: flex-start;

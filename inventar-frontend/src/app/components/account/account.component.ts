@@ -40,6 +40,9 @@ import { Unsubscribe } from 'src/app/shared/unsubscribe';
   ]
 })
 export class AccountComponent extends Unsubscribe implements OnInit {
+  private readonly minSpinnerMs = 500;
+  private spinnerStartedAt = Date.now();
+  private spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     public accountService: AccountService,
@@ -62,7 +65,7 @@ export class AccountComponent extends Unsubscribe implements OnInit {
       this.accountService
         .findAllAccountsSimplified()
         .pipe(
-          finalize(() => this.showSpinner.set(false)),
+          finalize(() => this.stopSpinner()),
           takeUntil(this.unsubscribe$)
         )
         .subscribe((simplifiedAccounts: SimplifiedAccount[]) => {
@@ -72,14 +75,14 @@ export class AccountComponent extends Unsubscribe implements OnInit {
         });
     } else {
       this.accounts.set(accounts);
-      this.showSpinner.set(false);
+      this.stopSpinner();
     }
   }
 
   selectAccount(account: SimplifiedAccount): void {
-    this.showSpinner.set(true);
+    this.startSpinner();
     this.accountService.findOne(account.id)
-      .pipe(finalize(() => this.showSpinner.set(false)))
+      .pipe(finalize(() => this.stopSpinner()))
       .subscribe(() => {
         localStorage.setItem("account", account.id);
         this.router.navigate(["/dashboard"]);
@@ -112,6 +115,24 @@ export class AccountComponent extends Unsubscribe implements OnInit {
       return '1 profile';
     }
     return `${count} profiles`;
+  }
+
+  private startSpinner(): void {
+    if (this.spinnerTimeout) {
+      clearTimeout(this.spinnerTimeout);
+      this.spinnerTimeout = null;
+    }
+    this.spinnerStartedAt = Date.now();
+    this.showSpinner.set(true);
+  }
+
+  private stopSpinner(): void {
+    const elapsed = Date.now() - this.spinnerStartedAt;
+    const remaining = Math.max(0, this.minSpinnerMs - elapsed);
+    this.spinnerTimeout = setTimeout(() => {
+      this.showSpinner.set(false);
+      this.spinnerTimeout = null;
+    }, remaining);
   }
 
 }

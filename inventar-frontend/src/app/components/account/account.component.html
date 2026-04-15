@@ -1,7 +1,9 @@
 <div class="account-page">
   <mat-card class="account-card light-dashboard-card {{sharedService.theme}}-table">
-    <mat-progress-bar class="progress-bar {{sharedService.theme}}" mode="indeterminate" [@inOutAnimation]
-      *ngIf="showSpinner()"></mat-progress-bar>
+    <div class="app-loading-overlay" [@inOutAnimation] *ngIf="showSpinner()">
+      <mat-spinner class="app-loading-spinner" diameter="46" strokeWidth="4"></mat-spinner>
+      <p class="app-loading-label">Loading profiles...</p>
+    </div>
 
     <header class="account-header">
       <div class="account-avatar" aria-hidden="true">

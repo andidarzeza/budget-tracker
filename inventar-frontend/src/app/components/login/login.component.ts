@@ -40,6 +40,9 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
   ]
 })
 export class LoginComponent {
+  private readonly minSpinnerMs = 500;
+  private spinnerStartedAt = 0;
+  private spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private toasterService: ToastrService,
@@ -74,7 +77,7 @@ export class LoginComponent {
       return;
     }
 
-    this.showSpinner.set(true);
+    this.startSpinner();
     this.authenticationService
       .login(this.loginGroup.value).pipe(
         mergeMap(() => this.configurationSevice.getConfiguration())
@@ -84,22 +87,43 @@ export class LoginComponent {
         mergeMap(() => this.accountService.findAllAccountsSimplified())
       )
       .subscribe((response: any) => {
-        this.showSpinner.set(false);
-        this.router.navigateByUrl('/account', {
-          state: {
-            accounts: response
-          }
+        this.stopSpinner(() => {
+          this.router.navigateByUrl('/account', {
+            state: {
+              accounts: response
+            }
+          });
         });
       },
         (error: any) => {
-          this.showSpinner.set(false);
-          if (error?.status === 403) {
-            this.toasterService.error("Authentication Failed", "Failed", TOASTER_CONFIGURATION)
-          }
+          this.stopSpinner(() => {
+            if (error?.status === 403) {
+              this.toasterService.error("Authentication Failed", "Failed", TOASTER_CONFIGURATION)
+            }
+          });
         });
   }
 
   navigate(url: string): void {
     this.router.navigate([url]);
+  }
+
+  private startSpinner(): void {
+    if (this.spinnerTimeout) {
+      clearTimeout(this.spinnerTimeout);
+      this.spinnerTimeout = null;
+    }
+    this.spinnerStartedAt = Date.now();
+    this.showSpinner.set(true);
+  }
+
+  private stopSpinner(onHidden?: () => void): void {
+    const elapsed = Date.now() - this.spinnerStartedAt;
+    const remaining = Math.max(0, this.minSpinnerMs - elapsed);
+    this.spinnerTimeout = setTimeout(() => {
+      this.showSpinner.set(false);
+      this.spinnerTimeout = null;
+      onHidden?.();
+    }, remaining);
   }
 }

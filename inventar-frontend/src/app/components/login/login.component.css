@@ -45,14 +45,6 @@
     box-shadow: 0 22px 50px rgba(24, 39, 75, 0.14) !important;
 }
 
-.progress-bar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 2;
-    border-radius: 20px 20px 0 0;
-}
-
 .form-header {
     margin-bottom: 1.25rem;
 }
