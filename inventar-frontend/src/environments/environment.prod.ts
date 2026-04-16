@@ -23,7 +23,7 @@ export const environment = {
 // export const serverAPIURL = 'http://192.168.100.206:9000';
 
 // LOCALHOST
-export const serverAPIURL = 'http://localhost:9000';
+export const serverAPIURL = '/api';
 
 export const TOASTER_CONFIGURATION = {
   timeOut: 7000, 
