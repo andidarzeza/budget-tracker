@@ -11,33 +11,49 @@
 
 .qr-scanner-dialog__topbar {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.85rem;
+    padding: 0.25rem;
+}
+
+.qr-scanner-dialog__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(53, 96, 173, 0.14);
+    color: var(--card-title);
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.45rem;
 }
 
 .qr-scanner-dialog__topbar h2 {
-    margin: 0 0 0.35rem;
-    font-size: 1.2rem;
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
     font-weight: 700;
 }
 
 .qr-scanner-dialog__topbar p {
     margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.8;
-    line-height: 1.45;
+    font-size: 0.89rem;
+    opacity: 0.78;
+    line-height: 1.4;
 }
 
 .qr-scanner-dialog__viewport {
     position: relative;
     flex: 1 1 auto;
     min-height: 0;
-    border-radius: 18px;
+    border-radius: 20px;
     overflow: hidden;
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #101a33;
+    border: 1px solid rgba(53, 96, 173, 0.25);
+    box-shadow: 0 16px 36px rgba(23, 35, 66, 0.26);
 }
 
 .qr-scanner-dialog__video {
@@ -50,12 +66,12 @@
 .qr-scanner-dialog__frame {
     position: absolute;
     inset: 50% auto auto 50%;
-    width: min(62vw, 250px);
-    height: min(62vw, 250px);
-    border: 3px solid rgba(255, 255, 255, 0.92);
-    border-radius: 20px;
+    width: min(62vw, 255px);
+    height: min(62vw, 255px);
+    border: 2px solid rgba(255, 255, 255, 0.96);
+    border-radius: 18px;
     transform: translate(-50%, -50%);
-    box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.22);
+    box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.34);
     pointer-events: none;
 }
 
@@ -70,14 +86,33 @@
     color: #fff;
     font-size: 0.95rem;
     line-height: 1.45;
+    gap: 0.5rem;
+    background: rgba(16, 26, 51, 0.66);
 }
 
 .qr-scanner-dialog__status--error {
-    background: rgba(15, 23, 42, 0.76);
+    background: rgba(124, 30, 30, 0.46);
+}
+
+.qr-scanner-dialog__hint {
+    margin: 0.75rem 0 0;
+    font-size: 0.84rem;
+    color: var(--card-title);
+    opacity: 0.72;
 }
 
 .qr-scanner-dialog__footer {
     display: flex;
     justify-content: flex-end;
-    padding-top: 1rem;
+    padding-top: 0.9rem;
+}
+
+@media (max-width: 767px) {
+    .qr-scanner-dialog {
+        padding: 0.9rem;
+    }
+
+    .qr-scanner-dialog__topbar h2 {
+        font-size: 1.15rem;
+    }
 }
