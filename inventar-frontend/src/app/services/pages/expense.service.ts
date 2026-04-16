@@ -14,4 +14,8 @@ export class ExpenseService extends BaseService<Expense> {
   constructor(public http: HttpClient) { 
     super(http);
   }
+
+  verifyInvoiceFromScannedUrl(url: string) {
+    return this.http.post(`${this.API_URl}/verify-invoice-from-url`, { url });
+  }
 }

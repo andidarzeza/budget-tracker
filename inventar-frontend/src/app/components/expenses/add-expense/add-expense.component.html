@@ -92,6 +92,15 @@
                 </ng-container>
 
                 <ng-container *ngSwitchCase="1">
+                    <ng-container *ngIf="isQrPrefillMode; else expenseAmountStep">
+                        <p class="create-wizard__intro">Add an optional note so you remember this expense later.</p>
+                        <mat-form-field appearance="outline" class="dialog-form__field dialog-form__textarea">
+                            <mat-label class="primary-text">Description</mat-label>
+                            <textarea class="primary-text" matInput formControlName="description"
+                                placeholder="Write a note…"></textarea>
+                        </mat-form-field>
+                    </ng-container>
+                    <ng-template #expenseAmountStep>
                     <ng-container *ngIf="isWizardMobile(); else expenseWizardStep1Desktop">
                         <div class="wizard-amount-layout">
                             <p class="create-wizard__intro">Choose currency and enter the amount on the keypad.</p>
@@ -153,15 +162,18 @@
                         <p *ngIf="formGroup.get('moneySpent')?.invalid && formGroup.get('moneySpent')?.touched"
                             class="create-wizard__field-error">Enter a valid amount.</p>
                     </ng-template>
+                    </ng-template>
                 </ng-container>
 
                 <ng-container *ngSwitchCase="2">
-                    <p class="create-wizard__intro">Add an optional note so you remember this expense later.</p>
-                    <mat-form-field appearance="outline" class="dialog-form__field dialog-form__textarea">
-                        <mat-label class="primary-text">Description</mat-label>
-                        <textarea class="primary-text" matInput formControlName="description"
-                            placeholder="Write a note…"></textarea>
-                    </mat-form-field>
+                    <ng-container *ngIf="!isQrPrefillMode">
+                        <p class="create-wizard__intro">Add an optional note so you remember this expense later.</p>
+                        <mat-form-field appearance="outline" class="dialog-form__field dialog-form__textarea">
+                            <mat-label class="primary-text">Description</mat-label>
+                            <textarea class="primary-text" matInput formControlName="description"
+                                placeholder="Write a note…"></textarea>
+                        </mat-form-field>
+                    </ng-container>
                 </ng-container>
             </div>
 
@@ -175,11 +187,11 @@
                             (click)="wizardBack()">
                             Back
                         </button>
-                        <button *ngIf="wizardStep() < 2" type="button" class="dialog-btn dialog-btn--primary"
+                        <button *ngIf="wizardStep() < lastWizardStep()" type="button" class="dialog-btn dialog-btn--primary"
                             (click)="wizardNext()">
                             Next
                         </button>
-                        <button *ngIf="wizardStep() === 2" type="button" class="dialog-btn dialog-btn--primary"
+                        <button *ngIf="wizardStep() === lastWizardStep()" type="button" class="dialog-btn dialog-btn--primary"
                             (click)="add()">
                             Save expense
                         </button>

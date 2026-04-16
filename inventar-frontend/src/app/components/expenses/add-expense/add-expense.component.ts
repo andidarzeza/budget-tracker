@@ -24,6 +24,13 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { inOutAnimation } from 'src/app/animations';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
+interface AddExpenseDialogData {
+  id?: string;
+  moneySpent?: number;
+  currency?: string;
+  description?: string;
+}
+
 @Component({
   standalone: false,
   selector: 'app-add-expense',
@@ -48,9 +55,10 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   readonly loadingData = signal(false);
   readonly loadingMessage = signal('Loading…');
   readonly isEditMode: boolean;
+  readonly isQrPrefillMode: boolean;
 
   readonly wizardStep = signal(0);
-  readonly wizardStepLabels: readonly string[] = ['Category', 'Amount', 'Description'];
+  readonly wizardStepLabels: readonly string[];
 
   /** Wizard step 1: raw keypad string (digits + optional `.`), synced to `moneySpent`. */
   readonly amountEntry = signal('');
@@ -64,7 +72,7 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
 
   constructor(
     private toaster: ToastrService,
-    @Inject(MAT_DIALOG_DATA) public expense: Expense,
+    @Inject(MAT_DIALOG_DATA) public expense: AddExpenseDialogData | null,
     public dialogRef: MatDialogRef<AddExpenseComponent>,
     private formBuilder: UntypedFormBuilder,
     private expenseService: ExpenseService,
@@ -72,7 +80,11 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
     public accountService: AccountService
   ) {
     super();
-    this.isEditMode = this.expense != null;
+    this.isEditMode = !!this.expense?.id;
+    this.isQrPrefillMode = !this.isEditMode && this.expense?.moneySpent != null;
+    this.wizardStepLabels = this.isQrPrefillMode
+      ? ['Category', 'Description']
+      : ['Category', 'Amount', 'Description'];
   }
 
   formGroup: UntypedFormGroup = this.formBuilder.group({
@@ -86,6 +98,17 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
 
   ngOnInit(): void {
     this.formGroup.get('currency')?.setValue(this.baseCurrency);
+    if (this.isQrPrefillMode) {
+      const scannedAmount = Number(this.expense?.moneySpent);
+      if (Number.isFinite(scannedAmount)) {
+        this.formGroup.get('moneySpent')?.setValue(scannedAmount);
+        this.amountEntry.set(
+          scannedAmount.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false })
+        );
+      }
+      this.formGroup.get('currency')?.setValue(this.expense?.currency || 'ALL');
+      this.formGroup.get('description')?.setValue(this.expense?.description || '');
+    }
     if (!this.isEditMode) {
       this.wizardStep.set(0);
     }
@@ -96,11 +119,11 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
     if (this.wizardStep() === 0 && !this.validateWizardCategoryStep()) {
       return;
     }
-    if (this.wizardStep() === 1 && !this.validateWizardAmountStep()) {
+    if (!this.isQrPrefillMode && this.wizardStep() === 1 && !this.validateWizardAmountStep()) {
       return;
     }
-    if (this.wizardStep() < 2) {
-      if (this.wizardStep() === 0 && this.isWizardMobile()) {
+    if (this.wizardStep() < this.lastWizardStep()) {
+      if (!this.isQrPrefillMode && this.wizardStep() === 0 && this.isWizardMobile()) {
         this.primeWizardAmountEntry();
       }
       this.wizardStep.update((s) => s + 1);
@@ -150,6 +173,10 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
     if (this.wizardStep() > 0) {
       this.wizardStep.update((s) => s - 1);
     }
+  }
+
+  lastWizardStep(): number {
+    return this.isQrPrefillMode ? 1 : 2;
   }
 
   selectWizardCategory(categoryId: string | number): void {

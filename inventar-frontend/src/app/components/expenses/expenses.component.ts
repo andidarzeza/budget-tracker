@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
+import { QrScannerDialogComponent } from './qr-scanner-dialog/qr-scanner-dialog.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
 import { CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
@@ -15,6 +17,8 @@ import { BaseTable } from 'src/app/core/BaseTable';
 import { HttpParams } from '@angular/common/http';
 import { FilterService } from 'src/app/core/services/filter.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({ standalone: false,
   selector: 'app-expenses',
@@ -44,7 +48,9 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     public navBarService: NavBarService,
     public columnDefinitionService: ColumnDefinitionService,
     public filterService: FilterService,
-    private routeSpinnerService: RouteSpinnerService
+    private routeSpinnerService: RouteSpinnerService,
+    public breakpointService: BreakpointService,
+    private readonly matDialog: MatDialog
   ) {
     super(dialog, expenseService, toaster, accountService);
   }
@@ -67,6 +73,54 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
 
   getQueryParams(): HttpParams {
     return buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount());
+  }
+
+  openQrScanner(): void {
+    if (!this.breakpointService.matchesMobileCreateLayout()) {
+      return;
+    }
+
+    this.matDialog.open(QrScannerDialogComponent, {
+      width: '100vw',
+      maxWidth: '100vw',
+      height: '100dvh',
+      maxHeight: '100dvh',
+      panelClass: ['qr-scanner-dialog-panel']
+    }).afterClosed().subscribe((scannedValue: string | null) => {
+      if (!scannedValue) {
+        return;
+      }
+      this.handleScannedUrl(scannedValue);
+    });
+  }
+
+  private handleScannedUrl(rawValue: string): void {
+    this.expenseService.verifyInvoiceFromScannedUrl(rawValue).subscribe({
+      next: (response: any) => {
+        const totalPrice = Number(response?.totalPrice);
+        const sellerName = String(response?.seller?.name || '').trim();
+        if (!Number.isFinite(totalPrice) || totalPrice <= 0) {
+          this.toaster.error(
+            'Scanned invoice does not contain a valid total price.',
+            'Invalid invoice',
+            TOASTER_CONFIGURATION
+          );
+          return;
+        }
+        this.dialog.openDialog(AddExpenseComponent, {
+          moneySpent: totalPrice,
+          currency: 'ALL',
+          description: sellerName
+        }).onSuccess(() => this.resetAndQuery());
+      },
+      error: () => {
+        this.toaster.error(
+          'Could not verify scanned invoice. Please try again.',
+          'Verification failed',
+          TOASTER_CONFIGURATION
+        );
+      }
+    });
   }
 
 }

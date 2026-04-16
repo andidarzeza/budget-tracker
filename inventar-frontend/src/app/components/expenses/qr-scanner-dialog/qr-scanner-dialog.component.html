@@ -1,0 +1,26 @@
+<div class="qr-scanner-dialog">
+  <div class="qr-scanner-dialog__topbar">
+    <div>
+      <h2>Scan QR code</h2>
+      <p>Point your camera at a square QR code containing a URL.</p>
+    </div>
+    <button type="button" mat-icon-button aria-label="Close scanner" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="qr-scanner-dialog__viewport" [class.qr-scanner-dialog__viewport--error]="!!errorMessage()">
+    <video #videoElement class="qr-scanner-dialog__video" playsinline muted></video>
+    <div class="qr-scanner-dialog__frame" *ngIf="cameraReady()"></div>
+    <div class="qr-scanner-dialog__status" *ngIf="!cameraReady() && !errorMessage()">
+      Initializing camera...
+    </div>
+    <div class="qr-scanner-dialog__status qr-scanner-dialog__status--error" *ngIf="errorMessage()">
+      {{ errorMessage() }}
+    </div>
+  </div>
+
+  <div class="qr-scanner-dialog__footer">
+    <button type="button" mat-stroked-button (click)="close()">Cancel</button>
+  </div>
+</div>

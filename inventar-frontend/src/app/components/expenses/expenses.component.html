@@ -4,7 +4,13 @@
         <app-expense-detail *ngIf="isSidenavOpened" [expenseViewId]="entityViewId" (onCloseAction)="drawer.toggle()">
         </app-expense-detail>
     </mat-drawer>
-    
+
+    <div class="mobile-qr-action" *ngIf="breakpointService.useTableCardLayout$ | async">
+        <button type="button" mat-fab class="mobile-qr-action__button" aria-label="Scan QR" (click)="openQrScanner()">
+            <mat-icon>qr_code_scanner</mat-icon>
+        </button>
+    </div>
+
     <base-table [data]="data$ | async" [columnDefinition]="columnDefinition"
         (onDeleteConfirmation)="openDeleteConfirmDialog($event)"
         (onAddEditForm)="openAddEditForm($event)"

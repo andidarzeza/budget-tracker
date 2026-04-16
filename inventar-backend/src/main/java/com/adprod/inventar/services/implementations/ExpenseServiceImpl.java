@@ -16,15 +16,24 @@ import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class ExpenseServiceImpl implements ExpenseService {
+    private static final String VERIFY_INVOICE_API_URL = "https://efiskalizimi-app.tatime.gov.al/invoice-check/api/verifyInvoice";
     private final ExpenseRepository expenseRepository;
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
@@ -109,5 +118,79 @@ public class ExpenseServiceImpl implements ExpenseService {
         expenseRepository.save(spending);
         historyService.save(historyService.from(EntityAction.UPDATE, EXPENSE, spending.getAccount()));
         return ResponseEntity.ok(spending);
+    }
+
+    @Override
+    public ResponseEntity verifyInvoiceFromUrl(InvoiceVerificationFromUrlRequest request) {
+        if (Objects.isNull(request) || Objects.isNull(request.getUrl()) || request.getUrl().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("URL is required."));
+        }
+
+        Map<String, String> qrParams = extractQrParams(request.getUrl().trim());
+        String iic = qrParams.get("iic");
+        String dateTimeCreated = qrParams.get("crtd");
+        String tin = qrParams.get("tin");
+
+        if (Objects.isNull(iic) || Objects.isNull(dateTimeCreated) || Objects.isNull(tin)) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseMessage("The scanned URL does not contain iic, crtd, and tin parameters."));
+        }
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("iic", iic);
+        formData.add("dateTimeCreated", dateTimeCreated);
+        formData.add("tin", tin);
+
+        try {
+            Map<String, Object> verificationResponse = WebClient.builder()
+                    .baseUrl(VERIFY_INVOICE_API_URL)
+                    .build()
+                    .post()
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .bodyValue(formData)
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                    .block();
+            Object totalPrice = Objects.nonNull(verificationResponse) ? verificationResponse.get("totalPrice") : null;
+            Object seller = Objects.nonNull(verificationResponse) ? verificationResponse.get("seller") : null;
+            if (Objects.isNull(totalPrice)) {
+                return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                        .body(new ResponseMessage("External service response does not include totalPrice."));
+            }
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalPrice", totalPrice);
+            response.put("seller", seller);
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(new ResponseMessage("Failed to verify invoice with external service."));
+        }
+    }
+
+    private Map<String, String> extractQrParams(String scannedUrl) {
+        URI uri = URI.create(scannedUrl);
+        String query = uri.getQuery();
+        String fragment = uri.getFragment();
+        String fragmentQuery = null;
+        if (Objects.nonNull(fragment) && fragment.contains("?")) {
+            fragmentQuery = fragment.substring(fragment.indexOf("?") + 1);
+        }
+
+        Map<String, String> params = new HashMap<>();
+        mergeQueryParams(params, query);
+        mergeQueryParams(params, fragmentQuery);
+        return params;
+    }
+
+    private void mergeQueryParams(Map<String, String> target, String query) {
+        if (Objects.isNull(query) || query.isEmpty()) {
+            return;
+        }
+        Map<String, String> extracted = UriComponentsBuilder.newInstance()
+                .query(query)
+                .build()
+                .getQueryParams()
+                .toSingleValueMap();
+        target.putAll(extracted);
     }
 }
