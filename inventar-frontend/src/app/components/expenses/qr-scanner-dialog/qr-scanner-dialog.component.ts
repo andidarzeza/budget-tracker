@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild, signal } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import jsQR from 'jsqr';
 
 interface DetectedBarcodeLike {
   rawValue?: string;
@@ -11,6 +12,9 @@ interface BarcodeDetectorConstructor {
   };
 }
 
+/** Cap frame size for jsQR so older phones stay responsive. */
+const JSQR_MAX_DIMENSION = 960;
+
 @Component({
   standalone: false,
   selector: 'app-qr-scanner-dialog',
@@ -21,7 +25,6 @@ interface BarcodeDetectorConstructor {
 export class QrScannerDialogComponent implements OnInit, OnDestroy {
   @ViewChild('videoElement', { static: true }) videoElement!: ElementRef<HTMLVideoElement>;
 
-  readonly scannerSupported = signal(true);
   readonly cameraReady = signal(false);
   readonly errorMessage = signal('');
 
@@ -29,6 +32,9 @@ export class QrScannerDialogComponent implements OnInit, OnDestroy {
   private rafId: number | null = null;
   private detector: { detect(source: ImageBitmapSource): Promise<DetectedBarcodeLike[]> } | null = null;
   private scanning = false;
+  private useNativeBarcode = false;
+  private jsQrCanvas: HTMLCanvasElement | null = null;
+  private jsQrCtx: CanvasRenderingContext2D | null = null;
 
   constructor(
     private readonly dialogRef: MatDialogRef<QrScannerDialogComponent, string | null>
@@ -36,13 +42,10 @@ export class QrScannerDialogComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     const detectorCtor = (window as Window & { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector;
-    if (!detectorCtor) {
-      this.scannerSupported.set(false);
-      this.errorMessage.set('QR scanning is not supported in this browser.');
-      return;
+    this.useNativeBarcode = typeof detectorCtor === 'function';
+    if (this.useNativeBarcode && detectorCtor) {
+      this.detector = new detectorCtor({ formats: ['qr_code'] });
     }
-
-    this.detector = new detectorCtor({ formats: ['qr_code'] });
 
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({
@@ -56,8 +59,14 @@ export class QrScannerDialogComponent implements OnInit, OnDestroy {
       video.srcObject = this.stream;
       await video.play();
       this.cameraReady.set(true);
-      this.startScanning();
-    } catch (error) {
+
+      if (this.useNativeBarcode) {
+        this.startScanningNative();
+      } else {
+        this.ensureJsQrCanvas();
+        this.startScanningJsQr();
+      }
+    } catch {
       this.errorMessage.set('Unable to access the camera. Please allow camera permission and try again.');
     }
   }
@@ -70,7 +79,17 @@ export class QrScannerDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.close(null);
   }
 
-  private startScanning(): void {
+  private ensureJsQrCanvas(): void {
+    if (this.jsQrCanvas) {
+      return;
+    }
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    this.jsQrCanvas = canvas;
+    this.jsQrCtx = ctx;
+  }
+
+  private startScanningNative(): void {
     if (!this.detector || this.scanning) {
       return;
     }
@@ -92,6 +111,52 @@ export class QrScannerDialogComponent implements OnInit, OnDestroy {
           }
         } catch {
           this.errorMessage.set('Scanning failed. Please try again.');
+        }
+      }
+
+      this.rafId = window.requestAnimationFrame(scan);
+    };
+
+    this.rafId = window.requestAnimationFrame(scan);
+  }
+
+  private startScanningJsQr(): void {
+    if (this.scanning) {
+      return;
+    }
+
+    this.scanning = true;
+    const scan = () => {
+      if (!this.scanning || !this.jsQrCanvas || !this.jsQrCtx) {
+        return;
+      }
+
+      const video = this.videoElement.nativeElement;
+      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        let w = video.videoWidth;
+        let h = video.videoHeight;
+        if (w > 0 && h > 0) {
+          if (w > JSQR_MAX_DIMENSION || h > JSQR_MAX_DIMENSION) {
+            const scale = JSQR_MAX_DIMENSION / Math.max(w, h);
+            w = Math.floor(w * scale);
+            h = Math.floor(h * scale);
+          }
+          this.jsQrCanvas.width = w;
+          this.jsQrCanvas.height = h;
+          this.jsQrCtx.drawImage(video, 0, 0, w, h);
+          try {
+            const imageData = this.jsQrCtx.getImageData(0, 0, w, h);
+            const result = jsQR(imageData.data, imageData.width, imageData.height, {
+              inversionAttempts: 'attemptBoth',
+            });
+            const value = result?.data?.trim();
+            if (value) {
+              this.dialogRef.close(value);
+              return;
+            }
+          } catch {
+            this.errorMessage.set('Scanning failed. Please try again.');
+          }
         }
       }
 
