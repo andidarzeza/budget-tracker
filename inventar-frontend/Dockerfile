@@ -1,4 +1,4 @@
-# Build Angular app; API origin from environment.docker.ts (browser → host:9000 by default).
+# Build Angular app; API is same-origin `/api` (nginx proxies to backend — see nginx.conf).
 FROM node:22-bookworm-slim AS build
 WORKDIR /app
 

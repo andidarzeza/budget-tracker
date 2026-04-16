@@ -1,18 +1,8 @@
 /**
- * Docker / VPS: SPA on HTTP_PORT (e.g. 4001), API on BACKEND_PORT (default 9000).
- * Must match BACKEND_PORT published for `backend` in docker-compose / .env.
+ * Docker / VPS: browser calls the API on the same origin as the SPA (`/api/...`).
+ * The web container’s nginx proxies `/api` to the backend service (see nginx.conf).
  */
-const DOCKER_API_PORT = 9000;
-
-function resolveDockerApiOrigin(): string {
-  if (typeof window === 'undefined') {
-    return '';
-  }
-  const { protocol, hostname } = window.location;
-  return `${protocol}//${hostname}:${DOCKER_API_PORT}`;
-}
-
-export const serverAPIURL = resolveDockerApiOrigin();
+export const serverAPIURL = '';
 
 export const environment = {
   production: true,

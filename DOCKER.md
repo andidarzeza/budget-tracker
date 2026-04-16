@@ -1,15 +1,15 @@
 # Docker deployment (e.g. Hostinger VPS)
 
-This stack runs **MongoDB**, the **Spring Boot** API, and the **Angular** app behind **nginx** on one machine. The Docker build uses `environment.docker.ts`: the browser calls the API on **the same host as the page, port `BACKEND_PORT`** (default **9000**), e.g. `http://YOUR_IP:9000/api/...`, while the SPA is served on **`HTTP_PORT`** (default **4001**). That is cross-origin; the API is configured with **permissive CORS** (any origin) in `SpringConfiguration`, so you do **not** need to set **`CORS_ORIGIN`**.
+This stack runs **MongoDB**, the **Spring Boot** API, and the **Angular** app behind **nginx** on one machine. The Docker build uses `environment.docker.ts`: the browser calls the API at **same-origin** paths **`/api/...`** (no port in the URL). The **web** container’s nginx **proxies** `/api` to the **backend** service on port **9000** inside the compose network. The API still has **permissive CORS** in `SpringConfiguration`; same-origin requests do not rely on it.
 
 **Default published ports**
 
 | Service   | Host port | Use |
 |-----------|-----------|-----|
-| **web** (nginx + Angular) | **4001** | Open the app at `http://YOUR_SERVER:4001` |
-| **backend** (Spring Boot) | **9000** | API base the SPA uses: `http://YOUR_SERVER:9000/api/...` |
+| **web** (nginx + Angular) | **4001** | Open the app at `http://YOUR_SERVER:4001` — API is `http://YOUR_SERVER:4001/api/...` |
+| **backend** (Spring Boot) | **9000** | Optional direct access (e.g. debugging); the SPA uses `/api` via nginx |
 
-Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports. If you change **`BACKEND_PORT`**, set **`DOCKER_API_PORT`** in `inventar-frontend/src/environments/environment.docker.ts` to the same value, then rebuild the **web** image.
+Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different **host** ports. The backend still listens on **9000 inside the container**; nginx proxies to `backend:9000`. Only if you change Spring’s **`server.port`** inside the image should you update **`proxy_pass`** in `inventar-frontend/nginx.conf` and rebuild **web**.
 
 ## Requirements
 
@@ -27,17 +27,13 @@ Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different host ports. I
    docker compose up -d
    ```
 
-4. Open `http://YOUR_SERVER_IP:4001` (or `http://YOUR_DOMAIN:4001`). Open firewall rules for **4001** and **9000** (the SPA calls the API on **9000** from the browser).
+4. Open `http://YOUR_SERVER_IP:4001` (or `http://YOUR_DOMAIN:4001`). Open firewall rules for **4001** (and **9000** only if you need direct API access from outside Docker).
 
 Data is stored in the **`mongo_data`** Docker volume. Back it up with your provider’s snapshot tools or `docker run` backup procedures.
 
 ## HTTPS
 
-Compose publishes **HTTP on port 4001** (web) and **9000** (backend). For HTTPS you can:
-
-- Terminate TLS on **Hostinger** (if they offer a reverse proxy in front of your VPS), or  
-- Install **Caddy** / **Traefik** / **Certbot** on the VPS and proxy to `127.0.0.1:4001` (and optionally `127.0.0.1:9000` if you expose the API under TLS), or  
-- Change the `web` service to publish `443:443` and use a custom nginx image with TLS certificates mounted as files.
+Compose publishes **HTTP on port 4001** (web) and **9000** (backend). For HTTPS (e.g. `https://www.example.com` with paths like `/api/...` on the same host), terminate TLS in front of the stack and proxy to **`127.0.0.1:4001`** only — `/api` is already handled by the **web** container’s nginx. Alternatively install **Caddy** / **Traefik** / **Certbot** on the VPS, or publish **443** from a custom nginx image with certificates.
 
 ## Useful commands
 
