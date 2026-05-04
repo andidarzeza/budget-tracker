@@ -33,6 +33,10 @@ export interface DashboardDTO {
     incomeTotalsByCurrency?: CurrencyTotalDTO[];
     /** Per-currency expense totals; backend omits zero amounts. */
     expenseTotalsByCurrency?: CurrencyTotalDTO[];
+    /** Per-category expense breakdown for the period, sorted desc by total. */
+    expensesInfo?: ExpenseInfoDTO[];
+    /** Per-category income breakdown for the period, sorted desc by total. */
+    incomesInfo?: IncomeInfoDTO[];
 }
 
 export interface TimelineIncomeDTO {
@@ -40,6 +44,7 @@ export interface TimelineIncomeDTO {
     income: number;
     currency: string;
 }
+
 
 export interface TimelineExpenseDTO {
     _id: string;
@@ -154,7 +159,7 @@ export interface UserRequest {
     lastName: string
 }
 
-export type RangeType = "DAY" | "MONTH" | "YEAR" | "MAX";
+export type RangeType = "DAY" | "WEEK" | "MONTH" | "YEAR" | "MAX";
 
 export interface SimplifiedAccount {
     id: string;

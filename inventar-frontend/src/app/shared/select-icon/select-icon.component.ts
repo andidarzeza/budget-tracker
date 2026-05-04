@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SharedService } from 'src/app/services/shared.service';
 
@@ -8,27 +8,24 @@ import { SharedService } from 'src/app/services/shared.service';
   templateUrl: './select-icon.component.html',
   styleUrls: ['./select-icon.component.css'],
   animations: [
-    trigger(
-      'slideAnimation', 
-      [
-        transition(
-          ':enter', 
-          [
-            style({ left: '100%' }),
-            animate('300ms cubic-bezier(0.25, 0.8, 0.25, 1)', 
-                    style({left: 0 }))
-          ]
-        ),
-        transition(
-          ':leave', 
-          [
-            style({ left: 0 }),
-            animate('300ms cubic-bezier(0.25, 0.8, 0.25, 1)', 
-                    style({ left: '100%' }))
-          ]
-        )
-      ]
-    )
+    trigger('panelAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('160ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ opacity: 0 }))
+      ])
+    ]),
+    trigger('fadeAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('160ms ease-in', style({ opacity: 0 }))
+      ])
+    ])
   ],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
@@ -98,6 +95,9 @@ export class SelectIconComponent implements ControlValueAccessor {
   }
 
   open(): void {
+    if (this.disabled) {
+      return;
+    }
     this.showIconSelect = true;
   }
 
@@ -107,8 +107,14 @@ export class SelectIconComponent implements ControlValueAccessor {
 
   select(icon: string): void {
     this.value = icon;
-    this.onChange(icon);    
+    this.onChange(icon);
     this.close();
   }
 
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.showIconSelect) {
+      this.close();
+    }
+  }
 }

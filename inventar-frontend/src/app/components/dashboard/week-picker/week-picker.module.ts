@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { YearPickerComponent } from './year-picker.component';
+import { WeekPickerComponent } from './week-picker.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -9,7 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
-  declarations: [YearPickerComponent],
+  declarations: [WeekPickerComponent],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -20,7 +20,7 @@ import { MatInputModule } from '@angular/material/input';
     MatNativeDateModule
   ],
   exports: [
-    YearPickerComponent
+    WeekPickerComponent
   ]
 })
-export class YearPickerModule { }
+export class WeekPickerModule { }

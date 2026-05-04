@@ -1,60 +1,37 @@
-
-<style>
-    /* width */
-    ::-webkit-scrollbar {
-        width: 5px;
-        border-radius: 10px;
-    }
-  
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.178);
-    }
-  
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 0, 0, 0.411);
-    }
-  </style>
-<mat-form-field  (click)="open()" class="primary-text" appearance="outline" style="width: 100%;cursor: pointer;">
-    <mat-label style="display: flex;align-items: center;" class="">
+<mat-form-field (click)="open()" class="primary-text icon-trigger" appearance="outline">
+    <mat-label class="icon-trigger__label">
         <mat-icon class="selected-icon primary-text" *ngIf="value">
             {{value}}
         </mat-icon>
-
-        <span style="padding-top: 3px;" class="primary-text">
+        <span class="primary-text icon-trigger__text">
             {{value ? value : 'Select Icon'}}
         </span>
     </mat-label>
-    <input style="cursor: pointer" readonly type="text" autocomplete="off" matInput>
+    <input class="icon-trigger__input" readonly type="text" autocomplete="off" matInput>
     <mat-error>This field is required.</mat-error>
 </mat-form-field>
 
-<div *ngIf="showIconSelect" [@slideAnimation] class="icon-select">
-    <div class="actions">
-        <button mat-icon-button (click)="close()">
-            <mat-icon style="color: var(--card-title);">
-                keyboard_arrow_left
-            </mat-icon>
-        </button>
+<ng-container *ngIf="showIconSelect">
+    <div class="icon-select-backdrop" [@fadeAnimation] (click)="close()"></div>
 
-        <span (click)="close()" style="font-size: 16px;padding-top: 4px;cursor: pointer;color: var(--card-title);">
-            Back
-        </span>
-    </div>
+    <div [@panelAnimation] class="icon-select" role="dialog" aria-label="Select an icon">
+        <div class="actions">
+            <button mat-icon-button (click)="close()" aria-label="Back">
+                <mat-icon class="actions__icon">keyboard_arrow_left</mat-icon>
+            </button>
+            <span class="actions__label" (click)="close()">Back</span>
+        </div>
 
+        <mat-divider></mat-divider>
 
-    <mat-divider></mat-divider>
-
-    <div class="icons">
-
-        <div *ngFor="let icon of icons" [ngStyle]="{'background': value==icon ? 'var(--light)' : 'default' }" class="icon" (click)="select(icon)">
-            <mat-icon [ngStyle]="{'color': value==icon ? 'white' : 'var(--primary-text)' }">
-                {{icon}}
-            </mat-icon>
-            <span style="margin-top: 5px;" [ngStyle]="{'color': value==icon ? 'white' : 'var(--primary-text)' }">
-                {{icon}}
-            </span>
+        <div class="icons">
+            <div *ngFor="let icon of icons"
+                 class="icon"
+                 [class.icon--selected]="value === icon"
+                 (click)="select(icon)">
+                <mat-icon>{{icon}}</mat-icon>
+                <span>{{icon}}</span>
+            </div>
         </div>
     </div>
-</div>
+</ng-container>

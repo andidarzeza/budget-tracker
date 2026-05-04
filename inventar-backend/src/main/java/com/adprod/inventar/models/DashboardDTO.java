@@ -16,4 +16,8 @@ public class DashboardDTO {
     private List<CurrencyTotalDTO> incomeTotalsByCurrency;
     /** Per-currency expense totals for the period; zeros omitted. */
     private List<CurrencyTotalDTO> expenseTotalsByCurrency;
+    /** Per-category expense breakdown for the period, sorted desc by total. */
+    private List<ExpenseInfoDTO> expensesInfo;
+    /** Per-category income breakdown for the period, sorted desc by total. */
+    private List<IncomeInfoDTO> incomesInfo;
 }

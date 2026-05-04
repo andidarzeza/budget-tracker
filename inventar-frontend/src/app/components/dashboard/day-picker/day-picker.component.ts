@@ -6,13 +6,13 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./day-picker.component.css']
 })
 export class DayPickerComponent implements OnInit {
-  
+
   date = new Date();
-  from = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate());
-  to = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
+  from = this.startOfDay(this.date);
+  to = this.shiftDays(this.from, 1);
 
   @Output() onChange = new EventEmitter<{from: Date, to: Date}>();
-  
+
   constructor() { }
 
   ngOnInit(): void {
@@ -20,25 +20,34 @@ export class DayPickerComponent implements OnInit {
   }
 
   nextDay(): void {
-    this.from = this.increaseOneDay(this.from);
-    this.to = this.increaseOneDay(this.to);
-    this.emitDateRange();
+    this.setFrom(this.shiftDays(this.from, 1));
   }
 
   previousDay(): void {
-    this.from = this.decreaseOneDay(this.from);
-    this.to = this.decreaseOneDay(this.to);
+    this.setFrom(this.shiftDays(this.from, -1));
+  }
+
+  onDatePicked(date: Date | null): void {
+    if (!date) {
+      return;
+    }
+    this.setFrom(this.startOfDay(date));
+  }
+
+  private setFrom(date: Date): void {
+    this.from = date;
+    this.to = this.shiftDays(date, 1);
     this.emitDateRange();
   }
 
-  private decreaseOneDay(input: Date): Date {
-    input.setDate(input.getDate() - 1);
-    return new Date(input.getTime());
+  private startOfDay(input: Date): Date {
+    return new Date(input.getFullYear(), input.getMonth(), input.getDate());
   }
 
-  private increaseOneDay(input: Date): Date {
-    input.setDate(input.getDate() + 1);
-    return new Date(input.getTime());
+  private shiftDays(input: Date, delta: number): Date {
+    const next = new Date(input);
+    next.setDate(next.getDate() + delta);
+    return next;
   }
 
   private emitDateRange(): void {

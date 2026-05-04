@@ -1,10 +1,16 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, HostListener, signal } from '@angular/core';
 import { DashboardService } from 'src/app/services/dashboard.service';
-import { ChartUtils } from 'src/app/utils/chart';
+import { ChartUtils, DoughnutDataPoint } from 'src/app/utils/chart';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, takeUntil } from 'rxjs/operators';
-import { DashboardDTO, RangeType, TimelineExpenseDTO } from 'src/app/models/models';
+import {
+  CurrencyTotalDTO,
+  DashboardDTO,
+  RangeType,
+  TimelineExpenseDTO,
+  TimelineIncomeDTO
+} from 'src/app/models/models';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { Chart, registerables } from 'chart.js';
@@ -12,6 +18,18 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { inOutAnimation } from 'src/app/animations';
 import { of } from 'rxjs';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
+
+interface CurrencyBalance {
+  currency: string;
+  income: number;
+  expense: number;
+  net: number;
+}
+
+const EXPENSE_LINE = 'expense-line';
+const INCOME_LINE = 'income-line';
+const EXPENSE_DOUGHNUT = 'expense-doughnut';
+const INCOME_DOUGHNUT = 'income-doughnut';
 
 @Component({ standalone: false,
   selector: 'app-dashboard',
@@ -25,16 +43,45 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   from!: Date;
   to!: Date;
 
-  selectedRange = signal<RangeType>("MONTH");
-  ranges: RangeType[] = ["DAY", "MONTH", "YEAR", "MAX"];
+  selectedRange = signal<RangeType>('MONTH');
+  ranges: RangeType[] = ['DAY', 'WEEK', 'MONTH', 'YEAR', 'MAX'];
 
   dashboardData = signal<DashboardDTO | null>(null);
+
+  /** Per-currency Income / Expense / Net for the KPI strip. */
+  balances = computed<CurrencyBalance[]>(() => {
+    const data = this.dashboardData();
+    if (!data) return [];
+    return DashboardComponent.mergeBalances(data.incomeTotalsByCurrency, data.expenseTotalsByCurrency);
+  });
+
+  /** True when the loaded dashboard period has no income, expense, or category rows. */
+  hasNoData = computed<boolean>(() => {
+    const d = this.dashboardData();
+    if (!d) return false;
+    const empty = (a?: { length?: number }) => !a || (a.length ?? 0) === 0;
+    return empty(d.incomeTotalsByCurrency) && empty(d.expenseTotalsByCurrency)
+      && empty(d.expensesInfo) && empty(d.incomesInfo);
+  });
+
+  /** Loaded-and-empty (not "still loading"). Drives the breakdown empty state. */
+  expensesEmpty = computed<boolean>(() => {
+    const d = this.dashboardData();
+    return !!d && !(d.expensesInfo?.length);
+  });
+
+  incomesEmpty = computed<boolean>(() => {
+    const d = this.dashboardData();
+    return !!d && !(d.incomesInfo?.length);
+  });
 
   ngAfterViewInit(): void {
     this.routeSpinnerService.stopLoading();
     Chart.register(...registerables);
-    this.chartUtil.createDoughnutChart("category-chart");
-    this.chartUtil.createChart("line-chart");
+    this.chartUtil.createLineChart(EXPENSE_LINE);
+    this.chartUtil.createLineChart(INCOME_LINE);
+    this.chartUtil.createDoughnutChart(EXPENSE_DOUGHNUT);
+    this.chartUtil.createDoughnutChart(INCOME_DOUGHNUT);
     this.chartUtil.resizeDashboardCharts();
   }
 
@@ -56,119 +103,173 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     this.navBarService.displayNavBar = true;
   }
 
-  private getDashboardData(): void {
+  onRangeSelect(range: RangeType): void {
+    if (this.selectedRange() === range) {
+      return;
+    }
+    this.selectedRange.set(range);
+    // Switching ranges remounts the picker; its ngOnInit emits onChange,
+    // which calls onDateSelected and triggers all data fetches with the new range.
+  }
+
+  onDateSelected(dateRange: { from: Date; to: Date }): void {
+    this.from = dateRange.from;
+    this.to = dateRange.to;
+    this.refresh();
+  }
+
+  private refresh(): void {
+    this.fetchDashboardData();
+    this.fetchExpenseTimeline();
+    this.fetchIncomeTimeline();
+  }
+
+  private fetchDashboardData(): void {
     this.dashboardService
       .getDashboardData(this.from, this.to, this.selectedRange())
       .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
       .subscribe((data: DashboardDTO | null) => {
         this.dashboardData.set(data);
+        this.updateDoughnut(EXPENSE_DOUGHNUT, this.toDoughnutPoints(data?.expensesInfo));
+        this.updateDoughnut(INCOME_DOUGHNUT, this.toDoughnutPoints(data?.incomesInfo));
+        // The doughnut wrapper toggles display:none ↔ block as the empty state appears
+        // and disappears. Resize so the chart picks up its new container size.
+        this.chartUtil.resizeDashboardCharts();
       });
   }
 
-  private expensesTimeline(): void {
+  private fetchExpenseTimeline(): void {
     this.dashboardService
       .expensesTimeline(this.period, this.selectedRange())
       .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
-      .subscribe((timeline: TimelineExpenseDTO[] | null) => {
-        this.updateLineChartLabels();
-        this.updateTimelineData(timeline ?? undefined);
-      });
+      .subscribe((timeline) => this.updateLineSeries(EXPENSE_LINE, timeline as any, 'expense'));
+  }
+
+  private fetchIncomeTimeline(): void {
+    this.dashboardService
+      .incomesTimeline(this.period, this.selectedRange())
+      .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
+      .subscribe((timeline) => this.updateLineSeries(INCOME_LINE, timeline as any, 'income'));
   }
 
   catchError = () => {
-    this.toasterService.error("An Error Occured", "Server Error", TOASTER_CONFIGURATION);
+    this.toasterService.error('An Error Occured', 'Server Error', TOASTER_CONFIGURATION);
     return of(null);
   }
 
-  onRangeSelect(range: RangeType): void {
-    this.selectedRange.set(range);
-    this.updateLineChartLabels();
-    this.getDashboardData();
-    this.expensesTimeline();
+  /** Drive the doughnut chart from a category info DTO list (expense or income). */
+  private updateDoughnut(canvasId: string, points: DoughnutDataPoint[]): void {
+    this.chartUtil.setDoughnutData(canvasId, points);
   }
 
-  private updateLineChartLabels(): void {
-    this.chartUtil.updateTimelineLabels(this.selectedRange(), "line", {year: this.from.getFullYear(), month: this.from.getMonth() + 1});
+  private toDoughnutPoints(items?: { _id: string; total: number }[] | null): DoughnutDataPoint[] {
+    if (!items?.length) return [];
+    return items
+      .filter(it => (it.total ?? 0) > 0)
+      .map(it => ({ label: it._id, value: it.total ?? 0 }));
   }
 
-  onDateSelected(dateRange: {from: Date, to: Date}): void {
-    this.from = dateRange.from;
-    this.to = dateRange.to;
-    this.getDashboardData();
-    this.expensesTimeline();
-  }
+  /**
+   * Build per-currency line datasets for a timeline. `kind` selects whether to read
+   * `dailyExpense` or `income` from the DTO and what label/series count to expect.
+   */
+  private updateLineSeries(
+    canvasId: string,
+    timeline: TimelineExpenseDTO[] | TimelineIncomeDTO[] | null | undefined,
+    kind: 'expense' | 'income'
+  ): void {
+    this.chartUtil.updateTimelineLabels(canvasId, this.selectedRange(), {
+      year: this.from?.getFullYear() ?? new Date().getFullYear(),
+      month: (this.from?.getMonth() ?? new Date().getMonth()) + 1,
+    });
 
-
-  private updateTimelineData(timeline: TimelineExpenseDTO[] | null | undefined): void {
     if (this.selectedRange() === 'MAX') {
-      this.chartUtil.updateTimelineDataByCurrency([]);
+      this.chartUtil.updateLineSeries(canvasId, []);
       return;
     }
 
     const rows = Array.isArray(timeline) ? timeline : [];
+    const valueOf = (r: TimelineExpenseDTO | TimelineIncomeDTO): number =>
+      kind === 'expense' ? ((r as TimelineExpenseDTO).dailyExpense ?? 0) : ((r as TimelineIncomeDTO).income ?? 0);
+
     const currencyLabel = (c: string | null | undefined): string =>
       c && String(c).trim() ? String(c).trim() : 'Other';
 
-    const currencies = [...new Set(rows.map(r => currencyLabel(r.currency)))].sort((a, b) => a.localeCompare(b));
+    const currencies = [...new Set(rows.map(r => currencyLabel(r.currency)))].sort();
 
     const valueByKey = new Map<string, number>();
     for (const r of rows) {
-      const bucket = this.normalizeTimelineBucketId(r._id);
-      const cur = currencyLabel(r.currency);
-      valueByKey.set(`${bucket}|${cur}`, r.dailyExpense ?? 0);
+      const bucket = this.normalizeBucketId(r._id);
+      valueByKey.set(`${bucket}|${currencyLabel(r.currency)}`, valueOf(r));
     }
 
-    const datasets = currencies.map((cur, idx) => {
-      const color = this.chartUtil.lineColorForDatasetIndex(idx);
+    const series = currencies.map((cur) => {
       const data: number[] = [];
-      if (this.selectedRange() === 'MONTH') {
-        const dim = this.getDaysInMonth(this.from.getFullYear(), this.from.getMonth() + 1);
-        for (let day = 1; day <= dim; day++) {
-          const key = String(day).padStart(2, '0');
-          data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
+      switch (this.selectedRange()) {
+        case 'DAY':
+          for (let h = 0; h < 24; h++) {
+            data.push(valueByKey.get(`${String(h).padStart(2, '0')}|${cur}`) ?? 0);
+          }
+          break;
+        case 'WEEK':
+          for (let d = 1; d <= 7; d++) {
+            data.push(valueByKey.get(`${d}|${cur}`) ?? 0);
+          }
+          break;
+        case 'MONTH': {
+          const dim = this.daysInMonth(this.from.getFullYear(), this.from.getMonth() + 1);
+          for (let day = 1; day <= dim; day++) {
+            data.push(valueByKey.get(`${String(day).padStart(2, '0')}|${cur}`) ?? 0);
+          }
+          break;
         }
-      } else if (this.selectedRange() === 'DAY') {
-        for (let h = 0; h < 24; h++) {
-          const key = String(h).padStart(2, '0');
-          data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
-        }
-      } else if (this.selectedRange() === 'YEAR') {
-        for (let m = 1; m <= 12; m++) {
-          const key = String(m).padStart(2, '0');
-          data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
-        }
+        case 'YEAR':
+          for (let m = 1; m <= 12; m++) {
+            data.push(valueByKey.get(`${String(m).padStart(2, '0')}|${cur}`) ?? 0);
+          }
+          break;
       }
-      return { label: cur, data, borderColor: color, backgroundColor: color };
+      return { label: cur, data };
     });
 
-    this.chartUtil.updateTimelineDataByCurrency(datasets);
+    this.chartUtil.updateLineSeries(canvasId, series);
   }
 
-  /** Aligns API bucket ids (day/hour/month strings) with padded keys used in the chart. */
-  private normalizeTimelineBucketId(raw: string | number | undefined | null): string {
-    if (raw === undefined || raw === null) {
-      return '';
-    }
+  /** Aligns API bucket ids (hour/day/month strings) with the keys used to look up chart values. */
+  private normalizeBucketId(raw: string | number | undefined | null): string {
+    if (raw === undefined || raw === null) return '';
     const s = String(raw).trim();
-    if (!s) {
-      return '';
-    }
+    if (!s) return '';
     const n = parseInt(s, 10);
-    if (!Number.isNaN(n)) {
+    if (!Number.isNaN(n) && this.selectedRange() !== 'WEEK') {
       return String(n).padStart(2, '0');
     }
     return s;
   }
-  
-  private getDaysInMonth(year: number, month): number {
+
+  private daysInMonth(year: number, month: number): number {
     return new Date(year, month, 0).getDate();
   }
 
-  get period() {
-    return {
-      from: this.from,
-      to: this.to
-    }
+  /** Combine income and expense currency totals into one row per currency for the KPI strip. */
+  private static mergeBalances(
+    incomes?: CurrencyTotalDTO[] | null,
+    expenses?: CurrencyTotalDTO[] | null
+  ): CurrencyBalance[] {
+    const inc = new Map<string, number>();
+    for (const c of incomes ?? []) inc.set(c._id, c.total ?? 0);
+    const exp = new Map<string, number>();
+    for (const c of expenses ?? []) exp.set(c._id, c.total ?? 0);
+
+    const currencies = [...new Set([...inc.keys(), ...exp.keys()])].sort();
+    return currencies.map(currency => {
+      const income = inc.get(currency) ?? 0;
+      const expense = exp.get(currency) ?? 0;
+      return { currency, income, expense, net: income - expense };
+    });
   }
 
+  get period() {
+    return { from: this.from, to: this.to };
+  }
 }

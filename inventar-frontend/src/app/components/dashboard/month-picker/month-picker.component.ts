@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { MatDatepicker } from '@angular/material/datepicker';
 
 @Component({ standalone: false,
   selector: 'month-picker',
@@ -6,13 +7,13 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./month-picker.component.css']
 })
 export class MonthPickerComponent implements OnInit {
-  
+
   date = new Date();
   from = new Date(this.date.getFullYear(), this.date.getMonth(), 1);
   to = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 1);
 
   @Output() onChange = new EventEmitter<{from: Date, to: Date}>();
-  
+
   constructor() { }
 
   ngOnInit(): void {
@@ -20,41 +21,22 @@ export class MonthPickerComponent implements OnInit {
   }
 
   nextMonth(): void {
-    this.from = this.increaseOneMonth(this.from);
-    this.to = this.increaseOneMonth(this.to);
-    this.emitDateRange();
+    this.setMonth(this.from.getFullYear(), this.from.getMonth() + 1);
   }
 
   previousMonth(): void {
-    this.from = this.decreaseOneMonth(this.from);
-    this.to = this.decreaseOneMonth(this.to);
+    this.setMonth(this.from.getFullYear(), this.from.getMonth() - 1);
+  }
+
+  onMonthPicked(date: Date, picker: MatDatepicker<Date>): void {
+    this.setMonth(date.getFullYear(), date.getMonth());
+    picker.close();
+  }
+
+  private setMonth(year: number, monthIndex: number): void {
+    this.from = new Date(year, monthIndex, 1);
+    this.to = new Date(year, monthIndex + 1, 1);
     this.emitDateRange();
-  }
-
-  private decreaseOneMonth(input: Date): Date {
-    const date = new Date();
-    const month = input.getMonth() - 1;
-    let year = input.getFullYear();    
-    if(month == -1) {
-      year--;
-    }    
-    date.setMonth(month);
-    date.setDate(1);
-    date.setFullYear(year);
-    return date;
-  }
-
-  private increaseOneMonth(input: Date): Date {
-    const date = new Date();
-    const month = input.getMonth() + 1;
-    let year = input.getFullYear();
-    if(month == 12) {
-      year++;
-    }    
-    date.setMonth(month);
-    date.setDate(1);
-    date.setFullYear(year);
-    return date;
   }
 
   private emitDateRange(): void {

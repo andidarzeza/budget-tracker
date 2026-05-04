@@ -1,17 +1,19 @@
-<div class="month-picker-container">
-    <button mat-icon-button (click)="previousMonth()">
-        <mat-icon class="text-color">
-            keyboard_arrow_left
-        </mat-icon>
+<div class="dash-picker">
+    <button mat-icon-button class="dash-picker__nav" (click)="previousMonth()" aria-label="Previous month">
+        <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
 
-    <span class="text-color" style="margin-top: 2px;font-family: 'Inter',-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;word-spacing: 3px;">
-        {{from | date: 'dd MMMM yyyy'}} - {{to | date: 'dd MMMM yyyy'}}
-    </span>
-
-    <button mat-icon-button class="text-color" (click)="nextMonth()">
-        <mat-icon>
-            keyboard_arrow_right
-        </mat-icon>
+    <button type="button" class="dash-picker__label" (click)="picker.open()" aria-label="Pick a month">
+        <mat-icon class="dash-picker__cal">event</mat-icon>
+        <span class="dash-picker__text">{{from | date: 'MMMM yyyy'}}</span>
     </button>
+
+    <button mat-icon-button class="dash-picker__nav" (click)="nextMonth()" aria-label="Next month">
+        <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
+
+    <mat-form-field class="dash-picker__hidden">
+        <input matInput [matDatepicker]="picker" [value]="from">
+        <mat-datepicker #picker startView="year" (monthSelected)="onMonthPicked($event, picker)"></mat-datepicker>
+    </mat-form-field>
 </div>

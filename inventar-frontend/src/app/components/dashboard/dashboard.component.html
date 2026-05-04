@@ -1,123 +1,160 @@
 <div class="dashboard-container">
 
-    <mat-card class="left-container">
-        <header class="period-summary-header">
-            <h2 class="period-summary-header__title">Period summary</h2>
-            <p class="period-summary-header__subtitle">Totals for the selected range and account, shown separately per currency.</p>
-        </header>
-
-        <div class="period-summary-grid">
-            <section class="summary-panel summary-panel--combined" aria-label="Income and expenses summary">
-                <div class="summary-columns">
-                    <div class="summary-column" aria-labelledby="summary-income-heading">
-                        <h3 id="summary-income-heading" class="summary-panel__heading">Income</h3>
-                        <ng-container *ngIf="dashboardData() as incomeDash; else incomeUnavailable">
-                            <div class="currency-breakdown" *ngIf="incomeDash.incomeTotalsByCurrency?.length">
-                                <ul class="currency-breakdown__list">
-                                    <li class="currency-breakdown__row" *ngFor="let c of incomeDash.incomeTotalsByCurrency">
-                                        <span class="currency-breakdown__label">
-                                            <span class="currency-breakdown__flag" aria-hidden="true">{{ c._id | flag }}</span>
-                                            <span class="currency-breakdown__code">{{ c._id }}</span>
-                                        </span>
-                                        <span class="currency-breakdown__amount">{{ c.total | number : '1.0-2' }}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <p class="summary-panel__empty" *ngIf="!incomeDash.incomeTotalsByCurrency?.length">No income in this period.</p>
-                        </ng-container>
-                        <ng-template #incomeUnavailable>
-                            <p class="summary-panel__empty">Summary unavailable.</p>
-                        </ng-template>
-                    </div>
-
-                    <div class="summary-column" aria-labelledby="summary-expense-heading">
-                        <h3 id="summary-expense-heading" class="summary-panel__heading">Expenses</h3>
-                        <ng-container *ngIf="dashboardData() as expenseDash; else expenseUnavailable">
-                            <div class="currency-breakdown" *ngIf="expenseDash.expenseTotalsByCurrency?.length">
-                                <ul class="currency-breakdown__list">
-                                    <li class="currency-breakdown__row" *ngFor="let c of expenseDash.expenseTotalsByCurrency">
-                                        <span class="currency-breakdown__label">
-                                            <span class="currency-breakdown__flag" aria-hidden="true">{{ c._id | flag }}</span>
-                                            <span class="currency-breakdown__code">{{ c._id }}</span>
-                                        </span>
-                                        <span class="currency-breakdown__amount">{{ c.total | number : '1.0-2' }}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <p class="summary-panel__empty" *ngIf="!expenseDash.expenseTotalsByCurrency?.length">No expenses in this period.</p>
-                        </ng-container>
-                        <ng-template #expenseUnavailable>
-                            <p class="summary-panel__empty">Summary unavailable.</p>
-                        </ng-template>
-                    </div>
-                </div>
-            </section>
+    <!-- ──── Range tabs + dynamic date picker ──── -->
+    <div class="control-bar">
+        <div class="control-bar__ranges" role="tablist" aria-label="Time range">
+            <button *ngFor="let range of ranges"
+                type="button"
+                role="tab"
+                [attr.aria-selected]="range == selectedRange()"
+                [class.range-option--active]="range == selectedRange()"
+                (click)="onRangeSelect(range)"
+                class="range-option">
+                {{ range == 'MAX' ? 'All' : (range | titlecase) }}
+            </button>
         </div>
 
-        <div class="overview-statistics">
-            <div class="overview-statistics-text">
-                <div class="title overview-statistics-title">Expense trend</div>
-                <div class="overview-statistics-hint">The chart shows one line per currency for the selected range.</div>
-            </div>
-
-            <div class="range-container">
-                <div *ngFor="let range of ranges"
-                    [style.background]="range == selectedRange() ? 'var(--light)' : 'var(--card)'"
-                    [style.color]="range == selectedRange() ? 'white' : 'var(--card-title)'"
-                    [style.margin-left]="range == 'DAY' ? '0px' : '10px'" (click)="onRangeSelect(range)"
-                    class="mat-elevation-z2 pointer no-select range-option">{{range | titlecase}}</div>
-            </div>
-        </div>
-
-        <div class="line-chart">
-            <canvas id="line-chart"></canvas>
-        </div>
-
-    </mat-card>
-
-    <div class="right-side">
-        <mat-card class="doughnut-chart-container">
+        <div class="control-bar__picker">
             <day-picker *ngIf="selectedRange() == 'DAY'" (onChange)="onDateSelected($event)"></day-picker>
+            <week-picker *ngIf="selectedRange() == 'WEEK'" (onChange)="onDateSelected($event)"></week-picker>
             <month-picker *ngIf="selectedRange() == 'MONTH'" (onChange)="onDateSelected($event)"></month-picker>
             <year-picker *ngIf="selectedRange() == 'YEAR'" (onChange)="onDateSelected($event)"></year-picker>
             <all-time-header *ngIf="selectedRange() == 'MAX'" (onChange)="onDateSelected($event)"></all-time-header>
+        </div>
+    </div>
 
-            <div class="category-chart">
-                <canvas id="category-chart"></canvas>
+    <!-- ──── KPI cards: per-currency Income / Expense / Net ──── -->
+    <section class="kpi-strip" *ngIf="balances().length" aria-label="Period totals">
+        <article class="kpi-card" *ngFor="let b of balances()">
+            <header class="kpi-card__head">
+                <span class="kpi-card__flag" aria-hidden="true">{{ b.currency | flag }}</span>
+                <span class="kpi-card__currency">{{ b.currency }}</span>
+            </header>
+
+            <div class="kpi-card__row">
+                <span class="kpi-card__label">Income</span>
+                <span class="kpi-card__value kpi-card__value--income">
+                    {{ b.income | number : '1.0-2' }}
+                </span>
             </div>
-        </mat-card>
 
-        <!-- <div *ngIf="timeline$ | async; let timeline">
-            {{timeline | json}}
-        </div> -->
+            <div class="kpi-card__row">
+                <span class="kpi-card__label">Expense</span>
+                <span class="kpi-card__value kpi-card__value--expense">
+                    {{ b.expense | number : '1.0-2' }}
+                </span>
+            </div>
 
-        <mat-card class="categories">
-            <!-- <spinner *ngIf="loading" [@inOutAnimation]></spinner> -->
-            <div class="title category-title">Spending by category</div>
+            <div class="kpi-card__row kpi-card__row--net">
+                <span class="kpi-card__label">Net</span>
+                <span class="kpi-card__value"
+                    [class.kpi-card__value--positive]="b.net >= 0"
+                    [class.kpi-card__value--negative]="b.net < 0">
+                    {{ b.net > 0 ? '+' : '' }}{{ b.net | number : '1.0-2' }}
+                </span>
+            </div>
+        </article>
+    </section>
+    <section class="kpi-empty" *ngIf="dashboardData() && !balances().length">
+        <mat-icon class="kpi-empty__icon">trending_flat</mat-icon>
+        <span class="kpi-empty__text">No transactions in this period yet.</span>
+    </section>
 
-            <ng-container *ngIf="(dashboardData()?.expensesInfo?.length == 0 || !dashboardData()?.expensesInfo)">
-                <div class="no-data-container">
-                    <mat-icon class="no-data-icon">info</mat-icon>
-                    <span class="no-data-message">No data available to display.</span>
+    <!-- ──── Spending section ──── -->
+    <section class="dashboard-section">
+        <header class="dashboard-section__header">
+            <h2 class="dashboard-section__title">Spending</h2>
+            <p class="dashboard-section__subtitle">Where your money is going in the selected period.</p>
+        </header>
+
+        <div class="dashboard-section__body">
+            <mat-card class="panel panel--chart">
+                <header class="panel__header">
+                    <h3 class="panel__title">Expense trend</h3>
+                    <span class="panel__hint">One line per currency</span>
+                </header>
+                <div class="line-chart-wrap">
+                    <canvas id="expense-line"></canvas>
                 </div>
-            </ng-container>
+            </mat-card>
 
-            <div class="hide-scroll categories-list"
-                *ngIf="!(dashboardData()?.expensesInfo?.length == 0 || !dashboardData()?.expensesInfo)">
-                <div *ngFor="let category of dashboardData()?.expensesInfo" class="category-data">
+            <mat-card class="panel panel--breakdown">
+                <header class="panel__header">
+                    <h3 class="panel__title">Breakdown</h3>
+                    <span class="panel__hint">By category</span>
+                </header>
 
-                    <div class="category-details">
-                        <mat-icon class="category-icon">{{category.icon}}</mat-icon>
-                        <div class="category-details-data">
-                            <div class="category-row-title">{{category._id}}</div>
-                            <div class="category-description">details</div>
-                        </div>
+                <div class="breakdown-grid" [class.breakdown-grid--empty]="expensesEmpty()">
+                    <div class="doughnut-wrap">
+                        <canvas id="expense-doughnut"></canvas>
                     </div>
 
-                    <div class="category-value">€ {{category.total}}</div>
-                </div>
-            </div>
+                    <ul class="cat-list" *ngIf="dashboardData()?.expensesInfo?.length">
+                        <li class="cat-list__row" *ngFor="let cat of dashboardData()?.expensesInfo; let i = index">
+                            <span class="cat-list__swatch" [style.background]="chartUtil.colorForIndex(i)" aria-hidden="true"></span>
+                            <span class="cat-list__icon-wrap">
+                                <mat-icon class="cat-list__icon">{{ cat.icon }}</mat-icon>
+                            </span>
+                            <span class="cat-list__name">{{ cat._id }}</span>
+                            <span class="cat-list__value">{{ cat.total | number : '1.0-2' }}</span>
+                        </li>
+                    </ul>
 
-        </mat-card>
-    </div>
+                    <div class="breakdown-empty" *ngIf="expensesEmpty()">
+                        <mat-icon class="breakdown-empty__icon">pie_chart_outline</mat-icon>
+                        <span class="breakdown-empty__text">No expenses in this period.</span>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+    </section>
+
+    <!-- ──── Earnings section ──── -->
+    <section class="dashboard-section">
+        <header class="dashboard-section__header">
+            <h2 class="dashboard-section__title">Earnings</h2>
+            <p class="dashboard-section__subtitle">Where your money is coming from in the selected period.</p>
+        </header>
+
+        <div class="dashboard-section__body">
+            <mat-card class="panel panel--chart">
+                <header class="panel__header">
+                    <h3 class="panel__title">Income trend</h3>
+                    <span class="panel__hint">One line per currency</span>
+                </header>
+                <div class="line-chart-wrap">
+                    <canvas id="income-line"></canvas>
+                </div>
+            </mat-card>
+
+            <mat-card class="panel panel--breakdown">
+                <header class="panel__header">
+                    <h3 class="panel__title">Breakdown</h3>
+                    <span class="panel__hint">By source</span>
+                </header>
+
+                <div class="breakdown-grid" [class.breakdown-grid--empty]="incomesEmpty()">
+                    <div class="doughnut-wrap">
+                        <canvas id="income-doughnut"></canvas>
+                    </div>
+
+                    <ul class="cat-list" *ngIf="dashboardData()?.incomesInfo?.length">
+                        <li class="cat-list__row" *ngFor="let cat of dashboardData()?.incomesInfo; let i = index">
+                            <span class="cat-list__swatch" [style.background]="chartUtil.colorForIndex(i)" aria-hidden="true"></span>
+                            <span class="cat-list__icon-wrap cat-list__icon-wrap--income">
+                                <mat-icon class="cat-list__icon">trending_up</mat-icon>
+                            </span>
+                            <span class="cat-list__name">{{ cat._id }}</span>
+                            <span class="cat-list__value">{{ cat.total | number : '1.0-2' }}</span>
+                        </li>
+                    </ul>
+
+                    <div class="breakdown-empty" *ngIf="incomesEmpty()">
+                        <mat-icon class="breakdown-empty__icon">savings</mat-icon>
+                        <span class="breakdown-empty__text">No income in this period.</span>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+    </section>
 </div>

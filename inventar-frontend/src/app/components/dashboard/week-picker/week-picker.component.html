@@ -1,14 +1,14 @@
 <div class="dash-picker">
-    <button mat-icon-button class="dash-picker__nav" (click)="previousDay()" aria-label="Previous day">
+    <button mat-icon-button class="dash-picker__nav" (click)="previousWeek()" aria-label="Previous week">
         <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
 
-    <button type="button" class="dash-picker__label" (click)="picker.open()" aria-label="Pick a day">
+    <button type="button" class="dash-picker__label" (click)="picker.open()" aria-label="Pick a week">
         <mat-icon class="dash-picker__cal">event</mat-icon>
-        <span class="dash-picker__text">{{from | date: 'EEE, dd MMM yyyy'}}</span>
+        <span class="dash-picker__text">{{from | date: 'dd MMM'}} – {{displayEnd | date: 'dd MMM yyyy'}}</span>
     </button>
 
-    <button mat-icon-button class="dash-picker__nav" (click)="nextDay()" aria-label="Next day">
+    <button mat-icon-button class="dash-picker__nav" (click)="nextWeek()" aria-label="Next week">
         <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
 

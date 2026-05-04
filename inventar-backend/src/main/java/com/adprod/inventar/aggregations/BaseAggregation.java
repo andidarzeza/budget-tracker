@@ -19,8 +19,9 @@ public class BaseAggregation {
 
     public List<AggregationOperation> baseAggregation(Instant from, Instant to, String account) {
         List<AggregationOperation> aggregationResult = new ArrayList<>();
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from)));
-        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").lte(to)));
+        // Half-open range [from, to): when "to" is the first instant of the next period, events at
+        // exactly that boundary belong to the next bucket and must be excluded from this one.
+        aggregationResult.add(Aggregation.match(Criteria.where("createdTime").gte(from).lt(to)));
         aggregationResult.add(Aggregation.match(Criteria.where("user").is(securityContextService.username())));
         aggregationResult.add(Aggregation.match(Criteria.where("account").is(account)));
         return aggregationResult;

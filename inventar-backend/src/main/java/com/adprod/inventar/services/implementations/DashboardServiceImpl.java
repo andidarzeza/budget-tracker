@@ -1,7 +1,9 @@
 package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.aggregations.ExpenseAggregation;
+import com.adprod.inventar.aggregations.ExpensesInfoAggregation;
 import com.adprod.inventar.aggregations.IncomeAggregation;
+import com.adprod.inventar.aggregations.IncomesInfoAggregation;
 import com.adprod.inventar.aggregations.TimelineAggregation;
 import com.adprod.inventar.models.DashboardDTO;
 import com.adprod.inventar.models.TimelineExpenseDTO;
@@ -21,6 +23,8 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final IncomeAggregation incomeAggregation;
     private final ExpenseAggregation expenseAggregation;
+    private final ExpensesInfoAggregation expensesInfoAggregation;
+    private final IncomesInfoAggregation incomesInfoAggregation;
     private final TimelineAggregation timelineAggregation;
 
     @Override
@@ -28,6 +32,8 @@ public class DashboardServiceImpl implements DashboardService {
         DashboardDTO dashboardDTO = new DashboardDTO();
         dashboardDTO.setIncomeTotalsByCurrency(incomeAggregation.getTotalIncomesByCurrency(from, to, account));
         dashboardDTO.setExpenseTotalsByCurrency(expenseAggregation.getTotalExpensesByCurrency(from, to, account));
+        dashboardDTO.setExpensesInfo(expensesInfoAggregation.getExpensesInfo(from, to, account));
+        dashboardDTO.setIncomesInfo(incomesInfoAggregation.getIncomesInfo(from, to, account));
         return ResponseEntity.ok(dashboardDTO);
     }
 
