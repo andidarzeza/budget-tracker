@@ -26,4 +26,16 @@ export class CategoriesService extends BaseService<Category> {
     return this.findAll(params);
   }
 
+  /**
+   * Returns categories for the given account, ordered by how often they've been used
+   * (most-used first). Drives the mobile add-expense / add-income picker so the
+   * categories the user touches most appear at the top of the grid.
+   */
+  public findByUsage(account: string, categoryType: CategoryType | string): Observable<Category[]> {
+    const params = new HttpParams()
+      .append('account', account)
+      .append('categoryType', String(categoryType));
+    return this.http.get<Category[]>(`${this.API_URl}/by-usage`, { params });
+  }
+
 }

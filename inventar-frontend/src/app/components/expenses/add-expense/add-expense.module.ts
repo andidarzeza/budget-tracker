@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 import { CreateFormModule } from 'src/app/shared/create-form/create-form.module';
 import { FlagPipeModule } from 'src/app/template/pipes/flag-pipe/flag-pipe.module';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -18,6 +19,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatIconModule,
     MatMenuModule,
     CreateFormModule,
     FlagPipeModule

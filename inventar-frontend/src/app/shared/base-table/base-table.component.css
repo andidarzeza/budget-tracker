@@ -60,7 +60,7 @@
     max-width: 100%;
     height: calc(100% - 40px);
     min-height: 0;
-    border-radius: 10px;
+    border-radius: 14px;
     overflow: hidden;
     margin: auto;
     position: relative;
@@ -68,7 +68,10 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+    background: var(--card);
+    /* Match dashboard panels: subtle shadow + theme-aware outline. */
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    border: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
 }
 
 .base-table-mobile {
@@ -146,7 +149,7 @@
     white-space: nowrap;
 }
 
-.dark-theme .mobile-page-title {
+:host-context(.dark-theme) .mobile-page-title {
     color: rgba(255, 255, 255, 0.92);
 }
 

@@ -37,23 +37,25 @@
         <article *ngFor="let element of (data || [])" class="table-data-card">
             <div class="table-card-body">
                 <div class="table-card-main-fields">
-                    <div *ngFor="let columnDef of cardMainFieldColumns" class="table-card-field"
-                        [class.table-card-field--money]="columnDef.type === 'currency'"
-                        [class.table-card-field--note]="columnDef.column === 'description' || columnDef.column === 'message'">
-                        <span class="table-card-field-label">{{ columnDef.label }}</span>
-                        <div class="table-card-field-value">
-                            <ng-container [ngSwitch]="columnDef.type">
-                                <ng-container *ngSwitchCase="'string'">
-                                    <mat-icon *ngIf="columnDef.column === 'icon' && displayString(element, columnDef.column)" class="table-card-icon">{{ displayString(element, columnDef.column) }}</mat-icon>
-                                    <span *ngIf="columnDef.column !== 'icon'">{{ displayString(element, columnDef.column) }}</span>
+                    <ng-container *ngFor="let columnDef of cardMainFieldColumns">
+                        <div *ngIf="!shouldHideField(element, columnDef)" class="table-card-field"
+                            [class.table-card-field--money]="columnDef.type === 'currency'"
+                            [class.table-card-field--note]="columnDef.column === 'description' || columnDef.column === 'message'">
+                            <span class="table-card-field-label">{{ columnDef.label }}</span>
+                            <div class="table-card-field-value">
+                                <ng-container [ngSwitch]="columnDef.type">
+                                    <ng-container *ngSwitchCase="'string'">
+                                        <mat-icon *ngIf="columnDef.column === 'icon' && displayString(element, columnDef.column)" class="table-card-icon">{{ displayString(element, columnDef.column) }}</mat-icon>
+                                        <span *ngIf="columnDef.column !== 'icon'">{{ displayString(element, columnDef.column) }}</span>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'currency'">
+                                        <span class="table-card-amount">{{ element[columnDef.column] | number:'1.0':'en-US' }}</span>
+                                        <span class="table-card-currency">{{ element?.currency }}</span>
+                                    </ng-container>
                                 </ng-container>
-                                <ng-container *ngSwitchCase="'currency'">
-                                    <span class="table-card-amount">{{ element[columnDef.column] | number:'1.0':'en-US' }}</span>
-                                    <span class="table-card-currency">{{ element?.currency }}</span>
-                                </ng-container>
-                            </ng-container>
+                            </div>
                         </div>
-                    </div>
+                    </ng-container>
                 </div>
                 <div class="table-card-dates" *ngIf="cardDateColumns.length">
                     <div *ngFor="let columnDef of cardDateColumns" class="table-card-field table-card-field--meta">

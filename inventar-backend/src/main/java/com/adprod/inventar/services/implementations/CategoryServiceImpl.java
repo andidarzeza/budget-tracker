@@ -13,11 +13,20 @@ import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.SecurityContextService;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
+import org.bson.Document;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,6 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final HistoryService historyService;
     private final EntityType entityType = CATEGORY;
     private final AccountService accountService;
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public ResponseEntity findAll(Pageable pageable, Map<String, String> params) {
@@ -48,6 +58,60 @@ public class CategoryServiceImpl implements CategoryService {
         categoryWrapper.setData(page.getContent());
         categoryWrapper.setCount(page.getTotalElements());
         return ResponseEntity.ok().body(categoryWrapper);
+    }
+
+    @Override
+    public ResponseEntity findByUsage(String account, String categoryType) {
+        String username = securityContextService.username();
+        Map<String, Long> usageById = countCategoryUsage(username, account, categoryType);
+
+        BooleanBuilder filter = new BooleanBuilder()
+                .and(QCategory.category1.user.eq(username))
+                .and(QCategory.category1.account.eq(account));
+        if (categoryType != null && !categoryType.isEmpty()) {
+            filter.and(QCategory.category1.categoryType.eq(categoryType));
+        }
+
+        List<Category> categories = new ArrayList<>();
+        categoryRepository.findAll(filter).forEach(categories::add);
+
+        // Most used first; ties broken alphabetically so ordering is stable for the picker.
+        categories.sort((a, b) -> {
+            long ca = usageById.getOrDefault(a.getId(), 0L);
+            long cb = usageById.getOrDefault(b.getId(), 0L);
+            if (ca != cb) {
+                return Long.compare(cb, ca);
+            }
+            String na = a.getCategory() != null ? a.getCategory() : "";
+            String nb = b.getCategory() != null ? b.getCategory() : "";
+            return na.compareToIgnoreCase(nb);
+        });
+
+        return ResponseEntity.ok(categories);
+    }
+
+    /**
+     * Count how many expenses (or incomes) reference each {@code categoryID} for the current
+     * user / account. Empty map when the collection has no matching rows.
+     */
+    private Map<String, Long> countCategoryUsage(String username, String account, String categoryType) {
+        String collection = "INCOME".equalsIgnoreCase(categoryType) ? "incomes" : "spending";
+        AggregationOperation match = Aggregation.match(
+                Criteria.where("user").is(username).and("account").is(account));
+        AggregationOperation group = Aggregation.group("categoryID").count().as("count");
+
+        Aggregation agg = Aggregation.newAggregation(match, group);
+        AggregationResults<Document> results = mongoTemplate.aggregate(agg, collection, Document.class);
+
+        Map<String, Long> counts = new HashMap<>();
+        for (Document doc : results.getMappedResults()) {
+            Object id = doc.get("_id");
+            Object count = doc.get("count");
+            if (id != null && count instanceof Number) {
+                counts.put(String.valueOf(id), ((Number) count).longValue());
+            }
+        }
+        return counts;
     }
 
     @Override

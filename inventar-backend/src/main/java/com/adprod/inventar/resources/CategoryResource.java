@@ -21,6 +21,17 @@ public class CategoryResource {
         return categoryService.findAll(pageable, params);
     }
 
+    /**
+     * Categories ordered by usage count (most used first). Used by the mobile add-expense /
+     * add-income wizard so the most-frequent picks appear at the top of the grid.
+     */
+    @GetMapping("/by-usage")
+    public ResponseEntity findByUsage(
+            @RequestParam String account,
+            @RequestParam(required = false) String categoryType) {
+        return categoryService.findByUsage(account, categoryType);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity findOne(@PathVariable String id){
         return categoryService.findOne(id);

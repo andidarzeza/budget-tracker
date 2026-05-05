@@ -296,8 +296,10 @@
 .doughnut-wrap {
     height: 180px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 6px;
     overflow: hidden;
     padding: 4px 0 8px;
 }
@@ -305,39 +307,41 @@
 .doughnut-wrap canvas {
     display: block;
     max-width: min(180px, 100%) !important;
-    max-height: 180px;
+    max-height: 150px;
     width: auto !important;
     height: auto !important;
+}
+
+.doughnut-currency-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--card-title);
+    opacity: 0.6;
 }
 
 .cat-list {
     list-style: none;
     margin: 0;
     padding: 0;
-    max-height: 240px;
+    max-height: 280px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     border-top: 1px solid color-mix(in srgb, var(--field-outline) 40%, transparent);
 }
 
-.cat-list__row {
+.cat-list__group {
     display: grid;
-    grid-template-columns: 8px auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
-    padding: 9px 4px;
+    gap: 10px 12px;
+    padding: 10px 4px;
     border-bottom: 1px solid color-mix(in srgb, var(--field-outline) 35%, transparent);
 }
 
-.cat-list__row:last-child {
+.cat-list__group:last-child {
     border-bottom: 0;
-}
-
-.cat-list__swatch {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    flex-shrink: 0;
 }
 
 .cat-list__icon-wrap {
@@ -376,11 +380,29 @@
     min-width: 0;
 }
 
-.cat-list__value {
+.cat-list__totals {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px 8px;
+    text-align: right;
+}
+
+.cat-list__total {
     font-variant-numeric: tabular-nums;
     font-weight: 700;
     font-size: 0.92rem;
     color: var(--card-title);
+    white-space: nowrap;
+}
+
+.cat-list__total + .cat-list__total::before {
+    content: '·';
+    margin-right: 8px;
+    color: var(--card-title);
+    opacity: 0.4;
+    font-weight: 400;
 }
 
 .breakdown-empty {

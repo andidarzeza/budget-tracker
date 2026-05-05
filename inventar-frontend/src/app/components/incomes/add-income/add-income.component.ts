@@ -14,14 +14,13 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
 import { filter, mergeMap, observeOn, takeUntil, tap } from 'rxjs/operators';
-import { Category, CategoryType, EntityType, Income, ResponseWrapper } from 'src/app/models/models';
+import { Category, CategoryType, EntityType, Income } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
-import { buildParams } from 'src/app/utils/param-bulder';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -199,16 +198,12 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
   private getCategories(): void {
     this.loadingMessage.set('Loading…');
     this.loadingData.set(true);
+    // Backend returns categories already sorted by usage count (most used first).
     this.categoryService
-      .findAll(
-        buildParams(0, 99999)
-          .append('categoryType', CategoryType.INCOME)
-          .append('account', this.accountService.getAccount())
-      )
+      .findByUsage(this.accountService.getAccount(), CategoryType.INCOME)
       .pipe(
         takeUntil(this.unsubscribe$),
-        tap((response: ResponseWrapper) => {
-          const rows = response?.data;
+        tap((rows: Category[]) => {
           const list = Array.isArray(rows) ? rows : [];
           this.categories.set(
             list.filter(

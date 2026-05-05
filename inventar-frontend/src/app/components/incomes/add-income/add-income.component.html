@@ -50,15 +50,18 @@
             <div class="create-wizard__panel" [ngSwitch]="wizardStep()">
                 <ng-container *ngSwitchCase="0">
                     <ng-container *ngIf="isWizardMobile(); else incomeWizardStep0Desktop">
-                        <p class="create-wizard__intro">Pick the category this income belongs to.</p>
-                        <div class="category-pick-list" role="listbox" aria-label="Income categories">
-                            <button type="button" *ngFor="let category of categories()" class="category-pick-list__item"
+                        <p class="create-wizard__intro">Tap a source. Most-used appear first.</p>
+                        <div class="category-pick-grid" role="listbox" aria-label="Income categories">
+                            <button type="button" *ngFor="let category of categories()" class="category-tile"
                                 role="option"
                                 [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
-                                [class.category-pick-list__item--selected]="formGroup.get('categoryID')?.value == category.id"
+                                [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
                                 (click)="selectWizardCategory(category.id)">
-                                <span class="category-pick-list__label">{{ category?.category }}</span>
-                                <span class="category-pick-list__check" aria-hidden="true"
+                                <span class="category-tile__icon-wrap category-tile__icon-wrap--income" aria-hidden="true">
+                                    <mat-icon class="category-tile__icon">{{ category?.icon || 'savings' }}</mat-icon>
+                                </span>
+                                <span class="category-tile__label">{{ category?.category }}</span>
+                                <span class="category-tile__check" aria-hidden="true"
                                     *ngIf="formGroup.get('categoryID')?.value == category.id">✓</span>
                             </button>
                         </div>

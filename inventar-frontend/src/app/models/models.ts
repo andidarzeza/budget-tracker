@@ -56,11 +56,15 @@ export interface ExpenseInfoDTO {
 	_id: string;
 	icon: string;
 	total: number;
+	/** ISO currency code; rows are split per currency (cross-currency sums are not additive). */
+	currency?: string;
 }
 
 export interface IncomeInfoDTO {
 	_id: string;
 	total: number;
+	/** ISO currency code; rows are split per currency (cross-currency sums are not additive). */
+	currency?: string;
 }
 
 export interface DailyExpenseDTO {

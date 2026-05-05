@@ -115,6 +115,19 @@ export class TableBodyComponent implements AfterViewInit, OnChanges, OnDestroy {
     return (this.columnDefinitions || []).filter((c) => c.type === 'date');
   }
 
+  /**
+   * Mobile card layout: skip the description field entirely when it's empty
+   * — it would otherwise render as a label with a `—` placeholder, which is noise.
+   * Used for expense, income and category cards (only those define a `description` column).
+   */
+  shouldHideField(element: any, columnDef: ColumnDefinition): boolean {
+    if (columnDef?.column !== 'description') {
+      return false;
+    }
+    const v = element?.description;
+    return v == null || String(v).trim() === '';
+  }
+
   displayString(element: any, column: string): string {
     if (!element) {
       return '—';

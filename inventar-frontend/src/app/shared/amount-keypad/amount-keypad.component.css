@@ -23,15 +23,15 @@
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   margin: 0;
-  border: 1.5px solid var(--field-outline);
-  border-radius: 14px;
+  border: 1.5px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+  border-radius: 16px;
   background: var(--secondary);
   color: var(--card-title);
   font-family: "Source Sans Pro", Roboto, "Helvetica Neue", sans-serif;
-  font-size: clamp(1.35rem, 4.5vw, 1.75rem);
+  font-size: clamp(1.5rem, 5vw, 1.9rem);
   font-weight: 700;
   line-height: 1;
-  min-height: 64px;
+  min-height: 72px;
   padding: 16px 12px;
   cursor: pointer;
   box-sizing: border-box;
@@ -59,19 +59,22 @@
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  width: 100%;
-  min-height: 56px;
-  border-radius: 12px;
-  border: 1.5px solid var(--field-outline);
+  align-self: center;
+  min-width: 96px;
+  min-height: 40px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1.5px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
   background: transparent;
   color: var(--card-title);
   font-family: "Source Sans Pro", Roboto, "Helvetica Neue", sans-serif;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
   box-sizing: border-box;
+  opacity: 0.85;
 }
 
 .amount-keypad__clear:active {

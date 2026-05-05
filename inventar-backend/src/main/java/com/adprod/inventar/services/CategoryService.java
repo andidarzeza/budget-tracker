@@ -8,6 +8,11 @@ import java.util.Map;
 
 public interface CategoryService {
     ResponseEntity findAll(Pageable pageable, Map<String, String> params);
+    /**
+     * Categories for the given account, ordered by how often they appear in the matching
+     * collection (expenses for {@code EXPENSE}, incomes for {@code INCOME}) — most used first.
+     */
+    ResponseEntity findByUsage(String account, String categoryType);
     ResponseEntity findOne(String id);
     ResponseEntity delete(String id);
     ResponseEntity save(Category category);

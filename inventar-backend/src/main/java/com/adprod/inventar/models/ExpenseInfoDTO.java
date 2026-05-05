@@ -13,4 +13,6 @@ public class ExpenseInfoDTO {
     private String _id;
     private String icon;
     private Double total;
+    /** ISO currency code; rows are split per currency since totals across currencies are not additive. */
+    private String currency;
 }

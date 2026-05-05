@@ -15,8 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { filter, mergeMap, observeOn, takeUntil, tap } from 'rxjs/operators';
-import { Category, CategoryType, EntityType, Expense, ResponseWrapper } from 'src/app/models/models';
-import { buildParams } from 'src/app/utils/param-bulder';
+import { Category, CategoryType, EntityType, Expense } from 'src/app/models/models';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { AccountService } from 'src/app/services/account.service';
@@ -225,16 +224,12 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   private getCategories(): void {
     this.loadingMessage.set('Loading…');
     this.loadingData.set(true);
+    // Backend returns categories already sorted by usage count (most used first).
     this.categoryService
-      .findAll(
-        buildParams(0, 1000)
-          .append('categoryType', CategoryType.EXPENSE)
-          .append('account', this.accountService.getAccount())
-      )
+      .findByUsage(this.accountService.getAccount(), CategoryType.EXPENSE)
       .pipe(
         takeUntil(this.unsubscribe$),
-        tap((response: ResponseWrapper) => {
-          const rows = response?.data;
+        tap((rows: Category[]) => {
           const list = Array.isArray(rows) ? rows : [];
           this.categories.set(
             list.filter(

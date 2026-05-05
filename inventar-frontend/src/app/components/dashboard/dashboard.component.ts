@@ -26,6 +26,20 @@ interface CurrencyBalance {
   net: number;
 }
 
+interface CategoryGroupRow {
+  currency: string;
+  total: number;
+}
+
+interface CategoryGroup {
+  /** Category name (used as the user-visible label and the row identity). */
+  name: string;
+  /** Optional Material icon name; absent for income groups. */
+  icon?: string;
+  /** Per-currency totals belonging to this category, sorted desc by total. */
+  rows: CategoryGroupRow[];
+}
+
 const EXPENSE_LINE = 'expense-line';
 const INCOME_LINE = 'income-line';
 const EXPENSE_DOUGHNUT = 'expense-doughnut';
@@ -64,15 +78,41 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
       && empty(d.expensesInfo) && empty(d.incomesInfo);
   });
 
+  /**
+   * Currency-aware breakdowns: backend returns one row per (category, currency).
+   * Categories are grouped so each shows its per-currency totals inline,
+   * since summing across currencies isn't meaningful (€100 + $100 ≠ 200 of anything).
+   */
+  expenseGroups = computed<CategoryGroup[]>(() =>
+    DashboardComponent.groupByCategory(this.dashboardData()?.expensesInfo)
+  );
+
+  incomeGroups = computed<CategoryGroup[]>(() =>
+    DashboardComponent.groupByCategory(this.dashboardData()?.incomesInfo)
+  );
+
+  /**
+   * Doughnut can only render one currency at a time without misleading the viewer.
+   * We pick the currency with the largest total so the chart reflects where most
+   * of the user's money is, and show its code as a label next to the chart.
+   */
+  primaryExpenseCurrency = computed<string | null>(() =>
+    DashboardComponent.pickPrimaryCurrency(this.dashboardData()?.expensesInfo)
+  );
+
+  primaryIncomeCurrency = computed<string | null>(() =>
+    DashboardComponent.pickPrimaryCurrency(this.dashboardData()?.incomesInfo)
+  );
+
   /** Loaded-and-empty (not "still loading"). Drives the breakdown empty state. */
   expensesEmpty = computed<boolean>(() => {
     const d = this.dashboardData();
-    return !!d && !(d.expensesInfo?.length);
+    return !!d && !this.expenseGroups().length;
   });
 
   incomesEmpty = computed<boolean>(() => {
     const d = this.dashboardData();
-    return !!d && !(d.incomesInfo?.length);
+    return !!d && !this.incomeGroups().length;
   });
 
   ngAfterViewInit(): void {
@@ -130,11 +170,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
       .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
       .subscribe((data: DashboardDTO | null) => {
         this.dashboardData.set(data);
-        this.updateDoughnut(EXPENSE_DOUGHNUT, this.toDoughnutPoints(data?.expensesInfo));
-        this.updateDoughnut(INCOME_DOUGHNUT, this.toDoughnutPoints(data?.incomesInfo));
-        // The doughnut wrapper toggles display:none ↔ block as the empty state appears
-        // and disappears. Resize so the chart picks up its new container size.
-        this.chartUtil.resizeDashboardCharts();
+        this.refreshBreakdownDoughnuts();
       });
   }
 
@@ -157,16 +193,76 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     return of(null);
   }
 
-  /** Drive the doughnut chart from a category info DTO list (expense or income). */
-  private updateDoughnut(canvasId: string, points: DoughnutDataPoint[]): void {
-    this.chartUtil.setDoughnutData(canvasId, points);
+  /**
+   * Push the primary-currency slice of each breakdown into the doughnuts.
+   * Doughnuts can only meaningfully render one currency at a time; the rest are
+   * communicated by the per-category list under the chart.
+   */
+  private refreshBreakdownDoughnuts(): void {
+    this.chartUtil.setDoughnutData(
+      EXPENSE_DOUGHNUT,
+      this.toPrimaryCurrencyPoints(this.dashboardData()?.expensesInfo, this.primaryExpenseCurrency())
+    );
+    this.chartUtil.setDoughnutData(
+      INCOME_DOUGHNUT,
+      this.toPrimaryCurrencyPoints(this.dashboardData()?.incomesInfo, this.primaryIncomeCurrency())
+    );
+    // The doughnut wrapper toggles display:none ↔ block when the empty state appears /
+    // disappears, so we resize after the swap to make the chart fit the new container.
+    this.chartUtil.resizeDashboardCharts();
   }
 
-  private toDoughnutPoints(items?: { _id: string; total: number }[] | null): DoughnutDataPoint[] {
-    if (!items?.length) return [];
+  private toPrimaryCurrencyPoints(
+    items: { _id: string; total: number; currency?: string }[] | null | undefined,
+    primaryCurrency: string | null
+  ): DoughnutDataPoint[] {
+    if (!items?.length || !primaryCurrency) return [];
     return items
-      .filter(it => (it.total ?? 0) > 0)
+      .filter(it => (it.currency ?? 'Other') === primaryCurrency && (it.total ?? 0) > 0)
       .map(it => ({ label: it._id, value: it.total ?? 0 }));
+  }
+
+  /** Currency with the largest sum across rows, or null when there's no data. */
+  private static pickPrimaryCurrency(
+    items: { total?: number; currency?: string }[] | null | undefined
+  ): string | null {
+    if (!items?.length) return null;
+    const totals = new Map<string, number>();
+    for (const it of items) {
+      const cur = it.currency ?? 'Other';
+      totals.set(cur, (totals.get(cur) ?? 0) + (it.total ?? 0));
+    }
+    if (!totals.size) return null;
+    return [...totals.entries()].sort((a, b) => b[1] - a[1])[0][0];
+  }
+
+  /**
+   * Collapse `(category, currency, total)` rows into one entry per category, with
+   * its per-currency totals listed inline. Sorted by largest single-currency total
+   * descending, which is an honest ordering without needing exchange rates.
+   */
+  private static groupByCategory(
+    items: ({ _id: string; total: number; currency?: string; icon?: string })[] | null | undefined
+  ): CategoryGroup[] {
+    if (!items?.length) return [];
+    const map = new Map<string, CategoryGroup>();
+    for (const it of items) {
+      const key = it._id;
+      let group = map.get(key);
+      if (!group) {
+        group = { name: it._id, icon: it.icon, rows: [] };
+        map.set(key, group);
+      } else if (!group.icon && it.icon) {
+        group.icon = it.icon;
+      }
+      group.rows.push({ currency: it.currency ?? 'Other', total: it.total ?? 0 });
+    }
+    for (const g of map.values()) {
+      g.rows.sort((a, b) => b.total - a.total);
+    }
+    return [...map.values()].sort(
+      (a, b) => Math.max(...b.rows.map(r => r.total)) - Math.max(...a.rows.map(r => r.total))
+    );
   }
 
   /**

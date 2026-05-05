@@ -87,16 +87,22 @@
                 <div class="breakdown-grid" [class.breakdown-grid--empty]="expensesEmpty()">
                     <div class="doughnut-wrap">
                         <canvas id="expense-doughnut"></canvas>
+                        <span class="doughnut-currency-label" *ngIf="primaryExpenseCurrency() as c">
+                            {{ c }} share
+                        </span>
                     </div>
 
-                    <ul class="cat-list" *ngIf="dashboardData()?.expensesInfo?.length">
-                        <li class="cat-list__row" *ngFor="let cat of dashboardData()?.expensesInfo; let i = index">
-                            <span class="cat-list__swatch" [style.background]="chartUtil.colorForIndex(i)" aria-hidden="true"></span>
+                    <ul class="cat-list" *ngIf="expenseGroups().length">
+                        <li class="cat-list__group" *ngFor="let g of expenseGroups()">
                             <span class="cat-list__icon-wrap">
-                                <mat-icon class="cat-list__icon">{{ cat.icon }}</mat-icon>
+                                <mat-icon class="cat-list__icon">{{ g.icon }}</mat-icon>
                             </span>
-                            <span class="cat-list__name">{{ cat._id }}</span>
-                            <span class="cat-list__value">{{ cat.total | number : '1.0-2' }}</span>
+                            <span class="cat-list__name">{{ g.name }}</span>
+                            <span class="cat-list__totals">
+                                <span class="cat-list__total" *ngFor="let r of g.rows">
+                                    {{ r.total | number : '1.0-2' }} {{ r.currency }}
+                                </span>
+                            </span>
                         </li>
                     </ul>
 
@@ -136,16 +142,22 @@
                 <div class="breakdown-grid" [class.breakdown-grid--empty]="incomesEmpty()">
                     <div class="doughnut-wrap">
                         <canvas id="income-doughnut"></canvas>
+                        <span class="doughnut-currency-label" *ngIf="primaryIncomeCurrency() as c">
+                            {{ c }} share
+                        </span>
                     </div>
 
-                    <ul class="cat-list" *ngIf="dashboardData()?.incomesInfo?.length">
-                        <li class="cat-list__row" *ngFor="let cat of dashboardData()?.incomesInfo; let i = index">
-                            <span class="cat-list__swatch" [style.background]="chartUtil.colorForIndex(i)" aria-hidden="true"></span>
+                    <ul class="cat-list" *ngIf="incomeGroups().length">
+                        <li class="cat-list__group" *ngFor="let g of incomeGroups()">
                             <span class="cat-list__icon-wrap cat-list__icon-wrap--income">
                                 <mat-icon class="cat-list__icon">trending_up</mat-icon>
                             </span>
-                            <span class="cat-list__name">{{ cat._id }}</span>
-                            <span class="cat-list__value">{{ cat.total | number : '1.0-2' }}</span>
+                            <span class="cat-list__name">{{ g.name }}</span>
+                            <span class="cat-list__totals">
+                                <span class="cat-list__total" *ngFor="let r of g.rows">
+                                    {{ r.total | number : '1.0-2' }} {{ r.currency }}
+                                </span>
+                            </span>
                         </li>
                     </ul>
 
