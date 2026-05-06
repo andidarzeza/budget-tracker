@@ -21,4 +21,10 @@ public class AccountResource {
     public ResponseEntity findUserAccountsSimplified() {
         return accountService.findUserAccountsSimplified();
     }
+
+    /** Replace the per-currency balance map for an account (the "Edit balance" dialog on the dashboard). */
+    @PutMapping("/{id}/balance")
+    public ResponseEntity setBalance(@PathVariable String id, @RequestBody java.util.Map<String, Double> balance) {
+        return accountService.setBalance(id, balance);
+    }
 }

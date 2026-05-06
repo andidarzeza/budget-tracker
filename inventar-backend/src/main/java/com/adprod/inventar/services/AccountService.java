@@ -3,6 +3,8 @@ package com.adprod.inventar.services;
 import com.adprod.inventar.models.Account;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Map;
+
 public interface AccountService {
     ResponseEntity findOne(String id);
     ResponseEntity findUserAccountsSimplified();
@@ -10,4 +12,6 @@ public interface AccountService {
     void removeFromBalance(String accountId, String currency, Double amount);
     void addToBalance(String accountId, String currency, Double amount);
     void checkAccount(String account);
+    /** Overwrite the per-currency balance map for an account — used by the dashboard "Edit balance" dialog. */
+    ResponseEntity setBalance(String accountId, Map<String, Double> balance);
 }

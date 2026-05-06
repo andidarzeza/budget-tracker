@@ -10,6 +10,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+
 
 @Service
 @AllArgsConstructor
@@ -56,5 +60,24 @@ public class AccountServiceImpl implements AccountService {
         this.accountRepository
                 .findByUsernameAndAndId(securityContextService.username(), account)
                 .orElseThrow(() -> new NotFoundException("Account with number: " + account + " was not found"));
+    }
+
+    @Override
+    public ResponseEntity setBalance(String accountId, Map<String, Double> balance) {
+        Account account = accountRepository
+                .findByUsernameAndAndId(securityContextService.username(), accountId)
+                .orElseThrow(() -> new NotFoundException("Account " + accountId + " not found."));
+        // Drop null/zero entries so the balance map only carries currencies with a real value;
+        // preserves insertion order via LinkedHashMap so the dashboard stays stable across saves.
+        Map<String, Double> cleaned = new LinkedHashMap<>();
+        if (Objects.nonNull(balance)) {
+            balance.forEach((currency, amount) -> {
+                if (currency == null || currency.isBlank()) return;
+                if (amount == null || amount == 0.0) return;
+                cleaned.put(currency, amount);
+            });
+        }
+        account.setBalance(cleaned);
+        return ResponseEntity.ok(accountRepository.save(account));
     }
 }

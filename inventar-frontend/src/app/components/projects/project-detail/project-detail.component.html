@@ -1,0 +1,105 @@
+<div class="project-detail">
+
+    <!-- Top action bar -->
+    <header class="pd-toolbar">
+        <button type="button" class="pd-back" (click)="back()" aria-label="Back to projects">
+            <mat-icon>arrow_back</mat-icon>
+            <span>Projects</span>
+        </button>
+        <div class="pd-toolbar__spacer"></div>
+        <button type="button" class="pd-icon-btn" *ngIf="view()" (click)="openEdit()" aria-label="Edit project">
+            <mat-icon>edit</mat-icon>
+        </button>
+        <button type="button" class="pd-icon-btn pd-icon-btn--danger" *ngIf="view()" (click)="deleteProject()"
+            aria-label="Delete project">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </header>
+
+    <ng-container *ngIf="view() as v">
+        <!-- Hero card: icon, name, description, progress -->
+        <section class="pd-hero">
+            <div class="pd-hero__head">
+                <span class="pd-hero__icon-wrap" aria-hidden="true">
+                    <mat-icon class="pd-hero__icon">{{ v.project.icon || 'flag' }}</mat-icon>
+                </span>
+                <div class="pd-hero__title-block">
+                    <h1 class="pd-hero__title">{{ v.project.name }}</h1>
+                    <p *ngIf="v.project.description" class="pd-hero__desc">{{ v.project.description }}</p>
+                </div>
+            </div>
+
+            <div class="pd-progress">
+                <div class="pd-progress__numbers">
+                    <span class="pd-progress__saved">
+                        {{ progress().saved | number : '1.0-2' }} {{ v.project.targetCurrency }}
+                    </span>
+                    <span class="pd-progress__target">
+                        of {{ progress().target | number : '1.0-2' }} {{ v.project.targetCurrency }}
+                    </span>
+                </div>
+                <div class="pd-progress__bar" [attr.aria-label]="'Progress ' + progress().pct + '%'">
+                    <div class="pd-progress__bar-fill" [style.width.%]="progress().pct"></div>
+                </div>
+                <div class="pd-progress__meta">
+                    <span class="pd-progress__pct">{{ progress().pct }}%</span>
+                    <span *ngIf="progress().pct >= 100" class="pd-progress__complete">Goal reached</span>
+                </div>
+            </div>
+
+            <div *ngIf="otherTotals().length" class="pd-others">
+                <span class="pd-others__label">Also saved in other currencies</span>
+                <ul class="pd-others__list">
+                    <li *ngFor="let t of otherTotals()" class="pd-others__item">
+                        <span class="pd-others__flag" aria-hidden="true">{{ t._id | flag }}</span>
+                        <span class="pd-others__code">{{ t._id }}</span>
+                        <span class="pd-others__amount">{{ t.total | number : '1.0-2' }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <button type="button" class="pd-add-cta" (click)="openAddContribution()">
+                <mat-icon aria-hidden="true">add</mat-icon>
+                <span>Add contribution</span>
+            </button>
+        </section>
+
+        <!-- Contributions list -->
+        <section class="pd-contributions">
+            <header class="pd-section-head">
+                <h2 class="pd-section-title">Contributions</h2>
+                <span *ngIf="contributions() as rows" class="pd-section-hint">
+                    {{ rows.length }} {{ rows.length === 1 ? 'entry' : 'entries' }}
+                </span>
+            </header>
+
+            <ng-container *ngIf="contributions() as rows">
+                <div *ngIf="rows.length === 0" class="pd-empty">
+                    <mat-icon class="pd-empty__icon">savings</mat-icon>
+                    <p class="pd-empty__text">No contributions yet. Tap "Add contribution" to start saving.</p>
+                </div>
+
+                <ul *ngIf="rows.length > 0" class="pd-list">
+                    <li *ngFor="let c of rows; trackBy: trackById" class="pd-row">
+                        <span class="pd-row__icon-wrap" aria-hidden="true">
+                            <mat-icon class="pd-row__icon">trending_up</mat-icon>
+                        </span>
+                        <div class="pd-row__main">
+                            <div class="pd-row__top">
+                                <span class="pd-row__amount">
+                                    {{ c.amount | number : '1.0-2' }} {{ c.currency }}
+                                </span>
+                                <span class="pd-row__date">{{ c.createdTime | customDate }}</span>
+                            </div>
+                            <p *ngIf="c.description" class="pd-row__desc">{{ c.description }}</p>
+                        </div>
+                        <button type="button" class="pd-row__delete" (click)="deleteContribution(c)"
+                            aria-label="Delete contribution">
+                            <mat-icon>delete_outline</mat-icon>
+                        </button>
+                    </li>
+                </ul>
+            </ng-container>
+        </section>
+    </ng-container>
+</div>

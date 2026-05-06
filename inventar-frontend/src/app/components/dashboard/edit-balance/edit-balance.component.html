@@ -1,0 +1,30 @@
+<create-form
+    [loadingData]="saving()"
+    loadingMessage="Saving…"
+    icon="account_balance_wallet"
+    [entity]="entity"
+    [editMode]="true"
+    (close)="cancel()"
+    (create)="save()">
+
+    <form [formGroup]="formGroup" class="dialog-form edit-balance-form">
+        <p class="edit-balance-form__intro">
+            Set the current amount you have for each currency. Leave a field empty to remove it.
+        </p>
+
+        <div *ngFor="let code of currencies" class="edit-balance-form__row">
+            <span class="edit-balance-form__flag" aria-hidden="true">{{ code | flag }}</span>
+            <span class="edit-balance-form__code">{{ code }}</span>
+            <mat-form-field appearance="outline" class="dialog-form__field edit-balance-form__field primary-text">
+                <mat-label class="primary-text">Amount</mat-label>
+                <input matInput type="number" step="0.01" min="0" autocomplete="off"
+                    placeholder="0.00" [formControlName]="code">
+            </mat-form-field>
+            <button type="button" class="edit-balance-form__clear" (click)="clearCurrency(code)"
+                [disabled]="!formGroup.get(code)?.value && formGroup.get(code)?.value !== 0"
+                aria-label="Clear">
+                <mat-icon>backspace</mat-icon>
+            </button>
+        </div>
+    </form>
+</create-form>

@@ -13,6 +13,7 @@ const routes: Routes = [
   {path: 'expenses', loadChildren: () => import('./components/expenses/expenses.module').then(m => m.ExpensesModule), canActivate : [AuthGuardService]},
   {path: 'incomes', loadChildren: () => import('./components/incomes/incomes.module').then(m => m.IncomesModule), canActivate : [AuthGuardService]},
   {path: 'categories', loadChildren: () => import('./components/categories/categories.module').then(m => m.CategoriesModule), canActivate : [AuthGuardService]},
+  {path: 'projects', loadChildren: () => import('./components/projects/projects.module').then(m => m.ProjectsModule), canActivate : [AuthGuardService]},
   {path: 'settings', loadChildren: () => import('./components/settings/settings.module').then(m => m.SettingsModule), canActivate : [AuthGuardService]},
   {path: 'history', loadChildren: () => import('./components/history/history.module').then(m => m.HistoryModule), canActivate : [AuthGuardService]},
   {path: '**', pathMatch: 'full', component: NotFoundComponent}

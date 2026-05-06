@@ -111,7 +111,8 @@ export enum EntityType {
     INCOME = "income",
     EXPENSE = "expense",
     CATEGORY = "category",
-    DASHBOARD = "dashboard"
+    DASHBOARD = "dashboard",
+    BALANCE = "balance"
 }
 
 export const ENTITIES = [
@@ -164,6 +165,38 @@ export interface UserRequest {
 }
 
 export type RangeType = "DAY" | "WEEK" | "MONTH" | "YEAR" | "MAX";
+
+export interface Project {
+    id?: string;
+    name: string;
+    description?: string;
+    targetAmount: number;
+    targetCurrency: string;
+    icon?: string;
+    archived?: boolean;
+    createdTime?: Date;
+    lastModifiedDate?: Date;
+    user?: string;
+    account?: string;
+}
+
+export interface Contribution {
+    id?: string;
+    projectId?: string;
+    amount: number;
+    currency: string;
+    description?: string;
+    createdTime?: Date;
+    lastModifiedDate?: Date;
+    user?: string;
+    account?: string;
+}
+
+/** Backend `ProjectViewDTO`: a project plus its current per-currency saved totals. */
+export interface ProjectView {
+    project: Project;
+    totalsByCurrency: CurrencyTotalDTO[];
+}
 
 export interface SimplifiedAccount {
     id: string;

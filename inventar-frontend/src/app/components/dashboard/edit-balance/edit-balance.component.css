@@ -1,0 +1,102 @@
+/*
+ * Layout uses the shared `.dialog-form` chrome (header / footer / spinner) provided by
+ * <create-form>; this file only styles the per-currency row inside the form body.
+ */
+
+.edit-balance-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.edit-balance-form__intro {
+    margin: 0 0 6px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--card-title);
+    opacity: 0.7;
+}
+
+.edit-balance-form__row {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.edit-balance-form__flag {
+    font-size: 1.25rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.edit-balance-form__code {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-size: 0.85rem;
+    color: var(--card-title);
+    width: 44px;
+    flex-shrink: 0;
+}
+
+.edit-balance-form__field {
+    width: 100%;
+    margin: 0;
+}
+
+.edit-balance-form__clear {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: var(--card-title);
+    opacity: 0.55;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 160ms ease, opacity 160ms ease;
+}
+
+.edit-balance-form__clear:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--field-outline) 30%, transparent);
+    opacity: 1;
+}
+
+.edit-balance-form__clear:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+@media only screen and (max-width: 480px) {
+    /* On narrow phones, give the input the full row and keep flag/code on a label line. */
+    .edit-balance-form__row {
+        grid-template-columns: auto auto 1fr;
+        grid-template-areas:
+            'flag code clear'
+            'field field field';
+        row-gap: 4px;
+    }
+
+    .edit-balance-form__flag {
+        grid-area: flag;
+    }
+
+    .edit-balance-form__code {
+        grid-area: code;
+        width: auto;
+    }
+
+    .edit-balance-form__clear {
+        grid-area: clear;
+        justify-self: end;
+    }
+
+    .edit-balance-form__field {
+        grid-area: field;
+    }
+}

@@ -8,29 +8,26 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Document(collection = "spending")
+/**
+ * A single deposit toward a {@link Project}. Stored per-currency since cross-currency
+ * sums aren't meaningful — the frontend shows totals by currency on each project card.
+ */
+@Document(collection = "contributions")
 @NoArgsConstructor
 @Getter
 @Setter
 @QueryEntity
-public class Expense {
+public class Contribution {
 
     @Id
     private String id;
     private LocalDateTime createdTime = LocalDateTime.now();
     private LocalDateTime lastModifiedDate = this.createdTime;
-    private Double moneySpent;
-    private String description;
-    private String categoryID;
-    private String user;
+    private String projectId;
+    private Double amount;
     private String currency;
+    private String description;
+    private String user;
     private String account;
-    /**
-     * If non-null, this expense was created automatically as a side-effect of adding the
-     * referenced project {@link Contribution}. Deleting either side of the link cleans
-     * up the other (and refunds the balance) so the two stay consistent.
-     */
-    private String contributionId;
 }

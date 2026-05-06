@@ -1,0 +1,33 @@
+<create-form [loadingData]="loadingData()" [loadingMessage]="loadingMessage()" icon="savings" [entity]="entity"
+    [editMode]="isEditMode" (close)="closeDialog($event)" (create)="add()">
+
+    <form [formGroup]="formGroup" class="dialog-form">
+        <div class="dialog-form__row">
+            <mat-form-field appearance="outline" class="dialog-form__field primary-text">
+                <mat-label class="primary-text">Amount</mat-label>
+                <input type="number" step="0.01" min="0" autocomplete="off" matInput formControlName="amount">
+                <mat-error>Enter a positive amount.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="dialog-form__field primary-text">
+                <mat-label class="primary-text">Currency</mat-label>
+                <mat-select formControlName="currency">
+                    <mat-option class="primary-text" *ngFor="let c of currencies" [value]="c">
+                        {{ c | flag }} {{ c }}
+                    </mat-option>
+                </mat-select>
+                <mat-error>This field is required.</mat-error>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="dialog-form__field dialog-form__textarea primary-text">
+            <mat-label class="primary-text">Note</mat-label>
+            <textarea matInput formControlName="description" placeholder="Optional note about this deposit…"></textarea>
+        </mat-form-field>
+
+        <p class="contribution-hint">
+            <mat-icon class="contribution-hint__icon" aria-hidden="true">info</mat-icon>
+            <span>This contribution will also be recorded as an expense under <strong>Savings</strong>, reducing your account balance.</span>
+        </p>
+    </form>
+</create-form>

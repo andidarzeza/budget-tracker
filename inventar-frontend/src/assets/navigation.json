@@ -20,6 +20,11 @@
         "link": "/categories"
     },
     {
+        "icon": "flag",
+        "text": "Projects",
+        "link": "/projects"
+    },
+    {
         "icon": "history",
         "text": "History",
         "link": "/history"

@@ -8,29 +8,28 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Document(collection = "spending")
+/**
+ * A savings goal — e.g. "Trip to Paris", "New car". Users add {@link Contribution}s in any
+ * currency, and progress is tracked against {@code targetAmount} in {@code targetCurrency}.
+ */
+@Document(collection = "projects")
 @NoArgsConstructor
 @Getter
 @Setter
 @QueryEntity
-public class Expense {
+public class Project {
 
     @Id
     private String id;
     private LocalDateTime createdTime = LocalDateTime.now();
     private LocalDateTime lastModifiedDate = this.createdTime;
-    private Double moneySpent;
+    private String name;
     private String description;
-    private String categoryID;
+    private Double targetAmount;
+    private String targetCurrency;
+    private String icon;
+    private boolean archived;
     private String user;
-    private String currency;
     private String account;
-    /**
-     * If non-null, this expense was created automatically as a side-effect of adding the
-     * referenced project {@link Contribution}. Deleting either side of the link cleans
-     * up the other (and refunds the balance) so the two stay consistent.
-     */
-    private String contributionId;
 }

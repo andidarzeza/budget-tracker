@@ -1,5 +1,42 @@
 <div class="dashboard-container">
 
+    <!-- ──── My balance card (always-on, persists across reloads) ──── -->
+    <section class="balance-card" aria-label="My balance">
+        <header class="balance-card__head">
+            <mat-icon class="balance-card__icon" aria-hidden="true">account_balance_wallet</mat-icon>
+            <h2 class="balance-card__title">My balance</h2>
+            <div class="balance-card__actions">
+                <button type="button" class="balance-card__btn"
+                    (click)="toggleBalanceVisibility()"
+                    [attr.aria-label]="balanceHidden() ? 'Show balance' : 'Hide balance'">
+                    <mat-icon>{{ balanceHidden() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <button type="button" class="balance-card__btn" (click)="openEditBalance()" aria-label="Edit balance">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </div>
+        </header>
+
+        <div class="balance-card__rows" *ngIf="balanceRows().length; else balanceEmpty">
+            <div *ngFor="let row of balanceRows()" class="balance-row">
+                <span class="balance-row__flag" aria-hidden="true">{{ row.currency | flag }}</span>
+                <span class="balance-row__currency">{{ row.currency }}</span>
+                <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
+                    {{ balanceHidden() ? '••••••' : (row.amount | number : '1.0-2') }}
+                </span>
+            </div>
+        </div>
+        <ng-template #balanceEmpty>
+            <div class="balance-empty">
+                <span>No balance set yet.</span>
+                <button type="button" class="balance-empty__cta" (click)="openEditBalance()">
+                    <mat-icon aria-hidden="true">add</mat-icon>
+                    <span>Set balance</span>
+                </button>
+            </div>
+        </ng-template>
+    </section>
+
     <!-- ──── Range tabs + dynamic date picker ──── -->
     <div class="control-bar">
         <div class="control-bar__ranges" role="tablist" aria-label="Time range">

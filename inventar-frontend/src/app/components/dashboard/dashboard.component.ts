@@ -1,16 +1,24 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, HostListener, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils, DoughnutDataPoint } from 'src/app/utils/chart';
-import { TOASTER_CONFIGURATION } from 'src/environments/environment';
+import {
+  CREATE_DIALOG_DESKTOP_CONFIGURATION,
+  CREATE_DIALOG_MOBILE_CONFIGURATION,
+  TOASTER_CONFIGURATION
+} from 'src/environments/environment';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, takeUntil } from 'rxjs/operators';
 import {
+  Account,
   CurrencyTotalDTO,
   DashboardDTO,
   RangeType,
   TimelineExpenseDTO,
   TimelineIncomeDTO
 } from 'src/app/models/models';
+import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { Chart, registerables } from 'chart.js';
@@ -18,6 +26,7 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { inOutAnimation } from 'src/app/animations';
 import { of } from 'rxjs';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { EditBalanceComponent } from './edit-balance/edit-balance.component';
 
 interface CurrencyBalance {
   currency: string;
@@ -25,6 +34,13 @@ interface CurrencyBalance {
   expense: number;
   net: number;
 }
+
+interface BalanceRow {
+  currency: string;
+  amount: number;
+}
+
+const BALANCE_HIDDEN_KEY = 'dashboard.balanceHidden';
 
 interface CategoryGroupRow {
   currency: string;
@@ -61,6 +77,19 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   ranges: RangeType[] = ['DAY', 'WEEK', 'MONTH', 'YEAR', 'MAX'];
 
   dashboardData = signal<DashboardDTO | null>(null);
+
+  /** Current per-currency balance straight from the user's account (Edit balance dialog updates this). */
+  account = signal<Account | null>(null);
+  /** Privacy toggle — value persisted in localStorage so it sticks across reloads. */
+  balanceHidden = signal<boolean>(localStorage.getItem(BALANCE_HIDDEN_KEY) === '1');
+
+  balanceRows = computed<BalanceRow[]>(() => {
+    const balance = this.account()?.balance ?? {};
+    return Object.entries(balance)
+      .filter(([, amount]) => typeof amount === 'number' && amount !== 0)
+      .map(([currency, amount]) => ({ currency, amount: amount as number }))
+      .sort((a, b) => a.currency.localeCompare(b.currency));
+  });
 
   /** Per-currency Income / Expense / Net for the KPI strip. */
   balances = computed<CurrencyBalance[]>(() => {
@@ -136,11 +165,52 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     private toasterService: ToastrService,
     public sideBarService: SideBarService,
     public navBarService: NavBarService,
-    private routeSpinnerService: RouteSpinnerService
+    private routeSpinnerService: RouteSpinnerService,
+    private accountService: AccountService,
+    private dialog: MatDialog,
+    private breakpointService: BreakpointService
   ) {
     super();
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
+    this.fetchAccount();
+  }
+
+  private fetchAccount(): void {
+    const accountId = this.accountService.getAccount();
+    if (!accountId) return;
+    this.accountService.findOne(accountId)
+      .pipe(takeUntil(this.unsubscribe$), catchError(() => of(null)))
+      .subscribe(account => this.account.set(account));
+  }
+
+  toggleBalanceVisibility(): void {
+    const next = !this.balanceHidden();
+    this.balanceHidden.set(next);
+    localStorage.setItem(BALANCE_HIDDEN_KEY, next ? '1' : '0');
+  }
+
+  openEditBalance(): void {
+    const accountId = this.accountService.getAccount();
+    if (!accountId) return;
+    // Match the create-dialog configuration used by every other dialog so the wrapper
+    // (header / footer / mobile fullscreen) renders consistently.
+    const mobile = this.breakpointService.matchesMobileCreateLayout();
+    const ref = this.dialog.open(EditBalanceComponent, {
+      panelClass: mobile ? ['create-dialog', 'create-dialog--fullscreen'] : ['create-dialog'],
+      ...(mobile ? CREATE_DIALOG_MOBILE_CONFIGURATION : CREATE_DIALOG_DESKTOP_CONFIGURATION),
+      autoFocus: false,
+      data: {
+        accountId,
+        balance: this.account()?.balance ?? {}
+      }
+    });
+    ref.afterClosed().pipe(takeUntil(this.unsubscribe$)).subscribe(updated => {
+      // Dialog returns the saved Account on success, null on cancel.
+      if (updated) {
+        this.account.set(updated);
+      }
+    });
   }
 
   onRangeSelect(range: RangeType): void {
@@ -171,6 +241,9 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
       .subscribe((data: DashboardDTO | null) => {
         this.dashboardData.set(data);
         this.refreshBreakdownDoughnuts();
+        // The account balance is mutated by background services (expenses, contributions);
+        // refresh it whenever fresh dashboard data arrives.
+        this.fetchAccount();
       });
   }
 

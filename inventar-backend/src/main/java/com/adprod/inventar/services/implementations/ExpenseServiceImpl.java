@@ -7,6 +7,7 @@ import static com.adprod.inventar.models.enums.EntityType.EXPENSE;
 import com.adprod.inventar.models.wrappers.ExpenseDTO;
 import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
+import com.adprod.inventar.repositories.ContributionRepository;
 import com.adprod.inventar.repositories.ExpenseRepository;
 import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.HistoryService;
@@ -36,6 +37,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private static final String VERIFY_INVOICE_API_URL = "https://efiskalizimi-app.tatime.gov.al/invoice-check/api/verifyInvoice";
     private final ExpenseRepository expenseRepository;
     private final CategoryRepository categoryRepository;
+    private final ContributionRepository contributionRepository;
     private final AccountService accountService;
     private final HistoryService historyService;
     private final SecurityContextService securityContextService;
@@ -101,6 +103,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         Expense expense = (Expense) findOne(id).getBody();
         accountService.addToBalance(expense.getAccount(), expense.getCurrency(), expense.getMoneySpent());
         expenseRepository.delete(expense);
+        // Cascade: an expense auto-created from a project contribution and the contribution itself
+        // are two views of the same event; deleting one always drops the other so they don't drift.
+        if (Objects.nonNull(expense.getContributionId())) {
+            contributionRepository.deleteById(expense.getContributionId());
+        }
         historyService.save(historyService.from(EntityAction.DELETE, EXPENSE, expense.getAccount()));
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }

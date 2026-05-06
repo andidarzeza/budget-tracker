@@ -1,0 +1,28 @@
+/* Uses shared `.dialog-form*` styles from styles.scss. */
+
+.contribution-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 4px 0 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--light) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--card-title);
+}
+
+.contribution-hint__icon {
+    flex-shrink: 0;
+    color: var(--light);
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    margin-top: 1px;
+}
+
+.contribution-hint strong {
+    font-weight: 700;
+}

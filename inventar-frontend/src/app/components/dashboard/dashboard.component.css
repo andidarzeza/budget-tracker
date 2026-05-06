@@ -17,6 +17,151 @@
     overflow-y: visible;
 }
 
+/* —— My balance card —— */
+.balance-card {
+    background: var(--card);
+    color: var(--card-title);
+    border-radius: 14px;
+    padding: 16px 18px 16px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    border: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+.balance-card__head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+}
+
+.balance-card__icon {
+    color: var(--light);
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+}
+
+.balance-card__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--card-title);
+}
+
+.balance-card__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.balance-card__btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: var(--card-title);
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 160ms ease, color 160ms ease;
+}
+
+.balance-card__btn:hover {
+    background: color-mix(in srgb, var(--field-outline) 30%, transparent);
+}
+
+.balance-card__rows {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+.balance-row {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--secondary) 65%, transparent);
+    border: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+}
+
+.balance-row__flag {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.balance-row__currency {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--card-title);
+    opacity: 0.75;
+}
+
+.balance-row__amount {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--card-title);
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: filter 160ms ease;
+}
+
+.balance-row__amount--hidden {
+    letter-spacing: 2px;
+    color: var(--card-title);
+    opacity: 0.55;
+}
+
+.balance-empty {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 4px;
+    color: var(--card-title);
+    opacity: 0.85;
+    font-size: 0.92rem;
+}
+
+.balance-empty__cta {
+    appearance: none;
+    border: 0;
+    cursor: pointer;
+    background: var(--light);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.balance-empty__cta mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+}
+
 /* —— Control bar (range tabs + dynamic date picker) —— */
 .control-bar {
     display: grid;
@@ -294,20 +439,23 @@
 }
 
 .doughnut-wrap {
-    height: 180px;
+    /* Auto-size to canvas + label so the chart isn't clipped by the wrap's box. */
+    min-height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 6px;
-    overflow: hidden;
-    padding: 4px 0 8px;
+    gap: 8px;
+    padding: 8px 0 4px;
+    box-sizing: border-box;
 }
 
 .doughnut-wrap canvas {
     display: block;
-    max-width: min(180px, 100%) !important;
-    max-height: 150px;
+    /* Clamp width and height so Chart.js's `aspectRatio: 1` square fits inside the wrap
+       even after accounting for the label, gap and padding below it. */
+    max-width: min(160px, 100%) !important;
+    max-height: 160px !important;
     width: auto !important;
     height: auto !important;
 }
@@ -492,12 +640,14 @@
     }
 
     .doughnut-wrap {
-        height: 200px;
+        /* Mobile: more breathing room so canvas + currency label fit without clipping. */
+        min-height: 240px;
+        padding: 8px 0 6px;
     }
 
     .doughnut-wrap canvas {
         max-width: 200px !important;
-        max-height: 200px;
+        max-height: 200px !important;
     }
 
     .cat-list {
