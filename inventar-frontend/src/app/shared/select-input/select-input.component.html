@@ -1,0 +1,70 @@
+<div class="select-input">
+  <label>
+    {{ label() }}
+    @if (required) {
+      *
+    }
+  </label>
+  <div class="input-wrap">
+    <div
+      #trigger
+      class="select-trigger"
+      tabindex="0"
+      role="combobox"
+      [attr.aria-haspopup]="'listbox'"
+      [attr.aria-expanded]="dropdownOpen()"
+      (click)="toggleDropdown()"
+      (blur)="onBlur()"
+      (keydown)="onKeydown($event)"
+      [class.required-field]="displayError"
+    >
+      @if (icon()) {
+        <mat-icon class="leading-icon">{{ icon() }}</mat-icon>
+      }
+      <span
+        class="value"
+        [class.placeholder]="!hasValue"
+        [class.error-text]="displayError"
+      >
+        @if (hasValue) {
+          {{ selectedDisplay }}
+        } @else {
+          {{ placeholder() }}
+        }
+      </span>
+      <mat-icon
+        class="chevron-icon"
+        [class.chevron-icon--open]="dropdownOpen()"
+      >
+        expand_more
+      </mat-icon>
+    </div>
+
+    @if (displayError) {
+      <div class="error-message" (click)="$event.stopPropagation()">
+        {{ requiredErrorMessage() }}
+      </div>
+    }
+
+    <ul class="dropdown" role="listbox" [class.dropdown--open]="dropdownOpen()">
+      @for (opt of options(); track opt) {
+        <li
+          role="option"
+          class="option"
+          [class.checked]="isSelected(opt)"
+          [attr.aria-selected]="isSelected(opt)"
+          (mousedown)="onSelect(opt, $event)"
+        >
+          <span class="truncate">{{ displayWith()(opt) }}</span>
+          @if (isSelected(opt)) {
+            <mat-icon>check</mat-icon>
+          }
+        </li>
+      }
+
+      @if (options().length === 0) {
+        <li class="option option--empty">{{ emptyText() }}</li>
+      }
+    </ul>
+  </div>
+</div>

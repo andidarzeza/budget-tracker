@@ -17,6 +17,7 @@ import { YearPickerModule } from './year-picker/year-picker.module';
 import { AllTimeHeaderModule } from './all-time-header/all-time-header.module';
 import { FlagPipeModule } from 'src/app/template/pipes/flag-pipe/flag-pipe.module';
 import { CreateFormModule } from 'src/app/shared/create-form/create-form.module';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { EditBalanceComponent } from './edit-balance/edit-balance.component';
 
 @NgModule({
@@ -42,6 +43,7 @@ import { EditBalanceComponent } from './edit-balance/edit-balance.component';
     SpinnerModule,
     TableMessageModule,
     FlagPipeModule,
+    LabeledFormInputComponent,
   ]
 })
 export class DashboardModule { }

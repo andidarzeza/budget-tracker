@@ -5,9 +5,12 @@
 
     <section class="form-panel">
         <mat-card class="form-container">
-            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="showSpinner()">
-                <mat-spinner class="app-loading-spinner" diameter="46" strokeWidth="4"></mat-spinner>
-                <p class="app-loading-label">Creating your account...</p>
+            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="showSpinner()" role="status" aria-live="polite">
+                <span class="app-spinner" aria-hidden="true">
+                    <span class="app-spinner__track"></span>
+                    <span class="app-spinner__arc"></span>
+                </span>
+                <p class="app-loading-label">Creating your account…</p>
             </div>
 
             <div class="form-header">

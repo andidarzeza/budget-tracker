@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { IConfiguration, Theme } from 'src/app/models/models';
+import { IConfiguration } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -25,40 +25,6 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
   configuration: IConfiguration;
   public EXPERIMENTAL_MODE = environment.experimentalMode;
 
-  public themesArray: Theme[] = [
-    {
-      name: 'Default',
-      color: 'rgba(0, 105, 92, 1)',
-      shadowedColor: 'rgba(0, 105, 92, 0.5)'
-    },
-    {
-      name: 'Pink & Blue-grey',
-      color: 'rgba(233, 30, 99, 1)',
-      shadowedColor: 'rgba(233, 30, 99, 0.5)'
-    },
-    {
-      name: 'Purple',
-      color: 'rgba(103, 58, 183, 1)',
-      shadowedColor: 'rgba(103, 58, 183, 0.5)'
-    },
-    {
-      name: 'Indigo Pink',
-      color: 'rgba(63, 81, 181, 1)',
-      shadowedColor: 'rgba(63, 81, 181, 0.5)'
-    },
-    {
-      name: "Amber",
-      color: 'rgba(254, 178, 4, 1)',
-      shadowedColor: 'rgba(254, 178, 4, 0.5)'
-    },
-    {
-      name: "Deep Amber",
-      color: 'rgba(242,126,51, 1)',
-      shadowedColor: 'rgba(242,126,51, 0.5)'
-    }
-
-  ]
-
   constructor(
     public sharedService: SharedService,
     public authenticationService: AuthenticationService,
@@ -73,7 +39,7 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setInitialTheme();
+    this.clearLegacyAccentOverride();
     this.breakpointService.useTableCardLayout$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((mobile) => (this.isMobileLayout = mobile));
@@ -86,13 +52,19 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
       });
   }
 
-  private setInitialTheme(): void {
-    const theme: string = localStorage.getItem("themeColor");
-    if(theme) this.changeThemeColor({color: theme, shadowedColor: this.getShadowedColor(theme)} as Theme);
-  }
-
-  getShadowedColor(themeColor: string): string {
-    return this.themesArray.filter((theme: Theme) => theme.color == themeColor)[0].shadowedColor;
+  /**
+   * The legacy theme picker wrote `--light` / `--lightShadowed` overrides
+   * onto :root and persisted them in `themeColor` localStorage. The new
+   * indigo design system owns those tokens through .light-theme/.dark-theme,
+   * so any leftover override would shadow the accent. Drop both once.
+   */
+  private clearLegacyAccentOverride(): void {
+    if (localStorage.getItem('themeColor')) {
+      localStorage.removeItem('themeColor');
+    }
+    const root = document.documentElement;
+    root.style.removeProperty('--light');
+    root.style.removeProperty('--lightShadowed');
   }
 
   logout(): void {
@@ -100,34 +72,19 @@ export class NavBarComponent extends Unsubscribe implements OnInit {
   }
 
   switchAccount(): void {
-    localStorage.removeItem("account");
-    this.router.navigate(["/account"]);
+    localStorage.removeItem('account');
+    this.router.navigate(['/account']);
   }
 
   toggleDarkMode(): void {
     this.themeService.changeTheme();
     this.sharedService.applyBodyTheme(this.themeService.themeValue);
-    // this.configuration.darkMode = !this.sharedService.darkMode;
-    // this.configurationService
-    //   .updateConfiguration()
-    //   .pipe(takeUntil(this.unsubscribe$))
-    //   .subscribe(() => {
-    //     this.sharedService.changeTheme();
-    //   });
-  }
-
-  changeThemeColor(theme: Theme): void {
-    const root: HTMLElement = document.documentElement;
-    root.style.setProperty('--light', theme.color);
-    root.style.setProperty('--lightShadowed', theme.shadowedColor);
-    localStorage.setItem("themeColor", theme.color);
-    this.themeService.next(theme.color);
   }
 
   get firstName() {
     return this.authenticationService?.currentUserValue?.firstName;
-  }  
-  
+  }
+
   get lastName() {
     return this.authenticationService?.currentUserValue?.lastName;
   }

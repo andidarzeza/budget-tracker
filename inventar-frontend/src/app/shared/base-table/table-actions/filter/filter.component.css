@@ -1,20 +1,41 @@
+.filter-container {
+    background: var(--app-bg-elevated);
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius-md);
+    overflow: hidden;
+}
+
+.filter-form {
+    width: 100%;
+    padding: 16px 16px 4px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px 16px;
+    box-sizing: border-box;
+}
+
+.filter-cell {
+    width: 100%;
+    min-width: 0;
+}
+
 .my-form-field {
     width: 100%;
 }
 
+/* Align mat-select height with the labeled-form-input wrapper (both ~44px tall). */
+.filter-cell .my-form-field .mat-mdc-text-field-wrapper {
+    background: var(--app-surface);
+}
+
 .filter-actions {
-    padding: 20px 0px;
+    padding: 14px 16px 18px;
     width: 100%;
     display: flex;
     justify-content: flex-end;
-}
-
-.filter-container {
-    background: var(--filter-bg);
-    /* border-bottom: 2px solid rgba(0, 0, 0, .12); */
-    /* border-radius: 0px 0px 10px 10px; */
+    box-sizing: border-box;
 }
 
 .filter-option {
-    background: var(--secondary);
+    background: var(--app-bg-elevated);
 }

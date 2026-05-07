@@ -1,14 +1,17 @@
+/* Base shell — wraps the entire authenticated app */
+
 .application-container {
     display: flex;
     justify-content: center;
     height: 100%;
     width: 100%;
+    background: var(--app-bg);
 }
 
 .shadow {
     width: 100%;
     height: 100%;
-    background: black;
+    background: var(--mat-sys-scrim, rgba(15, 23, 42, 0.32));
     position: absolute;
     top: 0;
     z-index: 10;
@@ -16,7 +19,7 @@
     opacity: 0;
     pointer-events: none;
     cursor: pointer;
-    transition: opacity 400ms;
+    transition: opacity var(--app-motion-slow, 320ms) var(--app-easing-standard, ease);
 }
 
 .application {
@@ -26,32 +29,31 @@
     height: 100%;
     min-height: 0;
     overflow: hidden;
+    background: var(--app-bg);
 }
 
 .app-width {
-    width: calc(100% - 0px);
+    width: 100%;
     margin-left: 76px;
 }
 
 .app-full-width {
     width: 100%;
-    margin-left: 0px;
+    margin-left: 0;
 }
 
 .display-none {
-    width: 0px
+    width: 0;
 }
 
 .content-container {
     flex: 1 1 auto;
     min-height: 0;
     height: auto;
-    border-radius: 10px 0px 0px 0px;
-    border: 2px solid rgba(0, 0, 0, .12);
-    border-right: none;
-    border-bottom: none;
+    border-radius: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    background: var(--app-bg);
 }
 
 .content-container--public {
@@ -59,16 +61,10 @@
     border-radius: 0;
 }
 
-@media only screen and (max-width: 767px) {
-    .content-container {
-        border-radius: 0;
-    }
-}
-
 @media only screen and (max-width: 600px) {
     .app-width {
         width: 100%;
-        margin-left: 0px;
+        margin-left: 0;
     }
 }
 
@@ -76,17 +72,17 @@
     position: fixed;
     left: 0;
     right: 0;
-    top: var(--app-toolbar-height, 76px);
+    top: var(--app-toolbar-height, 68px);
     bottom: 0;
-    background: #000;
+    background: var(--mat-sys-scrim, rgba(15, 23, 42, 0.4));
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.28s ease;
+    transition: opacity var(--app-motion-slow, 280ms) var(--app-easing-standard, ease);
     z-index: 11;
+    backdrop-filter: blur(2px);
 }
 
 .mobile-nav-backdrop--open {
-    opacity: 0.4;
+    opacity: 1;
     pointer-events: auto;
 }
-

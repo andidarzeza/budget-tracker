@@ -36,13 +36,6 @@
                     {{ lastName | titlecase }}</button>
                 <mat-divider style="width: 100%;"></mat-divider>
 
-                <!-- <button class="title" mat-menu-item [matMenuTriggerFor]="balance">
-                    <mat-icon class="primary-icon">account_balance_wallet</mat-icon> Balance
-                </button> -->
-                <mat-divider style="width: 100%;"></mat-divider>
-                <button mat-menu-item [matMenuTriggerFor]="themes">
-                    <mat-icon>color_lens</mat-icon> Themes
-                </button>
                 <mat-divider style="width: 100%;"></mat-divider>
                 <button (click)="switchAccount()" mat-menu-item>
                     <mat-icon>account_circle</mat-icon>Switch Account
@@ -50,15 +43,6 @@
                 <mat-divider style="width: 100%;"></mat-divider>
                 <button (click)="logout()" mat-menu-item>
                     <mat-icon>exit_to_app</mat-icon>Logout
-                </button>
-            </mat-menu>
-
-            <mat-menu #themes="matMenu">
-                <button *ngFor="let theme of themesArray" mat-menu-item
-                    class="flex-centered" style="justify-content: inherit; width: 200px;"
-                    (click)="changeThemeColor(theme)">
-                    <div class="round" [style.background-color]="theme.color"></div>
-                    <span>{{theme.name}}</span>
                 </button>
             </mat-menu>
 
@@ -90,8 +74,5 @@
             </mat-menu>
 
         </div>
-        <mat-divider *ngIf="breakpointService.screenSize != 'mobile'" [vertical]="true" class="vertical-divider"></mat-divider>
-
-        <clock *ngIf="breakpointService.screenSize != 'mobile'"></clock>
     </div>
 </mat-toolbar>

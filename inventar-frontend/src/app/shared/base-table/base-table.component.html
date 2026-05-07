@@ -1,9 +1,12 @@
 <ng-container *ngIf="{ mobile: (breakpointService.useTableCardLayout$ | async) === true } as layout">
     <!-- Desktop: bordered table shell + paginator -->
     <div *ngIf="!layout.mobile" class="base-table-container">
-        <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading">
-            <mat-spinner class="app-loading-spinner" diameter="42" strokeWidth="4"></mat-spinner>
-            <p class="app-loading-label">Loading data...</p>
+        <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading" role="status" aria-live="polite">
+            <span class="app-spinner" aria-hidden="true">
+                <span class="app-spinner__track"></span>
+                <span class="app-spinner__arc"></span>
+            </span>
+            <p class="app-loading-label">Loading data…</p>
         </div>
 
         <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
@@ -47,9 +50,12 @@
             </table-actions>
         </div>
         <div class="mobile-cards-viewport">
-            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading">
-                <mat-spinner class="app-loading-spinner" diameter="38" strokeWidth="4"></mat-spinner>
-                <p class="app-loading-label">Loading data...</p>
+            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading" role="status" aria-live="polite">
+                <span class="app-spinner app-spinner--sm" aria-hidden="true">
+                    <span class="app-spinner__track"></span>
+                    <span class="app-spinner__arc"></span>
+                </span>
+                <p class="app-loading-label">Loading data…</p>
             </div>
             <table-body [displayEditAction]="displayEditAction"
                 [displayDeleteAction]="displayDeleteAction" [data]="data"

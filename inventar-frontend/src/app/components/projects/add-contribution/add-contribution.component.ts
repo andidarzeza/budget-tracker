@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Contribution, EntityType } from 'src/app/models/models';
 import { ProjectService } from 'src/app/services/pages/project.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 interface AddContributionData {
@@ -18,7 +19,8 @@ interface AddContributionData {
   selector: 'app-add-contribution',
   templateUrl: './add-contribution.component.html',
   styleUrls: ['./add-contribution.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [FlagPipe]
 })
 export class AddContributionComponent extends Unsubscribe implements OnInit {
 
@@ -31,6 +33,8 @@ export class AddContributionComponent extends Unsubscribe implements OnInit {
   readonly isEditMode = false;
 
   readonly currencies = CURRENCIES;
+  /** Currency option label: "🇺🇸 USD". */
+  readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
   formGroup: UntypedFormGroup;
 
   constructor(
@@ -38,7 +42,8 @@ export class AddContributionComponent extends Unsubscribe implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: AddContributionData,
     private dialogRef: MatDialogRef<AddContributionComponent>,
     private projectService: ProjectService,
-    private toaster: ToastrService
+    private toaster: ToastrService,
+    private flagPipe: FlagPipe
   ) {
     super();
     const defaultCurrency = this.data?.defaultCurrency

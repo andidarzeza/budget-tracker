@@ -65,8 +65,8 @@
 }
 
 .pd-icon-btn--danger:hover {
-    background: color-mix(in srgb, rgb(220, 38, 38) 14%, transparent);
-    color: rgb(220, 38, 38);
+    background: color-mix(in srgb, var(--app-danger) 14%, transparent);
+    color: var(--app-danger);
 }
 
 /* Hero card */
@@ -75,8 +75,8 @@
     color: var(--card-title);
     border-radius: 14px;
     padding: 20px 22px 22px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
-    border: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+    box-shadow: var(--app-shadow-xs);
+    border: 1px solid var(--app-border);
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -182,7 +182,7 @@
 
 .pd-progress__complete {
     font-weight: 700;
-    color: rgb(5, 150, 105);
+    color: var(--app-success);
 }
 
 /* Other currencies */
@@ -255,7 +255,7 @@
     justify-content: center;
     gap: 8px;
     align-self: flex-start;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+    box-shadow: var(--app-shadow-accent);
     transition: filter 160ms ease, transform 80ms ease;
 }
 
@@ -273,8 +273,8 @@
     color: var(--card-title);
     border-radius: 14px;
     padding: 18px 22px 18px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
-    border: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+    box-shadow: var(--app-shadow-xs);
+    border: 1px solid var(--app-border);
 }
 
 .pd-section-head {
@@ -348,7 +348,7 @@
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    background: color-mix(in srgb, rgb(5, 150, 105) 16%, transparent);
+    background: color-mix(in srgb, var(--app-success) 16%, transparent);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -356,7 +356,7 @@
 }
 
 .pd-row__icon {
-    color: rgb(5, 150, 105);
+    color: var(--app-success);
     width: 20px;
     height: 20px;
     font-size: 20px;
@@ -419,8 +419,8 @@
 
 .pd-row__delete:hover {
     opacity: 1;
-    color: rgb(220, 38, 38);
-    background: color-mix(in srgb, rgb(220, 38, 38) 12%, transparent);
+    color: var(--app-danger);
+    background: color-mix(in srgb, var(--app-danger) 12%, transparent);
 }
 
 @media only screen and (max-width: 767px) {

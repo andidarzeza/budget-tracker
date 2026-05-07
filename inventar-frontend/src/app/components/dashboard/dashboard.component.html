@@ -3,7 +3,9 @@
     <!-- ──── My balance card (always-on, persists across reloads) ──── -->
     <section class="balance-card" aria-label="My balance">
         <header class="balance-card__head">
-            <mat-icon class="balance-card__icon" aria-hidden="true">account_balance_wallet</mat-icon>
+            <span class="balance-card__icon-wrap" aria-hidden="true">
+                <mat-icon class="balance-card__icon">account_balance_wallet</mat-icon>
+            </span>
             <h2 class="balance-card__title">My balance</h2>
             <div class="balance-card__actions">
                 <button type="button" class="balance-card__btn"
@@ -121,32 +123,24 @@
                     <span class="panel__hint">By category</span>
                 </header>
 
-                <div class="breakdown-grid" [class.breakdown-grid--empty]="expensesEmpty()">
-                    <div class="doughnut-wrap">
-                        <canvas id="expense-doughnut"></canvas>
-                        <span class="doughnut-currency-label" *ngIf="primaryExpenseCurrency() as c">
-                            {{ c }} share
+                <ul class="cat-list" *ngIf="expenseRows().length">
+                    <li class="cat-row" *ngFor="let r of expenseRows()">
+                        <span class="cat-row__icon cat-row__icon--exp">
+                            <mat-icon>{{ r.icon }}</mat-icon>
                         </span>
-                    </div>
+                        <span class="cat-row__main">
+                            <span class="cat-row__title">{{ r.name }}</span>
+                            <span class="cat-row__sub">{{ r.currency }}</span>
+                        </span>
+                        <span class="cat-row__amount cat-row__amount--exp">
+                            −{{ r.total | number : '1.0-2' }}
+                        </span>
+                    </li>
+                </ul>
 
-                    <ul class="cat-list" *ngIf="expenseGroups().length">
-                        <li class="cat-list__group" *ngFor="let g of expenseGroups()">
-                            <span class="cat-list__icon-wrap">
-                                <mat-icon class="cat-list__icon">{{ g.icon }}</mat-icon>
-                            </span>
-                            <span class="cat-list__name">{{ g.name }}</span>
-                            <span class="cat-list__totals">
-                                <span class="cat-list__total" *ngFor="let r of g.rows">
-                                    {{ r.total | number : '1.0-2' }} {{ r.currency }}
-                                </span>
-                            </span>
-                        </li>
-                    </ul>
-
-                    <div class="breakdown-empty" *ngIf="expensesEmpty()">
-                        <mat-icon class="breakdown-empty__icon">pie_chart_outline</mat-icon>
-                        <span class="breakdown-empty__text">No expenses in this period.</span>
-                    </div>
+                <div class="breakdown-empty" *ngIf="expensesEmpty()">
+                    <mat-icon class="breakdown-empty__icon">receipt_long</mat-icon>
+                    <span class="breakdown-empty__text">No expenses in this period.</span>
                 </div>
             </mat-card>
         </div>
@@ -176,32 +170,24 @@
                     <span class="panel__hint">By source</span>
                 </header>
 
-                <div class="breakdown-grid" [class.breakdown-grid--empty]="incomesEmpty()">
-                    <div class="doughnut-wrap">
-                        <canvas id="income-doughnut"></canvas>
-                        <span class="doughnut-currency-label" *ngIf="primaryIncomeCurrency() as c">
-                            {{ c }} share
+                <ul class="cat-list" *ngIf="incomeRows().length">
+                    <li class="cat-row" *ngFor="let r of incomeRows()">
+                        <span class="cat-row__icon cat-row__icon--inc">
+                            <mat-icon>{{ r.icon }}</mat-icon>
                         </span>
-                    </div>
+                        <span class="cat-row__main">
+                            <span class="cat-row__title">{{ r.name }}</span>
+                            <span class="cat-row__sub">{{ r.currency }}</span>
+                        </span>
+                        <span class="cat-row__amount cat-row__amount--inc">
+                            +{{ r.total | number : '1.0-2' }}
+                        </span>
+                    </li>
+                </ul>
 
-                    <ul class="cat-list" *ngIf="incomeGroups().length">
-                        <li class="cat-list__group" *ngFor="let g of incomeGroups()">
-                            <span class="cat-list__icon-wrap cat-list__icon-wrap--income">
-                                <mat-icon class="cat-list__icon">trending_up</mat-icon>
-                            </span>
-                            <span class="cat-list__name">{{ g.name }}</span>
-                            <span class="cat-list__totals">
-                                <span class="cat-list__total" *ngFor="let r of g.rows">
-                                    {{ r.total | number : '1.0-2' }} {{ r.currency }}
-                                </span>
-                            </span>
-                        </li>
-                    </ul>
-
-                    <div class="breakdown-empty" *ngIf="incomesEmpty()">
-                        <mat-icon class="breakdown-empty__icon">savings</mat-icon>
-                        <span class="breakdown-empty__text">No income in this period.</span>
-                    </div>
+                <div class="breakdown-empty" *ngIf="incomesEmpty()">
+                    <mat-icon class="breakdown-empty__icon">savings</mat-icon>
+                    <span class="breakdown-empty__text">No income in this period.</span>
                 </div>
             </mat-card>
         </div>

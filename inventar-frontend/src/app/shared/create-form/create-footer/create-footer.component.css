@@ -5,10 +5,6 @@
     flex-wrap: wrap;
     gap: 10px;
     padding: 18px 22px 22px;
-    background: var(--secondary);
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.dark-theme .dialog-footer {
-    border-top-color: rgba(255, 255, 255, 0.08);
+    background: var(--app-bg-elevated);
+    border-top: 1px solid var(--app-border);
 }

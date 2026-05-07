@@ -22,6 +22,7 @@ import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { inOutAnimation } from 'src/app/animations';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 
 interface AddExpenseDialogData {
   id?: string;
@@ -37,10 +38,19 @@ interface AddExpenseDialogData {
   styleUrls: ['./add-expense.component.css'],
   animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [FlagPipe],
 })
 export class AddExpenseComponent extends Unsubscribe implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly breakpointService = inject(BreakpointService);
+  private readonly flagPipe = inject(FlagPipe);
+
+  /** Currency option label: "🇺🇸 USD". */
+  readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
+  /** Category option label: just the name. */
+  readonly displayCategory = (c: Category) => c?.category ?? '';
+  /** Categories store the id on the form control. */
+  readonly categoryIdValue = (c: Category) => c?.id ?? null;
 
   /** Fullscreen keypad / currency menu wizard only on narrow viewports (≤767px). */
   readonly isWizardMobile = toSignal(this.breakpointService.useTableCardLayout$, {

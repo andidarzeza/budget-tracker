@@ -9,6 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatMenuModule } from '@angular/material/menu';
 import { AddIncomeComponent } from './add-income.component';
 import { CreateFormModule } from 'src/app/shared/create-form/create-form.module';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipeModule } from 'src/app/template/pipes/flag-pipe/flag-pipe.module';
 
 
@@ -27,7 +29,9 @@ import { FlagPipeModule } from 'src/app/template/pipes/flag-pipe/flag-pipe.modul
     MatButtonModule,
     MatSelectModule,
     MatMenuModule,
-    FlagPipeModule
+    FlagPipeModule,
+    LabeledFormInputComponent,
+    SelectInputComponent
   ]
 })
 export class AddIncomeModule { }

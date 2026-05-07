@@ -6,8 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { FilterHeaderModule } from './filter-header/filter-header.module';
 import { MatDividerModule } from '@angular/material/divider';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 
 
 
@@ -20,8 +20,8 @@ import { MatSelectModule } from '@angular/material/select';
     FilterHeaderModule,
     MatDividerModule,
     ReactiveFormsModule,
-    MatInputModule,
-    MatSelectModule
+    LabeledFormInputComponent,
+    SelectInputComponent
   ],
   exports: [FilterComponent]
 })

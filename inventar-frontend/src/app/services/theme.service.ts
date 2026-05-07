@@ -7,7 +7,7 @@ import { Observable, Subject } from 'rxjs';
 })
 export class ThemeService {
 
-  private theme: Theme = "light-theme";
+  private theme: Theme = 'light-theme';
   private renderer: Renderer2;
 
   private subject = new Subject<string>();
@@ -16,7 +16,7 @@ export class ThemeService {
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private rendererFactory: RendererFactory2
-  ) { 
+  ) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
@@ -25,24 +25,33 @@ export class ThemeService {
   }
 
   initTheme = (): void => {
-    const theme = localStorage.getItem("theme");
-    if(theme == "light-theme" || theme == "dark-theme") {
-      this.theme = theme;
-    } else {
-      localStorage.setItem("theme", this.theme);
+    const stored = localStorage.getItem('theme');
+    if (stored === 'light-theme' || stored === 'dark-theme') {
+      this.theme = stored;
+    } else if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+      this.theme = 'dark-theme';
     }
-    this.renderer.addClass(this.document.body, this.theme)
+    localStorage.setItem('theme', this.theme);
+    this.applyThemeClass();
   };
 
   changeTheme = (): void => {
-    this.document.body.classList.replace(this.theme, this.theme == 'dark-theme' ? (this.theme = 'light-theme') : (this.theme = 'dark-theme'));
-    localStorage.setItem("theme", this.theme);
-  }
-
+    this.theme = this.theme === 'dark-theme' ? 'light-theme' : 'dark-theme';
+    localStorage.setItem('theme', this.theme);
+    this.applyThemeClass();
+  };
 
   get themeValue() {
     return this.theme;
   }
+
+  /** Ensure exactly one of `light-theme` / `dark-theme` is on <body>. */
+  private applyThemeClass(): void {
+    const body = this.document.body;
+    const other: Theme = this.theme === 'dark-theme' ? 'light-theme' : 'dark-theme';
+    this.renderer.removeClass(body, other);
+    this.renderer.addClass(body, this.theme);
+  }
 }
 
-export type Theme = "light-theme" | "dark-theme";
+export type Theme = 'light-theme' | 'dark-theme';

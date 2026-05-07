@@ -74,6 +74,12 @@
             </footer>
         </article>
         <div #loadSentinel class="table-cards-load-sentinel" *ngIf="infiniteScrollEnabled && hasMore"></div>
-        <div *ngIf="loadingMore" class="table-cards-loading" aria-hidden="true">Loading more…</div>
+        <div *ngIf="loadingMore" class="table-cards-loading" role="status" aria-live="polite">
+            <span class="app-spinner app-spinner--sm" aria-hidden="true">
+                <span class="app-spinner__track"></span>
+                <span class="app-spinner__arc"></span>
+            </span>
+            <span>Loading more…</span>
+        </div>
     </div>
 </ng-template>

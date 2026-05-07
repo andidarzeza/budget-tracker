@@ -1,0 +1,12 @@
+<div class="form-field">
+  <label [for]="inputId()">{{ label() }}</label>
+  <div class="input-wrapper">
+    <textarea
+      [id]="inputId()"
+      [rows]="rows()"
+      [placeholder]="placeholder()"
+      [formControl]="control()"
+    ></textarea>
+  </div>
+</div>
+

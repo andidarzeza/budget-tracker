@@ -21,6 +21,7 @@ import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -29,10 +30,19 @@ import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment'
   templateUrl: './add-income.component.html',
   styleUrls: ['./add-income.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [FlagPipe],
 })
 export class AddIncomeComponent extends Unsubscribe implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly breakpointService = inject(BreakpointService);
+  private readonly flagPipe = inject(FlagPipe);
+
+  /** Currency option label: "🇺🇸 USD". */
+  readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
+  /** Category option label: just the name. */
+  readonly displayCategory = (c: Category) => c?.category ?? '';
+  /** Categories store the id on the form control. */
+  readonly categoryIdValue = (c: Category) => c?.id ?? null;
 
   readonly isWizardMobile = toSignal(this.breakpointService.useTableCardLayout$, {
     initialValue: this.breakpointService.matchesMobileCreateLayout(),

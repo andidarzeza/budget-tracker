@@ -1,177 +1,183 @@
+/* ----------------------------------------------------------------------------
+ * Legacy `.dark-*` class aliases.
+ *
+ * Like light-theme.scss, these map the dynamically-generated theme classes
+ * onto the indigo design tokens from design-tokens.scss. The tokens
+ * themselves switch via the `.light-theme` / `.dark-theme` body class.
+ * -------------------------------------------------------------------------- */
+
 .dark {
-    background: var(--dark);
+    background: var(--app-bg);
 }
 
 .dark-body {
-    background: #111619;
+    background: var(--app-bg);
 }
 
 .dark-sb9:before {
-    border-bottom: 19px solid #111619;
+    border-bottom: 19px solid var(--app-bg);
 }
 
 .dark-border {
-    border: 2px solid #ff6347;    
+    border: 2px solid var(--app-danger);
 }
 
 .dark-icon-2 {
-    color: #f6af06;    
+    color: var(--app-warning);
 }
 
 .dark-not-found-button {
-    background-color: #1D2325;
-    color: #9F9F9F;
+    background-color: var(--app-surface);
+    color: var(--app-text-muted);
 }
 
 .dark-dashboard-card {
-    // box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px !important;
+    border-radius: var(--app-radius-lg);
 }
 
 .dark-title {
-    color: #9F9F9F;
+    color: var(--app-text-muted);
 }
 
 .dark-view-button {
-    color: var(--dark) !important;
+    color: var(--app-text-muted) !important;
 }
 
 .dark > .mat-progress-bar-buffer {
-    background-color: #111619 !important;
+    background-color: var(--app-bg) !important;
 }
 
 .dark-table {
-    background: var(--dark);
+    background: var(--app-surface);
 }
 
 .dark-text {
-    color: #9F9F9F;
+    color: var(--app-text-muted);
 }
 
 .dark-button {
-    background: #222831;
+    background: var(--app-surface);
+    color: var(--app-text);
 }
-
-
 
 .dark-settings {
-    background: var(--dark);
+    background: var(--app-bg);
 }
 
-
 .dark-mobile-action-menu {
-    background: #111619 !important;
+    background: var(--app-bg-elevated) !important;
 }
 
 .dark-option:hover {
-    background: #1d252a !important;
-    color: #9F9F9F !important;
+    background: var(--app-surface-hover) !important;
+    color: var(--app-text) !important;
 }
 
 .dark-option {
-    background: #111619 !important;
-    color: #9F9F9F !important;
+    background: var(--app-bg-elevated) !important;
+    color: var(--app-text-muted) !important;
 }
 
 .dark-select .mat-select-value {
-    color: #9F9F9F !important;
+    color: var(--app-text) !important;
 }
 
 .dark-icon {
-    color: var(--light) !important;
+    color: var(--app-accent) !important;
 }
 
 .dark-card {
-    background: #1d252a;
-    color: #9F9F9F;
+    background: var(--app-surface);
+    color: var(--app-text-muted);
 }
 
-.dark-paginator .mat-select-value {
-    color: #9F9F9F !important;
-}
-
+.dark-paginator .mat-select-value,
 .dark-paginator .mat-select-arrow {
-    color: #9F9F9F !important;
+    color: var(--app-text-muted) !important;
 }
 
 .dark-paginator .mat-form-field.mat-focused .mat-form-field-ripple {
-    background-color: #f6af06;
+    background-color: var(--app-accent);
 }
 
 .dark-add-entity {
-    background: var(--light) !important;
-    color: white !important;
+    background: var(--app-accent) !important;
+    color: var(--app-on-accent) !important;
 }
 
 .dark-confirm-button {
-    color: white;
+    color: var(--app-text);
 }
 
 .dark-login-button {
-    background-color: #111619 !important;
-    color: #9F9F9F !important;
+    background-color: var(--app-bg) !important;
+    color: var(--app-text-muted) !important;
 }
 
 .dark-close-icon {
-    color: #9F9F9F !important;
+    color: var(--app-text-muted) !important;
 }
 
-/* Handle */
 .dark-table tbody::-webkit-scrollbar-thumb {
-    background: #1d252a;
+    background: var(--app-surface);
 }
 
 .dark-user-circle {
-    background-color: var(--light) !important;
-    color: white !important;
+    background-color: var(--app-accent) !important;
+    color: var(--app-on-accent) !important;
 }
 
 .dark-search-button {
-    background-color: var(--light) !important;
-    color: white !important;
+    background-color: var(--app-accent) !important;
+    color: var(--app-on-accent) !important;
 }
 
-.mat-menu-panel.dark-user-menu, .mat-menu-panel.dark-themes-menu{
-    background: #111619;
+.mat-menu-panel.dark-user-menu,
+.mat-menu-panel.dark-themes-menu {
+    background: var(--app-bg-elevated);
 }
 
 .dark-balance-text {
-    color: #9F9F9F;
+    color: var(--app-text);
 }
 
 .dark-floating-button {
-    background-color: var(--light) !important;
+    background-color: var(--app-accent) !important;
+    color: var(--app-on-accent) !important;
 }
 
-
 .dark-user-menu-button {
-    color: #9F9F9F;   
+    color: var(--app-text-muted);
 }
 
 .dark-user-menu-button:hover {
-    background: #00000018 !important;
-    color: #c9c9c9;
+    background: var(--app-surface-hover) !important;
+    color: var(--app-text);
 }
 
 .dark-user-menu-button::after {
-    color: var(--light) !important;
+    color: var(--app-accent) !important;
 }
 
 .dark-custom-calendar {
-    .mat-calendar-body-cell-content, .mat-calendar-body-label, .mat-calendar-table-header {
-        color: #9F9F9F !important;
+    .mat-calendar-body-cell-content,
+    .mat-calendar-body-label,
+    .mat-calendar-table-header {
+        color: var(--app-text-muted) !important;
     }
 
     .mat-calendar-arrow {
-        border-top-color: var(--light)
-    }
-    
-    .mat-calendar-body-today:not(.mat-calendar-body-selected) {
-        border-color: var(--light);
+        border-top-color: var(--app-accent);
     }
 
-    .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected), .cdk-keyboard-focused .mat-calendar-body-active>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected), .cdk-program-focused .mat-calendar-body-active>.mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
-        background-color: #00000018 !important;
-        color: #c9c9c9 !important;
+    .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+        border-color: var(--app-accent);
     }
-    
-} 
+
+    .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected),
+    .cdk-keyboard-focused .mat-calendar-body-active > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected),
+    .cdk-program-focused .mat-calendar-body-active > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+        background-color: var(--app-surface-hover) !important;
+        color: var(--app-text) !important;
+    }
+}

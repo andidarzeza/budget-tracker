@@ -1,16 +1,17 @@
 .titulli {
     display: flex;
-    padding: 25px 0px;
-    font-size: 25px;
-    color: #9F9F9F;
-    font-weight: 200;
+    padding: 24px 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--app-text);
+    font-family: var(--app-font-display);
+    letter-spacing: -0.02em;
     align-items: center;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .title {
     margin-left: 10px;
-    margin-top: 0.5px;
+    color: inherit;
 }
 
 .configuration {
@@ -35,29 +36,31 @@
     height: calc(100% - 104px);
     margin: auto;
     margin-top: 20px;
-    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
-    border-radius: 10px;
+    background: var(--app-surface);
+    border-radius: var(--app-radius-lg);
+    border: 1px solid var(--app-border);
+    box-shadow: var(--app-shadow-xs);
+    overflow: hidden;
 }
 
 .title-container {
     display: flex;
     align-items: center;
-    padding: 21px 25px;
-    font-size: 21px;
-    color: #9F9F9F;
-    font-weight: 200;
+    padding: 18px 24px;
+    font-size: 1.1rem;
+    color: var(--app-text-muted);
+    font-weight: 600;
     width: 275px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--app-font-display);
 }
 
 .main-action-container {
-    /* border-bottom: 1px solid rgba(0, 0, 0, .12); */
     display: flex;
-    /* justify-content: space-between; */
     align-items: center;
-    border-radius: 9px 9px 0 0;
+    border-radius: var(--app-radius-lg) var(--app-radius-lg) 0 0;
     position: relative;
-    background: var(--primary);
+    background: var(--app-surface);
+    border-bottom: 1px solid var(--app-border);
 }
 
 .settings-content {
@@ -66,32 +69,30 @@
 }
 
 .settings-menu {
-    border-radius: 0 0 0 9px;
+    border-radius: 0 0 0 var(--app-radius-lg);
     overflow-y: auto;
     width: 300px;
     height: 100%;
-    background: var(--primary);
-}
-
-.title {
-    margin-left: 10px;
-    margin-top: 1.5px;
+    background: var(--app-surface);
+    border-right: 1px solid var(--app-border);
 }
 
 .filter {
-    overflow:hidden;
+    overflow: hidden;
     position: absolute;
     top: 0;
     width: 100%;
-    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
-    background: white;
+    background: var(--app-bg-elevated);
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius-md);
+    box-shadow: var(--app-shadow-lg);
     z-index: 2;
 }
 
 @media only screen and (max-width: 500px) {
-    .title-container{
+    .title-container {
         padding: 12px 12px;
-        font-size: 19px;
+        font-size: 1rem;
     }
 
     .title-container > mat-icon {
@@ -101,27 +102,12 @@
     }
 
     .title {
-        margin-left: 0px;
-    }
-    
-}
-
-@media only screen and (max-height: 600px) { 
-    .title {
-        margin-left: 5px;
+        margin-left: 0;
     }
 
-    .title-container {
-        padding: 15px 15px;
-        font-size: 20px;
-    }
-}
-
-
-@media only screen and (max-width: 500px) {
-    .titulli{
-        padding: 20px 0px;
-        font-size: 19px;
+    .titulli {
+        padding: 20px 0;
+        font-size: 1.15rem;
     }
 
     .titulli > mat-icon {
@@ -130,13 +116,18 @@
         height: 19px !important;
     }
 
-    .title {
-        margin-left: 3px;
-        margin-top: 0;
-    }
-
     .button-container {
         height: fit-content;
     }
+}
 
+@media only screen and (max-height: 600px) {
+    .title {
+        margin-left: 6px;
+    }
+
+    .title-container {
+        padding: 14px 16px;
+        font-size: 1rem;
+    }
 }

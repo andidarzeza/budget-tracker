@@ -3,24 +3,28 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    background: linear-gradient(145deg, #f3f6fb 0%, #e7eef9 100%);
+    padding: 24px;
+    background:
+        radial-gradient(circle at 20% 0%, var(--app-accent-soft), transparent 40%),
+        radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--violet-500) 20%, transparent), transparent 50%),
+        var(--app-bg);
 }
 
 .account-card {
     position: relative;
     width: min(560px, 100%);
-    border-radius: 20px;
+    border-radius: var(--app-radius-2xl);
     padding: 2rem 1.75rem 1.5rem;
-    border: 1px solid rgba(53, 96, 173, 0.14);
-    box-shadow: 0 22px 50px rgba(24, 39, 75, 0.14) !important;
+    background: var(--app-bg-elevated);
+    border: 1px solid var(--app-border);
+    box-shadow: var(--app-shadow-lg) !important;
 }
 
 .account-header {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 1.25rem;
+    gap: 14px;
+    margin-bottom: 1.5rem;
 }
 
 .account-avatar {
@@ -33,9 +37,10 @@
     font-size: 14px;
     font-weight: 700;
     line-height: 1;
-    color: #fff !important;
-    background: linear-gradient(130deg, #3560ad 0%, #294d94 100%) !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--indigo-500) 0%, var(--violet-500) 100%) !important;
     border-radius: 50%;
+    box-shadow: var(--app-shadow-accent);
 }
 
 .account-header-content {
@@ -45,15 +50,17 @@
 
 .account-title {
     margin: 2px 0 4px;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 700;
+    font-family: var(--app-font-display);
+    color: var(--app-text);
 }
 
 .account-subtitle {
     margin: 0;
-    color: #6a7894;
-    font-size: 0.92rem;
-    line-height: 1.4;
+    color: var(--app-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
 }
 
 .account-count {
@@ -61,12 +68,12 @@
     margin-top: 4px;
     padding: 4px 10px;
     border-radius: 999px;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    background: rgba(53, 96, 173, 0.1);
-    color: #365ba4;
+    background: var(--app-accent-soft);
+    color: var(--app-accent);
 }
 
 .account-list {
@@ -80,31 +87,35 @@
     padding: 14px 14px 14px 12px;
     min-height: 74px;
     cursor: pointer;
-    border-radius: 14px;
+    border-radius: var(--app-radius-md);
     appearance: none;
-    border: 1px solid rgba(53, 96, 173, 0.2);
-    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--app-border);
+    background: var(--app-surface);
     text-align: left;
-    transition: background 0.2s, transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition:
+        background var(--app-motion-base) var(--app-easing-standard),
+        transform var(--app-motion-fast) var(--app-easing-standard),
+        box-shadow var(--app-motion-base) var(--app-easing-standard),
+        border-color var(--app-motion-base) var(--app-easing-standard);
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
 .account-option:hover {
-    background: #ffffff;
-    border-color: rgba(53, 96, 173, 0.45);
-    box-shadow: 0 8px 18px rgba(32, 50, 138, 0.12);
+    background: var(--app-surface-hover);
+    border-color: var(--app-accent);
+    box-shadow: var(--app-shadow-md);
     transform: translateY(-1px);
 }
 
 .account-option:active {
     transform: translateY(0);
-    box-shadow: 0 4px 10px rgba(32, 50, 138, 0.1);
+    box-shadow: var(--app-shadow-sm);
 }
 
 .account-option:disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
@@ -119,8 +130,8 @@
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.02em;
-    color: #33569c;
-    background: rgba(53, 96, 173, 0.13);
+    color: var(--app-accent);
+    background: var(--app-accent-soft);
 }
 
 .account-option-content {
@@ -134,29 +145,30 @@
 .account-name {
     font-size: 1rem;
     font-weight: 600;
+    color: var(--app-text);
 }
 
 .account-option-hint {
-    color: #6b7894;
+    color: var(--app-text-muted);
     font-size: 0.8rem;
 }
 
 .account-option-arrow {
     flex: 0 0 auto;
-    color: #4c66a7;
+    color: var(--app-accent);
     font-size: 1rem;
     font-weight: 700;
-    opacity: 0.82;
+    opacity: 0.85;
 }
 
 .account-empty {
-    border: 1px dashed rgba(53, 96, 173, 0.28);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.55);
+    border: 1px dashed var(--app-border);
+    border-radius: var(--app-radius-md);
+    background: var(--app-surface);
     text-align: center;
-    padding: 18px 14px;
+    padding: 24px 14px;
     font-size: 0.95rem;
-    opacity: 0.7;
+    color: var(--app-text-muted);
 }
 
 @media only screen and (max-width: 640px) {
@@ -165,8 +177,8 @@
     }
 
     .account-card {
-        padding: 1.35rem 1rem 1rem;
-        border-radius: 14px;
+        padding: 1.5rem 1.25rem 1.25rem;
+        border-radius: var(--app-radius-lg);
     }
 
     .account-avatar {
@@ -175,11 +187,11 @@
     }
 
     .account-title {
-        font-size: 1.06rem;
+        font-size: 1.1rem;
     }
 
     .account-subtitle {
-        font-size: 0.82rem;
+        font-size: 0.85rem;
     }
 
     .account-option {

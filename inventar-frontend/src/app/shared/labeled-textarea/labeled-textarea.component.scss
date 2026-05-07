@@ -1,0 +1,44 @@
+.form-field {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .input-wrapper {
+    display: flex;
+    align-items: stretch;
+    padding: 11px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:focus-within {
+      border-color: #3b82f6;
+    }
+
+    textarea {
+      font-size: 16px;
+      transform: scale(0.875);
+      transform-origin: left top;
+
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 0;
+      line-height: 1.5;
+      flex: 1 1 auto;
+      resize: vertical;
+      min-height: 3rem;
+
+      &::placeholder {
+        color: #9ca3af;
+      }
+    }
+  }
+}

@@ -1,112 +1,119 @@
+/* ----------------------------------------------------------------------------
+ * Legacy `.light-*` class aliases.
+ *
+ * These class names are still referenced from many templates via
+ * `[class]="sharedService.theme + '-foo'"`. Rather than rewrite every
+ * template, we map the classes onto the indigo design tokens defined in
+ * design-tokens.scss so they pick up the new look automatically.
+ * -------------------------------------------------------------------------- */
+
 .light {
-    background: var(--light);
+    background: var(--app-accent);
 }
 
 .light-body {
-    background: white;
+    background: var(--app-bg-elevated);
 }
 
 .light-sb9:before {
-    border-bottom: 19px solid white;
+    border-bottom: 19px solid var(--app-bg-elevated);
 }
 
-.light-border{
-    border: 2px solid var(--light);
+.light-border {
+    border: 2px solid var(--app-accent);
 }
 
 .light-not-found-button {
-    background-color: var(--light);
-    color: white;
+    background-color: var(--app-accent);
+    color: var(--app-on-accent);
 }
 
-.light-icon-2{
-    color: var(--light);
+.light-icon-2 {
+    color: var(--app-accent);
 }
 
 .light-balance-text {
-    color: black;
+    color: var(--app-text);
 }
 
 .light-dashboard-card {
-    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px !important;
+    box-shadow: var(--app-shadow-sm) !important;
+    border-radius: var(--app-radius-lg);
 }
 
 .light-title {
-    color: rgba(0, 0, 0, 0.57);
+    color: var(--app-text-muted);
 }
 
 .light-view-button {
-    color: var(--light) !important;
+    color: var(--app-accent) !important;
 }
 
 .light > .mat-progress-bar-buffer {
-    background-color: white !important;
+    background-color: rgba(255, 255, 255, 0.4) !important;
 }
 
 .light-table {
-    background: white;
+    background: var(--app-surface);
 }
 
 .light-text {
-    color: rgba(0,0,0,.67);
+    color: var(--app-text-muted);
 }
 
-
 .light-search-button {
-    background-color: var(--light) !important;
-    color: white !important;
+    background-color: var(--app-accent) !important;
+    color: var(--app-on-accent) !important;
 }
 
 .light-button {
-    background: #305680 !important;
+    background: var(--app-accent) !important;
+    color: var(--app-on-accent) !important;
 }
 
-.light-class>mat-dialog-container {
-    background: white;
+.light-class > mat-dialog-container {
+    background: var(--app-bg-elevated);
     overflow: hidden;
 }
 
 .light-settings {
-    background: #F8F8F8;
+    background: var(--app-bg);
 }
 
 .light-mobile-action-menu {
-    background: white !important;
+    background: var(--app-bg-elevated) !important;
 }
 
 .light-add-entity {
-    background: var(--light) !important;
-    color: white !important;
+    background: var(--app-accent) !important;
+    color: var(--app-on-accent) !important;
 }
-
-/* Handle */
-// .light-table tbody::-webkit-scrollbar-thumb {
-//     background: white;
-// }
 
 .light-user-circle {
-    background-color: white;
-    color: var(--light);
+    background-color: var(--app-accent);
+    color: var(--app-on-accent);
 }
 
-.mat-menu-panel.light-user-menu{
-    background: white;
+.mat-menu-panel.light-user-menu {
+    background: var(--app-bg-elevated);
 }
 
 .light-floating-button {
-    background-color: var(--light) !important;
-}
-
-.light-user-menu-button {
-    
+    background-color: var(--app-accent) !important;
+    color: var(--app-on-accent) !important;
 }
 
 .light-close-icon {
-    color: #9F9F9F !important;
+    color: var(--app-text-muted) !important;
 }
 
 .light-custom-calendar {
     .mat-calendar-body-cell-content {
-        color: rgba(0, 0, 0, 0.57) !important;
+        color: var(--app-text-muted) !important;
     }
-} 
+}
+
+/* `light-icon` (rendered as `{{theme}}-icon`) — keep accent for both themes */
+.light-icon {
+    color: var(--app-accent) !important;
+}

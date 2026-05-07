@@ -4,8 +4,8 @@
     justify-content: space-between;
     gap: 16px;
     padding: 20px 20px 18px 22px;
-    background: var(--primary);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--app-bg-elevated);
+    border-bottom: 1px solid var(--app-border);
     box-sizing: border-box;
 }
 
@@ -20,20 +20,20 @@
     flex-shrink: 0;
     width: 48px;
     height: 48px;
-    border-radius: 14px;
+    border-radius: var(--app-radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.14);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    background: var(--app-accent-soft);
+    box-shadow: inset 0 0 0 1px var(--app-border);
 }
 
 .dialog-header-icon mat-icon {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 26px;
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
+    color: var(--app-accent);
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
 }
 
 .dialog-header-text {
@@ -44,27 +44,27 @@
 }
 
 .dialog-header-eyebrow {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--app-text-subtle);
 }
 
 .dialog-header-title {
     margin: 0;
-    font-family: "Raleway", "Source Sans Pro", Roboto, sans-serif;
-    font-size: 1.35rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: #ffffff;
+    font-family: var(--app-font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--app-text);
     line-height: 1.25;
 }
 
 .dialog-header-close mat-icon {
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--app-text-muted);
 }
 
 .dialog-header-close:hover mat-icon {
-    color: #ffffff;
+    color: var(--app-text);
 }

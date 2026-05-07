@@ -6,10 +6,10 @@
 }
 
 .dashboard-container {
-    padding: 20px;
+    padding: var(--app-space-6);
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--app-space-5);
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -17,17 +17,18 @@
     overflow-y: visible;
 }
 
-/* —— My balance card —— */
+/* —— Balance card —— neutral surface; matches the other dashboard cards.
+   Accent only appears as the icon chip; the big number is the focal point. */
 .balance-card {
-    background: var(--card);
-    color: var(--card-title);
-    border-radius: 14px;
-    padding: 16px 18px 16px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
-    border: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+    background: var(--app-surface);
+    color: var(--app-text);
+    border-radius: var(--app-radius-lg);
+    padding: var(--app-space-5);
+    box-shadow: var(--app-shadow-xs);
+    border: 1px solid var(--app-border);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--app-space-3);
     box-sizing: border-box;
 }
 
@@ -35,24 +36,37 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--app-border);
+}
+
+.balance-card__icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--app-radius-sm);
+    background: var(--app-accent-soft);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .balance-card__icon {
-    color: var(--light);
-    width: 24px;
-    height: 24px;
-    font-size: 24px;
+    color: var(--app-accent);
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
 }
 
 .balance-card__title {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--card-title);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--app-text-subtle);
 }
 
 .balance-card__actions {
@@ -66,18 +80,21 @@
     border: 0;
     background: transparent;
     cursor: pointer;
-    color: var(--card-title);
+    color: var(--app-text-muted);
     width: 36px;
     height: 36px;
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background 160ms ease, color 160ms ease;
+    transition:
+        background var(--app-motion-base) var(--app-easing-standard),
+        color var(--app-motion-base) var(--app-easing-standard);
 }
 
 .balance-card__btn:hover {
-    background: color-mix(in srgb, var(--field-outline) 30%, transparent);
+    background: var(--app-surface-hover);
+    color: var(--app-text);
 }
 
 .balance-card__rows {
@@ -91,10 +108,10 @@
     grid-template-columns: auto auto minmax(0, 1fr);
     align-items: center;
     gap: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: color-mix(in srgb, var(--secondary) 65%, transparent);
-    border: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+    padding: 10px 14px;
+    border-radius: var(--app-radius-md);
+    background: var(--app-surface-muted);
+    border: 1px solid var(--app-border);
 }
 
 .balance-row__flag {
@@ -103,30 +120,28 @@
 }
 
 .balance-row__currency {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
-    color: var(--card-title);
-    opacity: 0.75;
+    letter-spacing: 0.08em;
+    color: var(--app-text-subtle);
 }
 
 .balance-row__amount {
     text-align: right;
     font-variant-numeric: tabular-nums;
     font-weight: 800;
-    font-size: 1.05rem;
-    color: var(--card-title);
+    font-size: 1.15rem;
+    color: var(--app-text);
     letter-spacing: -0.01em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: filter 160ms ease;
+    transition: filter var(--app-motion-base) var(--app-easing-standard);
 }
 
 .balance-row__amount--hidden {
     letter-spacing: 2px;
-    color: var(--card-title);
-    opacity: 0.55;
+    color: var(--app-text-subtle);
 }
 
 .balance-empty {
@@ -135,8 +150,7 @@
     justify-content: space-between;
     gap: 12px;
     padding: 8px 4px;
-    color: var(--card-title);
-    opacity: 0.85;
+    color: var(--app-text-muted);
     font-size: 0.92rem;
 }
 
@@ -144,16 +158,24 @@
     appearance: none;
     border: 0;
     cursor: pointer;
-    background: var(--light);
-    color: white;
-    padding: 8px 14px;
-    border-radius: 8px;
+    background: var(--app-accent);
+    color: var(--app-on-accent);
+    padding: 8px 16px;
+    border-radius: var(--app-radius-sm);
     font: inherit;
     font-weight: 600;
     font-size: 0.85rem;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    transition:
+        background var(--app-motion-base) var(--app-easing-standard),
+        transform var(--app-motion-fast) var(--app-easing-standard);
+}
+
+.balance-empty__cta:hover {
+    background: var(--app-accent-hover);
+    transform: translateY(-1px);
 }
 
 .balance-empty__cta mat-icon {
@@ -162,26 +184,27 @@
     font-size: 16px;
 }
 
-/* —— Control bar (range tabs + dynamic date picker) —— */
+/* —— Control bar (range tabs + date picker) —— */
 .control-bar {
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(0, 1fr);
     align-items: center;
-    gap: 16px;
-    padding: 12px 16px;
-    background: var(--card);
-    border-radius: 14px;
+    gap: var(--app-space-4);
+    padding: var(--app-space-3) var(--app-space-4);
+    background: var(--app-surface);
+    border-radius: var(--app-radius-lg);
     box-sizing: border-box;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    border: 1px solid var(--app-border);
+    box-shadow: var(--app-shadow-xs);
 }
 
 .control-bar__ranges {
     display: inline-flex;
     align-items: center;
-    background: color-mix(in srgb, var(--secondary) 75%, transparent);
-    border: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+    background: var(--app-surface-muted);
+    border: 1px solid var(--app-border);
     border-radius: 999px;
-    padding: 4px;
+    padding: 3px;
     gap: 2px;
     flex-wrap: wrap;
 }
@@ -196,62 +219,73 @@
     font-size: 0.85rem;
     font-weight: 500;
     line-height: 1.2;
-    color: var(--card-title);
+    color: var(--app-text-muted);
     border-radius: 999px;
-    transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    transition:
+        background var(--app-motion-base) var(--app-easing-standard),
+        color var(--app-motion-base) var(--app-easing-standard),
+        box-shadow var(--app-motion-base) var(--app-easing-standard);
     user-select: none;
 }
 
 .range-option:hover {
-    background: color-mix(in srgb, var(--card) 70%, transparent);
+    color: var(--app-text);
 }
 
 .range-option--active,
 .range-option--active:hover {
-    background: var(--light);
-    color: white;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+    background: var(--app-accent);
+    color: var(--app-on-accent);
+    box-shadow: 0 1px 3px rgba(99, 102, 241, 0.4);
 }
 
 .control-bar__picker {
     min-width: 0;
     width: 100%;
-    border-radius: 10px;
+    border-radius: var(--app-radius-sm);
     overflow: hidden;
 }
 
-/* —— KPI strip —— */
+/* —— KPI cards —— */
 .kpi-strip {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
+    gap: var(--app-space-4);
 }
 
 .kpi-card {
-    background: var(--card);
-    color: var(--card-title);
-    border-radius: 14px;
-    padding: 16px 18px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
-    border: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+    background: var(--app-surface);
+    color: var(--app-text);
+    border-radius: var(--app-radius-lg);
+    padding: var(--app-space-5);
+    box-shadow: var(--app-shadow-xs);
+    border: 1px solid var(--app-border);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--app-space-2);
     box-sizing: border-box;
     min-width: 0;
+    transition:
+        transform var(--app-motion-base) var(--app-easing-standard),
+        box-shadow var(--app-motion-base) var(--app-easing-standard);
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--app-shadow-md);
 }
 
 .kpi-card__head {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--app-border);
     margin-bottom: 4px;
 }
 
 .kpi-card__flag {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     line-height: 1;
 }
 
@@ -259,7 +293,7 @@
     font-size: 0.95rem;
     font-weight: 700;
     letter-spacing: 0.04em;
-    color: var(--card-title);
+    color: var(--app-text);
 }
 
 .kpi-card__row {
@@ -267,41 +301,34 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
 }
 
 .kpi-card__row--net {
     margin-top: 4px;
-    padding-top: 8px;
-    border-top: 1px dashed color-mix(in srgb, var(--field-outline) 50%, transparent);
+    padding-top: 10px;
+    border-top: 1px dashed var(--app-border);
 }
 
 .kpi-card__label {
-    color: var(--card-title);
-    opacity: 0.7;
+    color: var(--app-text-muted);
     font-weight: 500;
 }
 
 .kpi-card__value {
     font-variant-numeric: tabular-nums;
     font-weight: 700;
-    color: var(--card-title);
+    color: var(--app-text);
 }
 
-.kpi-card__value--income {
-    color: rgb(5, 150, 105);
-}
-
-.kpi-card__value--expense {
-    color: rgb(220, 38, 38);
-}
-
+.kpi-card__value--income,
 .kpi-card__value--positive {
-    color: rgb(5, 150, 105);
+    color: var(--app-success);
 }
 
+.kpi-card__value--expense,
 .kpi-card__value--negative {
-    color: rgb(220, 38, 38);
+    color: var(--app-danger);
 }
 
 .kpi-empty {
@@ -309,17 +336,15 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    padding: 24px;
-    background: var(--card);
-    border-radius: 14px;
-    color: var(--card-title);
-    opacity: 0.7;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    padding: 28px;
+    background: var(--app-surface);
+    border-radius: var(--app-radius-lg);
+    color: var(--app-text-muted);
+    border: 1px dashed var(--app-border);
 }
 
 .kpi-empty__icon {
-    color: var(--card-title);
-    opacity: 0.65;
+    color: var(--app-text-subtle);
 }
 
 .kpi-empty__text {
@@ -330,44 +355,43 @@
 .dashboard-section {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--app-space-3);
     min-width: 0;
 }
 
 .dashboard-section__header {
     padding: 0 4px;
-    margin-bottom: 0;
 }
 
 .dashboard-section__title {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--card-title);
+    letter-spacing: -0.015em;
+    color: var(--app-text);
 }
 
 .dashboard-section__subtitle {
     margin: 4px 0 0;
-    font-size: 0.85rem;
-    color: var(--card-title);
-    opacity: 0.7;
+    font-size: 0.875rem;
+    color: var(--app-text-muted);
 }
 
 .dashboard-section__body {
     display: grid;
     grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-    gap: 16px;
+    gap: var(--app-space-4);
     min-width: 0;
 }
 
 /* —— Panels —— */
 .panel {
-    background: var(--card) !important;
-    color: var(--card-title);
-    border-radius: 14px;
-    padding: 16px 18px 18px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    background: var(--app-surface) !important;
+    color: var(--app-text);
+    border-radius: var(--app-radius-lg);
+    padding: var(--app-space-5);
+    box-shadow: var(--app-shadow-xs) !important;
+    border: 1px solid var(--app-border);
     box-sizing: border-box;
     min-width: 0;
     display: flex;
@@ -381,20 +405,19 @@
     gap: 12px;
     padding-bottom: 12px;
     margin-bottom: 8px;
-    border-bottom: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+    border-bottom: 1px solid var(--app-border);
 }
 
 .panel__title {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: var(--card-title);
+    color: var(--app-text);
 }
 
 .panel__hint {
     font-size: 0.78rem;
-    color: var(--card-title);
-    opacity: 0.6;
+    color: var(--app-text-subtle);
 }
 
 /* Line chart */
@@ -419,138 +442,95 @@
     box-sizing: border-box;
 }
 
-/* Breakdown panel */
-.breakdown-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-width: 0;
-    flex: 1 1 auto;
-    min-height: 360px;
-}
-
-.breakdown-grid--empty {
-    /* Empty state takes over the entire breakdown area, doughnut hidden. */
-    justify-content: center;
-}
-
-.breakdown-grid--empty .doughnut-wrap {
-    display: none;
-}
-
-.doughnut-wrap {
-    /* Auto-size to canvas + label so the chart isn't clipped by the wrap's box. */
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 0 4px;
-    box-sizing: border-box;
-}
-
-.doughnut-wrap canvas {
-    display: block;
-    /* Clamp width and height so Chart.js's `aspectRatio: 1` square fits inside the wrap
-       even after accounting for the label, gap and padding below it. */
-    max-width: min(160px, 100%) !important;
-    max-height: 160px !important;
-    width: auto !important;
-    height: auto !important;
-}
-
-.doughnut-currency-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--card-title);
-    opacity: 0.6;
-}
-
+/* Breakdown panel — list of (category, currency) rows. Mirrors the login preview. */
 .cat-list {
     list-style: none;
     margin: 0;
     padding: 0;
-    max-height: 280px;
+    flex: 1 1 auto;
+    max-height: 360px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    border-top: 1px solid color-mix(in srgb, var(--field-outline) 40%, transparent);
+    display: flex;
+    flex-direction: column;
 }
 
-.cat-list__group {
+.cat-row {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px 12px;
-    padding: 10px 4px;
-    border-bottom: 1px solid color-mix(in srgb, var(--field-outline) 35%, transparent);
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--app-border);
 }
 
-.cat-list__group:last-child {
-    border-bottom: 0;
+.cat-row:first-child {
+    border-top: 0;
 }
 
-.cat-list__icon-wrap {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--light) 18%, transparent);
+.cat-row__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--app-radius-sm);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 
-.cat-list__icon-wrap--income {
-    background: color-mix(in srgb, rgb(5, 150, 105) 16%, transparent);
+.cat-row__icon mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
 }
 
-.cat-list__icon-wrap--income .cat-list__icon {
-    color: rgb(5, 150, 105);
+.cat-row__icon--exp {
+    background: var(--app-accent-soft);
+    color: var(--app-accent);
 }
 
-.cat-list__icon {
-    color: var(--light);
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
+.cat-row__icon--inc {
+    background: color-mix(in srgb, var(--app-success) 14%, transparent);
+    color: var(--app-success);
 }
 
-.cat-list__name {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--card-title);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.cat-row__main {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
 }
 
-.cat-list__totals {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 4px 8px;
-    text-align: right;
-}
-
-.cat-list__total {
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
-    font-size: 0.92rem;
-    color: var(--card-title);
+.cat-row__title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--app-text);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.cat-list__total + .cat-list__total::before {
-    content: '·';
-    margin-right: 8px;
-    color: var(--card-title);
-    opacity: 0.4;
-    font-weight: 400;
+.cat-row__sub {
+    font-size: 0.75rem;
+    color: var(--app-text-subtle);
+    margin-top: 2px;
+    letter-spacing: 0.04em;
+}
+
+.cat-row__amount {
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.cat-row__amount--inc {
+    color: var(--app-success);
+}
+
+.cat-row__amount--exp {
+    color: var(--app-text);
 }
 
 .breakdown-empty {
@@ -561,7 +541,7 @@
     justify-content: center;
     gap: 12px;
     padding: 32px 16px;
-    color: var(--card-title);
+    color: var(--app-text-muted);
     text-align: center;
     min-height: 240px;
 }
@@ -571,16 +551,14 @@
     height: 44px;
     font-size: 44px;
     line-height: 44px;
-    color: var(--card-title);
-    opacity: 0.4;
+    color: var(--app-text-subtle);
     flex-shrink: 0;
 }
 
 .breakdown-empty__text {
     font-size: 0.95rem;
     line-height: 1.4;
-    color: var(--card-title);
-    opacity: 0.7;
+    color: var(--app-text-muted);
 }
 
 /* —— Mobile —— */
@@ -592,13 +570,17 @@
 
 @media only screen and (max-width: 767px) {
     .dashboard-container {
-        padding: 12px;
-        gap: 14px;
+        padding: var(--app-space-3);
+        gap: var(--app-space-3);
+    }
+
+    .balance-card {
+        padding: var(--app-space-4);
     }
 
     .control-bar {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: var(--app-space-3);
         padding: 10px 12px;
     }
 
@@ -617,11 +599,11 @@
 
     .kpi-strip {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: var(--app-space-3);
     }
 
     .panel {
-        padding: 14px 14px 16px;
+        padding: var(--app-space-4);
     }
 
     .panel__header {
@@ -639,18 +621,7 @@
         height: 220px !important;
     }
 
-    .doughnut-wrap {
-        /* Mobile: more breathing room so canvas + currency label fit without clipping. */
-        min-height: 240px;
-        padding: 8px 0 6px;
-    }
-
-    .doughnut-wrap canvas {
-        max-width: 200px !important;
-        max-height: 200px !important;
-    }
-
     .cat-list {
-        max-height: 280px;
+        max-height: 320px;
     }
 }

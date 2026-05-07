@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CreateNewOptionComponent } from './create-new-option.component';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 
 
 
@@ -15,7 +16,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatIconModule,
     MatButtonModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    LabeledFormInputComponent
   ],
   exports: [
     CreateNewOptionComponent

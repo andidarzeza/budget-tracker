@@ -15,11 +15,12 @@
         <div *ngFor="let code of currencies" class="edit-balance-form__row">
             <span class="edit-balance-form__flag" aria-hidden="true">{{ code | flag }}</span>
             <span class="edit-balance-form__code">{{ code }}</span>
-            <mat-form-field appearance="outline" class="dialog-form__field edit-balance-form__field primary-text">
-                <mat-label class="primary-text">Amount</mat-label>
-                <input matInput type="number" step="0.01" min="0" autocomplete="off"
-                    placeholder="0.00" [formControlName]="code">
-            </mat-form-field>
+            <cb-labeled-form-input class="dialog-form__field edit-balance-form__field"
+                label="Amount"
+                type="number"
+                placeholder="0.00"
+                [control]="$any(formGroup.get(code))">
+            </cb-labeled-form-input>
             <button type="button" class="edit-balance-form__clear" (click)="clearCurrency(code)"
                 [disabled]="!formGroup.get(code)?.value && formGroup.get(code)?.value !== 0"
                 aria-label="Clear">

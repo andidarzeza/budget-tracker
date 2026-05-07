@@ -1,10 +1,11 @@
 <div class="add-option-container">
     <div *ngIf="createMode || editMode" class="input-container" [@inAnimation]>
         <form [formGroup]="formGroup" class="input-width">
-            <mat-form-field class="my-form-field w-full" [appearance]="appearance">
-                <mat-label>Create new option</mat-label>
-                <input formControlName="item" matInput>
-            </mat-form-field>
+            <cb-labeled-form-input class="my-form-field w-full"
+                label="Create new option"
+                type="text"
+                [control]="$any(formGroup.get('item'))">
+            </cb-labeled-form-input>
         </form>
 
         <div class="action-container">

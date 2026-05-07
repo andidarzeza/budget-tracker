@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ClockModule } from './clock/clock.module';
 import { FlagPipeModule } from '../../pipes/flag-pipe/flag-pipe.module';
 import { CurrencySymbolModule } from '../../pipes/currency-symbol/currency-symbol.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -21,7 +20,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatIconModule,
     MatMenuModule,
     MatToolbarModule,
-    ClockModule,
     MatDividerModule,
     FlagPipeModule,
     MatTooltipModule,

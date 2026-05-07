@@ -47,4 +47,19 @@ export class FilterComponent implements OnInit {
     });
   }
 
+  /**
+   * Bridge between the legacy filter-options config (`{ displayBy, valueBy }`)
+   * and `cb-select-input`'s `displayWith` / `valueWith` callbacks.
+   * Returns a function that reads `option[displayBy]` / `option[valueBy]`.
+   */
+  displayBy(filterOption: FilterOptions): (opt: any) => string {
+    const key = filterOption?.matSelectOptions?.displayBy;
+    return (opt: any) => (opt && key ? String(opt[key]) : '');
+  }
+
+  valueBy(filterOption: FilterOptions): (opt: any) => unknown {
+    const key = filterOption?.matSelectOptions?.valueBy;
+    return (opt: any) => (opt && key ? opt[key] : opt);
+  }
+
 }

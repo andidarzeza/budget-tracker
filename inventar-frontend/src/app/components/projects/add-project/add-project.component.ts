@@ -7,6 +7,7 @@ import { EntityType, Project } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { ProjectService } from 'src/app/services/pages/project.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -14,7 +15,8 @@ import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment'
   selector: 'app-add-project',
   templateUrl: './add-project.component.html',
   styleUrls: ['./add-project.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [FlagPipe]
 })
 export class AddProjectComponent extends Unsubscribe implements OnInit {
 
@@ -29,6 +31,9 @@ export class AddProjectComponent extends Unsubscribe implements OnInit {
   readonly currencies = CURRENCIES;
   readonly defaultCurrency = localStorage.getItem('baseCurrency') || CURRENCIES[0];
 
+  /** Currency option label: "🇺🇸 USD". Shared with `cb-select-input.displayWith`. */
+  readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
+
   formGroup: UntypedFormGroup;
 
   constructor(
@@ -37,7 +42,8 @@ export class AddProjectComponent extends Unsubscribe implements OnInit {
     private dialogRef: MatDialogRef<AddProjectComponent>,
     private projectService: ProjectService,
     private accountService: AccountService,
-    private toaster: ToastrService
+    private toaster: ToastrService,
+    private flagPipe: FlagPipe
   ) {
     super();
     this.isEditMode = !!this.data?.id;

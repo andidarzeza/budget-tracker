@@ -13,6 +13,7 @@
     flex: 1 1 auto;
     min-height: 0;
     -webkit-overflow-scrolling: touch;
+    background: var(--app-surface);
 }
 
 .data-row {
@@ -20,11 +21,12 @@
     align-items: stretch;
     width: 100%;
     min-width: min-content;
-    min-height: 48px;
-    border-bottom: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
-    background: var(--card);
-    color: var(--card-title);
+    min-height: 52px;
+    border-bottom: 1px solid var(--app-border);
+    background: var(--app-surface);
+    color: var(--app-text);
     box-sizing: border-box;
+    transition: background var(--app-motion-fast) var(--app-easing-standard);
 }
 
 .data-cell {
@@ -32,9 +34,11 @@
     align-items: center;
     justify-content: center;
     min-width: 0;
-    padding: 10px 8px;
+    padding: 12px 10px;
     box-sizing: border-box;
     flex-shrink: 0;
+    color: var(--app-text);
+    font-size: 0.875rem;
 }
 
 .text-center {
@@ -53,7 +57,7 @@
 }
 
 .data-row:hover {
-    background: var(--hover-table-row) !important;
+    background: var(--app-surface-hover) !important;
 }
 
 .pointer {
@@ -61,7 +65,7 @@
 }
 
 .active-element {
-    background: #80808014;
+    background: var(--app-accent-soft);
 }
 
 /* —— Mobile cards —— */
@@ -73,17 +77,24 @@
     padding: 4px 12px 16px;
     box-sizing: border-box;
     -webkit-overflow-scrolling: touch;
-    background: var(--secondary);
+    background: var(--app-bg);
 }
 
 .table-data-card {
-    margin-bottom: 16px;
-    border-radius: 14px;
+    margin-bottom: 14px;
+    border-radius: var(--app-radius-lg);
     overflow: hidden;
-    background: var(--card);
-    /* Match dashboard panels: subtle shadow + theme-aware outline (works in both themes). */
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
-    border: 1px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
+    background: var(--app-surface);
+    box-shadow: var(--app-shadow-xs);
+    border: 1px solid var(--app-border);
+    transition:
+        transform var(--app-motion-fast) var(--app-easing-standard),
+        box-shadow var(--app-motion-base) var(--app-easing-standard);
+}
+
+.table-data-card:hover,
+.table-data-card:active {
+    box-shadow: var(--app-shadow-sm);
 }
 
 .table-card-body {
@@ -92,13 +103,10 @@
 
 .table-card-field {
     padding: 12px 16px 14px;
-    border-bottom: 1px solid color-mix(in srgb, var(--field-outline) 35%, transparent);
+    border-bottom: 1px solid var(--app-border);
 }
 
-.table-card-main-fields .table-card-field:last-child {
-    border-bottom: none;
-}
-
+.table-card-main-fields .table-card-field:last-child,
 .table-card-dates .table-card-field:last-child {
     border-bottom: none;
 }
@@ -106,7 +114,7 @@
 .table-card-dates {
     margin-top: 4px;
     padding-top: 8px;
-    border-top: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+    border-top: 1px solid var(--app-border);
 }
 
 .table-card-field--meta {
@@ -116,13 +124,12 @@
 
 .table-card-field--meta .table-card-field-label {
     font-size: 10px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
 }
 
 .table-card-field--meta .table-card-field-value {
     font-size: 13px;
-    color: var(--card-title);
-    opacity: 0.92;
+    color: var(--app-text-muted);
 }
 
 .table-card-field-label {
@@ -131,63 +138,43 @@
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    /* --primary-text is for text on the teal toolbar; on white cards use readable muted labels */
-    color: var(--table-card-label, rgba(0, 0, 0, 0.5));
+    color: var(--app-text-subtle);
     margin-bottom: 6px;
     line-height: 1.2;
-}
-
-:host-context(.dark-theme) .table-card-field-label {
-    color: rgba(255, 255, 255, 0.55);
 }
 
 .table-card-field-value {
     font-size: 15px;
     line-height: 1.45;
-    color: rgba(0, 0, 0, 0.87);
+    color: var(--app-text);
     word-break: break-word;
 }
 
-:host-context(.dark-theme) .table-card-field-value {
-    color: var(--card-title);
-}
-
 .table-card-field--money {
-    padding-top: 16px;
-    padding-bottom: 16px;
-    /* Solid card surface to match dashboard panels — amount text is already
-       visually emphasized via size and weight; no decorative gradient. */
-    background: transparent;
-    border-bottom: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+    padding-top: 18px;
+    padding-bottom: 18px;
+    background: var(--app-surface-muted);
+    border-bottom: 1px solid var(--app-border);
 }
 
 .table-card-field--money .table-card-field-label {
-    color: var(--light);
-    opacity: 0.95;
+    color: var(--app-accent);
 }
 
 .table-card-amount {
-    font-size: 1.5rem;
-    font-weight: 700;
-    font-family: "Source Sans Pro", Roboto, sans-serif;
+    font-size: 1.65rem;
+    font-weight: 800;
+    font-family: var(--app-font-display);
     letter-spacing: -0.02em;
-    color: rgba(0, 0, 0, 0.87);
-}
-
-:host-context(.dark-theme) .table-card-amount {
-    color: var(--card-title);
+    color: var(--app-text);
+    font-variant-numeric: tabular-nums;
 }
 
 .table-card-currency {
     font-size: 0.95rem;
     font-weight: 600;
     margin-left: 8px;
-    color: rgba(0, 0, 0, 0.54);
-}
-
-:host-context(.dark-theme) .table-card-currency {
-    color: var(--primary-text);
-    opacity: 0.9;
+    color: var(--app-text-muted);
 }
 
 .table-card-field--note .table-card-field-value {
@@ -200,7 +187,7 @@
     font-size: 32px;
     width: 32px;
     height: 32px;
-    color: var(--light);
+    color: var(--app-accent);
 }
 
 .table-card-footer {
@@ -208,8 +195,8 @@
     justify-content: flex-end;
     align-items: center;
     padding: 10px 12px 12px;
-    background: color-mix(in srgb, var(--secondary) 50%, transparent);
-    border-top: 1px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+    background: var(--app-surface-muted);
+    border-top: 1px solid var(--app-border);
 }
 
 .table-card-footer .record-actions-container {
@@ -232,13 +219,11 @@
 }
 
 .table-cards-loading {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     padding: 16px 12px 8px;
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.54);
-}
-
-:host-context(.dark-theme) .table-cards-loading {
-    color: var(--primary-text);
-    opacity: 0.85;
+    color: var(--app-text-muted);
 }
