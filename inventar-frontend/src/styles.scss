@@ -502,7 +502,10 @@ mat-dialog-container {
     min-height: 0 !important;
     border-radius: 0 !important;
     overscroll-behavior: none;
-    touch-action: manipulation;
+    /* No `touch-action: manipulation` here — it commits the touch to "click"
+       semantics before iOS has a chance to interpret a vertical drag as a
+       scroll gesture, which makes the inner scroll container feel unusable
+       (the user has to pinch first to "unlock" scrolling). */
 }
 
 .create-dialog--fullscreen mat-dialog-container create-form {
@@ -548,6 +551,16 @@ mat-dialog-container {
     overflow-x: hidden;
     overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
+    /* Tell iOS this is a vertical-only scroll container so it commits to a
+       scroll gesture immediately when the user drags down — without this,
+       touches that start on a `<button>` child can be claimed for click
+       semantics before the scroll is recognized. */
+    touch-action: pan-y;
+    /* Force a compositing layer so iOS gives the scroll container its own
+       GPU-accelerated rendering. Without this, scrolling inside a
+       `position: fixed` ancestor can feel laggy or completely freeze. */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
     /* Pull to the dialog edges so the list visually fills the wizard width;
        the panel adds its own horizontal padding so options don't touch the
        border. */
@@ -908,7 +921,10 @@ html.cdk-global-scrollblock {
 .category-tile {
     appearance: none;
     -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+    /* Inherit the parent panel's `touch-action: pan-y` — explicitly setting
+       `manipulation` here makes iOS treat any touch-down as a click target,
+       which blocks vertical-scroll recognition when the user drags from
+       within a tile. The list could only be scrolled by pinching first. */
     display: flex;
     flex-direction: row;
     align-items: center;
