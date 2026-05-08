@@ -59,7 +59,10 @@
                                 <span class="category-tile__icon-wrap category-tile__icon-wrap--income" aria-hidden="true">
                                     <mat-icon class="category-tile__icon">{{ category?.icon || 'savings' }}</mat-icon>
                                 </span>
-                                <span class="category-tile__label">{{ category?.category }}</span>
+                                <span class="category-tile__body">
+                                    <span class="category-tile__label">{{ category?.category }}</span>
+                                    <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
+                                </span>
                                 <span class="category-tile__check" aria-hidden="true"
                                     *ngIf="formGroup.get('categoryID')?.value == category.id">✓</span>
                             </button>
@@ -87,7 +90,6 @@
                 <ng-container *ngSwitchCase="1">
                     <ng-container *ngIf="isWizardMobile(); else incomeWizardStep1Desktop">
                         <div class="wizard-amount-layout">
-                            <p class="create-wizard__intro">Choose currency and enter the amount on the keypad.</p>
                             <div class="wizard-amount-display-row">
                                 <div class="wizard-amount-currency-panel">
                                     <span class="wizard-amount-currency-panel__label">Currency</span>

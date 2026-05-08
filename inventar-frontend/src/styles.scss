@@ -487,13 +487,20 @@ mat-dialog-container {
     background: var(--app-bg-elevated);
 }
 
+/* Pin the fullscreen dialog to all four edges via `position: fixed; inset: 0`
+   instead of `height: 100dvh`. iOS Safari reports `dvh` inconsistently with
+   safe-area insets (especially around the home indicator), which leaves a
+   visible strip of page content at the bottom edge. `inset: 0` is exact. */
+.create-dialog--fullscreen.cdk-overlay-pane,
 .create-dialog--fullscreen mat-dialog-container {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-    min-height: 100dvh !important;
-    border-radius: 0;
+    position: fixed !important;
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    border-radius: 0 !important;
     overscroll-behavior: none;
     touch-action: manipulation;
 }
@@ -504,24 +511,63 @@ mat-dialog-container {
     height: 100%;
 }
 
-/* Wizard panel scroll-affordance for fullscreen dialogs. The action footer
-   is now projected through create-form's `.dialog-footer-slot` (so it sits
-   as a sibling of `.content-container` and pins to the bottom of the
-   dialog — same architecture edit-balance uses), and the form contents
-   scroll naturally inside `.content-container`. No overrides on the
-   wizard's internal flex chain needed. */
+/* Wizard scroll containment for fullscreen dialogs. Hand off the scroll
+   context from create-form's `.content-container` to the wizard's own flex
+   chain so only the panel (the list of options) scrolls — the rail stays
+   pinned at the top, the projected footer stays pinned at the bottom. */
+.create-dialog--fullscreen create-form .content-container:has(.create-wizard) {
+    overflow: visible;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.create-dialog--fullscreen .dialog-form:has(.create-wizard) {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.create-dialog--fullscreen .create-wizard {
+    flex: 1 1 auto;
+    min-height: 0;
+    /* Replace the padding the content-container used to provide. */
+    padding: 16px 20px 0;
+    gap: 16px;
+}
+
+.create-dialog--fullscreen .create-wizard__rail {
+    flex-shrink: 0;
+}
+
+.create-dialog--fullscreen .create-wizard__panel {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    /* Pull to the dialog edges so the list visually fills the wizard width;
+       the panel adds its own horizontal padding so options don't touch the
+       border. */
+    margin: 0 -20px;
+    padding: 0 20px 16px;
+}
 
 /* Projected footer slot. Matches the visual contract of `<create-footer>`
    (which is view-encapsulated, so its styles don't reach projected
    content): same padding, background, top divider — so a wizard's custom
-   actions sit in the dialog identically to the default Cancel / Save row. */
+   actions sit in the dialog identically to the default Cancel / Save row.
+   On iOS, the bottom padding extends with the safe-area inset so action
+   buttons clear the home indicator. */
 .dialog-footer-slot {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-    padding: 18px 22px 22px;
+    padding: 18px 22px max(22px, env(safe-area-inset-bottom));
     background: var(--app-bg-elevated);
     border-top: 1px solid var(--app-border);
     box-sizing: border-box;
@@ -719,7 +765,7 @@ html.cdk-global-scrollblock {
 .create-wizard {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 1rem;
     min-height: 200px;
 }
 
@@ -847,11 +893,13 @@ html.cdk-global-scrollblock {
     padding: 2px 0 4px;
 }
 
-/* Category icon list (mobile wizard) */
+/* Category list (mobile wizard step 0). Cards stack one per row with a
+   bigger icon chip, the category name on top, and a two-line description
+   underneath when present. */
 .category-pick-grid {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     max-height: min(58vh, 460px);
     overflow-y: auto;
     padding: 2px 2px 6px;
@@ -864,11 +912,11 @@ html.cdk-global-scrollblock {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     width: 100%;
-    min-height: 60px;
-    padding: 10px 14px;
-    border-radius: var(--app-radius-md);
+    min-height: 84px;
+    padding: 16px 18px;
+    border-radius: var(--app-radius-lg);
     border: 1.5px solid var(--app-border);
     background: var(--app-surface);
     color: var(--app-text);
@@ -886,6 +934,7 @@ html.cdk-global-scrollblock {
 .category-tile:hover {
     border-color: var(--app-accent);
     background: var(--app-surface-hover);
+    box-shadow: var(--app-shadow-sm);
 }
 
 .category-tile:active {
@@ -907,8 +956,8 @@ html.cdk-global-scrollblock {
 }
 
 .category-tile__icon-wrap {
-    width: 40px;
-    height: 40px;
+    width: 52px;
+    height: 52px;
     border-radius: var(--app-radius-md);
     background: var(--app-accent-soft);
     display: inline-flex;
@@ -926,9 +975,9 @@ html.cdk-global-scrollblock {
 }
 
 .category-tile__icon {
-    width: 22px;
-    height: 22px;
-    font-size: 22px;
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
     color: var(--app-accent);
 }
 
@@ -948,24 +997,49 @@ html.cdk-global-scrollblock {
     color: white;
 }
 
-.category-tile__label {
+.category-tile__body {
     flex: 1 1 auto;
     min-width: 0;
-    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.category-tile__label {
+    font-size: 16px;
     font-weight: 600;
-    line-height: 1.3;
+    line-height: 1.25;
     color: var(--app-text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    letter-spacing: -0.005em;
+}
+
+.category-tile__desc {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--app-text-muted);
+    /* Clamp to two lines so long descriptions don't blow the card height. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.category-tile--selected .category-tile__desc {
+    color: var(--app-text);
+    opacity: 0.75;
 }
 
 .category-tile__check {
     flex-shrink: 0;
     color: var(--app-accent);
     font-weight: 700;
-    font-size: 1.15rem;
+    font-size: 1.4rem;
     line-height: 1;
+    align-self: center;
 }
 
 .category-pick-list__item {

@@ -50,7 +50,6 @@
             <div class="create-wizard__panel" [ngSwitch]="wizardStep()">
                 <ng-container *ngSwitchCase="0">
                     <ng-container *ngIf="isWizardMobile(); else expenseWizardStep0Desktop">
-                        <p class="create-wizard__intro">Tap a category. Most-used appear first.</p>
                         <div class="category-pick-grid" role="listbox" aria-label="Expense categories">
                             <button type="button" *ngFor="let category of categories()" class="category-tile"
                                 role="option"
@@ -60,7 +59,10 @@
                                 <span class="category-tile__icon-wrap" aria-hidden="true">
                                     <mat-icon class="category-tile__icon">{{ category?.icon || 'label' }}</mat-icon>
                                 </span>
-                                <span class="category-tile__label">{{ category?.category }}</span>
+                                <span class="category-tile__body">
+                                    <span class="category-tile__label">{{ category?.category }}</span>
+                                    <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
+                                </span>
                                 <span class="category-tile__check" aria-hidden="true"
                                     *ngIf="formGroup.get('categoryID')?.value == category.id">✓</span>
                             </button>
@@ -96,7 +98,6 @@
                     <ng-template #expenseAmountStep>
                     <ng-container *ngIf="isWizardMobile(); else expenseWizardStep1Desktop">
                         <div class="wizard-amount-layout">
-                            <p class="create-wizard__intro">Choose currency and enter the amount on the keypad.</p>
                             <div class="wizard-amount-display-row">
                                 <div class="wizard-amount-currency-panel">
                                     <span class="wizard-amount-currency-panel__label">Currency</span>
