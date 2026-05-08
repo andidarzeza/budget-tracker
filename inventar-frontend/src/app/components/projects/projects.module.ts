@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { CreateFormModule } from 'src/app/shared/create-form/create-form.module';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { SelectIconModule } from 'src/app/shared/select-icon/select-icon.module';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -39,6 +40,7 @@ import { ProjectsComponent } from './projects.component';
     FlagPipeModule,
     SharedModule,
     LabeledFormInputComponent,
+    LabeledTextareaComponent,
     SelectInputComponent
   ]
 })

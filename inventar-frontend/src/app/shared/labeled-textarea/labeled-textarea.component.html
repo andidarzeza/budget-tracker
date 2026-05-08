@@ -1,6 +1,11 @@
 <div class="form-field">
-  <label [for]="inputId()">{{ label() }}</label>
-  <div class="input-wrapper">
+  <label [for]="inputId()">
+    {{ label() }}
+    @if (required) {
+      *
+    }
+  </label>
+  <div class="input-wrapper" [class.required-field]="displayError">
     <textarea
       [id]="inputId()"
       [rows]="rows()"
@@ -9,4 +14,3 @@
     ></textarea>
   </div>
 </div>
-

@@ -19,9 +19,10 @@
             </div>
         </div>
 
-        <mat-form-field appearance="outline" class="dialog-form__field dialog-form__textarea primary-text">
-            <mat-label class="primary-text">Description</mat-label>
-            <textarea matInput formControlName="description" placeholder="Write a note..."></textarea>
-        </mat-form-field>
+        <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
+            label="Description"
+            placeholder="Write a note…"
+            [control]="$any(categoryGroup.get('description'))">
+        </cb-labeled-textarea>
     </form>
 </create-form>

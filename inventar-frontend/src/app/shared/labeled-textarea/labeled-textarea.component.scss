@@ -1,44 +1,97 @@
+/* Mirror of `cb-labeled-form-input.component.scss` so a labeled-textarea
+   sits next to a labeled-form-input as a visual sibling — same label,
+   same border, same focus halo, same theme overrides. */
 .form-field {
   display: flex;
   flex-direction: column;
+  gap: 0.25rem;
 
   label {
     font-size: 0.875rem;
     font-weight: 500;
-    margin-bottom: 0.25rem;
   }
 
   .input-wrapper {
     display: flex;
     align-items: stretch;
     padding: 11px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid;
     border-radius: 6px;
+    box-sizing: border-box;
     transition:
       border-color 0.15s ease,
       box-shadow 0.15s ease;
 
+    /* `!important` so the focus accent wins over the theme overrides at the
+       bottom of this file (which use `!important` to set the resting border). */
     &:focus-within {
-      border-color: #3b82f6;
+      border-color: var(--app-accent) !important;
+      box-shadow: 0 0 0 3px var(--app-accent-soft);
     }
 
     textarea {
-      font-size: 16px;
-      transform: scale(0.875);
-      transform-origin: left top;
-
       border: none;
       outline: none;
       background: transparent;
       padding: 0;
+      font-size: 16px;
       line-height: 1.5;
       flex: 1 1 auto;
       resize: vertical;
-      min-height: 3rem;
+      min-height: 5.25rem;
+      transform: scale(0.875);
+      transform-origin: left top;
+      /* The 0.875 horizontal scale shrinks the rendered width too; counter
+         it so the textarea visually fills the wrapper. */
+      width: calc(100% / 0.875);
 
       &::placeholder {
         color: #9ca3af;
       }
+    }
+  }
+}
+
+.required-field {
+  border-color: var(--app-danger) !important;
+
+  &:focus-within {
+    border-color: var(--app-danger) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-danger) 18%, transparent);
+  }
+
+  textarea::placeholder {
+    color: var(--app-danger) !important;
+  }
+}
+
+/* Theme overrides — same colors as `labeled-form-input` so the controls
+   render identically under either theme. */
+:host-context(.dark-theme) {
+  .form-field {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .input-wrapper {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+
+    textarea {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+}
+
+:host-context(.light-theme) {
+  .form-field {
+    color: #1a1a1a;
+  }
+
+  .input-wrapper {
+    background-color: #f9fafb;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+
+    textarea {
+      color: rgba(0, 0, 0, 0.9);
     }
   }
 }
