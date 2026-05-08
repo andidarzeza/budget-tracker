@@ -26,12 +26,6 @@ export class SideBarService {
     this.mobileMenuOpenSubject.next(!this.mobileMenuOpenSubject.value);
   }
 
-  openMobileMenu(): void {
-    if (!this.mobileMenuOpenSubject.value) {
-      this.mobileMenuOpenSubject.next(true);
-    }
-  }
-
   closeMobileMenu(): void {
     this.mobileMenuOpenSubject.next(false);
   }
