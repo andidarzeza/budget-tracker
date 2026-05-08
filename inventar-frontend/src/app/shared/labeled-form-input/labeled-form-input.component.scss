@@ -18,8 +18,12 @@
       border-color 0.15s ease,
       box-shadow 0.15s ease;
 
+    /* `!important` so the focus accent wins over the theme overrides at the
+       bottom of this file (which use `!important` to set the resting border).
+       Mirrors the focus animation on `cb-select-input`. */
     &:focus-within {
-      border-color: #3b82f6;
+      border-color: var(--app-accent) !important;
+      box-shadow: 0 0 0 3px var(--app-accent-soft);
     }
 
     .input-icon {
@@ -57,16 +61,22 @@
 }
 
 .required-field {
-  border-color: #f44336 !important;
+  border-color: var(--app-danger) !important;
+
+  &:focus-within {
+    border-color: var(--app-danger) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-danger) 18%, transparent);
+  }
+
   input {
     &::placeholder {
-      color: #f44336 !important;
+      color: var(--app-danger) !important;
     }
   }
 }
 
 .required-text {
-  color: #f44336 !important;
+  color: var(--app-danger) !important;
 }
 
 @keyframes error-slide-in {

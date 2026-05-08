@@ -1,9 +1,10 @@
 <create-form [loadingData]="loadingData()" [loadingMessage]="loadingMessage()" icon="attach_money" [entity]="entity"
-    [editMode]="isEditMode" [hideDefaultFooter]="!isEditMode" (close)="closeDialog($event)" (create)="add()">
+    [editMode]="isEditMode" [hideDefaultFooter]="!isEditMode && isWizardMobile()" (close)="closeDialog($event)" (create)="add()">
 
     <form [formGroup]="formGroup" class="dialog-form">
-        <!-- Edit: single screen + default create-form footer -->
-        <ng-container *ngIf="isEditMode">
+        <!-- Single-screen form: edit (any size) OR desktop create. The wizard
+             below handles mobile create only. -->
+        <ng-container *ngIf="isEditMode || !isWizardMobile()">
             <div class="dialog-form__row">
                 <cb-select-input class="dialog-form__field"
                     label="Expense Category"
@@ -35,8 +36,8 @@
             </mat-form-field>
         </ng-container>
 
-        <!-- Add: stepped flow + custom footer -->
-        <div *ngIf="!isEditMode" class="create-wizard">
+        <!-- Mobile create: stepped flow + custom footer -->
+        <div *ngIf="!isEditMode && isWizardMobile()" class="create-wizard">
             <nav class="create-wizard__rail" aria-label="Steps">
                 <div *ngFor="let label of wizardStepLabels; let i = index" class="create-wizard__stop"
                     [class.create-wizard__stop--active]="wizardStep() === i"
@@ -67,11 +68,8 @@
                         <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">
                             No categories available yet.
                         </p>
-                        <p *ngIf="formGroup.get('categoryID')?.invalid && formGroup.get('categoryID')?.touched"
-                            class="create-wizard__field-error">Please choose a category.</p>
                     </ng-container>
                     <ng-template #expenseWizardStep0Desktop>
-                        <p class="create-wizard__intro">Pick the category this expense belongs to.</p>
                         <cb-select-input class="dialog-form__field"
                             label="Expense Category"
                             emptyText="No categories yet"
@@ -83,8 +81,6 @@
                         <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">
                             No categories available yet.
                         </p>
-                        <p *ngIf="formGroup.get('categoryID')?.invalid && formGroup.get('categoryID')?.touched"
-                            class="create-wizard__field-error">Please choose a category.</p>
                     </ng-template>
                 </ng-container>
 

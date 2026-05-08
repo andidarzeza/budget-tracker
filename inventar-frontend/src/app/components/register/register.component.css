@@ -51,10 +51,10 @@
     flex-direction: column;
     width: min(520px, 100%);
     padding: 2.25rem 2rem 1.75rem;
-    border-radius: var(--app-radius-2xl);
-    background: var(--app-bg-elevated);
+    border-radius: var(--app-radius-lg);
+    background: var(--app-surface);
     border: 1px solid var(--app-border);
-    box-shadow: var(--app-shadow-lg) !important;
+    box-shadow: var(--app-shadow-xs) !important;
 }
 
 .form-header {
@@ -212,7 +212,7 @@
     .form-container {
         width: 100%;
         padding: 1.5rem 1.25rem 1.25rem;
-        border-radius: var(--app-radius-lg);
+        border-radius: var(--app-radius-md);
     }
 
     .form-header h1 {

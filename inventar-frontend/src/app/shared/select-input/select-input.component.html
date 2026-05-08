@@ -17,6 +17,7 @@
       (blur)="onBlur()"
       (keydown)="onKeydown($event)"
       [class.required-field]="displayError"
+      [class.is-open]="dropdownOpen()"
     >
       @if (icon()) {
         <mat-icon class="leading-icon">{{ icon() }}</mat-icon>

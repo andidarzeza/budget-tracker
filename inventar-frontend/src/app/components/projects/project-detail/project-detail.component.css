@@ -71,9 +71,9 @@
 
 /* Hero card */
 .pd-hero {
-    background: var(--card);
-    color: var(--card-title);
-    border-radius: 14px;
+    background: var(--app-surface);
+    color: var(--app-text);
+    border-radius: var(--app-radius-lg);
     padding: 20px 22px 22px;
     box-shadow: var(--app-shadow-xs);
     border: 1px solid var(--app-border);
@@ -91,8 +91,8 @@
 .pd-hero__icon-wrap {
     width: 56px;
     height: 56px;
-    border-radius: 14px;
-    background: color-mix(in srgb, var(--light) 18%, transparent);
+    border-radius: var(--app-radius-md);
+    background: var(--app-accent-soft);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -269,9 +269,9 @@
 
 /* Contributions section */
 .pd-contributions {
-    background: var(--card);
-    color: var(--card-title);
-    border-radius: 14px;
+    background: var(--app-surface);
+    color: var(--app-text);
+    border-radius: var(--app-radius-lg);
     padding: 18px 22px 18px;
     box-shadow: var(--app-shadow-xs);
     border: 1px solid var(--app-border);

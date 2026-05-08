@@ -17,6 +17,9 @@
     align-items: center;
     gap: 0.5rem;
     width: 100%;
+    /* Height matches `cb-labeled-form-input`'s wrapper (content-box: 24px
+       text + 22px padding + 2px border = 48px). */
+    min-height: 48px;
     padding: 11px;
     font-size: 0.875rem;
     line-height: 1.5;
@@ -31,9 +34,12 @@
       border-color 0.15s ease,
       box-shadow 0.15s ease;
 
+    /* `!important` so the focus accent wins over the theme overrides at the
+       bottom of this file (which use `!important` to set the resting border). */
     &:focus,
-    &:focus-visible {
-      border-color: var(--app-accent);
+    &:focus-visible,
+    &.is-open {
+      border-color: var(--app-accent) !important;
       box-shadow: 0 0 0 3px var(--app-accent-soft);
     }
   }
@@ -161,7 +167,8 @@
   border-color: var(--app-danger) !important;
 
   &:focus,
-  &:focus-visible {
+  &:focus-visible,
+  &.is-open {
     border-color: var(--app-danger) !important;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-danger) 18%, transparent) !important;
   }
@@ -191,4 +198,39 @@
 
 .error-text {
   color: var(--app-danger) !important;
+}
+
+/* Theme overrides — mirror `labeled-form-input` so the two controls render
+   identically (same border, same field background) under either theme. */
+:host-context(.dark-theme) {
+  .select-input label {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .select-trigger {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .leading-icon,
+  .chevron-icon {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+:host-context(.light-theme) {
+  .select-input label {
+    color: #1a1a1a;
+  }
+
+  .select-trigger {
+    background-color: #f9fafb;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .leading-icon,
+  .chevron-icon {
+    color: rgba(0, 0, 0, 0.6);
+  }
 }

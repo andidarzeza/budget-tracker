@@ -13,11 +13,11 @@
 .account-card {
     position: relative;
     width: min(560px, 100%);
-    border-radius: var(--app-radius-2xl);
+    border-radius: var(--app-radius-lg);
     padding: 2rem 1.75rem 1.5rem;
-    background: var(--app-bg-elevated);
+    background: var(--app-surface);
     border: 1px solid var(--app-border);
-    box-shadow: var(--app-shadow-lg) !important;
+    box-shadow: var(--app-shadow-xs) !important;
 }
 
 .account-header {
@@ -178,7 +178,7 @@
 
     .account-card {
         padding: 1.5rem 1.25rem 1.25rem;
-        border-radius: var(--app-radius-lg);
+        border-radius: var(--app-radius-md);
     }
 
     .account-avatar {

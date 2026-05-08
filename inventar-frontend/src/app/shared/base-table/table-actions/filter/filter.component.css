@@ -1,7 +1,8 @@
 .filter-container {
-    background: var(--app-bg-elevated);
+    background: var(--app-surface);
     border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-md);
+    border-radius: var(--app-radius-lg);
+    box-shadow: var(--app-shadow-xs);
     overflow: hidden;
 }
 

@@ -2,11 +2,30 @@
  * Global styles — Budget Tracker
  * ----------------------------------------------------------------------------
  * Layered as:
- *   1. Design tokens (M3 + app-level CSS variables, light/dark)
- *   2. Legacy theme aliases (kept slim for components that haven't been redone)
- *   3. Tailwind layers
- *   4. App-wide layout, Material overrides, dialogs, ngx-toastr, animations
+ *   1. Angular Material theme — emits component-level token bindings
+ *      (e.g. --mdc-icon-button-icon-size, --mat-icon-button-state-layer-size).
+ *      Without this, MDC components render with unstyled defaults — icons
+ *      mis-sized, mis-aligned, ripples wrong, etc.
+ *   2. Design tokens (M3 sys + app-level CSS variables, light/dark) override
+ *      the colors the M3 theme emits so the accent reads as our indigo.
+ *   3. Legacy theme aliases (kept slim for components that haven't been redone)
+ *   4. Tailwind layers
+ *   5. App-wide layout, Material overrides, dialogs, ngx-toastr, animations
  * ========================================================================== */
+
+@use '@angular/material' as mat;
+
+html {
+    @include mat.theme((
+        color: (
+            theme-type: light,
+            primary: mat.$violet-palette,
+            tertiary: mat.$violet-palette,
+        ),
+        typography: Roboto,
+        density: 0,
+    ));
+}
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
@@ -34,7 +53,11 @@ body {
 body {
     margin: 0;
     font-family: var(--app-font-sans);
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    /* Inter character variants. Re-list `liga`/`calt`/`kern` because
+       `font-feature-settings` overrides browser defaults — without them the
+       Material Icons font (which renders glyphs via ligatures) breaks. */
+    font-feature-settings: "liga" 1, "calt" 1, "kern" 1,
+        "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--app-bg);
@@ -135,6 +158,20 @@ app-date-picker {
 }
 
 /* ============================================================================
+ * Card surface — single source of truth for every panel-like container.
+ * Matches the dashboard cards (balance / KPI / breakdown panels). Apply via
+ * the `.app-card` class or by mirroring these four properties.
+ * ========================================================================== */
+.app-card {
+    background: var(--app-surface);
+    color: var(--app-text);
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius-lg);
+    box-shadow: var(--app-shadow-xs);
+    box-sizing: border-box;
+}
+
+/* ============================================================================
  * Material overrides — apply our tokens to common Material surfaces.
  * Component-level overrides live in their own SCSS files.
  * ========================================================================== */
@@ -142,8 +179,46 @@ app-date-picker {
 .mat-card {
     background: var(--app-surface);
     color: var(--app-text);
-    box-shadow: var(--app-shadow-sm);
+    border: 1px solid var(--app-border);
+    box-shadow: var(--app-shadow-xs);
     border-radius: var(--app-radius-lg);
+}
+
+/* Icon-button hover state + centering fix.
+   Default M3 uses `--mat-sys-on-surface` (slate-900 in light theme) for the
+   ripple/state-layer, which lands as a heavy dark wash on hover. Re-tint it
+   to the accent color so hover reads as a soft indigo highlight instead.
+
+   Also force flex centering on the button: M3 ships `inline-block` with
+   `text-align: center`, which relies on font-baseline metrics for vertical
+   alignment — brittle when the body font (Inter) and the icon font
+   (Material Icons) have different metrics. Flex pins the icon dead-center
+   regardless of font. */
+.mat-mdc-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    --mat-icon-button-state-layer-color: var(--app-accent);
+    --mdc-icon-button-state-layer-color: var(--app-accent);
+    --mat-icon-button-hover-state-layer-opacity: 0.08;
+    --mat-icon-button-focus-state-layer-opacity: 0.12;
+    --mat-icon-button-pressed-state-layer-opacity: 0.16;
+}
+
+/* Buttons that already sit on a colored fill (avatar, FABs) need a light
+   overlay to read as "brighter on hover" instead of doubling the tint. */
+.mat-mdc-icon-button.user-name-button,
+.mat-mdc-fab,
+.mat-mdc-mini-fab,
+.mobile-qr-action__button {
+    --mat-icon-button-state-layer-color: #ffffff;
+    --mdc-icon-button-state-layer-color: #ffffff;
+    --mat-fab-state-layer-color: #ffffff;
+    --mdc-fab-state-layer-color: #ffffff;
+    --mat-icon-button-hover-state-layer-opacity: 0.14;
+    --mat-icon-button-focus-state-layer-opacity: 0.18;
+    --mat-icon-button-pressed-state-layer-opacity: 0.22;
 }
 
 .mat-mdc-menu-panel,
