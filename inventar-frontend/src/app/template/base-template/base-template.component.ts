@@ -79,4 +79,16 @@ export class BaseTemplateComponent extends Unsubscribe implements OnInit {
     this.sideBarService.toggleSideBar();
   }
 
+  /**
+   * Open the mobile drawer in response to an iOS-style left-edge swipe.
+   * Guarded so the gesture is a no-op on desktop, on public routes (login
+   * / register), and on routes that opt out of the sidebar entirely.
+   */
+  onSwipeOpenMobileMenu(): void {
+    if (!this.mobileCardLayout) return;
+    if (!this.authenticationService.currentUserValue) return;
+    if (!this.sideBarService.displaySidebar) return;
+    this.sideBarService.openMobileMenu();
+  }
+
 }

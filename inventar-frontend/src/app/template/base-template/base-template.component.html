@@ -1,4 +1,8 @@
-<div [@routeAnimations]="prepareRoute()" class="application-container">
+<div [@routeAnimations]="prepareRoute()" class="application-container"
+    appEdgeSwipe
+    [drawerOpen]="(sideBarService.mobileMenuOpen$ | async) === true"
+    (openDrawer)="onSwipeOpenMobileMenu()"
+    (closeDrawer)="sideBarService.closeMobileMenu()">
 
     <side-bar *ngIf="authenticationService.currentUserValue && sideBarService.displaySidebar" [navigation]="navigation"
         [sideBarMode]="sideBarMode"
