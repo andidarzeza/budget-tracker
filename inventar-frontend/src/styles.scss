@@ -34,7 +34,6 @@ html {
 @import "./app/template/dark-theme.scss";
 @import "./app/template/shared.scss";
 
-@import "./app/components/settings/dynamic-dropdown/custom-dropdown.scss";
 @import "./assets/fonts/fonts.scss";
 
 @tailwind base;
@@ -1715,11 +1714,6 @@ button.toast-close-button {
 
 .category-table tbody {
     height: calc(100% - 56px) !important;
-}
-
-.mat-menu-panel.floating-menu {
-    background: inherit !important;
-    box-shadow: none !important;
 }
 
 .mat-menu-panel.user-menu {

@@ -1,5 +1,3 @@
-import { ChartType } from "chart.js";
-
 export interface Account {
     id: string;
     balance: any;
@@ -15,14 +13,6 @@ export interface Category {
     user: string;
 }
 
-export interface ChartOptions {
-    type?: ChartType;
-    labels?: string[];
-    data?: number[];
-    colors?: string[];
-    datasets?: any[];
-    showGridLines?: boolean;
-}
 export interface CurrencyTotalDTO {
     _id: string;
     total: number;
@@ -65,11 +55,6 @@ export interface IncomeInfoDTO {
 	total: number;
 	/** ISO currency code; rows are split per currency (cross-currency sums are not additive). */
 	currency?: string;
-}
-
-export interface DailyExpenseDTO {
-	_id: string;
-	dailyExpense: number;
 }
 
 export interface Expense {
