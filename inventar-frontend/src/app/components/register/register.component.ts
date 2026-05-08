@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -37,19 +37,19 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   ]
 })
 export class RegisterComponent {
+  private readonly toasterService = inject(ToastrService);
+  readonly sharedService = inject(SharedService);
+  private readonly formBuilder = inject(UntypedFormBuilder);
+  readonly authenticationService = inject(AuthenticationService);
+  private readonly router = inject(Router);
+
   private readonly minSpinnerMs = 500;
   private spinnerStartedAt = 0;
   private spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(
-    private toasterService: ToastrService, 
-    public sharedService: SharedService, 
-    private formBuilder: UntypedFormBuilder, 
-    public authenticationService: AuthenticationService, 
-    private router: Router
-  ) { 
+  constructor() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if(currentUser) {
+    if (currentUser) {
       this.router.navigate(['/dashboard']);
     }
   }

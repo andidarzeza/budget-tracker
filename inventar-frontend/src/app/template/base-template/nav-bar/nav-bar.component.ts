@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
 import { IConfiguration } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -9,43 +9,39 @@ import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { environment } from 'src/environments/environment';
 
-@Component({ standalone: false,
+@Component({
+  standalone: false,
   selector: 'nav-bar',
   templateUrl: './nav-bar.component.html',
-  styleUrls: ['./nav-bar.component.css']
+  styleUrls: ['./nav-bar.component.css'],
 })
-export class NavBarComponent extends Unsubscribe implements OnInit {
+export class NavBarComponent implements OnInit {
+  readonly sharedService = inject(SharedService);
+  readonly authenticationService = inject(AuthenticationService);
+  readonly sidebarService = inject(SideBarService);
+  readonly themeService = inject(ThemeService);
+  readonly accountService = inject(AccountService);
+  readonly router = inject(Router);
+  readonly breakpointService = inject(BreakpointService);
+  private readonly configurationService = inject(ConfigurationService);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Same breakpoint as mobile table cards (≤767px). */
-  isMobileLayout = false;
+  readonly isMobileLayout = signal(false);
 
   configuration: IConfiguration;
-  public EXPERIMENTAL_MODE = environment.experimentalMode;
-
-  constructor(
-    public sharedService: SharedService,
-    public authenticationService: AuthenticationService,
-    public sidebarService: SideBarService,
-    private configurationService: ConfigurationService,
-    public themeService: ThemeService,
-    public accountService: AccountService,
-    public router: Router,
-    public breakpointService: BreakpointService
-  ) {
-    super();
-  }
+  readonly EXPERIMENTAL_MODE = environment.experimentalMode;
 
   ngOnInit(): void {
     this.clearLegacyAccentOverride();
     this.breakpointService.useTableCardLayout$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((mobile) => (this.isMobileLayout = mobile));
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((mobile) => this.isMobileLayout.set(mobile));
     this.configurationService
       .getConfiguration()
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((configuration: IConfiguration) => {
         this.configuration = configuration;
         this.sharedService.applyBodyTheme(this.themeService.themeValue);

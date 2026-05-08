@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
@@ -6,12 +6,18 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { MenuItem, SideBarMode } from '../base-template.models';
 
-@Component({ standalone: false,
+@Component({
+  standalone: false,
   selector: 'side-bar',
   templateUrl: './side-bar.component.html',
-  styleUrls: ['./side-bar.component.css']
+  styleUrls: ['./side-bar.component.css'],
 })
 export class SideBarComponent implements OnChanges, AfterViewInit {
+  readonly sharedService = inject(SharedService);
+  readonly authenticationService = inject(AuthenticationService);
+  readonly sideBarService = inject(SideBarService);
+  readonly router = inject(Router);
+  private readonly routeSpinnerService = inject(RouteSpinnerService);
 
   @Input() navigation: MenuItem[];
   @Input() sideBarMode: SideBarMode;
@@ -19,13 +25,6 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
   @Input() mobileDrawer = false;
 
   selIndex = 1;
-  constructor(
-    public sharedService: SharedService,
-    public authenticationService: AuthenticationService,
-    public sideBarService: SideBarService,
-    public router: Router,
-    private routeSpinnerService: RouteSpinnerService
-  ) { }
 
   ngAfterViewInit(): void {
     if (this.mobileDrawer) {
@@ -35,9 +34,9 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.mobileDrawer) {
+    if (changes['mobileDrawer']) {
       this.sideBarService.setDesktopSidebarLayout(!this.mobileDrawer);
-      if (!this.mobileDrawer && !changes.mobileDrawer.firstChange) {
+      if (!this.mobileDrawer && !changes['mobileDrawer'].firstChange) {
         this.applyStoredSidebarWidth();
       }
     }
@@ -52,14 +51,9 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
 
   private applyStoredSidebarWidth(): void {
     const sideBarStatus = localStorage.getItem('fms-sidebar');
-    if (sideBarStatus) {
-      if (sideBarStatus === 'true') {
-        this.sideBarService.isOpened = true;
-        this.sideBarService.openSideBar();
-      } else {
-        this.sideBarService.isOpened = false;
-        this.sideBarService.closeSideBar();
-      }
+    if (sideBarStatus === 'true') {
+      this.sideBarService.isOpened = true;
+      this.sideBarService.openSideBar();
     } else {
       this.sideBarService.isOpened = false;
       this.sideBarService.closeSideBar();
@@ -88,8 +82,7 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
     const activeItem = document.getElementById('active-item') as HTMLElement;
     if (activeItem) {
       const margin = index + 1;
-      activeItem.style.transform = `translate(0%, calc(${index * 100}% + ${(index * 3) + (margin * 3)}px))`;
+      activeItem.style.transform = `translate(0%, calc(${index * 100}% + ${index * 3 + margin * 3}px))`;
     }
   }
-
 }

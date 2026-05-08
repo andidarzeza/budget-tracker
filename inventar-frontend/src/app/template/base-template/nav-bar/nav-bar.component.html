@@ -1,10 +1,14 @@
-<mat-toolbar class="toolbar" *ngIf="authenticationService.currentUserValue">
+@if (authenticationService.currentUserValue) {
+<mat-toolbar class="toolbar">
 
-    <button *ngIf="isMobileLayout" type="button" mat-icon-button class="nav-menu-button"
-        (click)="sidebarService.toggleMobileMenu()" aria-label="Open navigation menu">
-        <mat-icon class="primary-icon">menu</mat-icon>
-    </button>
-    <span *ngIf="!isMobileLayout"></span>
+    @if (isMobileLayout()) {
+        <button type="button" mat-icon-button class="nav-menu-button"
+            (click)="sidebarService.toggleMobileMenu()" aria-label="Open navigation menu">
+            <mat-icon class="primary-icon">menu</mat-icon>
+        </button>
+    } @else {
+        <span></span>
+    }
     <div class="menu-container">
 
         <button mat-icon-button
@@ -12,10 +16,11 @@
             ? 'Switch to Light Theme'
             : 'Switch to Dark Theme'"
         class="menu-item pointer" (click)="toggleDarkMode()">
-            <i *ngIf="themeService?.themeValue == 'light-theme'" style="font-size: 24px;"
-                class="material-icons primary-icon">nights_stay</i>
-            <mat-icon *ngIf="themeService?.themeValue == 'dark-theme'" class="fullscreen-icon primary-icon">wb_sunny
-            </mat-icon>
+            @if (themeService?.themeValue == 'light-theme') {
+                <i style="font-size: 24px;" class="material-icons primary-icon">nights_stay</i>
+            } @else {
+                <mat-icon class="fullscreen-icon primary-icon">wb_sunny</mat-icon>
+            }
         </button>
 
         <div class="flex-centered">
@@ -35,8 +40,6 @@
                     {{ firstName | titlecase }}
                     {{ lastName | titlecase }}</button>
                 <mat-divider style="width: 100%;"></mat-divider>
-
-                <mat-divider style="width: 100%;"></mat-divider>
                 <button (click)="switchAccount()" mat-menu-item>
                     <mat-icon>account_circle</mat-icon>Switch Account
                 </button>
@@ -47,7 +50,7 @@
             </mat-menu>
 
             <mat-menu #balance="matMenu">
-               <div (click) = "$event.stopPropagation()" class="balance-info">
+               <div (click)="$event.stopPropagation()" class="balance-info">
                     <div style="padding: 16px;font-size: 16px;display: flex;align-items: center;">
                         <mat-icon class="primary-icon">
                             account_balance_wallet
@@ -60,19 +63,22 @@
                     <mat-divider></mat-divider>
 
                     <div style="max-height: 156px;overflow: auto;">
-                        <div *ngFor="let bal of accountService?.account?.balance | keyvalue" class="title" style="padding: 16px;display: flex;justify-content: space-between;align-items: center;">
-                            <div>
-                                {{bal?.key | flag}} {{bal?.key}}
+                        @for (bal of accountService?.account?.balance | keyvalue; track bal.key) {
+                            <div class="title" style="padding: 16px;display: flex;justify-content: space-between;align-items: center;">
+                                <div>
+                                    {{ bal?.key | flag }} {{ bal?.key }}
+                                </div>
+                                <div>
+                                    {{ bal?.value | number:'1.0':'en-US' }} {{ bal?.key | currencySymbol }}
+                                </div>
                             </div>
-                            <div>
-                                {{bal?.value | number:'1.0':'en-US'}} {{ bal?.key| currencySymbol }}
-                            </div>
-                        </div>
+                        }
                     </div>
-                    
+
                </div>
             </mat-menu>
 
         </div>
     </div>
 </mat-toolbar>
+}

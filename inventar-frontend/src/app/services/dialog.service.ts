@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ComponentType } from 'ngx-toastr';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -18,14 +18,8 @@ export interface ConfirmDialogHandler {
   providedIn: 'root'
 })
 export class DialogService extends Unsubscribe {
-
-
-  constructor(
-    public dialog: MatDialog,
-    private breakpointService: BreakpointService
-  ) {
-    super();
-  }
+  readonly dialog = inject(MatDialog);
+  private readonly breakpointService = inject(BreakpointService);
 
   openDialog(component: ComponentType<any>, data?: any): ConfirmDialogHandler {
     const mobile = this.breakpointService.matchesMobileCreateLayout();

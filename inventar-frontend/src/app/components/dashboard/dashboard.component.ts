@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, HostListener, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, HostListener, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ChartUtils } from 'src/app/utils/chart';
@@ -142,17 +142,17 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     this.chartUtil.resizeDashboardCharts();
   }
 
-  constructor(
-    public dashboardService: DashboardService,
-    public chartUtil: ChartUtils,
-    private toasterService: ToastrService,
-    public sideBarService: SideBarService,
-    public navBarService: NavBarService,
-    private routeSpinnerService: RouteSpinnerService,
-    private accountService: AccountService,
-    private dialog: MatDialog,
-    private breakpointService: BreakpointService
-  ) {
+  readonly dashboardService = inject(DashboardService);
+  readonly chartUtil = inject(ChartUtils);
+  readonly sideBarService = inject(SideBarService);
+  readonly navBarService = inject(NavBarService);
+  private readonly toasterService = inject(ToastrService);
+  private readonly routeSpinnerService = inject(RouteSpinnerService);
+  private readonly accountService = inject(AccountService);
+  private readonly dialog = inject(MatDialog);
+  private readonly breakpointService = inject(BreakpointService);
+
+  constructor() {
     super();
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;

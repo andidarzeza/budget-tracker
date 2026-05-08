@@ -61,7 +61,9 @@
             <div class="settings-profile__avatar" aria-hidden="true">{{ initials() }}</div>
             <div class="settings-profile__text">
                 <span class="settings-profile__name">{{ fullName }}</span>
-                <span class="settings-profile__handle" *ngIf="username">{{ '@' + username }}</span>
+                @if (username) {
+                    <span class="settings-profile__handle">{{ '@' + username }}</span>
+                }
             </div>
         </div>
 

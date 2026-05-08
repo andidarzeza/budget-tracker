@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -40,19 +40,15 @@ import { Unsubscribe } from 'src/app/shared/unsubscribe';
   ]
 })
 export class AccountComponent extends Unsubscribe implements OnInit {
+  readonly accountService = inject(AccountService);
+  readonly sideBarService = inject(SideBarService);
+  readonly navBarService = inject(NavBarService);
+  readonly sharedService = inject(SharedService);
+  readonly router = inject(Router);
+
   private readonly minSpinnerMs = 500;
   private spinnerStartedAt = Date.now();
   private spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
-
-  constructor(
-    public accountService: AccountService,
-    public sideBarService: SideBarService,
-    public navBarService: NavBarService,
-    public sharedService: SharedService,
-    public router: Router
-  ) { 
-    super();
-  }
 
   accounts = signal<SimplifiedAccount[]>([]);
   showSpinner = signal(true);

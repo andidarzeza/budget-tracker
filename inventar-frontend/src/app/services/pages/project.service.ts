@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Contribution, Project, ProjectView } from 'src/app/models/models';
 import { serverAPIURL } from 'src/environments/environment';
@@ -8,10 +8,9 @@ import { serverAPIURL } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class ProjectService {
+  private readonly http = inject(HttpClient);
 
   readonly API_URL: string = `${serverAPIURL}/api/projects`;
-
-  constructor(private http: HttpClient) {}
 
   /** All projects for the account, each bundled with its per-currency saved totals. */
   list(account: string): Observable<ProjectView[]> {

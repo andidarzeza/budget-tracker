@@ -1,22 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RouteSpinnerService {
-  private _loading = false;
-  constructor() { }
+  private readonly _loading = signal(false);
+
+  /** Read-only signal for templates: `routeSpinnerService.loading()`. */
+  readonly loading = this._loading.asReadonly();
 
   startLoading(): void {
-    this._loading = true;
+    this._loading.set(true);
   }
 
   stopLoading(): void {
-    this._loading = false;
+    this._loading.set(false);
   }
-
-  public get loading() {
-    return this._loading;
-  }
-
 }

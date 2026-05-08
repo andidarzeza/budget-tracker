@@ -7,10 +7,6 @@ import { TableEntity } from '../models';
   providedIn: 'root'
 })
 export class FilterService {
-
-  constructor() { }
-
-
   select(filterType: TableEntity): FilterOptions[] {
     return filterMap.get(filterType);
   }

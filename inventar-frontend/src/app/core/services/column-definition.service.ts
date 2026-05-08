@@ -127,10 +127,7 @@ export class ColumnDefinitionService {
     .set("CATEGORY", this.categoryColumnDefinition)
     .set("HISTORY", this.historyColumnDefinition);
 
-  constructor() { }
-
   get(tableEntity: TableEntity): ColumnDefinition[] {
     return this.columnDefinitions.get(tableEntity);
   }
-
 }

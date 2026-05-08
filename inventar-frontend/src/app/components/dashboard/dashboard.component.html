@@ -19,16 +19,19 @@
             </div>
         </header>
 
-        <div class="balance-card__rows" *ngIf="balanceRows().length; else balanceEmpty">
-            <div *ngFor="let row of balanceRows()" class="balance-row">
-                <span class="balance-row__flag" aria-hidden="true">{{ row.currency | flag }}</span>
-                <span class="balance-row__currency">{{ row.currency }}</span>
-                <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                    {{ balanceHidden() ? '••••••' : (row.amount | number : '1.0-2') }}
-                </span>
+        @if (balanceRows().length) {
+            <div class="balance-card__rows">
+                @for (row of balanceRows(); track row.currency) {
+                    <div class="balance-row">
+                        <span class="balance-row__flag" aria-hidden="true">{{ row.currency | flag }}</span>
+                        <span class="balance-row__currency">{{ row.currency }}</span>
+                        <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
+                            {{ balanceHidden() ? '••••••' : (row.amount | number : '1.0-2') }}
+                        </span>
+                    </div>
+                }
             </div>
-        </div>
-        <ng-template #balanceEmpty>
+        } @else {
             <div class="balance-empty">
                 <span>No balance set yet.</span>
                 <button type="button" class="balance-empty__cta" (click)="openEditBalance()">
@@ -36,68 +39,86 @@
                     <span>Set balance</span>
                 </button>
             </div>
-        </ng-template>
+        }
     </section>
 
     <!-- ──── Range tabs + dynamic date picker ──── -->
     <div class="control-bar">
         <div class="control-bar__ranges" role="tablist" aria-label="Time range">
-            <button *ngFor="let range of ranges"
-                type="button"
-                role="tab"
-                [attr.aria-selected]="range == selectedRange()"
-                [class.range-option--active]="range == selectedRange()"
-                (click)="onRangeSelect(range)"
-                class="range-option">
-                {{ range == 'MAX' ? 'All' : (range | titlecase) }}
-            </button>
+            @for (range of ranges; track range) {
+                <button type="button" role="tab"
+                    [attr.aria-selected]="range == selectedRange()"
+                    [class.range-option--active]="range == selectedRange()"
+                    (click)="onRangeSelect(range)"
+                    class="range-option">
+                    {{ range == 'MAX' ? 'All' : (range | titlecase) }}
+                </button>
+            }
         </div>
 
         <div class="control-bar__picker">
-            <day-picker *ngIf="selectedRange() == 'DAY'" (onChange)="onDateSelected($event)"></day-picker>
-            <week-picker *ngIf="selectedRange() == 'WEEK'" (onChange)="onDateSelected($event)"></week-picker>
-            <month-picker *ngIf="selectedRange() == 'MONTH'" (onChange)="onDateSelected($event)"></month-picker>
-            <year-picker *ngIf="selectedRange() == 'YEAR'" (onChange)="onDateSelected($event)"></year-picker>
-            <all-time-header *ngIf="selectedRange() == 'MAX'" (onChange)="onDateSelected($event)"></all-time-header>
+            @switch (selectedRange()) {
+                @case ('DAY') {
+                    <day-picker (onChange)="onDateSelected($event)"></day-picker>
+                }
+                @case ('WEEK') {
+                    <week-picker (onChange)="onDateSelected($event)"></week-picker>
+                }
+                @case ('MONTH') {
+                    <month-picker (onChange)="onDateSelected($event)"></month-picker>
+                }
+                @case ('YEAR') {
+                    <year-picker (onChange)="onDateSelected($event)"></year-picker>
+                }
+                @case ('MAX') {
+                    <all-time-header (onChange)="onDateSelected($event)"></all-time-header>
+                }
+            }
         </div>
     </div>
 
     <!-- ──── KPI cards: per-currency Income / Expense / Net ──── -->
-    <section class="kpi-strip" *ngIf="balances().length" aria-label="Period totals">
-        <article class="kpi-card" *ngFor="let b of balances()">
-            <header class="kpi-card__head">
-                <span class="kpi-card__flag" aria-hidden="true">{{ b.currency | flag }}</span>
-                <span class="kpi-card__currency">{{ b.currency }}</span>
-            </header>
+    @if (balances().length) {
+        <section class="kpi-strip" aria-label="Period totals">
+            @for (b of balances(); track b.currency) {
+                <article class="kpi-card">
+                    <header class="kpi-card__head">
+                        <span class="kpi-card__flag" aria-hidden="true">{{ b.currency | flag }}</span>
+                        <span class="kpi-card__currency">{{ b.currency }}</span>
+                    </header>
 
-            <div class="kpi-card__row">
-                <span class="kpi-card__label">Income</span>
-                <span class="kpi-card__value kpi-card__value--income">
-                    {{ b.income | number : '1.0-2' }}
-                </span>
-            </div>
+                    <div class="kpi-card__row">
+                        <span class="kpi-card__label">Income</span>
+                        <span class="kpi-card__value kpi-card__value--income">
+                            {{ b.income | number : '1.0-2' }}
+                        </span>
+                    </div>
 
-            <div class="kpi-card__row">
-                <span class="kpi-card__label">Expense</span>
-                <span class="kpi-card__value kpi-card__value--expense">
-                    {{ b.expense | number : '1.0-2' }}
-                </span>
-            </div>
+                    <div class="kpi-card__row">
+                        <span class="kpi-card__label">Expense</span>
+                        <span class="kpi-card__value kpi-card__value--expense">
+                            {{ b.expense | number : '1.0-2' }}
+                        </span>
+                    </div>
 
-            <div class="kpi-card__row kpi-card__row--net">
-                <span class="kpi-card__label">Net</span>
-                <span class="kpi-card__value"
-                    [class.kpi-card__value--positive]="b.net >= 0"
-                    [class.kpi-card__value--negative]="b.net < 0">
-                    {{ b.net > 0 ? '+' : '' }}{{ b.net | number : '1.0-2' }}
-                </span>
-            </div>
-        </article>
-    </section>
-    <section class="kpi-empty" *ngIf="dashboardData() && !balances().length">
-        <mat-icon class="kpi-empty__icon">trending_flat</mat-icon>
-        <span class="kpi-empty__text">No transactions in this period yet.</span>
-    </section>
+                    <div class="kpi-card__row kpi-card__row--net">
+                        <span class="kpi-card__label">Net</span>
+                        <span class="kpi-card__value"
+                            [class.kpi-card__value--positive]="b.net >= 0"
+                            [class.kpi-card__value--negative]="b.net < 0">
+                            {{ b.net > 0 ? '+' : '' }}{{ b.net | number : '1.0-2' }}
+                        </span>
+                    </div>
+                </article>
+            }
+        </section>
+    }
+    @if (dashboardData() && !balances().length) {
+        <section class="kpi-empty">
+            <mat-icon class="kpi-empty__icon">trending_flat</mat-icon>
+            <span class="kpi-empty__text">No transactions in this period yet.</span>
+        </section>
+    }
 
     <!-- ──── Spending section ──── -->
     <section class="dashboard-section">
@@ -123,25 +144,31 @@
                     <span class="panel__hint">By category</span>
                 </header>
 
-                <ul class="cat-list" *ngIf="expenseRows().length">
-                    <li class="cat-row" *ngFor="let r of expenseRows()">
-                        <span class="cat-row__icon cat-row__icon--exp">
-                            <mat-icon>{{ r.icon }}</mat-icon>
-                        </span>
-                        <span class="cat-row__main">
-                            <span class="cat-row__title">{{ r.name }}</span>
-                            <span class="cat-row__sub">{{ r.currency }}</span>
-                        </span>
-                        <span class="cat-row__amount cat-row__amount--exp">
-                            −{{ r.total | number : '1.0-2' }}
-                        </span>
-                    </li>
-                </ul>
+                @if (expenseRows().length) {
+                    <ul class="cat-list">
+                        @for (r of expenseRows(); track r.name + r.currency) {
+                            <li class="cat-row">
+                                <span class="cat-row__icon cat-row__icon--exp">
+                                    <mat-icon>{{ r.icon }}</mat-icon>
+                                </span>
+                                <span class="cat-row__main">
+                                    <span class="cat-row__title">{{ r.name }}</span>
+                                    <span class="cat-row__sub">{{ r.currency }}</span>
+                                </span>
+                                <span class="cat-row__amount cat-row__amount--exp">
+                                    −{{ r.total | number : '1.0-2' }}
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                }
 
-                <div class="breakdown-empty" *ngIf="expensesEmpty()">
-                    <mat-icon class="breakdown-empty__icon">receipt_long</mat-icon>
-                    <span class="breakdown-empty__text">No expenses in this period.</span>
-                </div>
+                @if (expensesEmpty()) {
+                    <div class="breakdown-empty">
+                        <mat-icon class="breakdown-empty__icon">receipt_long</mat-icon>
+                        <span class="breakdown-empty__text">No expenses in this period.</span>
+                    </div>
+                }
             </mat-card>
         </div>
     </section>
@@ -170,25 +197,31 @@
                     <span class="panel__hint">By source</span>
                 </header>
 
-                <ul class="cat-list" *ngIf="incomeRows().length">
-                    <li class="cat-row" *ngFor="let r of incomeRows()">
-                        <span class="cat-row__icon cat-row__icon--inc">
-                            <mat-icon>{{ r.icon }}</mat-icon>
-                        </span>
-                        <span class="cat-row__main">
-                            <span class="cat-row__title">{{ r.name }}</span>
-                            <span class="cat-row__sub">{{ r.currency }}</span>
-                        </span>
-                        <span class="cat-row__amount cat-row__amount--inc">
-                            +{{ r.total | number : '1.0-2' }}
-                        </span>
-                    </li>
-                </ul>
+                @if (incomeRows().length) {
+                    <ul class="cat-list">
+                        @for (r of incomeRows(); track r.name + r.currency) {
+                            <li class="cat-row">
+                                <span class="cat-row__icon cat-row__icon--inc">
+                                    <mat-icon>{{ r.icon }}</mat-icon>
+                                </span>
+                                <span class="cat-row__main">
+                                    <span class="cat-row__title">{{ r.name }}</span>
+                                    <span class="cat-row__sub">{{ r.currency }}</span>
+                                </span>
+                                <span class="cat-row__amount cat-row__amount--inc">
+                                    +{{ r.total | number : '1.0-2' }}
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                }
 
-                <div class="breakdown-empty" *ngIf="incomesEmpty()">
-                    <mat-icon class="breakdown-empty__icon">savings</mat-icon>
-                    <span class="breakdown-empty__text">No income in this period.</span>
-                </div>
+                @if (incomesEmpty()) {
+                    <div class="breakdown-empty">
+                        <mat-icon class="breakdown-empty__icon">savings</mat-icon>
+                        <span class="breakdown-empty__text">No income in this period.</span>
+                    </div>
+                }
             </mat-card>
         </div>
     </section>

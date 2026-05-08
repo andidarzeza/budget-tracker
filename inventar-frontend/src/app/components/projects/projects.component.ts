@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, of } from 'rxjs';
@@ -22,21 +22,16 @@ import { AddProjectComponent } from './add-project/add-project.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectsComponent extends Unsubscribe implements OnInit {
+  private readonly projectService = inject(ProjectService);
+  private readonly accountService = inject(AccountService);
+  private readonly dialog = inject(DialogService);
+  private readonly toaster = inject(ToastrService);
+  private readonly router = inject(Router);
+  private readonly sideBarService = inject(SideBarService);
+  private readonly navBarService = inject(NavBarService);
+  private readonly routeSpinnerService = inject(RouteSpinnerService);
 
   readonly projects = signal<ProjectView[] | null>(null);
-
-  constructor(
-    private projectService: ProjectService,
-    private accountService: AccountService,
-    private dialog: DialogService,
-    private toaster: ToastrService,
-    private router: Router,
-    private sideBarService: SideBarService,
-    private navBarService: NavBarService,
-    private routeSpinnerService: RouteSpinnerService
-  ) {
-    super();
-  }
 
   ngOnInit(): void {
     this.routeSpinnerService.stopLoading();

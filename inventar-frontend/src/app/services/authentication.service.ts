@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -13,19 +13,17 @@ import { SideBarService } from './side-bar.service';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  public currentUserSubject: BehaviorSubject<User>;
-  public currentUser: Observable<User>;
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly navBarService = inject(NavBarService);
+  private readonly sideBarService = inject(SideBarService);
+  /** Public so templates can still bind via `authenticationService.sharedService`. */
+  readonly sharedService = inject(SharedService);
 
-  constructor(
-    private http: HttpClient, 
-    private router: Router, 
-    public sharedService: SharedService,
-    private navBarService: NavBarService,
-    private sideBarService: SideBarService
-  ) {
-      this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
-      this.currentUser = this.currentUserSubject.asObservable();
-  }
+  readonly currentUserSubject = new BehaviorSubject<User>(
+    JSON.parse(localStorage.getItem('currentUser'))
+  );
+  readonly currentUser: Observable<User> = this.currentUserSubject.asObservable();
 
   public get currentUserValue(): User {
       return this.currentUserSubject.value;

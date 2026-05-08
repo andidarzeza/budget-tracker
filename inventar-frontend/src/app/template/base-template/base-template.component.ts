@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
 import { slider } from 'src/app/animations';
 import { inOutAnimation } from 'src/app/components/settings/dynamic-dropdown/animations';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -10,73 +10,64 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { MenuItem, SideBarMode } from './base-template.models';
 
 
-@Component({ standalone: false,
+@Component({
+  standalone: false,
   selector: 'base-template',
   templateUrl: './base-template.component.html',
   styleUrls: ['./base-template.component.css'],
-  animations: [
-    inOutAnimation,
-    slider
-  ]
+  animations: [inOutAnimation, slider],
 })
-export class BaseTemplateComponent extends Unsubscribe implements OnInit {
+export class BaseTemplateComponent implements OnInit {
+  readonly authenticationService = inject(AuthenticationService);
+  readonly sharedService = inject(SharedService);
+  readonly sideBarService = inject(SideBarService);
+  readonly breakpointService = inject(BreakpointService);
+  readonly navBarService = inject(NavBarService);
+  readonly routeSpinnerService = inject(RouteSpinnerService);
+  private readonly http = inject(HttpClient);
+  private readonly destroyRef = inject(DestroyRef);
 
+  /** Wired by `<base-template [outlet]="outlet">` in app.component.html. */
   @Input() outlet: RouterOutlet;
 
   /** Matches table mobile breakpoint (≤767px): no persistent sidebar strip. */
-  mobileCardLayout = false;
-
-  constructor(
-    public authenticationService: AuthenticationService,
-    public sharedService: SharedService,
-    public sideBarService: SideBarService,
-    public breakpointService: BreakpointService,
-    private http: HttpClient,
-    public navBarService: NavBarService,
-    public routeSpinnerService: RouteSpinnerService
-  ) {
-    super();
-  }
+  readonly mobileCardLayout = signal(false);
 
   navigation: MenuItem[];
-  sideBarMode: SideBarMode = "side";
+  sideBarMode: SideBarMode = 'side';
 
   ngOnInit(): void {
     if (this.sideBarMode === 'over') {
       this.sideBarService.isOpened = false;
     }
     this.breakpointService.useTableCardLayout$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((mobile) => (this.mobileCardLayout = mobile));
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((mobile) => this.mobileCardLayout.set(mobile));
     this.getNavigationItems();
   }
 
   get applicationLeftMargin(): string {
-    if (!this.authenticationService.currentUserValue || this.mobileCardLayout) {
+    if (!this.authenticationService.currentUserValue || this.mobileCardLayout()) {
       return '0';
     }
     return this.sideBarMode === 'over' ? '76px' : '0';
   }
 
-
   prepareRoute() {
-    return this.outlet && this.outlet?.activatedRouteData && this.outlet?.activatedRouteData['animation'];
+    return this.outlet?.activatedRouteData?.['animation'];
   }
-
 
   private getNavigationItems(): void {
     this.http
-    .get("assets/navigation.json")
-    .pipe(takeUntil(this.unsubscribe$))
-    .subscribe((data: MenuItem[]) => this.navigation = data);
+      .get<MenuItem[]>('assets/navigation.json')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => (this.navigation = data));
   }
 
   toggleSidebar(): void {
     this.sideBarService.toggleSideBar();
   }
-
 }

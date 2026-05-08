@@ -1,3 +1,4 @@
+@if (authenticationService.currentUserValue) {
 <div id="sidebar"
     [ngClass]="{
         'sidebar--mobile-drawer': mobileDrawer,
@@ -6,8 +7,7 @@
     [ngStyle]="mobileDrawer ? {} : {'position': sideBarMode!='over' ? 'relative' : 'absolute', 'width': sideBarMode!='over' ? '250px' : '76px' }"
     class="sidebar grad"
     [style.height]="'100%'"
-    [style.z-index]="mobileDrawer ? 13 : 2"
-    *ngIf="authenticationService.currentUserValue">
+    [style.z-index]="mobileDrawer ? 13 : 2">
     <div class="logo-container">
         <a routerLink="/dashboard" class="sidebar-brand"
             (click)="onBrandClick()"
@@ -19,36 +19,42 @@
                     <div class="sidebar-brand-core"></div>
                 </div>
             </div>
-            <div *ngIf="sideBarService.isOpened" class="sidebar-brand-text">
-                <span class="sidebar-brand-title">Budget</span>
-                <span class="sidebar-brand-accent">Tracker</span>
-            </div>
+            @if (sideBarService.isOpened) {
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-title">Budget</span>
+                    <span class="sidebar-brand-accent">Tracker</span>
+                </div>
+            }
         </a>
     </div>
 
     <div class="menu-items">
         <div id="active-item"></div>
-        <div 
-            class="opened-menu-item pointer" 
-            *ngFor="let item of navigation;let i = index" 
-            [routerLink]="[item.link]" 
-            routerLinkActive="router-link-active"
-            (click)="onNavItemClick(i)"
-            [matTooltip]="item.text"
-            matTooltipPosition="below"
-            matTooltipClass="sidebar-tooltip"
-        >
-            <mat-icon class="primary-icon sidebar-icon">{{item.icon}}</mat-icon>
-            <span *ngIf="sideBarService.isOpened" class="title">{{item.text}}</span>
-        </div>
+        @for (item of navigation; track item.link; let i = $index) {
+            <div class="opened-menu-item pointer"
+                [routerLink]="[item.link]"
+                routerLinkActive="router-link-active"
+                (click)="onNavItemClick(i)"
+                [matTooltip]="item.text"
+                matTooltipPosition="below"
+                matTooltipClass="sidebar-tooltip">
+                <mat-icon class="primary-icon sidebar-icon">{{ item.icon }}</mat-icon>
+                @if (sideBarService.isOpened) {
+                    <span class="title">{{ item.text }}</span>
+                }
+            </div>
+        }
     </div>
 
-    <div *ngIf="!mobileDrawer" style="position: absolute; bottom: 30px;left: 50%;transform: translateX(-50%);">
-        <button class="menu-item" mat-icon-button (click)="sideBarService.toggleSideBar()">
-            <mat-icon class="primary-icon">
-                compare_arrows
-            </mat-icon>
-        </button>
-    </div>
+    @if (!mobileDrawer) {
+        <div style="position: absolute; bottom: 30px;left: 50%;transform: translateX(-50%);">
+            <button class="menu-item" mat-icon-button (click)="sideBarService.toggleSideBar()">
+                <mat-icon class="primary-icon">
+                    compare_arrows
+                </mat-icon>
+            </button>
+        </div>
+    }
 
 </div>
+}

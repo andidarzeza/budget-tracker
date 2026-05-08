@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 
@@ -7,8 +7,9 @@ import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class BreakpointService {
+  private readonly breakpointObserver = inject(BreakpointObserver);
 
-  public screenSize: ScreenSize;
+  screenSize: ScreenSize;
 
   /**
    * Same breakpoint as `useTableCardLayout$`: add/create dialogs use fullscreen + keypad wizard on mobile.
@@ -28,9 +29,7 @@ export class BreakpointService {
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-  constructor(
-    private breakpointObserver: BreakpointObserver
-  ) {
+  constructor() {
     this.recomputeScreenSize();
     this.breakpointObserver
       .observe([

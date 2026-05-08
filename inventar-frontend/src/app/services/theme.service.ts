@@ -1,56 +1,58 @@
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { inject, Injectable, RendererFactory2, signal } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
+  private readonly document = inject(DOCUMENT);
+  private readonly renderer = inject(RendererFactory2).createRenderer(null, null);
 
-  private theme: Theme = 'light-theme';
-  private renderer: Renderer2;
+  private readonly _theme = signal<Theme>('light-theme');
 
-  private subject = new Subject<string>();
-  public colorChange: Observable<string> = this.subject.asObservable();
+  /** Read-only signal — useful inside `effect()` / templates. */
+  readonly theme = this._theme.asReadonly();
 
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-    private rendererFactory: RendererFactory2
-  ) {
-    this.renderer = rendererFactory.createRenderer(null, null);
-  }
+  private readonly subject = new Subject<string>();
+  readonly colorChange: Observable<string> = this.subject.asObservable();
 
-  public next(color: string): void {
+  next(color: string): void {
     this.subject.next(color);
   }
 
   initTheme = (): void => {
     const stored = localStorage.getItem('theme');
+    let next: Theme = 'light-theme';
     if (stored === 'light-theme' || stored === 'dark-theme') {
-      this.theme = stored;
+      next = stored;
     } else if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
-      this.theme = 'dark-theme';
+      next = 'dark-theme';
     }
-    localStorage.setItem('theme', this.theme);
+    this._theme.set(next);
+    localStorage.setItem('theme', next);
     this.applyThemeClass();
   };
 
   changeTheme = (): void => {
-    this.theme = this.theme === 'dark-theme' ? 'light-theme' : 'dark-theme';
-    localStorage.setItem('theme', this.theme);
+    const next: Theme = this._theme() === 'dark-theme' ? 'light-theme' : 'dark-theme';
+    this._theme.set(next);
+    localStorage.setItem('theme', next);
     this.applyThemeClass();
   };
 
-  get themeValue() {
-    return this.theme;
+  /** Backwards-compatible alias — many call sites read `themeValue`. */
+  get themeValue(): Theme {
+    return this._theme();
   }
 
   /** Ensure exactly one of `light-theme` / `dark-theme` is on <body>. */
   private applyThemeClass(): void {
     const body = this.document.body;
-    const other: Theme = this.theme === 'dark-theme' ? 'light-theme' : 'dark-theme';
+    const current = this._theme();
+    const other: Theme = current === 'dark-theme' ? 'light-theme' : 'dark-theme';
     this.renderer.removeClass(body, other);
-    this.renderer.addClass(body, this.theme);
+    this.renderer.addClass(body, current);
   }
 }
 

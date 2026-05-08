@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
 import { DashboardDTO, Period, RangeType, TimelineExpenseDTO, TimelineIncomeDTO } from '../models/models';
@@ -9,13 +9,10 @@ import { AccountService } from './account.service';
   providedIn: 'root'
 })
 export class DashboardService {
+  private readonly http = inject(HttpClient);
+  readonly accountService = inject(AccountService);
 
   readonly API_URL: string = `${serverAPIURL}/api/dashboard`;
-  
-  constructor(
-    private http: HttpClient,
-    public accountService: AccountService
-  ) {}
 
   getDashboardData(from: Date, to: Date, range: RangeType): Observable<DashboardDTO> {
     const params = new HttpParams()

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -28,7 +28,21 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
-  
+
+  // Field initializers need their dependencies already in scope; using
+  // `inject()` directly here keeps them order-independent and avoids the
+  // "used before initialization" trap with `this.*Service`.
+  readonly columnDefinitionService = inject(ColumnDefinitionService);
+  readonly filterService = inject(FilterService);
+  readonly breakpointService = inject(BreakpointService);
+  readonly sideBarService = inject(SideBarService);
+  readonly navBarService = inject(NavBarService);
+  private readonly categoryService = inject(CategoriesService);
+  private readonly routeSpinnerService = inject(RouteSpinnerService);
+  private readonly expenseService = inject(ExpenseService);
+  private readonly matDialog = inject(MatDialog);
+  private readonly router = inject(Router);
+
   createComponent = AddExpenseComponent;
   sort: string = "createdTime,desc";
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("EXPENSE");
@@ -38,23 +52,15 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     icon: 'attach_money'
   };
 
-
   constructor(
-    private expenseService: ExpenseService,
     public dialog: DialogService,
-    private categoryService: CategoriesService,
     protected toaster: ToastrService,
     protected accountService: AccountService,
-    public sideBarService: SideBarService,
-    public navBarService: NavBarService,
-    public columnDefinitionService: ColumnDefinitionService,
-    public filterService: FilterService,
-    private routeSpinnerService: RouteSpinnerService,
-    public breakpointService: BreakpointService,
-    private readonly matDialog: MatDialog,
-    private readonly router: Router
   ) {
-    super(dialog, expenseService, toaster, accountService);
+    // BaseTable's constructor wires `entityService` into the `query()` /
+    // `delete()` chain — pass via `inject()` so the field below stays
+    // available for the QR-prefill flow.
+    super(dialog, inject(ExpenseService), toaster, accountService);
   }
 
   /**
