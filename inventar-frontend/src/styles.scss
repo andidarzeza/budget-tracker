@@ -184,6 +184,96 @@ app-date-picker {
     border-radius: var(--app-radius-lg);
 }
 
+/* ============================================================================
+ * `cb-select-input` overlay panel
+ * ----------------------------------------------------------------------------
+ * The select component renders its dropdown through CDK overlay (the same
+ * way `mat-select` does) so it portals to the document body and escapes
+ * parent `overflow: hidden` / z-index limits. Because the panel lives
+ * outside the component's view, its styles can't be encapsulated — they
+ * live here and are scoped via the `.cb-select-overlay` panel class.
+ * ========================================================================== */
+.cb-select-overlay .cb-select-dropdown {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    /* Fill the overlay pane (which is sized to the trigger via
+       `cdkConnectedOverlayWidth`). Without `width: 100%` the `<ul>` would
+       shrink to its widest option, leaving a gap on either side when the
+       trigger is wider than the longest label. */
+    width: 100%;
+    background: var(--app-bg-elevated);
+    color: var(--app-text);
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius-md);
+    box-shadow: var(--app-shadow-lg);
+    max-height: 240px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    animation: cb-select-dropdown-in 180ms var(--app-easing-standard, ease-out) both;
+}
+
+@keyframes cb-select-dropdown-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cb-select-overlay .cb-select-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 10.5px 12px;
+    font-size: 0.875rem;
+    color: var(--app-text);
+    cursor: pointer;
+    transition: background 120ms ease;
+}
+
+.cb-select-overlay .cb-select-option:hover {
+    background: var(--app-surface-hover);
+}
+
+.cb-select-overlay .cb-select-option__label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cb-select-overlay .cb-select-option mat-icon {
+    flex-shrink: 0;
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+}
+
+.cb-select-overlay .cb-select-option--checked {
+    background: var(--app-accent-soft);
+}
+
+.cb-select-overlay .cb-select-option--checked mat-icon {
+    color: var(--app-accent) !important;
+}
+
+.cb-select-overlay .cb-select-option--empty {
+    color: var(--app-text-subtle);
+    font-style: italic;
+    padding: 16px;
+    cursor: default;
+}
+
+.cb-select-overlay .cb-select-option--empty:hover {
+    background: transparent;
+}
+
 /* Icon-button hover state + centering fix.
    Default M3 uses `--mat-sys-on-surface` (slate-900 in light theme) for the
    ripple/state-layer, which lands as a heavy dark wash on hover. Re-tint it

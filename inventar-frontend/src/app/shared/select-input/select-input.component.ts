@@ -6,12 +6,17 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
 import { MatIconModule } from '@angular/material/icon';
 
 /**
  * Generic select-style input. Replaces the look-and-feel of `mat-select`
  * with a styled trigger + dropdown that matches the rest of the app's form
  * controls (see `cb-labeled-form-input`).
+ *
+ * The dropdown uses Angular CDK's overlay (the same primitive `mat-select`
+ * uses) so it portals to the document and is unaffected by parent
+ * `overflow: hidden` / `z-index` / stacking-context constraints.
  *
  * Two type params:
  *  - `T`    — the value stored on the form control.
@@ -43,7 +48,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'cb-select-input',
   standalone: true,
-  imports: [ReactiveFormsModule, MatIconModule],
+  imports: [ReactiveFormsModule, MatIconModule, OverlayModule],
   templateUrl: './select-input.component.html',
   styleUrl: './select-input.component.scss',
 })
@@ -91,6 +96,36 @@ export class SelectInputComponent<T, OptT = T> {
 
   readonly dropdownOpen = signal(false);
 
+  /**
+   * Trigger width, in pixels, captured at the moment we open the dropdown.
+   * Re-measuring on each open avoids latching `0` from a cycle that ran
+   * before the viewChild query resolved, and keeps the panel honest after
+   * responsive layout / font-load reflows.
+   */
+  private readonly triggerWidthPx = signal(0);
+
+  /**
+   * Connected positions for the overlay: prefer below the trigger, flip above
+   * if there's not enough room. Width is matched to the trigger via
+   * `cdkConnectedOverlayWidth`.
+   */
+  readonly overlayPositions: ConnectedPosition[] = [
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 4,
+    },
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetY: -4,
+    },
+  ];
+
   get required(): boolean {
     return this.control().hasValidator(Validators.required);
   }
@@ -120,29 +155,51 @@ export class SelectInputComponent<T, OptT = T> {
     return match !== undefined ? this.displayWith()(match) : String(v);
   }
 
+  /** Match the overlay panel width to the trigger box (set on open). */
+  get triggerWidth(): number {
+    return this.triggerWidthPx();
+  }
+
   isSelected(opt: OptT): boolean {
     return this.compareWith()(this.selectedValue, this.valueWith()(opt));
   }
 
   toggleDropdown(): void {
+    if (!this.dropdownOpen()) {
+      // Measure right before opening so the panel always matches the trigger,
+      // even after responsive layout / font-load reflows.
+      const w = this.trigger()?.nativeElement?.offsetWidth ?? 0;
+      this.triggerWidthPx.set(w);
+    }
     this.dropdownOpen.update((open) => !open);
   }
 
   /**
-   * Select an option. Bound on `mousedown` so it fires before the trigger's
-   * `blur` (which would close the dropdown and swallow the click).
+   * Select an option. Options live inside the CDK overlay so a click on them
+   * fires *before* any blur on the trigger; mousedown isn't needed here, but
+   * we keep `event.preventDefault()` so the trigger doesn't lose focus.
    */
   onSelect(opt: OptT, event?: MouseEvent): void {
     event?.preventDefault();
     this.control().setValue(this.valueWith()(opt));
     this.control().markAsDirty();
+    this.control().markAsTouched();
     this.dropdownOpen.set(false);
     this.trigger()?.nativeElement?.blur();
   }
 
-  onBlur(): void {
-    this.control().markAsTouched();
+  /**
+   * The CDK overlay's outsideClick fires for any click outside the panel —
+   * including clicks on our own trigger. Skip the trigger so its `(click)`
+   * handler can flip the dropdown without us closing it first.
+   */
+  onOverlayOutsideClick(event: MouseEvent): void {
+    const trigger = this.trigger()?.nativeElement;
+    if (trigger && trigger.contains(event.target as Node)) {
+      return;
+    }
     this.dropdownOpen.set(false);
+    this.control().markAsTouched();
   }
 
   onKeydown(event: KeyboardEvent): void {
@@ -154,7 +211,7 @@ export class SelectInputComponent<T, OptT = T> {
       !this.dropdownOpen()
     ) {
       event.preventDefault();
-      this.dropdownOpen.set(true);
+      this.toggleDropdown();
     }
   }
 }

@@ -1,3 +1,5 @@
+/* Trigger styles only — the dropdown lives in a CDK overlay portal and is
+   styled globally in `src/styles.scss` (look for `.cb-select-overlay`). */
 .select-input {
   display: flex;
   flex-direction: column;
@@ -76,90 +78,6 @@
 
   .chevron-icon--open {
     transform: rotate(180deg);
-  }
-
-  .dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin: 0.25rem 0 0;
-    padding: 0.25rem 0;
-    list-style: none;
-    background: var(--app-bg-elevated);
-    color: var(--app-text);
-    border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-md, 12px);
-    box-shadow: var(--app-shadow-lg);
-    max-height: 0;
-    overflow-y: hidden;
-    z-index: 10;
-    opacity: 0;
-    transform: translateY(-4px);
-    pointer-events: none;
-    transition:
-      max-height 0.18s ease-out,
-      opacity 0.18s ease-out,
-      transform 0.18s ease-out;
-  }
-
-  .dropdown--open {
-    max-height: 240px;
-    overflow-y: auto;
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-
-  .option {
-    padding: 10.5px 0.75rem;
-    font-size: 0.875rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    color: var(--app-text);
-    transition: background 0.12s ease;
-
-    &:hover,
-    &:focus-visible {
-      background: var(--app-surface-hover);
-    }
-
-    .truncate {
-      flex: 1 1 auto;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    mat-icon {
-      flex-shrink: 0;
-      font-size: 18px;
-      height: 18px;
-      width: 18px;
-    }
-
-    &--empty {
-      color: var(--app-text-subtle);
-      font-style: italic;
-      padding: 1rem;
-      cursor: default;
-
-      &:hover {
-        background: transparent;
-      }
-    }
-  }
-}
-
-.checked {
-  background: var(--app-accent-soft);
-
-  mat-icon {
-    color: var(--app-accent) !important;
   }
 }
 
