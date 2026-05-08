@@ -504,25 +504,27 @@ mat-dialog-container {
     height: 100%;
 }
 
-.create-dialog--fullscreen .dialog-form:has(.create-wizard) {
-    flex: 1 1 auto;
-    min-height: 0;
+/* Wizard panel scroll-affordance for fullscreen dialogs. The action footer
+   is now projected through create-form's `.dialog-footer-slot` (so it sits
+   as a sibling of `.content-container` and pins to the bottom of the
+   dialog — same architecture edit-balance uses), and the form contents
+   scroll naturally inside `.content-container`. No overrides on the
+   wizard's internal flex chain needed. */
+
+/* Projected footer slot. Matches the visual contract of `<create-footer>`
+   (which is view-encapsulated, so its styles don't reach projected
+   content): same padding, background, top divider — so a wizard's custom
+   actions sit in the dialog identically to the default Cancel / Save row. */
+.dialog-footer-slot {
     display: flex;
-    flex-direction: column;
-}
-
-.create-dialog--fullscreen .create-wizard {
-    flex: 1 1 auto;
-    min-height: 0;
-}
-
-.create-dialog--fullscreen .create-wizard__panel {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 18px 22px 22px;
+    background: var(--app-bg-elevated);
+    border-top: 1px solid var(--app-border);
+    box-sizing: border-box;
 }
 
 .create-dialog--fullscreen .category-pick-list {
@@ -822,10 +824,6 @@ html.cdk-global-scrollblock {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-}
-
-.create-wizard__footer.dialog-footer {
-    margin-top: 12px;
 }
 
 .create-wizard__hint {

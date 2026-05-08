@@ -3,4 +3,15 @@
     <form-spinner [loadingData]="loadingData" [message]="loadingMessage"></form-spinner>
     <ng-content></ng-content>
 </div>
+<!--
+  Optional custom footer slot. Anything projected with class
+  `.dialog-footer-slot` is rendered as a sibling of `.content-container`,
+  so it stays pinned to the bottom of the dialog while the form above
+  scrolls inside `.content-container`.
+
+  Use this when you need custom action buttons (a wizard's Back/Next/Save,
+  for example) and pair it with `[hideDefaultFooter]="true"` so the
+  default Cancel/Save row doesn't render alongside.
+-->
+<ng-content select=".dialog-footer-slot"></ng-content>
 <create-footer *ngIf="!hideDefaultFooter" [editMode]="editMode" (create)="add()" (cancel)="closeDialog(false)"></create-footer>

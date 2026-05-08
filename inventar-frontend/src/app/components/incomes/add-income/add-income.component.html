@@ -153,28 +153,31 @@
                     </cb-labeled-textarea>
                 </ng-container>
             </div>
-
-            <footer class="dialog-footer create-wizard__footer">
-                <div class="create-wizard__footer-row">
-                    <button type="button" class="dialog-btn dialog-btn--secondary" (click)="closeDialog(false)">
-                        Cancel
-                    </button>
-                    <div class="create-wizard__footer-actions">
-                        <button *ngIf="wizardStep() > 0" type="button" class="dialog-btn dialog-btn--secondary"
-                            (click)="wizardBack()">
-                            Back
-                        </button>
-                        <button *ngIf="wizardStep() < 2" type="button" class="dialog-btn dialog-btn--primary"
-                            (click)="wizardNext()">
-                            Next
-                        </button>
-                        <button *ngIf="wizardStep() === 2" type="button" class="dialog-btn dialog-btn--primary"
-                            (click)="add()">
-                            Save income
-                        </button>
-                    </div>
-                </div>
-            </footer>
         </div>
     </form>
+
+    <!-- Projected to the create-form's footer slot, sibling of `.content-container`,
+         so it pins to the bottom of the dialog (same architecture edit-balance uses). -->
+    <footer *ngIf="!isEditMode && isWizardMobile()"
+        class="dialog-footer dialog-footer-slot create-wizard__footer">
+        <div class="create-wizard__footer-row">
+            <button type="button" class="dialog-btn dialog-btn--secondary" (click)="closeDialog(false)">
+                Cancel
+            </button>
+            <div class="create-wizard__footer-actions">
+                <button *ngIf="wizardStep() > 0" type="button" class="dialog-btn dialog-btn--secondary"
+                    (click)="wizardBack()">
+                    Back
+                </button>
+                <button *ngIf="wizardStep() < 2" type="button" class="dialog-btn dialog-btn--primary"
+                    (click)="wizardNext()">
+                    Next
+                </button>
+                <button *ngIf="wizardStep() === 2" type="button" class="dialog-btn dialog-btn--primary"
+                    (click)="add()">
+                    Save income
+                </button>
+            </div>
+        </div>
+    </footer>
 </create-form>
