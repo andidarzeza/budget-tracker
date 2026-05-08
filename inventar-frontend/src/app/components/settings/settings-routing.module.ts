@@ -1,21 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AccountComponent } from './account/account.component';
-import { AppearanceComponent } from './appearance/appearance.component';
 import { SettingsComponent } from './settings.component';
 
 
-const routes: Routes = [{
-  path: '', component: SettingsComponent,
-  children: [
-    {
-      path: 'appearance', component: AppearanceComponent
-    },
-    {
-      path: 'account', component: AccountComponent
-    }
-  ]
-}];
+// Settings is a single-page hub — no child routes. Sections render inline
+// and persistence is local (theme, base currency) or backed by the
+// existing services (configuration, account).
+const routes: Routes = [
+  { path: '', component: SettingsComponent },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

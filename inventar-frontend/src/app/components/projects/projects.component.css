@@ -115,20 +115,14 @@
     flex-direction: column;
     gap: 14px;
     cursor: pointer;
-    transition:
-        box-shadow var(--app-motion-base) var(--app-easing-standard),
-        transform var(--app-motion-fast) var(--app-easing-standard),
-        border-color var(--app-motion-base) var(--app-easing-standard);
     box-sizing: border-box;
     min-width: 0;
 }
 
-.project-card:hover,
 .project-card:focus-visible {
     outline: none;
     border-color: var(--app-accent);
-    box-shadow: var(--app-shadow-md);
-    transform: translateY(-2px);
+    box-shadow: 0 0 0 3px var(--app-accent-soft);
 }
 
 .project-card__head {

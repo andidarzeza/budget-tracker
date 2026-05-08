@@ -265,14 +265,6 @@
     gap: var(--app-space-2);
     box-sizing: border-box;
     min-width: 0;
-    transition:
-        transform var(--app-motion-base) var(--app-easing-standard),
-        box-shadow var(--app-motion-base) var(--app-easing-standard);
-}
-
-.kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--app-shadow-md);
 }
 
 .kpi-card__head {

@@ -1,53 +1,108 @@
-<div class="{{sharedService.theme}}-table settings-table">
-    <div class="main-action-container">
-        <div class="title-container">
-            <mat-icon class="primary-icon">
-                settings
-            </mat-icon>
-            <span class="title {{sharedService.theme}}-title">
-                Settings > {{simplifiedPath | titlecase}}
+<section class="settings-page">
+    <header class="settings-header">
+        <span class="settings-header__icon-wrap" aria-hidden="true">
+            <mat-icon class="settings-header__icon">settings</mat-icon>
+        </span>
+        <div class="settings-header__text">
+            <h1 class="settings-header__title">Settings</h1>
+            <p class="settings-header__subtitle">Manage your account and preferences.</p>
+        </div>
+    </header>
+
+    <!-- ──── Appearance ──── -->
+    <section class="app-card settings-section">
+        <header class="settings-section__head">
+            <h2 class="settings-section__title">Appearance</h2>
+            <p class="settings-section__hint">How the app looks and which currency it defaults to.</p>
+        </header>
+
+        <div class="settings-row">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">dark_mode</mat-icon>
             </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Dark mode</span>
+                <span class="settings-row__desc">Switch the entire app to a darker palette.</span>
+            </div>
+            <mat-slide-toggle class="settings-row__trailing"
+                [checked]="darkMode()"
+                (change)="toggleDarkMode($event.checked)"
+                aria-label="Toggle dark mode">
+            </mat-slide-toggle>
         </div>
 
-        <div style="width: 500px;max-width: calc(100% - 350px);">
-            <and-input [placeholder]="'Search'">
-                <mat-icon prefix>search</mat-icon>
-            </and-input>
-        </div>
-        
-
-        
-
-    </div>
-
-    <div class="settings-content">
-        <div class="settings-menu">
-            <dropdown [showOptions]="true" [selectedTab]="selectedTab" [title]="'Appearance'" [path]="appearancePath"
-                (onNavigation)="onNavigation($event)" [options]="appearanceOptions"></dropdown>
-            <dropdown [selectedTab]="selectedTab" [title]="'Account'" [path]="accountPath"
-                (onNavigation)="onNavigation($event)" [options]="accountOptions"></dropdown>
-        </div>
-
-        
-        <div style="    width: calc(100% - 300px);
-        background: var(--primary);
-        border-radius: 0 0 10px 0;" class="settings-view">
-            <div style="    background: var(--secondary);
-            width: calc(100% - 42px);
-            height: calc(100% - 42px);
-            padding: 20px;
-            border-radius: 10px 0 10px 0px;
-            border-top: 2px solid rgba(0, 0, 0, .12);
-            border-left: 2px solid rgba(0, 0, 0, .12);">
-                <router-outlet></router-outlet>
+        <div class="settings-row">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">payments</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Base currency</span>
+                <span class="settings-row__desc">Default for new expenses, incomes, and projects.</span>
+            </div>
+            <div class="settings-row__trailing settings-row__trailing--currency">
+                <cb-select-input
+                    label=""
+                    [control]="$any(baseCurrencyControl)"
+                    [options]="currencies"
+                    [displayWith]="displayCurrency">
+                </cb-select-input>
             </div>
         </div>
-    </div>
+    </section>
 
+    <!-- ──── Account ──── -->
+    <section class="app-card settings-section">
+        <header class="settings-section__head">
+            <h2 class="settings-section__title">Account</h2>
+            <p class="settings-section__hint">Profile, switch user, sign out.</p>
+        </header>
 
+        <div class="settings-profile">
+            <div class="settings-profile__avatar" aria-hidden="true">{{ initials() }}</div>
+            <div class="settings-profile__text">
+                <span class="settings-profile__name">{{ fullName }}</span>
+                <span class="settings-profile__handle" *ngIf="username">{{ '@' + username }}</span>
+            </div>
+        </div>
 
-</div>
+        <button type="button" class="settings-action" (click)="switchAccount()">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">swap_horiz</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Switch account</span>
+                <span class="settings-row__desc">Choose a different profile linked to this user.</span>
+            </div>
+            <mat-icon class="settings-action__chevron" aria-hidden="true">chevron_right</mat-icon>
+        </button>
 
-<!-- <div style="margin-top: 50px;margin-left: 50px;width: 500px;">
-    <dynamic-dropdown [data]="data" (onSelection)="onSelectionFunction($event)" (onCreate)="onCreateFunction($event)" (onDelete)="onDeleteFunction($event)"></dynamic-dropdown>
-</div> -->
+        <button type="button" class="settings-action settings-action--danger" (click)="logout()">
+            <span class="settings-row__icon-wrap settings-row__icon-wrap--danger" aria-hidden="true">
+                <mat-icon class="settings-row__icon">logout</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Log out</span>
+                <span class="settings-row__desc">Sign out of this device.</span>
+            </div>
+            <mat-icon class="settings-action__chevron" aria-hidden="true">chevron_right</mat-icon>
+        </button>
+    </section>
+
+    <!-- ──── About ──── -->
+    <section class="app-card settings-section">
+        <header class="settings-section__head">
+            <h2 class="settings-section__title">About</h2>
+        </header>
+
+        <div class="settings-row settings-row--static">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">info</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Budget Tracker</span>
+                <span class="settings-row__desc">Personal finance, multi-currency, your account.</span>
+            </div>
+            <span class="settings-row__value">v{{ appVersion }}</span>
+        </div>
+    </section>
+</section>

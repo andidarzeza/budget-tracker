@@ -1,98 +1,118 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { ThemeService } from 'src/app/services/theme.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
-import { DropdownOption } from 'src/app/template/shared/dropdown/models';
+import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
+import { CURRENCIES } from 'src/environments/environment';
 
-@Component({ standalone: false,
+const BASE_CURRENCY_KEY = 'baseCurrency';
+
+@Component({
+  standalone: false,
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+  styleUrls: ['./settings.component.css'],
+  providers: [FlagPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent extends Unsubscribe implements OnInit {
-  appearancePath = "/settings/appearance";
-  appearanceOptions: DropdownOption[] = [
-    {
-      icon: 'color_lens',
-      title: 'Theme',
-      path: 'theme'
-    },
-    {
-      icon: 'nights_stay',
-      title: 'Dark Mode',
-      path: 'dark-mode',
-      showSwitch: true,
-      switchValue: this.sharedService.theme == 'dark',
-      onSwitchChange: (value) => {
-        this.changeTheme(value);
-      }
-    },
-    {
-      icon: 'language',
-      title: 'Language',
-      path: 'language'
-    }
-  ];
+  private readonly themeService = inject(ThemeService);
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly configurationService = inject(ConfigurationService);
+  private readonly sharedService = inject(SharedService);
+  private readonly sideBarService = inject(SideBarService);
+  private readonly navBarService = inject(NavBarService);
+  private readonly router = inject(Router);
+  private readonly flagPipe = inject(FlagPipe);
 
-  accountPath = "/settings/account";
-  accountOptions: DropdownOption[] = [
-    {
-      icon: 'account_circle',
-      title: 'Account',
-      path: 'account'
-    },
-    {
-      icon: 'supervisor_account',
-      title: 'Profiles',
-      path: 'profiles'
-    },
-    {
-      icon: 'delete_forever',
-      title: 'Delete Account',
-      path: 'delete-account'
-    }
-  ];
+  readonly currencies = CURRENCIES;
 
+  /** Live signal so the toggle reflects external theme changes (nav-bar). */
+  readonly darkMode = signal(this.themeService.themeValue === 'dark-theme');
 
-  selectedPath = this.appearancePath;
-  simplifiedPath = this.selectedPath.split("/")[this.selectedPath.split("/").length - 1];
-  selectedTab = this.appearanceOptions[0].path;
+  /** Currency picker control — value persisted to localStorage on change. */
+  readonly baseCurrencyControl = new FormControl<string | null>(
+    localStorage.getItem(BASE_CURRENCY_KEY) || CURRENCIES[0]
+  );
 
-  constructor(
-    public sharedService: SharedService,
-    public sideBarService: SideBarService,
-    public navBarService: NavBarService,
-    private router: Router,
-    private configurationService: ConfigurationService
-  ) {
-    super();
+  /** Currency option label: "🇺🇸 USD". */
+  readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
+
+  /** User initials for the avatar; falls back to "?" when no user. */
+  readonly initials = computed(() => {
+    const u = this.authenticationService.currentUserValue;
+    if (!u) return '?';
+    const first = (u.firstName || '').charAt(0).toUpperCase();
+    const last = (u.lastName || '').charAt(0).toUpperCase();
+    return first + last || '?';
+  });
+
+  /** "Andi Darzeza" — used as the display name in the profile card. */
+  get fullName(): string {
+    const u = this.authenticationService.currentUserValue;
+    if (!u) return 'Guest';
+    return [u.firstName, u.lastName].filter(Boolean).join(' ') || u.username || 'Guest';
+  }
+
+  get username(): string {
+    return this.authenticationService.currentUserValue?.username ?? '';
+  }
+
+  get appVersion(): string {
+    // Static for now — pulled from package.json at build time would be cleaner
+    // long-term, but Angular doesn't expose that without extra config.
+    return '1.0.0';
   }
 
   ngOnInit(): void {
-    this.router.navigate([this.selectedPath]);
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
-    this.sharedService.themeSubscribable.subscribe(theme => {
-      this.appearanceOptions.filter(item => item.title === "Dark Mode")[0].switchValue = theme == 'dark';
-    });
-  }
-  
-  changeTheme(value: boolean): void {
-    this.configurationService.configuration.darkMode = value;
-    this.configurationService
-      .updateConfiguration()
+
+    // Persist base-currency changes immediately. No backend call needed —
+    // it's a local default for new expenses / incomes / projects.
+    this.baseCurrencyControl.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(() => {
-        this.sharedService.changeTheme();
+      .subscribe((value) => {
+        if (value) {
+          localStorage.setItem(BASE_CURRENCY_KEY, value);
+        } else {
+          localStorage.removeItem(BASE_CURRENCY_KEY);
+        }
       });
   }
 
-  onNavigation(path: string): void {
-    this.selectedTab = path;
+  toggleDarkMode(checked: boolean): void {
+    // Only toggle if the new state differs (slide-toggle change can fire on init).
+    const isDark = this.themeService.themeValue === 'dark-theme';
+    if (isDark === checked) return;
+
+    this.themeService.changeTheme();
+    this.sharedService.applyBodyTheme(this.themeService.themeValue);
+    this.darkMode.set(this.themeService.themeValue === 'dark-theme');
+
+    // Best-effort backend persistence — fire and forget; UI is already updated.
+    if (this.configurationService.configuration) {
+      this.configurationService.configuration.darkMode = checked;
+      this.configurationService
+        .updateConfiguration()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe({ error: () => {} });
+    }
+  }
+
+  switchAccount(): void {
+    localStorage.removeItem('account');
+    this.router.navigate(['/account']);
+  }
+
+  logout(): void {
+    this.authenticationService.logout();
   }
 }
