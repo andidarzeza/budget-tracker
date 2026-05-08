@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AddIncomeComponent } from './add-income/add-income.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
@@ -12,6 +13,7 @@ import { BaseTable } from 'src/app/core/BaseTable';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { HttpParams } from '@angular/common/http';
 import { FilterService } from 'src/app/core/services/filter.service';
@@ -47,9 +49,24 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
     public accountService: AccountService,
     public columnDefinitionService: ColumnDefinitionService,
     public filterService: FilterService,
-    private routeSpinnerService: RouteSpinnerService
+    private routeSpinnerService: RouteSpinnerService,
+    public breakpointService: BreakpointService,
+    private readonly router: Router
   ) {
     super(dialog, incomeService, toaster, accountService);
+  }
+
+  /**
+   * Mobile *create* uses a routed full-screen page (native body scroll,
+   * sticky header + footer); desktop create and any edit (mobile or
+   * desktop) continue to use the dialog.
+   */
+  override openAddEditForm(entity?: Income): void {
+    if (!entity && this.breakpointService.matchesMobileCreateLayout()) {
+      this.router.navigate(['/incomes/add']);
+      return;
+    }
+    super.openAddEditForm(entity);
   }
   
   ngAfterViewInit(): void {

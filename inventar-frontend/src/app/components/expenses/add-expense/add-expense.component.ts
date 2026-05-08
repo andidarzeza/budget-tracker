@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   Inject,
+  Optional,
   OnInit,
   inject,
   signal,
@@ -11,6 +12,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -20,6 +22,8 @@ import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
+import { SideBarService } from 'src/app/services/side-bar.service';
 import { inOutAnimation } from 'src/app/animations';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
@@ -44,6 +48,8 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly breakpointService = inject(BreakpointService);
   private readonly flagPipe = inject(FlagPipe);
+  private readonly navBarService = inject(NavBarService);
+  private readonly sideBarService = inject(SideBarService);
 
   /** Currency option label: "🇺🇸 USD". */
   readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
@@ -79,16 +85,27 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
     return s;
   });
 
+  /**
+   * Routed-page mode (mobile create). When the component is opened via
+   * `Router.navigate(['/expenses/add'])` instead of `MatDialog.open(...)`,
+   * MAT_DIALOG_DATA and MatDialogRef are absent — render a full-page shell
+   * (sticky header + scrolling body + sticky footer) instead of the dialog
+   * chrome. Native browser scroll keeps iOS scrolling smooth.
+   */
+  readonly isPageMode: boolean;
+
   constructor(
     private toaster: ToastrService,
-    @Inject(MAT_DIALOG_DATA) public expense: AddExpenseDialogData | null,
-    public dialogRef: MatDialogRef<AddExpenseComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public expense: AddExpenseDialogData | null,
+    @Optional() public dialogRef: MatDialogRef<AddExpenseComponent> | null,
+    private router: Router,
     private formBuilder: UntypedFormBuilder,
     private expenseService: ExpenseService,
     private categoryService: CategoriesService,
     public accountService: AccountService
   ) {
     super();
+    this.isPageMode = !this.dialogRef;
     this.isEditMode = !!this.expense?.id;
     this.isQrPrefillMode = !this.isEditMode && this.expense?.moneySpent != null;
     this.wizardStepLabels = this.isQrPrefillMode
@@ -106,6 +123,11 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   currencies = CURRENCIES;
 
   ngOnInit(): void {
+    if (this.isPageMode) {
+      // Hide the app shell so the sticky header below is the only top bar.
+      this.navBarService.displayNavBar = false;
+      this.sideBarService.displaySidebar = false;
+    }
     this.formGroup.get('currency')?.setValue(this.baseCurrency);
     if (this.isQrPrefillMode) {
       const scannedAmount = Number(this.expense?.moneySpent);
@@ -258,7 +280,14 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   }
 
   public closeDialog(update: boolean): void {
-    this.dialogRef.close(update);
+    if (this.dialogRef) {
+      this.dialogRef.close(update);
+      return;
+    }
+    // Routed-page mode — navigate back to the list. The list component is
+    // re-created on entry, so successful saves naturally show in the
+    // refreshed query.
+    this.router.navigate(['/expenses']);
   }
 
   add(): void {

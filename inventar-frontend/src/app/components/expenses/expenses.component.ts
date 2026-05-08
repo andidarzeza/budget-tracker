@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { QrScannerDialogComponent } from './qr-scanner-dialog/qr-scanner-dialog.component';
@@ -50,9 +51,23 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     public filterService: FilterService,
     private routeSpinnerService: RouteSpinnerService,
     public breakpointService: BreakpointService,
-    private readonly matDialog: MatDialog
+    private readonly matDialog: MatDialog,
+    private readonly router: Router
   ) {
     super(dialog, expenseService, toaster, accountService);
+  }
+
+  /**
+   * Mobile *create* uses a routed full-screen page (native body scroll,
+   * sticky header + footer); desktop create and any edit (mobile or
+   * desktop) continue to use the dialog.
+   */
+  override openAddEditForm(entity?: Expense): void {
+    if (!entity && this.breakpointService.matchesMobileCreateLayout()) {
+      this.router.navigate(['/expenses/add']);
+      return;
+    }
+    super.openAddEditForm(entity);
   }
 
   ngOnInit(): void {

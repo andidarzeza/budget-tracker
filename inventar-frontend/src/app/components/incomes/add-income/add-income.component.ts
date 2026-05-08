@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   Inject,
+  Optional,
   OnInit,
   inject,
   signal,
@@ -11,6 +12,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
 import { filter, mergeMap, observeOn, takeUntil, tap } from 'rxjs/operators';
@@ -19,7 +21,9 @@ import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { SideBarService } from 'src/app/services/side-bar.service';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -36,6 +40,8 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly breakpointService = inject(BreakpointService);
   private readonly flagPipe = inject(FlagPipe);
+  private readonly navBarService = inject(NavBarService);
+  private readonly sideBarService = inject(SideBarService);
 
   /** Currency option label: "🇺🇸 USD". */
   readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
@@ -67,17 +73,28 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
 
   public formGroup: UntypedFormGroup;
 
+  /**
+   * Routed-page mode (mobile create). When the component is opened via
+   * `Router.navigate(['/incomes/add'])` instead of `MatDialog.open(...)`,
+   * MAT_DIALOG_DATA and MatDialogRef are absent — render a full-page shell
+   * (sticky header + scrolling body + sticky footer) instead of the dialog
+   * chrome. Native browser scroll keeps iOS scrolling smooth.
+   */
+  readonly isPageMode: boolean;
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public income: Income,
+    @Optional() @Inject(MAT_DIALOG_DATA) public income: Income | null,
     public sharedService: SharedService,
     private toaster: ToastrService,
-    private dialogRef: MatDialogRef<AddIncomeComponent>,
+    @Optional() private dialogRef: MatDialogRef<AddIncomeComponent> | null,
+    private router: Router,
     private formBuilder: UntypedFormBuilder,
     private incomeService: IncomeService,
     private categoryService: CategoriesService,
     private accountService: AccountService
   ) {
     super();
+    this.isPageMode = !this.dialogRef;
     this.isEditMode = this.income != null;
     this.formGroup = this.formBuilder.group({
       description: [''],
@@ -111,6 +128,11 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.isPageMode) {
+      // Hide the app shell so the sticky header below is the only top bar.
+      this.navBarService.displayNavBar = false;
+      this.sideBarService.displaySidebar = false;
+    }
     this.formGroup.get('currency')?.setValue(this.baseCurrency);
     if (!this.isEditMode) {
       this.wizardStep.set(0);
@@ -282,7 +304,14 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
   }
 
   closeDialog(update: boolean): void {
-    this.dialogRef.close(update);
+    if (this.dialogRef) {
+      this.dialogRef.close(update);
+      return;
+    }
+    // Routed-page mode — navigate back to the list. The list component is
+    // re-created on entry, so successful saves naturally show in the
+    // refreshed query.
+    this.router.navigate(['/incomes']);
   }
 
   onSaveSuccess(message: string): void {

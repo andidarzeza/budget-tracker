@@ -1,0 +1,99 @@
+/*
+ * Routed-page mode (mobile create). Native body scroll inside the parent
+ * `.content-container`, sticky header/footer that pin to the visible top
+ * and bottom while content underneath scrolls. No `overflow: auto` and
+ * no `position: fixed` ancestors → iOS scroll behaves natively.
+ */
+.form-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: var(--app-bg);
+    color: var(--app-text);
+}
+
+.form-page__header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px max(12px, env(safe-area-inset-top, 0));
+    background: var(--app-bg-elevated);
+    border-bottom: 1px solid var(--app-border);
+    box-sizing: border-box;
+    min-height: var(--app-toolbar-height, 56px);
+}
+
+.form-page__back {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--app-text);
+    transition: background var(--app-motion-fast) var(--app-easing-standard);
+}
+
+.form-page__back:hover {
+    background: var(--app-surface-hover);
+}
+
+.form-page__title {
+    margin: 0;
+    font-family: var(--app-font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--app-text);
+}
+
+.form-page__body {
+    flex: 1 1 auto;
+    padding: 20px 18px;
+    box-sizing: border-box;
+}
+
+/* Wizard inside the body: rail at top, panel underneath. The body itself
+   scrolls (parent `.content-container`), so the panel just lays out in
+   normal flow — no inner scroll container. */
+.form-page__wizard {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+.form-page__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.form-page__footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px max(14px, env(safe-area-inset-bottom));
+    background: var(--app-bg-elevated);
+    border-top: 1px solid var(--app-border);
+    box-sizing: border-box;
+}
+
+.form-page__footer .dialog-btn {
+    flex: 1 1 0;
+    justify-content: center;
+}
