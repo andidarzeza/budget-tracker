@@ -1,16 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 
-@Component({ standalone: false,
+@Component({
   selector: 'app-appearance',
   templateUrl: './appearance.component.html',
-  styleUrls: ['./appearance.component.css']
+  styleUrls: ['./appearance.component.css'],
 })
 export class AppearanceComponent implements OnInit {
+  readonly sharedService = inject(SharedService);
 
-  constructor(
-    public sharedService: SharedService
-  ) { }
   ngOnInit(): void {
     this.sharedService.changeTheme();
   }

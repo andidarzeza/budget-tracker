@@ -1,5 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { IConfiguration } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
@@ -10,12 +17,24 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { environment } from 'src/environments/environment';
+import { CurrencySymbolPipe } from '../../pipes/currency-symbol/currency-symbol.pipe';
+import { FlagPipe } from '../../pipes/flag-pipe/flag.pipe';
 
 @Component({
-  standalone: false,
   selector: 'nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css'],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatIconModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    FlagPipe,
+    CurrencySymbolPipe,
+  ],
 })
 export class NavBarComponent implements OnInit {
   readonly sharedService = inject(SharedService);

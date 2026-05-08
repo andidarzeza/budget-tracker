@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import jsQR from 'jsqr';
 
 interface DetectedBarcodeLike {
@@ -16,13 +19,15 @@ interface BarcodeDetectorConstructor {
 const JSQR_MAX_DIMENSION = 960;
 
 @Component({
-  standalone: false,
   selector: 'app-qr-scanner-dialog',
   templateUrl: './qr-scanner-dialog.component.html',
   styleUrls: ['./qr-scanner-dialog.component.css'],
+  imports: [CommonModule, MatButtonModule, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QrScannerDialogComponent implements OnInit, OnDestroy {
+  private readonly dialogRef = inject<MatDialogRef<QrScannerDialogComponent, string | null>>(MatDialogRef);
+
   @ViewChild('videoElement', { static: true }) videoElement!: ElementRef<HTMLVideoElement>;
 
   readonly cameraReady = signal(false);
@@ -35,10 +40,6 @@ export class QrScannerDialogComponent implements OnInit, OnDestroy {
   private useNativeBarcode = false;
   private jsQrCanvas: HTMLCanvasElement | null = null;
   private jsQrCtx: CanvasRenderingContext2D | null = null;
-
-  constructor(
-    private readonly dialogRef: MatDialogRef<QrScannerDialogComponent, string | null>
-  ) {}
 
   async ngOnInit(): Promise<void> {
     const detectorCtor = (window as Window & { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector;

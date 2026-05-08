@@ -1,35 +1,36 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
-import { AddIncomeComponent } from './add-income/add-income.component';
-import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
-import { DialogService } from 'src/app/services/dialog.service';
-import { ColumnDefinition, Income, ResponseWrapper } from 'src/app/models/models';
-import { buildParams } from 'src/app/utils/param-bulder';
-import { CategoriesService } from 'src/app/services/pages/categories.service';
-import { IncomeService } from 'src/app/services/pages/income.service';
 import { BaseTable } from 'src/app/core/BaseTable';
-import { AccountService } from 'src/app/services/account.service';
-import { SideBarService } from 'src/app/services/side-bar.service';
-import { NavBarService } from 'src/app/services/nav-bar.service';
-import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { FilterService } from 'src/app/core/services/filter.service';
+import { ColumnDefinition, Income, ResponseWrapper } from 'src/app/models/models';
+import { AccountService } from 'src/app/services/account.service';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { DialogService } from 'src/app/services/dialog.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { IncomeService } from 'src/app/services/pages/income.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
-
+import { SideBarService } from 'src/app/services/side-bar.service';
+import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
+import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
+import { buildParams } from 'src/app/utils/param-bulder';
+import { AddIncomeComponent } from './add-income/add-income.component';
+import { IncomeDetailsComponent } from './income-details/income-details.component';
 
 @Component({
-  standalone: false,
   selector: 'app-incomes',
   templateUrl: './incomes.component.html',
   styleUrls: ['./incomes.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, MatSidenavModule, BaseTableComponent, IncomeDetailsComponent],
 })
 export class IncomesComponent extends BaseTable<Income> implements OnInit, AfterViewInit {
-  // Field initializers need their dependencies already in scope; using
-  // `inject()` directly here keeps them order-independent.
   readonly columnDefinitionService = inject(ColumnDefinitionService);
   readonly filterService = inject(FilterService);
   readonly breakpointService = inject(BreakpointService);
@@ -38,6 +39,7 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
   readonly categoryService = inject(CategoriesService);
   private readonly routeSpinnerService = inject(RouteSpinnerService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   sort: string = 'createdTime,desc';
 
@@ -50,13 +52,8 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
     icon: 'transit_enterexit',
   };
 
-  constructor(
-    public incomeService: IncomeService,
-    public dialog: DialogService,
-    public toaster: ToastrService,
-    public accountService: AccountService,
-  ) {
-    super(dialog, incomeService, toaster, accountService);
+  constructor() {
+    super(inject(DialogService), inject(IncomeService), inject(ToastrService), inject(AccountService));
   }
 
   /**
@@ -76,11 +73,6 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
     this.routeSpinnerService.stopLoading();
   }
 
-  getQueryParams(): HttpParams {
-    return buildParams(this.page, this.size, this.sort, this.previousFilters)
-      .append('account', this.accountService?.getAccount());
-  }
-
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
@@ -88,10 +80,17 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
     this.query();
   }
 
+  getQueryParams(): HttpParams {
+    return buildParams(this.page, this.size, this.sort, this.previousFilters).append(
+      'account',
+      this.accountService?.getAccount(),
+    );
+  }
+
   private getCategories(): void {
     this.categoryService
       .incomeCategories(buildParams(0, 9999).append('account', this.accountService?.getAccount()))
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res: ResponseWrapper) => {
         const item = this.filterOptions.filter((filterOpt) => filterOpt.field == 'category')[0];
         item.matSelectOptions = {

@@ -1,28 +1,38 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { History } from 'src/app/models/models';
 import { HistoryService } from 'src/app/services/pages/history.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({ standalone: false,
+@Component({
   selector: 'history-details',
   templateUrl: './history-details.component.html',
-  styleUrls: ['./history-details.component.css']
+  styleUrls: ['./history-details.component.css'],
+  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule],
 })
-export class HistoryDetailsComponent extends Unsubscribe implements OnInit, OnChanges {
+export class HistoryDetailsComponent implements OnInit, OnChanges {
+  private readonly historyService = inject(HistoryService);
+  readonly sharedService = inject(SharedService);
+  private readonly destroyRef = inject(DestroyRef);
 
   @Input() historyId: string;
-  public history$: Observable<History>;
-  @Output() onCloseAction: EventEmitter<any> = new EventEmitter<any>();
-
-  constructor(
-    private historyService: HistoryService,
-    public sharedService: SharedService
-  ) {
-    super();
-  }
+  history$: Observable<History>;
+  @Output() onCloseAction = new EventEmitter<void>();
 
   ngOnInit(): void {
     this.loadHistory();
@@ -34,17 +44,14 @@ export class HistoryDetailsComponent extends Unsubscribe implements OnInit, OnCh
     }
   }
 
-  private loadHistory(): void {
-    if (!this.historyId) {
-      return;
-    }
-    this.history$ = this.historyService.findOne(this.historyId).pipe(
-      takeUntil(this.unsubscribe$)
-    );
-  }
-
   closeDrawer(): void {
     this.onCloseAction.emit();
   }
 
+  private loadHistory(): void {
+    if (!this.historyId) return;
+    this.history$ = this.historyService
+      .findOne(this.historyId)
+      .pipe(takeUntilDestroyed(this.destroyRef));
+  }
 }

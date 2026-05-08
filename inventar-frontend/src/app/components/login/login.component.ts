@@ -1,49 +1,48 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { SharedService } from 'src/app/services/shared.service';
-import { AuthenticationService } from 'src/app/services/authentication.service';
-import { Router } from '@angular/router';
-import { map, mergeMap } from 'rxjs/operators';
-import { ConfigurationService } from 'src/app/services/configuration.service';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { map, mergeMap } from 'rxjs/operators';
+import { CapsLockDirective } from 'src/app/directives/caps-lock/caps-lock.directive';
 import { AccountService } from 'src/app/services/account.service';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
-@Component({ standalone: false,
+import { ConfigurationService } from 'src/app/services/configuration.service';
+import { SharedService } from 'src/app/services/shared.service';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
+
+@Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    trigger(
-      'inOutAnimation',
-      [
-        transition(
-          ':enter',
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out',
-              style({ opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave',
-          [
-            style({ opacity: 1 }),
-            animate('400ms ease-in',
-              style({ opacity: 0 }))
-          ]
-        )
-      ]
-    )
-  ]
+    trigger('inOutAnimation', [
+      transition(':enter', [style({ opacity: 0 }), animate('400ms ease-out', style({ opacity: 1 }))]),
+      transition(':leave', [style({ opacity: 1 }), animate('400ms ease-in', style({ opacity: 0 }))]),
+    ]),
+  ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    LabeledFormInputComponent,
+    CapsLockDirective,
+  ],
 })
 export class LoginComponent {
   private readonly toasterService = inject(ToastrService);
   private readonly configurationSevice = inject(ConfigurationService);
   readonly sharedService = inject(SharedService);
-  private readonly formBuilder = inject(UntypedFormBuilder);
+  private readonly formBuilder = inject(FormBuilder);
   readonly authenticationService = inject(AuthenticationService);
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
@@ -52,6 +51,13 @@ export class LoginComponent {
   private readonly minSpinnerMs = 500;
   private spinnerStartedAt = 0;
   private spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  showSpinner = signal(false);
+
+  loginGroup: FormGroup = this.formBuilder.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required],
+  });
 
   constructor() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -63,13 +69,6 @@ export class LoginComponent {
       this.router.navigate(['/dashboard']);
     }
   }
-  showSpinner = signal(false);
-
-  loginGroup: UntypedFormGroup = this.formBuilder.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required]
-  });
-
 
   login(): void {
     if (!this.loginGroup.valid) {
@@ -79,29 +78,30 @@ export class LoginComponent {
 
     this.startSpinner();
     this.authenticationService
-      .login(this.loginGroup.value).pipe(
-        mergeMap(() => this.configurationSevice.getConfiguration())
-      )
+      .login(this.loginGroup.value)
+      .pipe(mergeMap(() => this.configurationSevice.getConfiguration()))
       .pipe(
         map(() => this.sharedService.changeTheme()),
-        mergeMap(() => this.accountService.findAllAccountsSimplified())
+        mergeMap(() => this.accountService.findAllAccountsSimplified()),
       )
-      .subscribe((response: any) => {
-        this.stopSpinner(() => {
-          this.router.navigateByUrl('/account', {
-            state: {
-              accounts: response
-            }
+      .subscribe(
+        (response: any) => {
+          this.stopSpinner(() => {
+            this.router.navigateByUrl('/account', {
+              state: {
+                accounts: response,
+              },
+            });
           });
-        });
-      },
+        },
         (error: any) => {
           this.stopSpinner(() => {
             if (error?.status === 403) {
-              this.toasterService.error("Authentication Failed", "Failed", TOASTER_CONFIGURATION)
+              this.toasterService.error('Authentication Failed', 'Failed', TOASTER_CONFIGURATION);
             }
           });
-        });
+        },
+      );
   }
 
   navigate(url: string): void {

@@ -1,21 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { inOutAnimation } from '../animations';
 
-@Component({ standalone: false,
+@Component({
   selector: 'delete-confirmation',
   templateUrl: './delete-confirmation.component.html',
   styleUrls: ['./delete-confirmation.component.css'],
-  animations: [inOutAnimation]
+  animations: [inOutAnimation],
+  imports: [MatButtonModule, MatIconModule],
 })
-export class DeleteConfirmationComponent implements OnInit {
-
+export class DeleteConfirmationComponent {
   @Input() selectedItem: string;
-  @Output() onCancel = new EventEmitter();
-  @Output() onDelete = new EventEmitter();
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+  @Output() onCancel = new EventEmitter<void>();
+  @Output() onDelete = new EventEmitter<string>();
 
   delete(): void {
     this.onDelete.emit(this.selectedItem);
@@ -24,5 +22,4 @@ export class DeleteConfirmationComponent implements OnInit {
   cancel(): void {
     this.onCancel.emit();
   }
-
 }

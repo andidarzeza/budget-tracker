@@ -1,14 +1,12 @@
 import { formatDate } from '@angular/common';
-import { Inject, LOCALE_ID, Pipe, PipeTransform } from '@angular/core';
+import { inject, LOCALE_ID, Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ standalone: false,
-  name: 'customDate'
+@Pipe({
+  name: 'customDate',
 })
 export class CustomDatePipe implements PipeTransform {
-
   private static readonly FORMAT = 'dd/MM/yyyy HH:mm';
-
-  constructor(@Inject(LOCALE_ID) private readonly locale: string) {}
+  private readonly locale = inject(LOCALE_ID);
 
   transform(value: string | number | Date | null | undefined): string {
     if (value === null || value === undefined || value === '') {
@@ -20,5 +18,4 @@ export class CustomDatePipe implements PipeTransform {
     }
     return formatDate(date, CustomDatePipe.FORMAT, this.locale);
   }
-
 }

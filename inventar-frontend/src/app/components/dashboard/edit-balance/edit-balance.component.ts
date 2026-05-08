@@ -1,11 +1,15 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit, signal } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
 import { EntityType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 interface EditBalanceData {
@@ -14,13 +18,26 @@ interface EditBalanceData {
 }
 
 @Component({
-  standalone: false,
   selector: 'app-edit-balance',
   templateUrl: './edit-balance.component.html',
   styleUrls: ['./edit-balance.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    CreateFormComponent,
+    LabeledFormInputComponent,
+    FlagPipe,
+  ],
 })
-export class EditBalanceComponent extends Unsubscribe implements OnInit {
+export class EditBalanceComponent {
+  readonly data = inject<EditBalanceData>(MAT_DIALOG_DATA);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly dialogRef = inject(MatDialogRef<EditBalanceComponent>);
+  private readonly accountService = inject(AccountService);
+  private readonly toaster = inject(ToastrService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly currencies = CURRENCIES;
   readonly saving = signal(false);
@@ -28,27 +45,7 @@ export class EditBalanceComponent extends Unsubscribe implements OnInit {
   readonly entity: EntityType = EntityType.BALANCE;
 
   /** One control per supported currency, keyed by ISO code. Empty string = remove that currency. */
-  formGroup: UntypedFormGroup;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: EditBalanceData,
-    private formBuilder: UntypedFormBuilder,
-    private dialogRef: MatDialogRef<EditBalanceComponent>,
-    private accountService: AccountService,
-    private toaster: ToastrService
-  ) {
-    super();
-    const controls: Record<string, UntypedFormControl> = {};
-    for (const code of CURRENCIES) {
-      const current = this.data?.balance?.[code];
-      controls[code] = this.formBuilder.control(
-        current === null || current === undefined ? '' : current
-      );
-    }
-    this.formGroup = this.formBuilder.group(controls);
-  }
-
-  ngOnInit(): void {}
+  readonly formGroup: FormGroup = this.buildForm();
 
   save(): void {
     if (this.saving()) return;
@@ -61,10 +58,11 @@ export class EditBalanceComponent extends Unsubscribe implements OnInit {
       cleaned[code] = n;
     }
     this.saving.set(true);
-    this.accountService.setBalance(this.data.accountId, cleaned)
-      .pipe(takeUntil(this.unsubscribe$))
+    this.accountService
+      .setBalance(this.data.accountId, cleaned)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: account => {
+        next: (account) => {
           this.saving.set(false);
           this.toaster.success('Balance updated', 'Success', TOASTER_CONFIGURATION);
           this.dialogRef.close(account);
@@ -72,7 +70,7 @@ export class EditBalanceComponent extends Unsubscribe implements OnInit {
         error: () => {
           this.saving.set(false);
           this.toaster.error('Could not update balance.', 'Server Error', TOASTER_CONFIGURATION);
-        }
+        },
       });
   }
 
@@ -83,5 +81,16 @@ export class EditBalanceComponent extends Unsubscribe implements OnInit {
   /** Empties the field; on save the currency is dropped from the balance map. */
   clearCurrency(code: string): void {
     this.formGroup.get(code)?.setValue('');
+  }
+
+  private buildForm(): FormGroup {
+    const controls: Record<string, FormControl> = {};
+    for (const code of CURRENCIES) {
+      const current = this.data?.balance?.[code];
+      controls[code] = this.formBuilder.control(
+        current === null || current === undefined ? '' : current,
+      );
+    }
+    return this.formBuilder.group(controls);
   }
 }

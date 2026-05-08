@@ -1,31 +1,30 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router, RouterOutlet } from '@angular/router';
 import { IConfiguration } from './models/models';
 import { AccountService } from './services/account.service';
 import { AuthenticationService } from './services/authentication.service';
 import { ConfigurationService } from './services/configuration.service';
 import { SharedService } from './services/shared.service';
 import { ThemeService } from './services/theme.service';
-import { Unsubscribe } from './shared/unsubscribe';
-
+import { BaseTemplateComponent } from './template/base-template/base-template.component';
 
 @Component({
-  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
+  imports: [RouterOutlet, BaseTemplateComponent],
 })
-export class AppComponent extends Unsubscribe implements OnInit {
+export class AppComponent implements OnInit {
   readonly authenticationService = inject(AuthenticationService);
   readonly sharedService = inject(SharedService);
   readonly router = inject(Router);
   private readonly configurationService = inject(ConfigurationService);
   private readonly accountService = inject(AccountService);
   private readonly themeService = inject(ThemeService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
-    super();
     this.themeService.initTheme();
     this.sharedService.applyBodyTheme(this.themeService.themeValue);
   }
@@ -33,7 +32,7 @@ export class AppComponent extends Unsubscribe implements OnInit {
   ngOnInit(): void {
     this.configurationService
       .getConfiguration()
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((configuration: IConfiguration) => {
         localStorage.setItem('baseCurrency', configuration.baseCurrency);
         this.sharedService.applyBodyTheme(this.themeService.themeValue);
@@ -45,7 +44,7 @@ export class AppComponent extends Unsubscribe implements OnInit {
     } else {
       this.accountService
         .findOne(this.accountService.getAccount())
-        .pipe(takeUntil(this.unsubscribe$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe();
     }
   }

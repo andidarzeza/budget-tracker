@@ -1,8 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
+import { ExpenseDetailComponent } from './expense-detail/expense-detail.component';
 import { QrScannerDialogComponent } from './qr-scanner-dialog/qr-scanner-dialog.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
@@ -19,13 +24,22 @@ import { HttpParams } from '@angular/common/http';
 import { FilterService } from 'src/app/core/services/filter.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
-@Component({ standalone: false,
+@Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSidenavModule,
+    BaseTableComponent,
+    ExpenseDetailComponent,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
 

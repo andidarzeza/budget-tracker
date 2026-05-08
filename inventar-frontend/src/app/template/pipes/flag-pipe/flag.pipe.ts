@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 
-@Pipe({ standalone: false,
+@Pipe({
   name: 'flag'
 })
 export class FlagPipe implements PipeTransform {

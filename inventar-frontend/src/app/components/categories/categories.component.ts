@@ -1,28 +1,32 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { ToastrService } from 'ngx-toastr';
-import { AddCategoryComponent } from './add-category/add-category.component';
-import { DialogService } from 'src/app/services/dialog.service';
-import { Category, ColumnDefinition } from 'src/app/models/models';
-import { buildParams } from 'src/app/utils/param-bulder';
-import { CategoriesService } from 'src/app/services/pages/categories.service';
-import { SideBarService } from 'src/app/services/side-bar.service';
-import { AccountService } from 'src/app/services/account.service';
-import { NavBarService } from 'src/app/services/nav-bar.service';
 import { BaseTable } from 'src/app/core/BaseTable';
-import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { FilterService } from 'src/app/core/services/filter.service';
+import { Category, ColumnDefinition } from 'src/app/models/models';
+import { AccountService } from 'src/app/services/account.service';
+import { DialogService } from 'src/app/services/dialog.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
+import { SideBarService } from 'src/app/services/side-bar.service';
+import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
+import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
+import { buildParams } from 'src/app/utils/param-bulder';
+import { AddCategoryComponent } from './add-category/add-category.component';
+import { CategoryDetailComponent } from './category-detail/category-detail.component';
 
 @Component({
-  standalone: false,
   selector: 'app-categories',
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, MatSidenavModule, BaseTableComponent, CategoryDetailComponent],
 })
-export class CategoriesComponent extends BaseTable<Category> {
+export class CategoriesComponent extends BaseTable<Category> implements OnInit {
   readonly columnDefinitionService = inject(ColumnDefinitionService);
   readonly filterService = inject(FilterService);
   readonly sideBarService = inject(SideBarService);
@@ -41,18 +45,15 @@ export class CategoriesComponent extends BaseTable<Category> {
   };
   resetData: boolean = false;
 
-  constructor(
-    public categoriesService: CategoriesService,
-    public dialog: DialogService,
-    public toaster: ToastrService,
-    public accountService: AccountService,
-  ) {
-    super(dialog, categoriesService, toaster, accountService);
+  constructor() {
+    super(inject(DialogService), inject(CategoriesService), inject(ToastrService), inject(AccountService));
   }
 
   getQueryParams(): HttpParams {
-    return buildParams(this.page, this.size, this.sort, this.previousFilters)
-      .append('account', this.accountService?.getAccount());
+    return buildParams(this.page, this.size, this.sort, this.previousFilters).append(
+      'account',
+      this.accountService?.getAccount(),
+    );
   }
 
   ngOnInit(): void {

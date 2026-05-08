@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -10,14 +11,16 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { NavBarComponent } from './nav-bar/nav-bar.component';
+import { SideBarComponent } from './side-bar/side-bar.component';
 import { MenuItem, SideBarMode } from './base-template.models';
 
 
 @Component({
-  standalone: false,
   selector: 'base-template',
   templateUrl: './base-template.component.html',
   styleUrls: ['./base-template.component.css'],
+  imports: [CommonModule, NavBarComponent, SideBarComponent],
   animations: [inOutAnimation, slider],
 })
 export class BaseTemplateComponent implements OnInit {

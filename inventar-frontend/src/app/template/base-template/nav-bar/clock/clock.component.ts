@@ -1,23 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({ standalone: false,
+@Component({
   selector: 'clock',
   templateUrl: './clock.component.html',
-  styleUrls: ['./clock.component.css']
+  styleUrls: ['./clock.component.css'],
+  imports: [CommonModule],
 })
-export class ClockComponent extends Unsubscribe implements OnInit {
+export class ClockComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+
   currentDate = new Date();
-  constructor() { 
-    super();
-  }
 
   ngOnInit(): void {
     timer(0, 1000)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(() => this.currentDate = new Date());
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => (this.currentDate = new Date()));
   }
-
 }

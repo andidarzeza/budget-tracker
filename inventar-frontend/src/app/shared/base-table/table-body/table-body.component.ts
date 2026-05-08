@@ -1,28 +1,52 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
   Output,
   SimpleChanges,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatButtonModule } from '@angular/material/button';
+import { MatRippleModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { inOutAnimation } from 'src/app/animations';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinition } from 'src/app/models/models';
+import { CustomDatePipe } from 'src/app/pipes/custom-date.pipe';
+import { ColumnWidthPipe } from '../column-width/column-width.pipe';
+import { RecordActionsComponent } from '../../record-actions/record-actions.component';
 
-@Component({ standalone: false,
+@Component({
   selector: 'table-body',
   templateUrl: './table-body.component.html',
   styleUrls: ['./table-body.component.css'],
+  imports: [
+    CommonModule,
+    ScrollingModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatRippleModule,
+    MatTooltipModule,
+    ColumnWidthPipe,
+    CustomDatePipe,
+    RecordActionsComponent,
+  ],
   animations: [inOutAnimation],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableBodyComponent implements AfterViewInit, OnChanges, OnDestroy {
+  readonly breakpointService = inject(BreakpointService);
 
   @Input() columnDefinitions: ColumnDefinition[];
   @Input() data: any[];
@@ -45,14 +69,12 @@ export class TableBodyComponent implements AfterViewInit, OnChanges, OnDestroy {
   private intersectionObserver: IntersectionObserver | null = null;
   private observeTimer: any;
 
-  constructor(public breakpointService: BreakpointService) { }
-
   ngAfterViewInit(): void {
     this.scheduleObserveSetup();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.infiniteScrollEnabled || changes.hasMore || changes.data || changes.loadingMore) {
+    if (changes['infiniteScrollEnabled'] || changes['hasMore'] || changes['data'] || changes['loadingMore']) {
       this.scheduleObserveSetup();
     }
   }

@@ -1,20 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-@Component({ standalone: false,
+@Component({
   selector: 'create-footer',
   templateUrl: './create-footer.component.html',
-  styleUrls: ['./create-footer.component.css']
+  styleUrls: ['./create-footer.component.css'],
 })
-export class CreateFooterComponent implements OnInit {
-
+export class CreateFooterComponent {
   @Input() editMode: boolean;
-  @Output() create = new EventEmitter();
-  @Output() cancel = new EventEmitter();
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+  @Output() create = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 
   add(): void {
     this.create.emit();
@@ -23,5 +17,4 @@ export class CreateFooterComponent implements OnInit {
   onCancel(): void {
     this.cancel.emit();
   }
-
 }

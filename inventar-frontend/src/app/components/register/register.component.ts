@@ -1,51 +1,56 @@
 import { animate, style, transition, trigger } from '@angular/animations';
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { CapsLockDirective } from 'src/app/directives/caps-lock/caps-lock.directive';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
-@Component({ standalone: false,
+@Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    trigger(
-      'inOutAnimation', 
-      [
-        transition(
-          ':enter', 
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out', 
-                    style({opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave', 
-          [
-            style({ opacity: 1 }),
-            animate('400ms ease-in', 
-                    style({ opacity: 0 }))
-          ]
-        )
-      ]
-    )
-  ]
+    trigger('inOutAnimation', [
+      transition(':enter', [style({ opacity: 0 }), animate('400ms ease-out', style({ opacity: 1 }))]),
+      transition(':leave', [style({ opacity: 1 }), animate('400ms ease-in', style({ opacity: 0 }))]),
+    ]),
+  ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
+    LabeledFormInputComponent,
+    CapsLockDirective,
+  ],
 })
 export class RegisterComponent {
   private readonly toasterService = inject(ToastrService);
   readonly sharedService = inject(SharedService);
-  private readonly formBuilder = inject(UntypedFormBuilder);
+  private readonly formBuilder = inject(FormBuilder);
   readonly authenticationService = inject(AuthenticationService);
   private readonly router = inject(Router);
 
   private readonly minSpinnerMs = 500;
   private spinnerStartedAt = 0;
   private spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  showSpinner = signal(false);
+
+  registerGroup: FormGroup = this.formBuilder.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required],
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+  });
 
   constructor() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -54,16 +59,7 @@ export class RegisterComponent {
     }
   }
 
-  showSpinner = signal(false);
-  
-  registerGroup: UntypedFormGroup = this.formBuilder.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required]
-  });
-  
-  get username(){
+  get username() {
     return this.registerGroup.controls['username'];
   }
 
@@ -78,16 +74,16 @@ export class RegisterComponent {
     }
 
     this.startSpinner();
-    this.authenticationService
-      .register(this.registerGroup.value)
-      .subscribe(() => this.stopSpinner(() => this.router.navigate(['/login'])),
-        (error: any) => {
-          this.stopSpinner(() => {
-            if (error?.status === 409) {
-              this.toasterService.error("Username already taken", "Failed", TOASTER_CONFIGURATION);
-            }
-          });
+    this.authenticationService.register(this.registerGroup.value).subscribe(
+      () => this.stopSpinner(() => this.router.navigate(['/login'])),
+      (error: any) => {
+        this.stopSpinner(() => {
+          if (error?.status === 409) {
+            this.toasterService.error('Username already taken', 'Failed', TOASTER_CONFIGURATION);
+          }
         });
+      },
+    );
   }
 
   navigate(url: string): void {
@@ -112,5 +108,4 @@ export class RegisterComponent {
       onHidden?.();
     }, remaining);
   }
-
 }

@@ -1,20 +1,32 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { MatDatepicker } from '@angular/material/datepicker';
+import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
-@Component({ standalone: false,
+@Component({
   selector: 'month-picker',
   templateUrl: './month-picker.component.html',
-  styleUrls: ['./month-picker.component.css']
+  styleUrls: ['./month-picker.component.css'],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatNativeDateModule,
+  ],
 })
 export class MonthPickerComponent implements OnInit {
-
   date = new Date();
   from = new Date(this.date.getFullYear(), this.date.getMonth(), 1);
   to = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 1);
 
-  @Output() onChange = new EventEmitter<{from: Date, to: Date}>();
-
-  constructor() { }
+  @Output() onChange = new EventEmitter<{ from: Date; to: Date }>();
 
   ngOnInit(): void {
     this.emitDateRange();
@@ -40,7 +52,6 @@ export class MonthPickerComponent implements OnInit {
   }
 
   private emitDateRange(): void {
-    this.onChange.emit({from: this.from, to: this.to});
+    this.onChange.emit({ from: this.from, to: this.to });
   }
-
 }

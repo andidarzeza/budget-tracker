@@ -1,47 +1,74 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
+  DestroyRef,
   Inject,
-  Optional,
-  OnInit,
   inject,
+  OnInit,
+  Optional,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
-import { filter, mergeMap, observeOn, takeUntil, tap } from 'rxjs/operators';
+import { filter, mergeMap, observeOn, tap } from 'rxjs/operators';
 import { Category, CategoryType, EntityType, Income } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
-import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { AmountKeypadComponent } from 'src/app/shared/amount-keypad/amount-keypad.component';
+import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
+import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
-  standalone: false,
   selector: 'app-add-income',
   templateUrl: './add-income.component.html',
   styleUrls: ['./add-income.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatMenuModule,
+    CreateFormComponent,
+    LabeledFormInputComponent,
+    LabeledTextareaComponent,
+    SelectInputComponent,
+    AmountKeypadComponent,
+    FlagPipe,
+  ],
 })
-export class AddIncomeComponent extends Unsubscribe implements OnInit {
+export class AddIncomeComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly breakpointService = inject(BreakpointService);
   private readonly flagPipe = inject(FlagPipe);
   private readonly navBarService = inject(NavBarService);
   private readonly sideBarService = inject(SideBarService);
+  readonly sharedService = inject(SharedService);
+  private readonly toaster = inject(ToastrService);
+  private readonly router = inject(Router);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly incomeService = inject(IncomeService);
+  private readonly categoryService = inject(CategoriesService);
+  private readonly accountService = inject(AccountService);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Currency option label: "🇺🇸 USD". */
   readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
@@ -71,7 +98,7 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
     return s;
   });
 
-  public formGroup: UntypedFormGroup;
+  formGroup: FormGroup;
 
   /**
    * Routed-page mode (mobile create). When the component is opened via
@@ -82,18 +109,17 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
    */
   readonly isPageMode: boolean;
 
+  baseCurrency = localStorage.getItem('baseCurrency');
+
+  currencies = CURRENCIES;
+  entity: EntityType = EntityType.INCOME;
+
+  readonly categories = signal<Category[]>([]);
+
   constructor(
-    @Optional() @Inject(MAT_DIALOG_DATA) public income: Income | null,
-    public sharedService: SharedService,
-    private toaster: ToastrService,
-    @Optional() private dialogRef: MatDialogRef<AddIncomeComponent> | null,
-    private router: Router,
-    private formBuilder: UntypedFormBuilder,
-    private incomeService: IncomeService,
-    private categoryService: CategoriesService,
-    private accountService: AccountService
+    @Optional() @Inject(MAT_DIALOG_DATA) public income: Income | null = null,
+    @Optional() private dialogRef: MatDialogRef<AddIncomeComponent> | null = null,
   ) {
-    super();
     this.isPageMode = !this.dialogRef;
     this.isEditMode = this.income != null;
     this.formGroup = this.formBuilder.group({
@@ -103,13 +129,6 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
       currency: ['', Validators.required],
     });
   }
-
-  public baseCurrency = localStorage.getItem('baseCurrency');
-
-  currencies = CURRENCIES;
-  public entity: EntityType = EntityType.INCOME;
-
-  readonly categories = signal<Category[]>([]);
 
   get name() {
     return this.formGroup.controls['name'];
@@ -125,6 +144,10 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
 
   get incomeValue() {
     return this.formGroup.controls['incoming'];
+  }
+
+  get id() {
+    return this.income?.id;
   }
 
   ngOnInit(): void {
@@ -160,40 +183,6 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
     this.syncIncomingFromEntry(raw);
   }
 
-  private primeWizardAmountEntry(): void {
-    const v = this.formGroup.get('incoming')?.value;
-    if (v === null || v === undefined || v === '') {
-      this.amountEntry.set('');
-      return;
-    }
-    const n = Number(v);
-    if (!Number.isFinite(n)) {
-      this.amountEntry.set('');
-      return;
-    }
-    this.amountEntry.set(
-      n.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false })
-    );
-    this.syncIncomingFromEntry(this.amountEntry());
-  }
-
-  private syncIncomingFromEntry(raw: string): void {
-    const ctrl = this.formGroup.get('incoming');
-    if (!ctrl) {
-      return;
-    }
-    if (raw === '' || raw === '.') {
-      ctrl.setValue('', { emitEvent: true });
-      return;
-    }
-    const n = parseFloat(raw.replace(',', '.'));
-    if (!Number.isFinite(n)) {
-      ctrl.setValue('', { emitEvent: true });
-      return;
-    }
-    ctrl.setValue(n, { emitEvent: true });
-  }
-
   wizardBack(): void {
     if (this.wizardStep() > 0) {
       this.wizardStep.update((s) => s - 1);
@@ -210,65 +199,6 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
     this.formGroup.get('currency')?.markAsTouched();
   }
 
-  private validateWizardCategoryStep(): boolean {
-    const c = this.formGroup.get('categoryID');
-    c?.markAsTouched();
-    return !!c?.valid;
-  }
-
-  private validateWizardAmountStep(): boolean {
-    if (this.isWizardMobile()) {
-      this.syncIncomingFromEntry(this.amountEntry());
-    }
-    const m = this.formGroup.get('incoming');
-    const cur = this.formGroup.get('currency');
-    m?.markAsTouched();
-    cur?.markAsTouched();
-    return !!(m?.valid && cur?.valid);
-  }
-
-  private getCategories(): void {
-    this.loadingMessage.set('Loading…');
-    this.loadingData.set(true);
-    // Backend returns categories already sorted by usage count (most used first).
-    this.categoryService
-      .findByUsage(this.accountService.getAccount(), CategoryType.INCOME)
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        tap((rows: Category[]) => {
-          const list = Array.isArray(rows) ? rows : [];
-          this.categories.set(
-            list.filter(
-              (c: Category) => !c?.categoryType || c.categoryType === CategoryType.INCOME
-            )
-          );
-        }),
-        observeOn(asyncScheduler),
-        tap(() => {
-          this.loadingData.set(false);
-        }),
-        filter(() => this.isEditMode),
-        mergeMap(() => this.getIncome())
-      )
-      .subscribe();
-  }
-
-  private getIncome(): Observable<any> {
-    this.loadingMessage.set('Loading…');
-    this.loadingData.set(true);
-    return this.incomeService.findOne(this.id).pipe(
-      takeUntil(this.unsubscribe$),
-      tap((inc) => {
-        this.formGroup.patchValue(inc);
-        this.cdr.markForCheck();
-      }),
-      observeOn(asyncScheduler),
-      tap(() => {
-        this.loadingData.set(false);
-      })
-    );
-  }
-
   add(): void {
     if (this.formGroup.valid && !this.savingEntity()) {
       if (this.isEditMode) {
@@ -278,8 +208,8 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
         const payload = this.formGroup.value;
         payload.account = this.accountService.getAccount();
         this.incomeService
-          .update(this.income.id, payload)
-          .pipe(takeUntil(this.unsubscribe$), observeOn(asyncScheduler))
+          .update(this.income!.id, payload)
+          .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
           .subscribe(() => {
             this.accountService.findOne(this.accountService.getAccount()).subscribe();
             this.onSaveSuccess('Income updated with success');
@@ -292,7 +222,7 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
         payload.account = this.accountService.getAccount();
         this.incomeService
           .save(payload)
-          .pipe(takeUntil(this.unsubscribe$), observeOn(asyncScheduler))
+          .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
           .subscribe(() => {
             this.accountService.findOne(this.accountService.getAccount()).subscribe();
             this.onSaveSuccess('A new Income has been inserted');
@@ -321,7 +251,94 @@ export class AddIncomeComponent extends Unsubscribe implements OnInit {
     this.toaster.success(message, 'Success', TOASTER_CONFIGURATION);
   }
 
-  get id() {
-    return this.income?.id;
+  private primeWizardAmountEntry(): void {
+    const v = this.formGroup.get('incoming')?.value;
+    if (v === null || v === undefined || v === '') {
+      this.amountEntry.set('');
+      return;
+    }
+    const n = Number(v);
+    if (!Number.isFinite(n)) {
+      this.amountEntry.set('');
+      return;
+    }
+    this.amountEntry.set(
+      n.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false }),
+    );
+    this.syncIncomingFromEntry(this.amountEntry());
+  }
+
+  private syncIncomingFromEntry(raw: string): void {
+    const ctrl = this.formGroup.get('incoming');
+    if (!ctrl) return;
+    if (raw === '' || raw === '.') {
+      ctrl.setValue('', { emitEvent: true });
+      return;
+    }
+    const n = parseFloat(raw.replace(',', '.'));
+    if (!Number.isFinite(n)) {
+      ctrl.setValue('', { emitEvent: true });
+      return;
+    }
+    ctrl.setValue(n, { emitEvent: true });
+  }
+
+  private validateWizardCategoryStep(): boolean {
+    const c = this.formGroup.get('categoryID');
+    c?.markAsTouched();
+    return !!c?.valid;
+  }
+
+  private validateWizardAmountStep(): boolean {
+    if (this.isWizardMobile()) {
+      this.syncIncomingFromEntry(this.amountEntry());
+    }
+    const m = this.formGroup.get('incoming');
+    const cur = this.formGroup.get('currency');
+    m?.markAsTouched();
+    cur?.markAsTouched();
+    return !!(m?.valid && cur?.valid);
+  }
+
+  private getCategories(): void {
+    this.loadingMessage.set('Loading…');
+    this.loadingData.set(true);
+    // Backend returns categories already sorted by usage count (most used first).
+    this.categoryService
+      .findByUsage(this.accountService.getAccount(), CategoryType.INCOME)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((rows: Category[]) => {
+          const list = Array.isArray(rows) ? rows : [];
+          this.categories.set(
+            list.filter(
+              (c: Category) => !c?.categoryType || c.categoryType === CategoryType.INCOME,
+            ),
+          );
+        }),
+        observeOn(asyncScheduler),
+        tap(() => {
+          this.loadingData.set(false);
+        }),
+        filter(() => this.isEditMode),
+        mergeMap(() => this.getIncome()),
+      )
+      .subscribe();
+  }
+
+  private getIncome(): Observable<any> {
+    this.loadingMessage.set('Loading…');
+    this.loadingData.set(true);
+    return this.incomeService.findOne(this.id!).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      tap((inc) => {
+        this.formGroup.patchValue(inc);
+        this.cdr.markForCheck();
+      }),
+      observeOn(asyncScheduler),
+      tap(() => {
+        this.loadingData.set(false);
+      }),
+    );
   }
 }

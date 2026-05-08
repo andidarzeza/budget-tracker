@@ -1,24 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { SharedService } from 'src/app/services/shared.service';
 
-@Component({ standalone: false,
+@Component({
   selector: 'app-not-found',
   templateUrl: './not-found.component.html',
-  styleUrls: ['./not-found.component.css']
+  styleUrls: ['./not-found.component.css'],
+  imports: [MatButtonModule],
 })
-export class NotFoundComponent implements OnInit {
+export class NotFoundComponent {
+  private readonly route = inject(Router);
+  readonly sharedService = inject(SharedService);
 
-  constructor(
-    private route: Router,
-    public sharedService: SharedService
-  ) { }
-
-  ngOnInit(): void {
+  navigate(page: string) {
+    this.route.navigate([`/${page}`]);
   }
-
-  navigate(page: string){
-		this.route.navigate([`/${page}`]);
-	}
-
 }

@@ -1,34 +1,35 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-@Component({ standalone: false,
+@Component({
   selector: 'record-actions',
   templateUrl: './record-actions.component.html',
-  styleUrls: ['./record-actions.component.css']
+  styleUrls: ['./record-actions.component.css'],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule],
 })
 export class RecordActionsComponent {
-
-  @Output() openEditForm: EventEmitter<any> = new EventEmitter();
-  @Output() openDeleteDialog: EventEmitter<any> = new EventEmitter();
-  @Output() openViewDrawer: EventEmitter<any> = new EventEmitter();
+  @Output() openEditForm = new EventEmitter<void>();
+  @Output() openDeleteDialog = new EventEmitter<void>();
+  @Output() openViewDrawer = new EventEmitter<void>();
 
   @Input() displayEditAction = true;
   @Input() displayDeleteAction = true;
-  
-  constructor() { }
 
-  emitDeleteAction(event): void {
+  emitDeleteAction(event: Event): void {
     event.stopPropagation();
     this.openDeleteDialog.emit();
   }
 
-  emitEditAction(event): void {    
+  emitEditAction(event: Event): void {
     event.stopPropagation();
     this.openEditForm.emit();
   }
 
-  emitViewAction(event): void {
+  emitViewAction(event: Event): void {
     event.stopPropagation();
     this.openViewDrawer.emit();
   }
-
 }

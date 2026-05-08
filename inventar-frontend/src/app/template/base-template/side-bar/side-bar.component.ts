@@ -1,5 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -7,10 +11,17 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { MenuItem, SideBarMode } from '../base-template.models';
 
 @Component({
-  standalone: false,
   selector: 'side-bar',
   templateUrl: './side-bar.component.html',
   styleUrls: ['./side-bar.component.css'],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    RouterLink,
+    RouterLinkActive,
+  ],
 })
 export class SideBarComponent implements OnChanges, AfterViewInit {
   readonly sharedService = inject(SharedService);

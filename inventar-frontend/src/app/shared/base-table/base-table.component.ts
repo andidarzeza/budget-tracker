@@ -1,44 +1,47 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { ColumnDefinition } from 'src/app/models/models';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { TableActionsComponent } from './table-actions/table-actions.component';
+import { TableHeaderComponent } from './table-header/table-header.component';
+import { TableBodyComponent } from './table-body/table-body.component';
+import { TableMessageComponent } from '../table-message/table-message.component';
 import { FilterOptions } from './table-actions/filter/filter.models';
 import { TableActionInput } from './table-actions/TableActionInput';
 import { PAGE_SIZE } from 'src/environments/environment';
 
-@Component({ standalone: false,
+@Component({
   selector: 'base-table',
   templateUrl: './base-table.component.html',
   styleUrls: ['./base-table.component.css'],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatPaginatorModule,
+    TableActionsComponent,
+    TableHeaderComponent,
+    TableBodyComponent,
+    TableMessageComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    trigger(
-      'inOutAnimation',
-      [
-        transition(
-          ':enter',
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out',
-              style({ opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave',
-          [
-            style({ opacity: 1 }),
-            animate('400ms ease-in',
-              style({ opacity: 0 }))
-          ]
-        )
-      ]
-    )
-  ]
+    trigger('inOutAnimation', [
+      transition(':enter', [style({ opacity: 0 }), animate('400ms ease-out', style({ opacity: 1 }))]),
+      transition(':leave', [style({ opacity: 1 }), animate('400ms ease-in', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class BaseTableComponent implements OnInit, OnDestroy {
+  readonly sharedService = inject(SharedService);
+  readonly breakpointService = inject(BreakpointService);
 
   @Input() data: any[];
   @Input() total: number;
@@ -69,11 +72,6 @@ export class BaseTableComponent implements OnInit, OnDestroy {
   readonly pageSize = PAGE_SIZE;
 
   private readonly destroy$ = new Subject<void>();
-
-  constructor(
-    public sharedService: SharedService,
-    public breakpointService: BreakpointService
-  ) { }
 
   ngOnInit(): void {
     let prevMobile: boolean | undefined;

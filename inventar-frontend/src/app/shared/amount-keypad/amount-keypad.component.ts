@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 const MAX_DECIMALS = 2;
 
 @Component({
-  standalone: false,
   selector: 'app-amount-keypad',
   templateUrl: './amount-keypad.component.html',
   styleUrls: ['./amount-keypad.component.css'],

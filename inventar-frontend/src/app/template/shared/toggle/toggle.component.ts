@@ -1,20 +1,22 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 
-@Component({ standalone: false,
+@Component({
   selector: 'toggle',
   templateUrl: './toggle.component.html',
-  styleUrls: ['./toggle.component.css']
+  styleUrls: ['./toggle.component.css'],
+  imports: [CommonModule],
 })
 export class ToggleComponent implements AfterViewInit, OnChanges {
   @Input() checked: boolean;
-  @Output() onValueChange = new EventEmitter();
-  toggleBallId = uuidv4();
-  private toggleElement;
-  constructor() { }
+  @Output() onValueChange = new EventEmitter<boolean>();
 
-  ngOnChanges(): void {    
-    this.animateToggle();    
+  readonly toggleBallId = uuidv4();
+  private toggleElement: HTMLElement | null;
+
+  ngOnChanges(): void {
+    this.animateToggle();
   }
 
   ngAfterViewInit(): void {
@@ -22,7 +24,7 @@ export class ToggleComponent implements AfterViewInit, OnChanges {
     this.animateToggle();
   }
 
-  toggle(event): void {
+  toggle(event: Event): void {
     event.stopPropagation();
     if (this.toggleElement) {
       this.checked = !this.checked;
@@ -37,5 +39,4 @@ export class ToggleComponent implements AfterViewInit, OnChanges {
       this.toggleElement.style.transform = `translate(${value}, -50%)`;
     }
   }
-
 }

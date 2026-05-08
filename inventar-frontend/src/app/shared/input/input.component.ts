@@ -1,33 +1,24 @@
+import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 
-@Component({ standalone: false,
+@Component({
   selector: 'and-input',
   templateUrl: './input.component.html',
-  styleUrls: ['./input.component.css']
+  styleUrls: ['./input.component.css'],
+  imports: [CommonModule],
 })
 export class InputComponent implements AfterViewInit {
-  @Input() placeholder = "";
-  inputContainerId = uuidv4();
+  @Input() placeholder = '';
+  readonly inputContainerId = uuidv4();
   showPrefixContainer = true;
   showSuffixContainer = true;
-  constructor() { }
 
   ngAfterViewInit(): void {
     const container = document.getElementById(this.inputContainerId);
-    const prefix = container.querySelector("[prefix]");
-    const suffix = container.querySelector("[suffix]");
-    if (prefix) {
-      this.showPrefixContainer = true;
-    } else {
-      this.showPrefixContainer = false;
-    }
-    if (suffix) {
-      this.showSuffixContainer = true;
-    } else {
-      this.showSuffixContainer = false;
-    }
-    
+    const prefix = container?.querySelector('[prefix]');
+    const suffix = container?.querySelector('[suffix]');
+    this.showPrefixContainer = !!prefix;
+    this.showSuffixContainer = !!suffix;
   }
-
 }

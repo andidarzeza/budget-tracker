@@ -1,32 +1,50 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, HostListener, inject, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { DashboardService } from 'src/app/services/dashboard.service';
-import { ChartUtils } from 'src/app/utils/chart';
+import { CommonModule } from '@angular/common';
 import {
-  CREATE_DIALOG_DESKTOP_CONFIGURATION,
-  CREATE_DIALOG_MOBILE_CONFIGURATION,
-  TOASTER_CONFIGURATION
-} from 'src/environments/environment';
-import { BreakpointService } from 'src/app/services/breakpoint.service';
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { Chart, registerables } from 'chart.js';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, takeUntil } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { inOutAnimation } from 'src/app/animations';
 import {
   Account,
   CurrencyTotalDTO,
   DashboardDTO,
   RangeType,
   TimelineExpenseDTO,
-  TimelineIncomeDTO
+  TimelineIncomeDTO,
 } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
-import { SideBarService } from 'src/app/services/side-bar.service';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { DashboardService } from 'src/app/services/dashboard.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
-import { Chart, registerables } from 'chart.js';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
-import { inOutAnimation } from 'src/app/animations';
-import { of } from 'rxjs';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { SideBarService } from 'src/app/services/side-bar.service';
+import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
+import { ChartUtils } from 'src/app/utils/chart';
+import {
+  CREATE_DIALOG_DESKTOP_CONFIGURATION,
+  CREATE_DIALOG_MOBILE_CONFIGURATION,
+  TOASTER_CONFIGURATION,
+} from 'src/environments/environment';
+import { AllTimeHeaderComponent } from './all-time-header/all-time-header.component';
+import { DayPickerComponent } from './day-picker/day-picker.component';
 import { EditBalanceComponent } from './edit-balance/edit-balance.component';
+import { MonthPickerComponent } from './month-picker/month-picker.component';
+import { WeekPickerComponent } from './week-picker/week-picker.component';
+import { YearPickerComponent } from './year-picker/year-picker.component';
 
 interface CurrencyBalance {
   currency: string;
@@ -59,14 +77,35 @@ interface CategoryRow {
 const EXPENSE_LINE = 'expense-line';
 const INCOME_LINE = 'income-line';
 
-@Component({ standalone: false,
+@Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   animations: [inOutAnimation],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    DayPickerComponent,
+    WeekPickerComponent,
+    MonthPickerComponent,
+    YearPickerComponent,
+    AllTimeHeaderComponent,
+    FlagPipe,
+  ],
 })
-export class DashboardComponent extends Unsubscribe implements AfterViewInit {
+export class DashboardComponent implements AfterViewInit {
+  readonly dashboardService = inject(DashboardService);
+  readonly chartUtil = inject(ChartUtils);
+  readonly sideBarService = inject(SideBarService);
+  readonly navBarService = inject(NavBarService);
+  private readonly toasterService = inject(ToastrService);
+  private readonly routeSpinnerService = inject(RouteSpinnerService);
+  private readonly accountService = inject(AccountService);
+  private readonly dialog = inject(MatDialog);
+  private readonly breakpointService = inject(BreakpointService);
+  private readonly destroyRef = inject(DestroyRef);
 
   from!: Date;
   to!: Date;
@@ -93,7 +132,10 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   balances = computed<CurrencyBalance[]>(() => {
     const data = this.dashboardData();
     if (!data) return [];
-    return DashboardComponent.mergeBalances(data.incomeTotalsByCurrency, data.expenseTotalsByCurrency);
+    return DashboardComponent.mergeBalances(
+      data.incomeTotalsByCurrency,
+      data.expenseTotalsByCurrency,
+    );
   });
 
   /** True when the loaded dashboard period has no income, expense, or category rows. */
@@ -101,8 +143,12 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     const d = this.dashboardData();
     if (!d) return false;
     const empty = (a?: { length?: number }) => !a || (a.length ?? 0) === 0;
-    return empty(d.incomeTotalsByCurrency) && empty(d.expenseTotalsByCurrency)
-      && empty(d.expensesInfo) && empty(d.incomesInfo);
+    return (
+      empty(d.incomeTotalsByCurrency) &&
+      empty(d.expenseTotalsByCurrency) &&
+      empty(d.expensesInfo) &&
+      empty(d.incomesInfo)
+    );
   });
 
   /**
@@ -111,11 +157,11 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
    * €100 + $100 ≠ 200 of anything.
    */
   expenseRows = computed<CategoryRow[]>(() =>
-    DashboardComponent.toRows(this.dashboardData()?.expensesInfo, 'shopping_cart')
+    DashboardComponent.toRows(this.dashboardData()?.expensesInfo, 'shopping_cart'),
   );
 
   incomeRows = computed<CategoryRow[]>(() =>
-    DashboardComponent.toRows(this.dashboardData()?.incomesInfo, 'trending_up')
+    DashboardComponent.toRows(this.dashboardData()?.incomesInfo, 'trending_up'),
   );
 
   /** Loaded-and-empty (not "still loading"). Drives the breakdown empty state. */
@@ -129,6 +175,12 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     return !!d && !this.incomeRows().length;
   });
 
+  constructor() {
+    this.sideBarService.displaySidebar = true;
+    this.navBarService.displayNavBar = true;
+    this.fetchAccount();
+  }
+
   ngAfterViewInit(): void {
     this.routeSpinnerService.stopLoading();
     Chart.register(...registerables);
@@ -140,31 +192,6 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   @HostListener('window:resize')
   onWindowResize(): void {
     this.chartUtil.resizeDashboardCharts();
-  }
-
-  readonly dashboardService = inject(DashboardService);
-  readonly chartUtil = inject(ChartUtils);
-  readonly sideBarService = inject(SideBarService);
-  readonly navBarService = inject(NavBarService);
-  private readonly toasterService = inject(ToastrService);
-  private readonly routeSpinnerService = inject(RouteSpinnerService);
-  private readonly accountService = inject(AccountService);
-  private readonly dialog = inject(MatDialog);
-  private readonly breakpointService = inject(BreakpointService);
-
-  constructor() {
-    super();
-    this.sideBarService.displaySidebar = true;
-    this.navBarService.displayNavBar = true;
-    this.fetchAccount();
-  }
-
-  private fetchAccount(): void {
-    const accountId = this.accountService.getAccount();
-    if (!accountId) return;
-    this.accountService.findOne(accountId)
-      .pipe(takeUntil(this.unsubscribe$), catchError(() => of(null)))
-      .subscribe(account => this.account.set(account));
   }
 
   toggleBalanceVisibility(): void {
@@ -185,15 +212,18 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
       autoFocus: false,
       data: {
         accountId,
-        balance: this.account()?.balance ?? {}
-      }
+        balance: this.account()?.balance ?? {},
+      },
     });
-    ref.afterClosed().pipe(takeUntil(this.unsubscribe$)).subscribe(updated => {
-      // Dialog returns the saved Account on success, null on cancel.
-      if (updated) {
-        this.account.set(updated);
-      }
-    });
+    ref
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((updated) => {
+        // Dialog returns the saved Account on success, null on cancel.
+        if (updated) {
+          this.account.set(updated);
+        }
+      });
   }
 
   onRangeSelect(range: RangeType): void {
@@ -211,6 +241,27 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     this.refresh();
   }
 
+  catchError = () => {
+    this.toasterService.error('An Error Occured', 'Server Error', TOASTER_CONFIGURATION);
+    return of(null);
+  };
+
+  get period() {
+    return { from: this.from, to: this.to };
+  }
+
+  private fetchAccount(): void {
+    const accountId = this.accountService.getAccount();
+    if (!accountId) return;
+    this.accountService
+      .findOne(accountId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(() => of(null)),
+      )
+      .subscribe((account) => this.account.set(account));
+  }
+
   private refresh(): void {
     this.fetchDashboardData();
     this.fetchExpenseTimeline();
@@ -220,7 +271,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   private fetchDashboardData(): void {
     this.dashboardService
       .getDashboardData(this.from, this.to, this.selectedRange())
-      .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
+      .pipe(takeUntilDestroyed(this.destroyRef), catchError(this.catchError))
       .subscribe((data: DashboardDTO | null) => {
         this.dashboardData.set(data);
         // The account balance is mutated by background services (expenses, contributions);
@@ -232,20 +283,15 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   private fetchExpenseTimeline(): void {
     this.dashboardService
       .expensesTimeline(this.period, this.selectedRange())
-      .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
+      .pipe(takeUntilDestroyed(this.destroyRef), catchError(this.catchError))
       .subscribe((timeline) => this.updateLineSeries(EXPENSE_LINE, timeline as any, 'expense'));
   }
 
   private fetchIncomeTimeline(): void {
     this.dashboardService
       .incomesTimeline(this.period, this.selectedRange())
-      .pipe(takeUntil(this.unsubscribe$), catchError(this.catchError))
+      .pipe(takeUntilDestroyed(this.destroyRef), catchError(this.catchError))
       .subscribe((timeline) => this.updateLineSeries(INCOME_LINE, timeline as any, 'income'));
-  }
-
-  catchError = () => {
-    this.toasterService.error('An Error Occured', 'Server Error', TOASTER_CONFIGURATION);
-    return of(null);
   }
 
   /**
@@ -255,12 +301,12 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
    */
   private static toRows(
     items: ({ _id: string; total: number; currency?: string; icon?: string })[] | null | undefined,
-    fallbackIcon: string
+    fallbackIcon: string,
   ): CategoryRow[] {
     if (!items?.length) return [];
     return items
-      .filter(it => (it.total ?? 0) > 0)
-      .map(it => ({
+      .filter((it) => (it.total ?? 0) > 0)
+      .map((it) => ({
         name: it._id,
         icon: it.icon || fallbackIcon,
         currency: it.currency ?? 'Other',
@@ -276,7 +322,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   private updateLineSeries(
     canvasId: string,
     timeline: TimelineExpenseDTO[] | TimelineIncomeDTO[] | null | undefined,
-    kind: 'expense' | 'income'
+    kind: 'expense' | 'income',
   ): void {
     this.chartUtil.updateTimelineLabels(canvasId, this.selectedRange(), {
       year: this.from?.getFullYear() ?? new Date().getFullYear(),
@@ -290,12 +336,14 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
 
     const rows = Array.isArray(timeline) ? timeline : [];
     const valueOf = (r: TimelineExpenseDTO | TimelineIncomeDTO): number =>
-      kind === 'expense' ? ((r as TimelineExpenseDTO).dailyExpense ?? 0) : ((r as TimelineIncomeDTO).income ?? 0);
+      kind === 'expense'
+        ? ((r as TimelineExpenseDTO).dailyExpense ?? 0)
+        : ((r as TimelineIncomeDTO).income ?? 0);
 
     const currencyLabel = (c: string | null | undefined): string =>
       c && String(c).trim() ? String(c).trim() : 'Other';
 
-    const currencies = [...new Set(rows.map(r => currencyLabel(r.currency)))].sort();
+    const currencies = [...new Set(rows.map((r) => currencyLabel(r.currency)))].sort();
 
     const valueByKey = new Map<string, number>();
     for (const r of rows) {
@@ -354,7 +402,7 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
   /** Combine income and expense currency totals into one row per currency for the KPI strip. */
   private static mergeBalances(
     incomes?: CurrencyTotalDTO[] | null,
-    expenses?: CurrencyTotalDTO[] | null
+    expenses?: CurrencyTotalDTO[] | null,
   ): CurrencyBalance[] {
     const inc = new Map<string, number>();
     for (const c of incomes ?? []) inc.set(c._id, c.total ?? 0);
@@ -362,14 +410,10 @@ export class DashboardComponent extends Unsubscribe implements AfterViewInit {
     for (const c of expenses ?? []) exp.set(c._id, c.total ?? 0);
 
     const currencies = [...new Set([...inc.keys(), ...exp.keys()])].sort();
-    return currencies.map(currency => {
+    return currencies.map((currency) => {
       const income = inc.get(currency) ?? 0;
       const expense = exp.get(currency) ?? 0;
       return { currency, income, expense, net: income - expense };
     });
-  }
-
-  get period() {
-    return { from: this.from, to: this.to };
   }
 }

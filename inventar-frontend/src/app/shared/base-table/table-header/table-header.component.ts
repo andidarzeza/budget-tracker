@@ -1,19 +1,18 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinition } from 'src/app/models/models';
+import { ColumnWidthPipe } from '../column-width/column-width.pipe';
 
-@Component({ standalone: false,
+@Component({
   selector: 'table-header',
   templateUrl: './table-header.component.html',
   styleUrls: ['./table-header.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [CommonModule, ColumnWidthPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableHeaderComponent {
-
-  constructor(public breakpointService: BreakpointService) { }
+  readonly breakpointService = inject(BreakpointService);
 
   @Input() columnDefinitions: ColumnDefinition[];
-
-
-
 }

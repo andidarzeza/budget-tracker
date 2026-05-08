@@ -1,50 +1,45 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatRippleModule } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { SimplifiedAccount } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({ standalone: false,
+@Component({
   selector: 'app-account',
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    trigger(
-      'inOutAnimation',
-      [
-        transition(
-          ':enter',
-          [
-            style({ opacity: 0 }),
-            animate('400ms ease-out',
-              style({ opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave',
-          [
-            style({ opacity: 1 }),
-            animate('400ms ease-in',
-              style({ opacity: 0 }))
-          ]
-        )
-      ]
-    )
-  ]
+    trigger('inOutAnimation', [
+      transition(':enter', [style({ opacity: 0 }), animate('400ms ease-out', style({ opacity: 1 }))]),
+      transition(':leave', [style({ opacity: 1 }), animate('400ms ease-in', style({ opacity: 0 }))]),
+    ]),
+  ],
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatRippleModule],
 })
-export class AccountComponent extends Unsubscribe implements OnInit {
+export class AccountComponent implements OnInit {
   readonly accountService = inject(AccountService);
   readonly sideBarService = inject(SideBarService);
   readonly navBarService = inject(NavBarService);
   readonly sharedService = inject(SharedService);
   readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly minSpinnerMs = 500;
   private spinnerStartedAt = Date.now();
@@ -62,13 +57,16 @@ export class AccountComponent extends Unsubscribe implements OnInit {
         .findAllAccountsSimplified()
         .pipe(
           finalize(() => this.stopSpinner()),
-          takeUntil(this.unsubscribe$)
+          takeUntilDestroyed(this.destroyRef),
         )
-        .subscribe((simplifiedAccounts: SimplifiedAccount[]) => {
-          this.accounts.set(simplifiedAccounts);
-        }, () => {
-          this.accounts.set([]);
-        });
+        .subscribe(
+          (simplifiedAccounts: SimplifiedAccount[]) => {
+            this.accounts.set(simplifiedAccounts);
+          },
+          () => {
+            this.accounts.set([]);
+          },
+        );
     } else {
       this.accounts.set(accounts);
       this.stopSpinner();
@@ -77,11 +75,12 @@ export class AccountComponent extends Unsubscribe implements OnInit {
 
   selectAccount(account: SimplifiedAccount): void {
     this.startSpinner();
-    this.accountService.findOne(account.id)
+    this.accountService
+      .findOne(account.id)
       .pipe(finalize(() => this.stopSpinner()))
       .subscribe(() => {
-        localStorage.setItem("account", account.id);
-        this.router.navigate(["/dashboard"]);
+        localStorage.setItem('account', account.id);
+        this.router.navigate(['/dashboard']);
       });
   }
 
@@ -130,5 +129,4 @@ export class AccountComponent extends Unsubscribe implements OnInit {
       this.spinnerTimeout = null;
     }, remaining);
   }
-
 }

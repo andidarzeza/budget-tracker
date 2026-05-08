@@ -1,15 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
-@Component({ standalone: false,
+@Component({
   selector: 'bottom-navigation-bar',
   templateUrl: './bottom-navigation-bar.component.html',
-  styleUrls: ['./bottom-navigation-bar.component.css']
+  styleUrls: ['./bottom-navigation-bar.component.css'],
 })
-export class BottomNavigationBarComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-}
+export class BottomNavigationBarComponent {}

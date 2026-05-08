@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
-@Component({ standalone: false,
+@Component({
   selector: 'app-confirm',
   templateUrl: './confirm.component.html',
-  styleUrls: ['./confirm.component.css']
+  styleUrls: ['./confirm.component.css'],
+  imports: [MatButtonModule, MatIconModule],
 })
 export class ConfirmComponent {
-
-  constructor(public dialogRef: MatDialogRef<ConfirmComponent>) { }
+  readonly dialogRef = inject<MatDialogRef<ConfirmComponent>>(MatDialogRef);
 
   closeDialog(): void {
     this.dialogRef.close(false);

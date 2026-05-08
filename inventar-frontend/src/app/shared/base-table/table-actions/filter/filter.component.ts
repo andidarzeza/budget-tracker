@@ -1,29 +1,43 @@
+import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { MatDividerModule } from '@angular/material/divider';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { SharedService } from 'src/app/services/shared.service';
+import { FilterActionsComponent } from './filter-actions/filter-actions.component';
+import { FilterHeaderComponent } from './filter-header/filter-header.component';
 import { FilterOptions } from './filter.models';
 
-@Component({ standalone: false,
+@Component({
   selector: 'filter',
   templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.css']
+  styleUrls: ['./filter.component.css'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDividerModule,
+    LabeledFormInputComponent,
+    SelectInputComponent,
+    FilterActionsComponent,
+    FilterHeaderComponent,
+  ],
 })
 export class FilterComponent implements OnInit {
-  @Output() public onReset = new EventEmitter(); 
-  @Output() public onSearch = new EventEmitter();
-  @Input() filterOptions: FilterOptions[];
-  public formGroup: UntypedFormGroup = this.formBuilder.group({});
+  private readonly formBuilder = inject(UntypedFormBuilder);
+  readonly sharedService = inject(SharedService);
 
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    public sharedService: SharedService
-  ) { }
+  @Output() onReset = new EventEmitter<void>();
+  @Output() onSearch = new EventEmitter<{ params: HttpParams }>();
+  @Input() filterOptions: FilterOptions[];
+
+  readonly formGroup: UntypedFormGroup = this.formBuilder.group({});
 
   ngOnInit(): void {
     this.filterOptions?.forEach((filterOption: FilterOptions) => {
       this.formGroup.addControl(filterOption.field, new UntypedFormControl());
-    })
+    });
   }
 
   onEnter(): void {
@@ -38,13 +52,11 @@ export class FilterComponent implements OnInit {
   search(): void {
     let params: HttpParams = new HttpParams();
     for (const [key, value] of Object.entries(this.formGroup.value)) {
-      if(value) {
+      if (value) {
         params = params.append(key, value as string);
       }
     }
-    this.onSearch.emit({
-      params
-    });
+    this.onSearch.emit({ params });
   }
 
   /**
@@ -61,5 +73,4 @@ export class FilterComponent implements OnInit {
     const key = filterOption?.matSelectOptions?.valueBy;
     return (opt: any) => (opt && key ? opt[key] : opt);
   }
-
 }

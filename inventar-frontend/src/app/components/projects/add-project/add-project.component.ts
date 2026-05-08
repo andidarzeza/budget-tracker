@@ -1,24 +1,52 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit, signal } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  Inject,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
 import { EntityType, Project } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { ProjectService } from 'src/app/services/pages/project.service';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
+import { SelectIconComponent } from 'src/app/shared/select-icon/select-icon.component';
+import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
-  standalone: false,
   selector: 'app-add-project',
   templateUrl: './add-project.component.html',
   styleUrls: ['./add-project.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [FlagPipe]
+  providers: [FlagPipe],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    CreateFormComponent,
+    LabeledFormInputComponent,
+    LabeledTextareaComponent,
+    SelectInputComponent,
+    SelectIconComponent,
+  ],
 })
-export class AddProjectComponent extends Unsubscribe implements OnInit {
+export class AddProjectComponent implements OnInit {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly dialogRef = inject(MatDialogRef<AddProjectComponent>);
+  private readonly projectService = inject(ProjectService);
+  private readonly accountService = inject(AccountService);
+  private readonly toaster = inject(ToastrService);
+  private readonly flagPipe = inject(FlagPipe);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly loadingData = signal(false);
   readonly loadingMessage = signal('Loading…');
@@ -34,25 +62,16 @@ export class AddProjectComponent extends Unsubscribe implements OnInit {
   /** Currency option label: "🇺🇸 USD". Shared with `cb-select-input.displayWith`. */
   readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
 
-  formGroup: UntypedFormGroup;
+  formGroup: FormGroup;
 
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: Project | null,
-    private dialogRef: MatDialogRef<AddProjectComponent>,
-    private projectService: ProjectService,
-    private accountService: AccountService,
-    private toaster: ToastrService,
-    private flagPipe: FlagPipe
-  ) {
-    super();
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Project | null) {
     this.isEditMode = !!this.data?.id;
     this.formGroup = this.formBuilder.group({
       name: ['', Validators.required],
       description: [''],
       targetAmount: ['', [Validators.required, Validators.min(0.01)]],
       targetCurrency: [this.defaultCurrency, Validators.required],
-      icon: ['flag']
+      icon: ['flag'],
     });
   }
 
@@ -63,7 +82,7 @@ export class AddProjectComponent extends Unsubscribe implements OnInit {
         description: this.data.description ?? '',
         targetAmount: this.data.targetAmount,
         targetCurrency: this.data.targetCurrency,
-        icon: this.data.icon || 'flag'
+        icon: this.data.icon || 'flag',
       });
     }
   }
@@ -81,21 +100,21 @@ export class AddProjectComponent extends Unsubscribe implements OnInit {
 
     const payload: Project = {
       ...this.formGroup.value,
-      account: this.accountService.getAccount()
+      account: this.accountService.getAccount(),
     };
 
     const op$ = this.isEditMode
       ? this.projectService.update(this.data!.id!, payload)
       : this.projectService.save(payload);
 
-    op$.pipe(takeUntil(this.unsubscribe$)).subscribe({
+    op$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.saving.set(false);
         this.loadingData.set(false);
         this.toaster.success(
           this.isEditMode ? 'Project updated' : 'Project created',
           'Success',
-          TOASTER_CONFIGURATION
+          TOASTER_CONFIGURATION,
         );
         this.closeDialog(true);
       },
@@ -103,7 +122,7 @@ export class AddProjectComponent extends Unsubscribe implements OnInit {
         this.saving.set(false);
         this.loadingData.set(false);
         this.toaster.error('Could not save project.', 'Server Error', TOASTER_CONFIGURATION);
-      }
+      },
     });
   }
 

@@ -1,34 +1,42 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 import { Category } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
-@Component({ standalone: false,
+@Component({
   selector: 'app-category-detail',
   templateUrl: './category-detail.component.html',
-  styleUrls: ['./category-detail.component.css']
+  styleUrls: ['./category-detail.component.css'],
+  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule],
 })
-export class CategoryDetailComponent extends Unsubscribe implements OnInit {
+export class CategoryDetailComponent implements OnInit {
+  private readonly categoriesService = inject(CategoriesService);
+  readonly sharedService = inject(SharedService);
+  private readonly destroyRef = inject(DestroyRef);
 
   @Input() categoryId: string;
-  private category: Category;
-  @Output() onCloseAction: EventEmitter<any> = new EventEmitter();
+  @Output() onCloseAction = new EventEmitter<void>();
 
-  constructor(
-    private categoriesService: CategoriesService,
-    public sharedService: SharedService
-  ) {
-    super();
-  }
+  private category: Category;
 
   ngOnInit(): void {
     this.categoriesService
       .findOne(this.categoryId)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((category: Category) => this.category = category);
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((category: Category) => (this.category = category));
   }
 
   closeDrawer(): void {
@@ -36,7 +44,7 @@ export class CategoryDetailComponent extends Unsubscribe implements OnInit {
   }
 
   get name() {
-    return this.category?.category ?? "-";
+    return this.category?.category ?? '-';
   }
 
   get createdTime() {
@@ -48,11 +56,10 @@ export class CategoryDetailComponent extends Unsubscribe implements OnInit {
   }
 
   get description() {
-    return this.category?.description ?? "no-notes-recorded"
+    return this.category?.description ?? 'no-notes-recorded';
   }
 
   get categoryIcon() {
     return this.category?.icon;
   }
-
 }

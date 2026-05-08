@@ -1,32 +1,40 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
+  DestroyRef,
   Inject,
-  Optional,
-  OnInit,
   inject,
+  OnInit,
+  Optional,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
-import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
-import { filter, mergeMap, observeOn, takeUntil, tap } from 'rxjs/operators';
-import { Category, CategoryType, EntityType, Expense } from 'src/app/models/models';
-import { ExpenseService } from 'src/app/services/pages/expense.service';
-import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { filter, mergeMap, observeOn, tap } from 'rxjs/operators';
+import { inOutAnimation } from 'src/app/animations';
+import { Category, CategoryType, EntityType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { inOutAnimation } from 'src/app/animations';
-import { Unsubscribe } from 'src/app/shared/unsubscribe';
+import { AmountKeypadComponent } from 'src/app/shared/amount-keypad/amount-keypad.component';
+import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
+import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
+import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
+import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 interface AddExpenseDialogData {
   id?: string;
@@ -36,20 +44,38 @@ interface AddExpenseDialogData {
 }
 
 @Component({
-  standalone: false,
   selector: 'app-add-expense',
   templateUrl: './add-expense.component.html',
   styleUrls: ['./add-expense.component.css'],
   animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatMenuModule,
+    CreateFormComponent,
+    LabeledFormInputComponent,
+    LabeledTextareaComponent,
+    SelectInputComponent,
+    AmountKeypadComponent,
+    FlagPipe,
+  ],
 })
-export class AddExpenseComponent extends Unsubscribe implements OnInit {
+export class AddExpenseComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly breakpointService = inject(BreakpointService);
   private readonly flagPipe = inject(FlagPipe);
   private readonly navBarService = inject(NavBarService);
   private readonly sideBarService = inject(SideBarService);
+  private readonly toaster = inject(ToastrService);
+  private readonly router = inject(Router);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly expenseService = inject(ExpenseService);
+  private readonly categoryService = inject(CategoriesService);
+  readonly accountService = inject(AccountService);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Currency option label: "🇺🇸 USD". */
   readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
@@ -64,9 +90,9 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   });
 
   readonly savingEntity = signal(false);
-  public entity: EntityType = EntityType.EXPENSE;
+  entity: EntityType = EntityType.EXPENSE;
   readonly categories = signal<Category[]>([]);
-  public baseCurrency = localStorage.getItem('baseCurrency');
+  baseCurrency = localStorage.getItem('baseCurrency');
   readonly loadingData = signal(false);
   readonly loadingMessage = signal('Loading…');
   readonly isEditMode: boolean;
@@ -94,26 +120,7 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
    */
   readonly isPageMode: boolean;
 
-  constructor(
-    private toaster: ToastrService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public expense: AddExpenseDialogData | null,
-    @Optional() public dialogRef: MatDialogRef<AddExpenseComponent> | null,
-    private router: Router,
-    private formBuilder: UntypedFormBuilder,
-    private expenseService: ExpenseService,
-    private categoryService: CategoriesService,
-    public accountService: AccountService
-  ) {
-    super();
-    this.isPageMode = !this.dialogRef;
-    this.isEditMode = !!this.expense?.id;
-    this.isQrPrefillMode = !this.isEditMode && this.expense?.moneySpent != null;
-    this.wizardStepLabels = this.isQrPrefillMode
-      ? ['Category', 'Description']
-      : ['Category', 'Amount', 'Description'];
-  }
-
-  formGroup: UntypedFormGroup = this.formBuilder.group({
+  formGroup: FormGroup = this.formBuilder.group({
     description: [''],
     categoryID: ['', Validators.required],
     moneySpent: ['', Validators.required],
@@ -121,6 +128,18 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   });
 
   currencies = CURRENCIES;
+
+  constructor(
+    @Optional() @Inject(MAT_DIALOG_DATA) public expense: AddExpenseDialogData | null = null,
+    @Optional() public dialogRef: MatDialogRef<AddExpenseComponent> | null = null,
+  ) {
+    this.isPageMode = !this.dialogRef;
+    this.isEditMode = !!this.expense?.id;
+    this.isQrPrefillMode = !this.isEditMode && this.expense?.moneySpent != null;
+    this.wizardStepLabels = this.isQrPrefillMode
+      ? ['Category', 'Description']
+      : ['Category', 'Amount', 'Description'];
+  }
 
   ngOnInit(): void {
     if (this.isPageMode) {
@@ -134,7 +153,7 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
       if (Number.isFinite(scannedAmount)) {
         this.formGroup.get('moneySpent')?.setValue(scannedAmount);
         this.amountEntry.set(
-          scannedAmount.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false })
+          scannedAmount.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false }),
         );
       }
       this.formGroup.get('currency')?.setValue(this.expense?.currency || 'ALL');
@@ -166,40 +185,6 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
     this.syncMoneySpentFromEntry(raw);
   }
 
-  private primeWizardAmountEntry(): void {
-    const v = this.formGroup.get('moneySpent')?.value;
-    if (v === null || v === undefined || v === '') {
-      this.amountEntry.set('');
-      return;
-    }
-    const n = Number(v);
-    if (!Number.isFinite(n)) {
-      this.amountEntry.set('');
-      return;
-    }
-    this.amountEntry.set(
-      n.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false })
-    );
-    this.syncMoneySpentFromEntry(this.amountEntry());
-  }
-
-  private syncMoneySpentFromEntry(raw: string): void {
-    const ctrl = this.formGroup.get('moneySpent');
-    if (!ctrl) {
-      return;
-    }
-    if (raw === '' || raw === '.') {
-      ctrl.setValue('', { emitEvent: true });
-      return;
-    }
-    const n = parseFloat(raw.replace(',', '.'));
-    if (!Number.isFinite(n)) {
-      ctrl.setValue('', { emitEvent: true });
-      return;
-    }
-    ctrl.setValue(n, { emitEvent: true });
-  }
-
   wizardBack(): void {
     if (this.wizardStep() > 0) {
       this.wizardStep.update((s) => s - 1);
@@ -218,6 +203,99 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   selectWizardCurrency(code: string): void {
     this.formGroup.get('currency')?.setValue(code);
     this.formGroup.get('currency')?.markAsTouched();
+  }
+
+  closeDialog(update: boolean): void {
+    if (this.dialogRef) {
+      this.dialogRef.close(update);
+      return;
+    }
+    // Routed-page mode — navigate back to the list. The list component is
+    // re-created on entry, so successful saves naturally show in the
+    // refreshed query.
+    this.router.navigate(['/expenses']);
+  }
+
+  add(): void {
+    if (this.formGroup.valid && !this.savingEntity()) {
+      if (this.isEditMode) {
+        this.loadingMessage.set('Saving…');
+        this.loadingData.set(true);
+        this.savingEntity.set(true);
+        const payload = this.formGroup.value;
+        payload.account = this.accountService.getAccount();
+        this.expenseService
+          .update(this.expense!.id!, payload)
+          .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
+          .subscribe(() => {
+            this.accountService
+              .findOne(this.accountService.getAccount())
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe();
+            this.loadingData.set(false);
+            this.savingEntity.set(false);
+            this.closeDialog(true);
+            this.toaster.success('Expense updated successfully', 'Success', TOASTER_CONFIGURATION);
+          });
+      } else if (!this.savingEntity()) {
+        this.loadingMessage.set('Saving…');
+        this.loadingData.set(true);
+        this.savingEntity.set(true);
+        const payload = this.formGroup.value;
+        payload.account = this.accountService.getAccount();
+        this.expenseService
+          .save(payload)
+          .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
+          .subscribe(() => {
+            this.accountService
+              .findOne(this.accountService.getAccount())
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe();
+            this.savingEntity.set(false);
+            this.loadingData.set(false);
+            this.closeDialog(true);
+            this.toaster.success('A new Expense has been inserted', 'Success', TOASTER_CONFIGURATION);
+          });
+      }
+    } else if (this.formGroup.invalid) {
+      this.toaster.error('Please, fill in all required fields.', 'Error', TOASTER_CONFIGURATION);
+    }
+  }
+
+  get id() {
+    return this.expense?.id;
+  }
+
+  private primeWizardAmountEntry(): void {
+    const v = this.formGroup.get('moneySpent')?.value;
+    if (v === null || v === undefined || v === '') {
+      this.amountEntry.set('');
+      return;
+    }
+    const n = Number(v);
+    if (!Number.isFinite(n)) {
+      this.amountEntry.set('');
+      return;
+    }
+    this.amountEntry.set(
+      n.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false }),
+    );
+    this.syncMoneySpentFromEntry(this.amountEntry());
+  }
+
+  private syncMoneySpentFromEntry(raw: string): void {
+    const ctrl = this.formGroup.get('moneySpent');
+    if (!ctrl) return;
+    if (raw === '' || raw === '.') {
+      ctrl.setValue('', { emitEvent: true });
+      return;
+    }
+    const n = parseFloat(raw.replace(',', '.'));
+    if (!Number.isFinite(n)) {
+      ctrl.setValue('', { emitEvent: true });
+      return;
+    }
+    ctrl.setValue(n, { emitEvent: true });
   }
 
   private validateWizardCategoryStep(): boolean {
@@ -240,8 +318,8 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
   private getExpense(): Observable<any> {
     this.loadingMessage.set('Loading…');
     this.loadingData.set(true);
-    return this.expenseService.findOne(this.id).pipe(
-      takeUntil(this.unsubscribe$),
+    return this.expenseService.findOne(this.id!).pipe(
+      takeUntilDestroyed(this.destroyRef),
       tap((expense) => {
         this.formGroup.patchValue(expense);
         this.cdr.markForCheck();
@@ -249,7 +327,7 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
       observeOn(asyncScheduler),
       tap(() => {
         this.loadingData.set(false);
-      })
+      }),
     );
   }
 
@@ -260,13 +338,13 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
     this.categoryService
       .findByUsage(this.accountService.getAccount(), CategoryType.EXPENSE)
       .pipe(
-        takeUntil(this.unsubscribe$),
+        takeUntilDestroyed(this.destroyRef),
         tap((rows: Category[]) => {
           const list = Array.isArray(rows) ? rows : [];
           this.categories.set(
             list.filter(
-              (c: Category) => !c?.categoryType || c.categoryType === CategoryType.EXPENSE
-            )
+              (c: Category) => !c?.categoryType || c.categoryType === CategoryType.EXPENSE,
+            ),
           );
         }),
         observeOn(asyncScheduler),
@@ -274,69 +352,8 @@ export class AddExpenseComponent extends Unsubscribe implements OnInit {
           this.loadingData.set(false);
         }),
         filter(() => this.isEditMode),
-        mergeMap(() => this.getExpense())
+        mergeMap(() => this.getExpense()),
       )
       .subscribe();
-  }
-
-  public closeDialog(update: boolean): void {
-    if (this.dialogRef) {
-      this.dialogRef.close(update);
-      return;
-    }
-    // Routed-page mode — navigate back to the list. The list component is
-    // re-created on entry, so successful saves naturally show in the
-    // refreshed query.
-    this.router.navigate(['/expenses']);
-  }
-
-  add(): void {
-    if (this.formGroup.valid && !this.savingEntity()) {
-      if (this.isEditMode) {
-        this.loadingMessage.set('Saving…');
-        this.loadingData.set(true);
-        this.savingEntity.set(true);
-        const payload = this.formGroup.value;
-        payload.account = this.accountService.getAccount();
-        this.expenseService
-          .update(this.expense.id, payload)
-          .pipe(takeUntil(this.unsubscribe$), observeOn(asyncScheduler))
-          .subscribe(() => {
-            this.accountService
-              .findOne(this.accountService.getAccount())
-              .pipe(takeUntil(this.unsubscribe$))
-              .subscribe();
-            this.loadingData.set(false);
-            this.savingEntity.set(false);
-            this.closeDialog(true);
-            this.toaster.success('Expense updated successfully', 'Success', TOASTER_CONFIGURATION);
-          });
-      } else if (!this.savingEntity()) {
-        this.loadingMessage.set('Saving…');
-        this.loadingData.set(true);
-        this.savingEntity.set(true);
-        const payload = this.formGroup.value;
-        payload.account = this.accountService.getAccount();
-        this.expenseService
-          .save(payload)
-          .pipe(takeUntil(this.unsubscribe$), observeOn(asyncScheduler))
-          .subscribe(() => {
-            this.accountService
-              .findOne(this.accountService.getAccount())
-              .pipe(takeUntil(this.unsubscribe$))
-              .subscribe();
-            this.savingEntity.set(false);
-            this.loadingData.set(false);
-            this.closeDialog(true);
-            this.toaster.success('A new Expense has been inserted', 'Success', TOASTER_CONFIGURATION);
-          });
-      }
-    } else if (this.formGroup.invalid) {
-      this.toaster.error('Please, fill in all required fields.', 'Error', TOASTER_CONFIGURATION);
-    }
-  }
-
-  get id() {
-    return this.expense?.id;
   }
 }
