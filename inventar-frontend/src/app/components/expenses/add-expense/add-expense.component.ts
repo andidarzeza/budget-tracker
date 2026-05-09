@@ -35,6 +35,7 @@ import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/lab
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
+import { toBareLocalIso } from 'src/app/utils/local-iso';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 interface AddExpenseDialogData {
@@ -269,14 +270,15 @@ export class AddExpenseComponent implements OnInit {
   }
 
   /**
-   * Build the API payload. `createdTime` is already a Date from the
-   * datepicker; we normalise it to local noon so DST shifts can't drag the
-   * date into the previous day server-side.
+   * Backend's `Expense.createdTime` is `LocalDateTime`, which has no zone.
+   * Sending `JSON.stringify(date)` (UTC `Z`) makes Jackson drop the offset
+   * and shift the wall-clock; sending `+HH:MM` makes its deserializer
+   * throw. The right format is a bare local wall-clock string.
    */
   private buildPayload(): any {
     const value = { ...this.formGroup.value };
-    const d = value.createdTime instanceof Date ? value.createdTime : new Date();
-    value.createdTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
+    const picked = value.createdTime instanceof Date ? value.createdTime : new Date();
+    value.createdTime = toBareLocalIso(picked);
     value.account = this.accountService.getAccount();
     return value;
   }

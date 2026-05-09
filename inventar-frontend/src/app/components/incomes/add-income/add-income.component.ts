@@ -35,6 +35,7 @@ import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/lab
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
+import { pickEntryTimestamp } from 'src/app/utils/local-iso';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -348,14 +349,15 @@ export class AddIncomeComponent implements OnInit {
   }
 
   /**
-   * Build the API payload. `createdTime` is already a Date from the
-   * datepicker; we normalise it to local noon so DST shifts can't drag the
-   * date into the previous day server-side.
+   * Backend's `Income.createdTime` is `java.util.Date`, which Jackson
+   * serializes/deserializes as a UTC `Z` ISO string. A `Date` object hands
+   * `JSON.stringify` exactly that format, so we send the picked timestamp
+   * verbatim — no string formatting needed for this entity.
    */
   private buildPayload(): any {
     const value = { ...this.formGroup.value };
-    const d = value.createdTime instanceof Date ? value.createdTime : new Date();
-    value.createdTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
+    const picked = value.createdTime instanceof Date ? value.createdTime : new Date();
+    value.createdTime = pickEntryTimestamp(picked);
     value.account = this.accountService.getAccount();
     return value;
   }
