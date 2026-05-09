@@ -1,0 +1,44 @@
+<div class="dash-picker">
+    <button
+        type="button"
+        class="dash-picker__label dash-picker__label--range"
+        (click)="startPicker.open()"
+        aria-label="Pick start date"
+    >
+        <mat-icon class="dash-picker__cal">event</mat-icon>
+        <span class="dash-picker__text">{{ start() | date: 'MMM d, yyyy' }}</span>
+    </button>
+
+    <span class="dash-picker__separator" aria-hidden="true">→</span>
+
+    <button
+        type="button"
+        class="dash-picker__label dash-picker__label--range"
+        (click)="endPicker.open()"
+        aria-label="Pick end date"
+    >
+        <span class="dash-picker__text">{{ end() | date: 'MMM d, yyyy' }}</span>
+    </button>
+
+    <input
+        class="dash-picker__hidden"
+        [matDatepicker]="startPicker"
+        [value]="start()"
+        [min]="startMin"
+        [max]="startMax"
+        (dateChange)="onStartPicked($event.value)"
+        readonly
+    />
+    <mat-datepicker #startPicker [touchUi]="touchUi()"></mat-datepicker>
+
+    <input
+        class="dash-picker__hidden"
+        [matDatepicker]="endPicker"
+        [value]="end()"
+        [min]="endMin"
+        [max]="endMax"
+        (dateChange)="onEndPicked($event.value)"
+        readonly
+    />
+    <mat-datepicker #endPicker [touchUi]="touchUi()"></mat-datepicker>
+</div>

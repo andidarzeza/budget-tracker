@@ -5,5 +5,7 @@ public enum RangeType {
     WEEK,
     MONTH,
     YEAR,
-    MAX
+    MAX,
+    /** Arbitrary user-selected window. Frontend caps the gap at 31 days. */
+    CUSTOM
 }

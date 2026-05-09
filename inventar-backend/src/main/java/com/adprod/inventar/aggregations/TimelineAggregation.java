@@ -84,12 +84,17 @@ public class TimelineAggregation {
     /**
      * Mongo $dateToString format token (already wrapped in single quotes for inline use)
      * for the requested range bucket:
-     *   DAY   → hour of day            (00–23)
-     *   WEEK  → ISO weekday            (1=Mon … 7=Sun)
-     *   MONTH → day of month           (01–31)
-     *   YEAR  → month of year          (01–12)
-     *   MAX   → year-month             (yyyy-MM)
+     *   DAY    → hour of day            (00–23)
+     *   WEEK   → ISO weekday            (1=Mon … 7=Sun)
+     *   MONTH  → day of month           (01–31)
+     *   YEAR   → month of year          (01–12)
+     *   MAX    → year-month             (yyyy-MM)
+     *   CUSTOM → full calendar day      (yyyy-MM-dd)
      * Anything else falls back to hour of day for safety.
+     *
+     * CUSTOM uses a fully-qualified date because the user-picked window can
+     * straddle months — bucketing by day-of-month alone would collide
+     * (e.g. May 31 and Jun 30 would both land in bucket "31"/"30").
      */
     private String bucketFormat(String range) {
         if (range == null) {
@@ -104,6 +109,8 @@ public class TimelineAggregation {
                 return "'%m'";
             case "MAX":
                 return "'%Y-%m'";
+            case "CUSTOM":
+                return "'%Y-%m-%d'";
             case "DAY":
             default:
                 return "'%H'";

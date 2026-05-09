@@ -73,6 +73,9 @@
                 @case ('MAX') {
                     <all-time-header (onChange)="onDateSelected($event)"></all-time-header>
                 }
+                @case ('CUSTOM') {
+                    <custom-range-picker (onChange)="onDateSelected($event)"></custom-range-picker>
+                }
             }
         </div>
     </div>

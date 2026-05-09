@@ -150,7 +150,7 @@ export interface UserRequest {
     lastName: string
 }
 
-export type RangeType = "DAY" | "WEEK" | "MONTH" | "YEAR" | "MAX";
+export type RangeType = "DAY" | "WEEK" | "MONTH" | "YEAR" | "MAX" | "CUSTOM";
 
 export interface Project {
     id?: string;

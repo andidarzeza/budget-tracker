@@ -40,6 +40,7 @@ import {
   TOASTER_CONFIGURATION,
 } from 'src/environments/environment';
 import { AllTimeHeaderComponent } from './all-time-header/all-time-header.component';
+import { CustomRangePickerComponent } from './custom-range-picker/custom-range-picker.component';
 import { DayPickerComponent } from './day-picker/day-picker.component';
 import { EditBalanceComponent } from './edit-balance/edit-balance.component';
 import { MonthPickerComponent } from './month-picker/month-picker.component';
@@ -59,6 +60,16 @@ interface BalanceRow {
 }
 
 const BALANCE_HIDDEN_KEY = 'dashboard.balanceHidden';
+const SELECTED_RANGE_KEY = 'dashboard.selectedRange';
+/** Valid `RangeType` values, used to validate a stored range before trusting it. */
+const RANGE_VALUES: ReadonlySet<RangeType> = new Set<RangeType>([
+  'DAY',
+  'WEEK',
+  'MONTH',
+  'YEAR',
+  'MAX',
+  'CUSTOM',
+]);
 
 /**
  * One breakdown row: a single (category, currency) pairing.
@@ -92,6 +103,7 @@ const INCOME_LINE = 'income-line';
     MonthPickerComponent,
     YearPickerComponent,
     AllTimeHeaderComponent,
+    CustomRangePickerComponent,
     FlagPipe,
   ],
 })
@@ -110,8 +122,8 @@ export class DashboardComponent implements AfterViewInit {
   from!: Date;
   to!: Date;
 
-  selectedRange = signal<RangeType>('MONTH');
-  ranges: RangeType[] = ['DAY', 'WEEK', 'MONTH', 'YEAR', 'MAX'];
+  selectedRange = signal<RangeType>(DashboardComponent.readStoredRange());
+  ranges: RangeType[] = ['DAY', 'WEEK', 'MONTH', 'YEAR', 'MAX', 'CUSTOM'];
 
   dashboardData = signal<DashboardDTO | null>(null);
 
@@ -231,6 +243,9 @@ export class DashboardComponent implements AfterViewInit {
       return;
     }
     this.selectedRange.set(range);
+    // Persist so the next visit to /dashboard re-opens the same range without
+    // forcing the user to re-pick (mirrors the balance-visibility toggle).
+    localStorage.setItem(SELECTED_RANGE_KEY, range);
     // Switching ranges remounts the picker; its ngOnInit emits onChange,
     // which calls onDateSelected and triggers all data fetches with the new range.
   }
@@ -295,6 +310,16 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   /**
+   * Restore the last-selected range from localStorage, falling back to MONTH.
+   * Validated against `RANGE_VALUES` so a corrupted/stale entry can't crash
+   * the component or send an unknown range string to the backend.
+   */
+  private static readStoredRange(): RangeType {
+    const stored = localStorage.getItem(SELECTED_RANGE_KEY) as RangeType | null;
+    return stored && RANGE_VALUES.has(stored) ? stored : 'MONTH';
+  }
+
+  /**
    * Flatten backend `(category, currency, total)` rows for direct rendering,
    * sorted by total descending. No cross-currency aggregation — each row owns
    * exactly one currency, which is the only honest ordering without FX rates.
@@ -327,6 +352,8 @@ export class DashboardComponent implements AfterViewInit {
     this.chartUtil.updateTimelineLabels(canvasId, this.selectedRange(), {
       year: this.from?.getFullYear() ?? new Date().getFullYear(),
       month: (this.from?.getMonth() ?? new Date().getMonth()) + 1,
+      from: this.from,
+      to: this.to,
     });
 
     if (this.selectedRange() === 'MAX') {
@@ -376,6 +403,24 @@ export class DashboardComponent implements AfterViewInit {
             data.push(valueByKey.get(`${String(m).padStart(2, '0')}|${cur}`) ?? 0);
           }
           break;
+        case 'CUSTOM': {
+          // Backend buckets CUSTOM by full `yyyy-MM-dd`, so we walk every day
+          // in the selected window and look up the matching key. `to` is
+          // exclusive (start of the day after the last included day) — same
+          // convention as the other pickers.
+          const cursor = new Date(
+            this.from.getFullYear(),
+            this.from.getMonth(),
+            this.from.getDate(),
+          );
+          const end = new Date(this.to.getFullYear(), this.to.getMonth(), this.to.getDate());
+          while (cursor < end) {
+            const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`;
+            data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
+            cursor.setDate(cursor.getDate() + 1);
+          }
+          break;
+        }
       }
       return { label: cur, data };
     });
@@ -383,14 +428,19 @@ export class DashboardComponent implements AfterViewInit {
     this.chartUtil.updateLineSeries(canvasId, series);
   }
 
-  /** Aligns API bucket ids (hour/day/month strings) with the keys used to look up chart values. */
+  /**
+   * Aligns API bucket ids with the keys used to look up chart values.
+   * For numeric ranges (DAY hour, MONTH day-of-month, YEAR month-of-year) we
+   * pad to 2 digits so `'5'` matches the lookup key `'05'`. WEEK and the
+   * date-string ranges (MAX `'yyyy-MM'`, CUSTOM `'yyyy-MM-dd'`) are left
+   * untouched — padding `'2026-05-09'` would corrupt it to `'2026'`.
+   */
   private normalizeBucketId(raw: string | number | undefined | null): string {
     if (raw === undefined || raw === null) return '';
     const s = String(raw).trim();
     if (!s) return '';
-    const n = parseInt(s, 10);
-    if (!Number.isNaN(n) && this.selectedRange() !== 'WEEK') {
-      return String(n).padStart(2, '0');
+    if (/^\d+$/.test(s) && this.selectedRange() !== 'WEEK') {
+      return s.padStart(2, '0');
     }
     return s;
   }

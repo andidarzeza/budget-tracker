@@ -84,7 +84,7 @@ export class ChartUtils {
   updateTimelineLabels(
     canvasId: string,
     range: RangeType,
-    selectedTimeline: { year: number; month: number },
+    selectedTimeline: { year: number; month: number; from?: Date; to?: Date },
   ): void {
     const chart = this.charts.get(canvasId);
     if (!chart) return;
@@ -105,12 +105,34 @@ export class ChartUtils {
       case 'YEAR':
         labels = this.monthLabels;
         break;
+      case 'CUSTOM':
+        labels = this.customDayLabels(selectedTimeline.from, selectedTimeline.to);
+        break;
       case 'MAX':
       default:
         labels = [];
     }
     chart.data.labels = labels;
     chart.update();
+  }
+
+  /**
+   * "MMM d" labels for every day in `[from, to)` — `to` is exclusive (matches
+   * the convention used by every dashboard picker, where `to` is the start of
+   * the day after the last included day).
+   */
+  private customDayLabels(from?: Date, to?: Date): string[] {
+    if (!from || !to) return [];
+    const out: string[] = [];
+    const cursor = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+    const end = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+    while (cursor < end) {
+      out.push(
+        `${this.monthLabels[cursor.getMonth()]} ${cursor.getDate()}`,
+      );
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return out;
   }
 
   /** One line per series (typically per currency). Replaces all line datasets. */
