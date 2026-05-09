@@ -57,6 +57,7 @@
     @if (filterOpen()) {
         <filter
             [filterOptions]="filterOptions"
+            [initialValues]="lastFilterValues()"
             (applied)="onFilterApplied($event)"
             (reset)="onFilterReset()"
             (closed)="closeFilter()"

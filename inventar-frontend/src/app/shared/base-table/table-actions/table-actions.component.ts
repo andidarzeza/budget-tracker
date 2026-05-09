@@ -44,6 +44,13 @@ export class TableActionsComponent {
   readonly filterOpen = signal(false);
   /** How many filter fields are currently feeding the table query. */
   readonly appliedFilterCount = signal(0);
+  /**
+   * Last-applied form values, kept across panel close/open cycles so the
+   * panel re-renders with the same selections instead of an empty form.
+   * The filter component is destroyed when the user closes the panel
+   * (`@if (filterOpen())`), so its internal state can't survive on its own.
+   */
+  readonly lastFilterValues = signal<Record<string, unknown>>({});
 
   refresh(): void {
     this.onRefresh.emit();
@@ -61,13 +68,19 @@ export class TableActionsComponent {
     this.filterOpen.set(false);
   }
 
-  onFilterApplied(payload: { params: any; count: number }): void {
+  onFilterApplied(payload: {
+    params: any;
+    count: number;
+    values: Record<string, unknown>;
+  }): void {
     this.appliedFilterCount.set(payload.count);
+    this.lastFilterValues.set(payload.values);
     this.onSearch.emit({ params: payload.params });
   }
 
   onFilterReset(): void {
     this.appliedFilterCount.set(0);
+    this.lastFilterValues.set({});
     this.onReset.emit();
   }
 }

@@ -46,12 +46,18 @@ public class CategoryServiceImpl implements CategoryService {
     public ResponseEntity findAll(Pageable pageable, Map<String, String> params) {
         String category = params.get("category");
         String description = params.get("description");
+        String categoryType = params.get("categoryType");
         BooleanBuilder booleanBuilder = new BooleanBuilder()
                 .and(QCategory.category1.user.eq(securityContextService.username()))
                 .and(QCategory.category1.account.eq(params.get("account")))
-//                .and(QCategory.category1.categoryType.eq(params.get("categoryType")))
                 .and(QCategory.category1.description.containsIgnoreCase(Objects.nonNull(description) ? description : ""))
                 .and(QCategory.category1.category.containsIgnoreCase(Objects.nonNull(category) ? category : ""));
+
+        // Optional — only narrow by INCOME/EXPENSE when the caller explicitly
+        // asked for it; the Categories page itself wants every type.
+        if (Objects.nonNull(categoryType) && !categoryType.isEmpty()) {
+            booleanBuilder.and(QCategory.category1.categoryType.eq(categoryType));
+        }
 
         Page<Category> page = this.categoryRepository.findAll(booleanBuilder, pageable);
         ResponseWrapper<Category> categoryWrapper = new ResponseWrapper();

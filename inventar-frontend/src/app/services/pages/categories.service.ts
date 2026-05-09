@@ -17,7 +17,7 @@ export class CategoriesService extends BaseService<Category> {
   }
 
   expenseCategories(params: HttpParams): Observable<ResponseWrapper> {
-    params = params.append('categoryType', CategoryType.INCOME);
+    params = params.append('categoryType', CategoryType.EXPENSE);
     return this.findAll(params);
   }
 

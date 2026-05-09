@@ -33,189 +33,9 @@
     pointer-events: none;
 }
 
-/* —— Product preview (replaces the old illustration) —— */
-.preview {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 420px;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    animation: preview-rise 600ms var(--app-easing-emphasized, cubic-bezier(0.3, 0, 0, 1)) both;
-}
-
-@keyframes preview-rise {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.preview-card {
-    border-radius: var(--app-radius-lg);
-    padding: 1.25rem 1.4rem;
-    box-sizing: border-box;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.4);
-}
-
-.preview-card--balance {
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    color: #ffffff;
-    transform: rotate(-1deg);
-}
-
-.preview-card--list {
-    background: rgba(255, 255, 255, 0.96);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    color: var(--slate-900);
-    margin-left: 1.5rem;
-    transform: rotate(1deg);
-}
-
-.preview-eyebrow {
-    display: block;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.78);
-    margin-bottom: 0.45rem;
-}
-
-.preview-eyebrow--dark {
-    color: var(--slate-500);
-    margin-bottom: 0.85rem;
-}
-
-.preview-amount {
-    display: block;
-    font-family: var(--app-font-display);
-    font-size: 2.2rem;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-    font-variant-numeric: tabular-nums;
-}
-
-.preview-currencies {
-    display: flex;
-    gap: 14px;
-    margin-top: 0.85rem;
-    padding-top: 0.85rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.18);
-    flex-wrap: wrap;
-}
-
-.preview-currency {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.16);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    font-size: 0.85rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-}
-
-.preview-flag {
-    font-size: 0.95rem;
-    line-height: 1;
-}
-
-.preview-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.preview-row {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-top: 1px solid var(--slate-100);
-}
-
-.preview-row:first-child {
-    border-top: 0;
-}
-
-.preview-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.preview-icon mat-icon {
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    line-height: 20px;
-}
-
-.preview-icon--exp {
-    background: var(--indigo-100);
-    color: var(--indigo-600);
-}
-
-.preview-icon--inc {
-    background: #d1fae5;
-    color: var(--success-600);
-}
-
-.preview-row-main {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.preview-row-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--slate-900);
-    line-height: 1.25;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.preview-row-sub {
-    font-size: 0.75rem;
-    color: var(--slate-500);
-    margin-top: 2px;
-}
-
-.preview-row-amount {
-    font-size: 0.95rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-}
-
-.preview-row-amount--pos {
-    color: var(--success-600);
-}
-
-.preview-row-amount--neg {
-    color: var(--slate-700);
-}
+/* Preview styles live in `auth-visual.component.css`, shared between
+   login and register. Layout / gradient for `.visual-panel` stays here
+   because it's specific to the auth-page two-column shell. */
 
 .form-panel {
     display: flex;
@@ -312,15 +132,16 @@ button {
 .primary-action {
     background: linear-gradient(135deg, var(--indigo-500) 0%, var(--indigo-600) 100%) !important;
     color: #ffffff !important;
-    box-shadow: var(--app-shadow-accent) !important;
-    transition:
-        transform var(--app-motion-fast) var(--app-easing-standard),
-        box-shadow var(--app-motion-base) var(--app-easing-standard) !important;
+    /* Buttons use `mat-stroked-button`, which adds a 1px border + no
+       elevation shadow. Clear the border so the indigo fill is edge-to-edge
+       and skip the heavy raised-button shadow that looked out of place. */
+    border-color: transparent !important;
+    box-shadow: none !important;
+    transition: transform var(--app-motion-fast) var(--app-easing-standard) !important;
 }
 
 .primary-action:hover {
     transform: translateY(-1px);
-    box-shadow: 0 12px 28px -6px rgba(99, 102, 241, 0.5) !important;
 }
 
 .secondary-action {
@@ -342,28 +163,6 @@ button {
 input {
     color: var(--app-text);
     font-size: 15px;
-}
-
-.caps-lock {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    color: var(--app-text-muted);
-    font-family: var(--app-font-sans);
-    overflow: hidden;
-    height: 0;
-    transition: height var(--app-motion-base) var(--app-easing-standard);
-    margin-top: 6px;
-}
-
-.caps-lock-dot {
-    display: block;
-    height: 10px;
-    width: 10px;
-    background: var(--app-warning);
-    border-radius: 50%;
-    margin-top: 6px;
-    margin-right: 3px;
 }
 
 .show-hide-password {

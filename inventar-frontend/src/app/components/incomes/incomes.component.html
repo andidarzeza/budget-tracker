@@ -11,9 +11,9 @@
         [loading]="loading()"
         [pageIndex]="page" [loadingMore]="loadingMore()"
         [filterOptions]="filterOptions"
-        [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="resetAndQuery()"
+        [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="refresh()"
         (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
-        (layoutModeChange)="resetAndQuery()"
+        (layoutModeChange)="refresh()"
         [total]="totalItems$ | async"
         [displayEditAction]="true" [displayDeleteAction]="true"></base-table>
 

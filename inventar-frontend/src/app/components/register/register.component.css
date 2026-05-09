@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 2.5rem;
     background:
         radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.16), transparent 40%),
         radial-gradient(circle at 20% 100%, rgba(255, 255, 255, 0.08), transparent 50%),
@@ -24,15 +24,15 @@
     overflow: hidden;
 }
 
-.visual-image {
-    width: 100%;
-    max-width: 720px;
-    height: auto;
-    max-height: 92vh;
-    object-fit: contain;
-    position: relative;
-    z-index: 1;
-    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.25));
+/* Subtle dotted overlay matching the login page so the two visuals share
+   identical depth/grain. */
+.visual-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0/40px 40px;
+    pointer-events: none;
 }
 
 .form-panel {
@@ -95,21 +95,22 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.95rem;
+    gap: 1rem;
 }
 
 .name-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem;
+    gap: 1rem;
 }
 
 .full-width {
     width: 100%;
 }
 
+.username-field,
 .password-field {
-    margin-top: 0.25rem;
+    margin-top: 0.45rem;
 }
 
 .actions {
@@ -117,7 +118,7 @@
     flex-direction: column;
     align-items: center;
     gap: 0.65rem;
-    margin-top: 1.2rem;
+    margin-top: 1.4rem;
 }
 
 .actions > button {
@@ -131,15 +132,15 @@
 .primary-action {
     background: linear-gradient(135deg, var(--indigo-500) 0%, var(--indigo-600) 100%) !important;
     color: #ffffff !important;
-    box-shadow: var(--app-shadow-accent) !important;
-    transition:
-        transform var(--app-motion-fast) var(--app-easing-standard),
-        box-shadow var(--app-motion-base) var(--app-easing-standard) !important;
+    /* `mat-stroked-button` adds a 1px border by default; clear it so the
+       indigo fill stays edge-to-edge and matches the login primary button. */
+    border-color: transparent !important;
+    box-shadow: none !important;
+    transition: transform var(--app-motion-fast) var(--app-easing-standard) !important;
 }
 
 .primary-action:hover {
     transform: translateY(-1px);
-    box-shadow: 0 12px 28px -6px rgba(99, 102, 241, 0.5) !important;
 }
 
 .secondary-action {
@@ -153,26 +154,9 @@
     background: var(--app-surface-hover) !important;
 }
 
-.caps-lock {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    color: var(--app-text-muted);
-    font-family: var(--app-font-sans);
-    overflow: hidden;
-    height: 0;
-    transition: height var(--app-motion-base) var(--app-easing-standard);
-    margin-top: 6px;
-}
-
-.caps-lock-dot {
-    display: block;
-    height: 10px;
-    width: 10px;
-    background: var(--app-warning);
-    border-radius: 50%;
-    margin-top: 6px;
-    margin-right: 3px;
+.divider-label {
+    color: var(--app-text-subtle);
+    font-size: 0.84rem;
 }
 
 @media only screen and (max-width: 1000px) {
@@ -225,10 +209,21 @@
 
     .name-row {
         grid-template-columns: 1fr;
-        gap: 0.9rem;
+        /* Match the form's vertical rhythm: 1rem gap + 0.45rem margin-top
+           on the second child = 1.45rem total, same as username/password
+           sit below the row above them. */
+        gap: 1rem;
+    }
+
+    .name-row > :nth-child(2) {
+        margin-top: 0.45rem;
     }
 
     .actions > button {
         min-height: 48px;
+    }
+
+    .divider-label {
+        font-size: 0.8rem;
     }
 }

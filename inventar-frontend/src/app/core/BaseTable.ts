@@ -109,7 +109,11 @@ export abstract class BaseTable<E> extends Unsubscribe {
     }
 
     openAddEditForm(entity?: E): void {
-        this.dialog.openDialog(this.createComponent, entity).onSuccess(() => this.resetAndQuery());
+        // After save, re-query keeping the active filters so the user's view
+        // doesn't suddenly widen to "all records" — they can still see the
+        // newly-inserted/edited item if it matches the current filter, or
+        // get a clean empty result if it doesn't.
+        this.dialog.openDialog(this.createComponent, entity).onSuccess(() => this.refresh());
     }
 
     onSidenavClose(): void {
@@ -131,6 +135,22 @@ export abstract class BaseTable<E> extends Unsubscribe {
         this.query(false);
     }
 
+    /**
+     * Re-query from page 0 keeping the currently-applied filters. Used by
+     * the toolbar's refresh button, layout switches, and after insert /
+     * delete — anything that wants a fresh result set without throwing
+     * away the user's filter selection.
+     */
+    refresh(): void {
+        this.page = 0;
+        this.query(false);
+    }
+
+    /**
+     * Wipe the active filters *and* re-query. Wired to the filter panel's
+     * explicit "Reset" button — never call this from refresh/insert/delete
+     * paths, since those should preserve filters.
+     */
     resetAndQuery(): void {
         this.previousFilters = null;
         this.page = 0;
@@ -149,7 +169,7 @@ export abstract class BaseTable<E> extends Unsubscribe {
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(() => {
                 this.accountService.findOne(this.accountService.getAccount()).subscribe();
-                this.resetAndQuery();
+                this.refresh();
                 this.toaster.success("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
             })
     }

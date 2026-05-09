@@ -146,7 +146,7 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
           moneySpent: totalPrice,
           currency: 'ALL',
           description: sellerName
-        }).onSuccess(() => this.resetAndQuery());
+        }).onSuccess(() => this.refresh());
       },
       error: () => {
         this.toaster.error(

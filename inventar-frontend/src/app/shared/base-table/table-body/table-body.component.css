@@ -26,7 +26,6 @@
     background: var(--app-surface);
     color: var(--app-text);
     box-sizing: border-box;
-    transition: background var(--app-motion-fast) var(--app-easing-standard);
 }
 
 .data-cell {

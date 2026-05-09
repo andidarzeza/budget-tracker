@@ -55,8 +55,18 @@ export class FilterComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
 
   @Input() filterOptions: FilterOptions[] = [];
+  /**
+   * Last-applied form values, supplied by the parent. The filter is mounted
+   * via `@if`, so closing and reopening the panel destroys the component
+   * and loses any form state. Hydrating from the parent restores it.
+   */
+  @Input() initialValues: Record<string, unknown> = {};
 
-  @Output() applied = new EventEmitter<{ params: HttpParams; count: number }>();
+  @Output() applied = new EventEmitter<{
+    params: HttpParams;
+    count: number;
+    values: Record<string, unknown>;
+  }>();
   @Output() reset = new EventEmitter<void>();
   @Output() closed = new EventEmitter<void>();
 
@@ -73,8 +83,13 @@ export class FilterComponent implements OnInit {
 
   ngOnInit(): void {
     for (const option of this.filterOptions ?? []) {
-      this.formGroup.addControl(option.field, new FormControl<unknown>(null));
+      const seed = this.initialValues?.[option.field] ?? null;
+      this.formGroup.addControl(option.field, new FormControl<unknown>(seed));
     }
+    // Re-create the snapshot from the parent-provided values so the
+    // `dirty` flag and `appliedCount` are accurate immediately on mount.
+    this.appliedSnapshot = { ...(this.initialValues ?? {}) };
+    this.appliedCount.set(Object.keys(this.appliedSnapshot).length);
     this.formGroup.valueChanges.subscribe(() => this.recomputeDirty());
   }
 
@@ -97,7 +112,7 @@ export class FilterComponent implements OnInit {
     this.appliedSnapshot = snapshot;
     this.appliedCount.set(count);
     this.dirty.set(false);
-    this.applied.emit({ params, count });
+    this.applied.emit({ params, count, values: snapshot });
   }
 
   clear(): void {

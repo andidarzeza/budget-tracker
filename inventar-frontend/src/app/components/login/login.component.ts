@@ -4,18 +4,17 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { CapsLockDirective } from 'src/app/directives/caps-lock/caps-lock.directive';
 import { SimplifiedAccount } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { AuthVisualComponent } from 'src/app/shared/auth-visual/auth-visual.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
@@ -35,9 +34,8 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
+    AuthVisualComponent,
     LabeledFormInputComponent,
-    CapsLockDirective,
   ],
 })
 export class LoginComponent {
@@ -62,12 +60,12 @@ export class LoginComponent {
   });
 
   constructor() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const account = localStorage.getItem('account');
-    if (!account) {
-      this.router.navigate(['/account']);
-    }
-    if (currentUser) {
+    // If a session is still valid (e.g. user opens /login from the address
+    // bar while already authed) skip the form and go straight to the app.
+    // Don't try to redirect anywhere else from here — sending an unauthed
+    // user to a guarded route bounces back through `logout()` and briefly
+    // mounts the next component, which causes a fullscreen-spinner flash.
+    if (this.authenticationService.getToken()) {
       this.router.navigate(['/dashboard']);
     }
   }

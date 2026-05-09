@@ -1,57 +1,6 @@
 <div class="login-container">
     <section class="visual-panel" aria-hidden="true">
-        <div class="preview">
-            <div class="preview-card preview-card--balance">
-                <span class="preview-eyebrow">My balance</span>
-                <span class="preview-amount">$12,480.32</span>
-                <div class="preview-currencies">
-                    <span class="preview-currency">
-                        <span class="preview-flag">🇪🇺</span>
-                        <span class="preview-currency-amount">€ 4,210</span>
-                    </span>
-                    <span class="preview-currency">
-                        <span class="preview-flag">🇬🇧</span>
-                        <span class="preview-currency-amount">£ 1,820</span>
-                    </span>
-                </div>
-            </div>
-
-            <div class="preview-card preview-card--list">
-                <span class="preview-eyebrow preview-eyebrow--dark">Recent activity</span>
-                <ul class="preview-list">
-                    <li class="preview-row">
-                        <span class="preview-icon preview-icon--exp">
-                            <mat-icon>shopping_basket</mat-icon>
-                        </span>
-                        <span class="preview-row-main">
-                            <span class="preview-row-title">Groceries</span>
-                            <span class="preview-row-sub">Fri, May 3</span>
-                        </span>
-                        <span class="preview-row-amount preview-row-amount--neg">−$54.00</span>
-                    </li>
-                    <li class="preview-row">
-                        <span class="preview-icon preview-icon--inc">
-                            <mat-icon>trending_up</mat-icon>
-                        </span>
-                        <span class="preview-row-main">
-                            <span class="preview-row-title">Salary</span>
-                            <span class="preview-row-sub">May 1</span>
-                        </span>
-                        <span class="preview-row-amount preview-row-amount--pos">+$2,400.00</span>
-                    </li>
-                    <li class="preview-row">
-                        <span class="preview-icon preview-icon--exp">
-                            <mat-icon>local_cafe</mat-icon>
-                        </span>
-                        <span class="preview-row-main">
-                            <span class="preview-row-title">Coffee</span>
-                            <span class="preview-row-sub">Today</span>
-                        </span>
-                        <span class="preview-row-amount preview-row-amount--neg">−$4.20</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <auth-visual></auth-visual>
     </section>
 
     <section class="form-panel">
@@ -75,6 +24,7 @@
                     [inputId]="'login-username'"
                     [label]="'Username'"
                     [placeholder]="'Enter username'"
+                    [icon]="'person'"
                     [control]="$any(loginGroup.get('username'))"
                     [type]="'text'">
                 </cb-labeled-form-input>
@@ -83,24 +33,22 @@
                     [inputId]="'login-password'"
                     [label]="'Password'"
                     [placeholder]="'Enter password'"
+                    [icon]="'lock'"
                     [control]="$any(loginGroup.get('password'))"
                     [type]="'password'">
                 </cb-labeled-form-input>
 
                 <div class="actions">
-                    <button [disabled]="showSpinner()" class="primary-action" mat-raised-button color="primary" (click)="login()">
+                    <button type="button" [disabled]="showSpinner()" class="primary-action" mat-stroked-button (click)="login()">
                         Sign in
                     </button>
                     <span class="divider-label">or</span>
 
-                    <button [disabled]="showSpinner()" class="secondary-action" mat-raised-button color="primary"
+                    <button type="button" [disabled]="showSpinner()" class="secondary-action" mat-stroked-button
                         (click)="navigate('/register')">
                         Create account
                     </button>
 
-                </div>
-                <div class="caps-lock" appCapsLock>
-                    <span class="caps-lock-dot"></span> Caps lock is on.
                 </div>
             </form>
         </mat-card>

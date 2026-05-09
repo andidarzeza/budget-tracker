@@ -60,6 +60,12 @@
   }
 }
 
+/* Specificity note: the theme overrides below use
+   `:host-context(.light-theme) .input-wrapper { border-color: … !important }`
+   (specificity 0,2,1), which would otherwise beat a plain
+   `.required-field { border-color … !important }` (0,1,0) — leaving the
+   resting border grey when the field is invalid. We replicate the rule
+   under both theme contexts so the danger border wins consistently. */
 .required-field {
   border-color: var(--app-danger) !important;
 
@@ -73,6 +79,11 @@
       color: var(--app-danger) !important;
     }
   }
+}
+
+:host-context(.light-theme) .input-wrapper.required-field,
+:host-context(.dark-theme) .input-wrapper.required-field {
+  border-color: var(--app-danger) !important;
 }
 
 .required-text {

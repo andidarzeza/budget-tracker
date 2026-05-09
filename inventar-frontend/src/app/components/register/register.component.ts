@@ -6,9 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { CapsLockDirective } from 'src/app/directives/caps-lock/caps-lock.directive';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { AuthVisualComponent } from 'src/app/shared/auth-visual/auth-visual.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
@@ -28,8 +28,8 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
+    AuthVisualComponent,
     LabeledFormInputComponent,
-    CapsLockDirective,
   ],
 })
 export class RegisterComponent {
@@ -53,8 +53,10 @@ export class RegisterComponent {
   });
 
   constructor() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser) {
+    // Only redirect when the stored token is still valid — `getToken()`
+    // returns null for expired sessions, so an idle tab doesn't get
+    // bounced into a guarded route.
+    if (this.authenticationService.getToken()) {
       this.router.navigate(['/dashboard']);
     }
   }

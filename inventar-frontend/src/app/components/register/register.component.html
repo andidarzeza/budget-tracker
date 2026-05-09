@@ -1,6 +1,6 @@
 <div class="register-container">
-    <section class="visual-panel">
-        <img class="visual-image" src="assets/login-hero.svg" alt="Budget planning illustration">
+    <section class="visual-panel" aria-hidden="true">
+        <auth-visual></auth-visual>
     </section>
 
     <section class="form-panel">
@@ -25,6 +25,7 @@
                         [inputId]="'register-first-name'"
                         [label]="'First Name'"
                         [placeholder]="'Enter first name'"
+                        [icon]="'badge'"
                         [control]="$any(registerGroup.get('firstName'))"
                         [type]="'text'">
                     </cb-labeled-form-input>
@@ -33,15 +34,17 @@
                         [inputId]="'register-last-name'"
                         [label]="'Last Name'"
                         [placeholder]="'Enter last name'"
+                        [icon]="'badge'"
                         [control]="$any(registerGroup.get('lastName'))"
                         [type]="'text'">
                     </cb-labeled-form-input>
                 </div>
 
-                <cb-labeled-form-input class="full-width"
+                <cb-labeled-form-input class="full-width username-field"
                     [inputId]="'register-username'"
                     [label]="'Username'"
                     [placeholder]="'Choose username'"
+                    [icon]="'person'"
                     [control]="$any(registerGroup.get('username'))"
                     [type]="'text'">
                 </cb-labeled-form-input>
@@ -50,20 +53,19 @@
                     [inputId]="'register-password'"
                     [label]="'Password'"
                     [placeholder]="'Create password'"
+                    [icon]="'lock'"
                     [control]="$any(registerGroup.get('password'))"
                     [type]="'password'">
                 </cb-labeled-form-input>
 
                 <div class="actions">
-                    <button [disabled]="showSpinner()" mat-raised-button color="primary" class="primary-action" (click)="login()">
+                    <button type="button" [disabled]="showSpinner()" mat-stroked-button class="primary-action" (click)="login()">
                         Create account
                     </button>
-                    <button [disabled]="showSpinner()" mat-stroked-button class="secondary-action" (click)="navigate('/login')">
+                    <span class="divider-label">or</span>
+                    <button type="button" [disabled]="showSpinner()" mat-stroked-button class="secondary-action" (click)="navigate('/login')">
                         Back to sign in
                     </button>
-                </div>
-                <div class="caps-lock" appCapsLock>
-                    <span class="caps-lock-dot"></span> Caps lock is on.
                 </div>
             </form>
         </mat-card>
