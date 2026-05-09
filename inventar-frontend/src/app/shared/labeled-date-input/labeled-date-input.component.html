@@ -1,0 +1,33 @@
+<div class="form-field" [style.gap]="label ? '.25rem' : ''">
+  <label [for]="inputId || null">
+    {{ label }}
+    @if (required) {
+      *
+    }
+  </label>
+  <div
+    class="input-wrapper relative"
+    [class.required-field]="displayError"
+    (click)="picker.open()"
+  >
+    <input
+      [id]="inputId || null"
+      [matDatepicker]="picker"
+      [formControl]="control"
+      [placeholder]="placeholder"
+      readonly
+      (focus)="picker.open()"
+    />
+    <mat-icon class="input-icon">calendar_today</mat-icon>
+    <mat-datepicker #picker></mat-datepicker>
+    @if (displayError) {
+      <div class="error-message">
+        @if (control.errors?.["required"]) {
+          This field is required.
+        } @else if (control.errors?.["matDatepickerParse"]) {
+          Please choose a valid date.
+        }
+      </div>
+    }
+  </div>
+</div>

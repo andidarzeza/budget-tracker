@@ -86,6 +86,10 @@
                     </ng-container>
 
                     <ng-container *ngSwitchCase="2">
+                        <cb-labeled-date-input class="dialog-form__field dialog-form__date"
+                            label="Date"
+                            [control]="$any(formGroup.get('createdTime'))">
+                        </cb-labeled-date-input>
                         <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
                             label="Description"
                             placeholder="Write a note…"
@@ -148,6 +152,13 @@
                 </cb-select-input>
             </div>
 
+            <div class="dialog-form__row">
+                <cb-labeled-date-input class="dialog-form__field dialog-form__date"
+                    label="Date"
+                    [control]="$any(formGroup.get('createdTime'))">
+                </cb-labeled-date-input>
+            </div>
+
             <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
                 label="Description"
                 placeholder="Write a note…"
@@ -208,6 +219,10 @@
                 <ng-container *ngSwitchCase="1">
                     <ng-container *ngIf="isQrPrefillMode; else expenseAmountStep">
                         <p class="create-wizard__intro">Add an optional note so you remember this expense later.</p>
+                        <cb-labeled-date-input class="dialog-form__field dialog-form__date"
+                            label="Date"
+                            [control]="$any(formGroup.get('createdTime'))">
+                        </cb-labeled-date-input>
                         <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
                             label="Description"
                             placeholder="Write a note…"
@@ -277,6 +292,10 @@
                 <ng-container *ngSwitchCase="2">
                     <ng-container *ngIf="!isQrPrefillMode">
                         <p class="create-wizard__intro">Add an optional note so you remember this expense later.</p>
+                        <cb-labeled-date-input class="dialog-form__field dialog-form__date"
+                            label="Date"
+                            [control]="$any(formGroup.get('createdTime'))">
+                        </cb-labeled-date-input>
                         <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
                             label="Description"
                             placeholder="Write a note…"

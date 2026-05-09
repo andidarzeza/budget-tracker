@@ -86,6 +86,10 @@
                     </ng-container>
 
                     <ng-container *ngSwitchCase="2">
+                        <cb-labeled-date-input class="dialog-form__field dialog-form__date"
+                            label="Date"
+                            [control]="$any(formGroup.get('createdTime'))">
+                        </cb-labeled-date-input>
                         <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
                             label="Description"
                             placeholder="Write a note…"
@@ -145,6 +149,13 @@
                     [options]="currencies"
                     [displayWith]="displayCurrency">
                 </cb-select-input>
+            </div>
+
+            <div class="dialog-form__row">
+                <cb-labeled-date-input class="dialog-form__field dialog-form__date"
+                    label="Date"
+                    [control]="$any(formGroup.get('createdTime'))">
+                </cb-labeled-date-input>
             </div>
 
             <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
@@ -267,6 +278,10 @@
 
                 <ng-container *ngSwitchCase="2">
                     <p class="create-wizard__intro">Add an optional note so you remember this income later.</p>
+                    <cb-labeled-date-input class="dialog-form__field dialog-form__date"
+                        label="Date"
+                        [control]="$any(formGroup.get('createdTime'))">
+                    </cb-labeled-date-input>
                     <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
                         label="Description"
                         placeholder="Write a note…"

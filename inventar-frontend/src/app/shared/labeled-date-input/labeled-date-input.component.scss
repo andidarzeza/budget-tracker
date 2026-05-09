@@ -1,0 +1,126 @@
+/* Mirrors `cb-labeled-form-input` — keep them visually identical so date
+   fields blend into existing forms without bespoke spacing tweaks. */
+.form-field {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 11px;
+    border: 1px solid;
+    border-radius: 6px;
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:focus-within {
+      border-color: var(--app-accent) !important;
+      box-shadow: 0 0 0 3px var(--app-accent-soft);
+    }
+
+    .input-icon {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+
+    input {
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 0;
+      font-size: 16px;
+      line-height: 1.5;
+      flex: 1 1 auto;
+      cursor: pointer;
+      transform: scale(0.875);
+      transform-origin: left top;
+      caret-color: transparent;
+
+      &::placeholder {
+        color: #9ca3af;
+      }
+    }
+
+    .error-message {
+      position: absolute;
+      bottom: -100%;
+      font-size: 12px;
+      color: #f44336;
+      transform: translateY(calc(-100% - 2px));
+      opacity: 0;
+      animation: error-slide-in 0.18s ease-out forwards;
+    }
+  }
+}
+
+.required-field {
+  border-color: var(--app-danger) !important;
+
+  &:focus-within {
+    border-color: var(--app-danger) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-danger) 18%, transparent);
+  }
+
+  input {
+    &::placeholder {
+      color: var(--app-danger) !important;
+    }
+  }
+}
+
+@keyframes error-slide-in {
+  from {
+    transform: translateY(calc(-80%));
+    opacity: 0;
+  }
+  to {
+    transform: translateY(calc(-100% - 2px));
+    opacity: 1;
+  }
+}
+
+:host-context(.dark-theme) {
+  .form-field {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .input-wrapper {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+
+    input {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  .mat-icon {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+:host-context(.light-theme) {
+  .form-field {
+    color: #1a1a1a;
+  }
+
+  .input-wrapper {
+    background-color: #f9fafb;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+
+    input {
+      color: rgba(0, 0, 0, 0.9);
+    }
+  }
+
+  .mat-icon {
+    color: rgba(0, 0, 0, 0.6);
+  }
+}

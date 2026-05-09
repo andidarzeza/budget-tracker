@@ -30,6 +30,7 @@ import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { AmountKeypadComponent } from 'src/app/shared/amount-keypad/amount-keypad.component';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
+import { LabeledDateInputComponent } from 'src/app/shared/labeled-date-input/labeled-date-input.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
@@ -56,6 +57,7 @@ interface AddExpenseDialogData {
     MatIconModule,
     MatMenuModule,
     CreateFormComponent,
+    LabeledDateInputComponent,
     LabeledFormInputComponent,
     LabeledTextareaComponent,
     SelectInputComponent,
@@ -125,6 +127,8 @@ export class AddExpenseComponent implements OnInit {
     categoryID: ['', Validators.required],
     moneySpent: ['', Validators.required],
     currency: ['', Validators.required],
+    // Transaction date — bound to the Material datepicker; defaults to today.
+    createdTime: [new Date() as Date | null, Validators.required],
   });
 
   currencies = CURRENCIES;
@@ -222,8 +226,7 @@ export class AddExpenseComponent implements OnInit {
         this.loadingMessage.set('Saving…');
         this.loadingData.set(true);
         this.savingEntity.set(true);
-        const payload = this.formGroup.value;
-        payload.account = this.accountService.getAccount();
+        const payload = this.buildPayload();
         this.expenseService
           .update(this.expense!.id!, payload)
           .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
@@ -241,8 +244,7 @@ export class AddExpenseComponent implements OnInit {
         this.loadingMessage.set('Saving…');
         this.loadingData.set(true);
         this.savingEntity.set(true);
-        const payload = this.formGroup.value;
-        payload.account = this.accountService.getAccount();
+        const payload = this.buildPayload();
         this.expenseService
           .save(payload)
           .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
@@ -264,6 +266,19 @@ export class AddExpenseComponent implements OnInit {
 
   get id() {
     return this.expense?.id;
+  }
+
+  /**
+   * Build the API payload. `createdTime` is already a Date from the
+   * datepicker; we normalise it to local noon so DST shifts can't drag the
+   * date into the previous day server-side.
+   */
+  private buildPayload(): any {
+    const value = { ...this.formGroup.value };
+    const d = value.createdTime instanceof Date ? value.createdTime : new Date();
+    value.createdTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
+    value.account = this.accountService.getAccount();
+    return value;
   }
 
   private primeWizardAmountEntry(): void {
@@ -321,7 +336,10 @@ export class AddExpenseComponent implements OnInit {
     return this.expenseService.findOne(this.id!).pipe(
       takeUntilDestroyed(this.destroyRef),
       tap((expense) => {
-        this.formGroup.patchValue(expense);
+        this.formGroup.patchValue({
+          ...expense,
+          createdTime: expense?.createdTime ? new Date(expense.createdTime) : new Date(),
+        });
         this.cdr.markForCheck();
       }),
       observeOn(asyncScheduler),

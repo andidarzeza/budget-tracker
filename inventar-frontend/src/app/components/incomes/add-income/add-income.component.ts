@@ -30,6 +30,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { AmountKeypadComponent } from 'src/app/shared/amount-keypad/amount-keypad.component';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
+import { LabeledDateInputComponent } from 'src/app/shared/labeled-date-input/labeled-date-input.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
@@ -48,6 +49,7 @@ import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment'
     MatIconModule,
     MatMenuModule,
     CreateFormComponent,
+    LabeledDateInputComponent,
     LabeledFormInputComponent,
     LabeledTextareaComponent,
     SelectInputComponent,
@@ -127,6 +129,8 @@ export class AddIncomeComponent implements OnInit {
       categoryID: ['', Validators.required],
       incoming: ['', Validators.required],
       currency: ['', Validators.required],
+      // Transaction date — bound to the Material datepicker; defaults to today.
+      createdTime: [new Date() as Date | null, Validators.required],
     });
   }
 
@@ -205,8 +209,7 @@ export class AddIncomeComponent implements OnInit {
         this.loadingMessage.set('Saving…');
         this.loadingData.set(true);
         this.savingEntity.set(true);
-        const payload = this.formGroup.value;
-        payload.account = this.accountService.getAccount();
+        const payload = this.buildPayload();
         this.incomeService
           .update(this.income!.id, payload)
           .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
@@ -218,8 +221,7 @@ export class AddIncomeComponent implements OnInit {
         this.loadingMessage.set('Saving…');
         this.loadingData.set(true);
         this.savingEntity.set(true);
-        const payload = this.formGroup.value;
-        payload.account = this.accountService.getAccount();
+        const payload = this.buildPayload();
         this.incomeService
           .save(payload)
           .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
@@ -332,7 +334,10 @@ export class AddIncomeComponent implements OnInit {
     return this.incomeService.findOne(this.id!).pipe(
       takeUntilDestroyed(this.destroyRef),
       tap((inc) => {
-        this.formGroup.patchValue(inc);
+        this.formGroup.patchValue({
+          ...inc,
+          createdTime: inc?.createdTime ? new Date(inc.createdTime) : new Date(),
+        });
         this.cdr.markForCheck();
       }),
       observeOn(asyncScheduler),
@@ -340,5 +345,18 @@ export class AddIncomeComponent implements OnInit {
         this.loadingData.set(false);
       }),
     );
+  }
+
+  /**
+   * Build the API payload. `createdTime` is already a Date from the
+   * datepicker; we normalise it to local noon so DST shifts can't drag the
+   * date into the previous day server-side.
+   */
+  private buildPayload(): any {
+    const value = { ...this.formGroup.value };
+    const d = value.createdTime instanceof Date ? value.createdTime : new Date();
+    value.createdTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0);
+    value.account = this.accountService.getAccount();
+    return value;
   }
 }

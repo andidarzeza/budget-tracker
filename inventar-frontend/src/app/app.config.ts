@@ -1,5 +1,6 @@
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Routes } from '@angular/router';
 import { provideToastr } from 'ngx-toastr';
@@ -83,5 +84,9 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
     provideToastr(),
+    // Material datepickers (dashboard pickers, expense/income date input) need
+    // a DateAdapter from the environment injector — providing it once here
+    // avoids per-component MatNativeDateModule plumbing.
+    provideNativeDateAdapter(),
   ],
 };

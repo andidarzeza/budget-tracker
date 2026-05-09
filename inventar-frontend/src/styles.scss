@@ -1307,6 +1307,12 @@ html.cdk-global-scrollblock {
     grid-template-columns: minmax(0, 1.25fr) minmax(120px, 0.85fr);
 }
 
+/* Standalone Date row — keep the field compact instead of stretching across 3 columns. */
+.dialog-form .dialog-form__row > .dialog-form__date:only-child {
+    grid-column: 1 / 2;
+    max-width: 240px;
+}
+
 .dialog-form .mat-form-field {
     width: 100%;
 }

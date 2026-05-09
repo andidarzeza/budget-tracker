@@ -7,8 +7,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { map, mergeMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 import { CapsLockDirective } from 'src/app/directives/caps-lock/caps-lock.directive';
+import { SimplifiedAccount } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -85,12 +87,23 @@ export class LoginComponent {
         mergeMap(() => this.accountService.findAllAccountsSimplified()),
       )
       .subscribe(
-        (response: any) => {
+        (accounts: SimplifiedAccount[]) => {
+          // One profile: skip the picker and drop the user straight on the dashboard.
+          // Multiple: keep the picker so they can pick which workspace to open.
+          if (accounts?.length === 1) {
+            const only = accounts[0];
+            this.accountService
+              .findOne(only.id)
+              .pipe(catchError(() => of(null)))
+              .subscribe(() => {
+                localStorage.setItem('account', only.id);
+                this.stopSpinner(() => this.router.navigate(['/dashboard']));
+              });
+            return;
+          }
           this.stopSpinner(() => {
             this.router.navigateByUrl('/account', {
-              state: {
-                accounts: response,
-              },
+              state: { accounts },
             });
           });
         },

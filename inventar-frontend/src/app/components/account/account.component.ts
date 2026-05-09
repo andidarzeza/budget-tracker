@@ -61,6 +61,7 @@ export class AccountComponent implements OnInit {
         )
         .subscribe(
           (simplifiedAccounts: SimplifiedAccount[]) => {
+            if (this.tryAutoSelect(simplifiedAccounts)) return;
             this.accounts.set(simplifiedAccounts);
           },
           () => {
@@ -68,9 +69,17 @@ export class AccountComponent implements OnInit {
           },
         );
     } else {
+      if (this.tryAutoSelect(accounts)) return;
       this.accounts.set(accounts);
       this.stopSpinner();
     }
+  }
+
+  /** Single profile: skip the picker entirely and load it. Returns true when the redirect fires. */
+  private tryAutoSelect(accounts: SimplifiedAccount[] | null | undefined): boolean {
+    if (accounts?.length !== 1) return false;
+    this.selectAccount(accounts[0]);
+    return true;
   }
 
   selectAccount(account: SimplifiedAccount): void {
