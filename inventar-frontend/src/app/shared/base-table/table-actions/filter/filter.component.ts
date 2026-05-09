@@ -1,76 +1,141 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { MatDividerModule } from '@angular/material/divider';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  signal,
+} from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
-import { SharedService } from 'src/app/services/shared.service';
-import { FilterActionsComponent } from './filter-actions/filter-actions.component';
-import { FilterHeaderComponent } from './filter-header/filter-header.component';
 import { FilterOptions } from './filter.models';
 
+/**
+ * Collapsible filter panel rendered below a table's toolbar.
+ *
+ * UX rules baked in:
+ * - Closing (X) preserves whatever's currently applied — only the panel
+ *   disappears.
+ * - Reset wipes both the form *and* the applied filters in a single click.
+ * - Apply does not auto-close the panel, so users can iterate (tweak
+ *   description, re-apply, etc.) without re-opening every time.
+ * - `appliedCount` is exposed so the toolbar can render an "n active" badge.
+ */
 @Component({
   selector: 'filter',
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatDividerModule,
+    MatIconModule,
     LabeledFormInputComponent,
     SelectInputComponent,
-    FilterActionsComponent,
-    FilterHeaderComponent,
+  ],
+  animations: [
+    trigger('panelIn', [
+      transition(':enter', [
+        style({ height: 0, opacity: 0 }),
+        animate('180ms ease-out', style({ height: '*', opacity: 1 })),
+      ]),
+      transition(':leave', [animate('140ms ease-in', style({ height: 0, opacity: 0 }))]),
+    ]),
   ],
 })
 export class FilterComponent implements OnInit {
-  private readonly formBuilder = inject(UntypedFormBuilder);
-  readonly sharedService = inject(SharedService);
+  private readonly formBuilder = inject(FormBuilder);
 
-  @Output() onReset = new EventEmitter<void>();
-  @Output() onSearch = new EventEmitter<{ params: HttpParams }>();
-  @Input() filterOptions: FilterOptions[];
+  @Input() filterOptions: FilterOptions[] = [];
 
-  readonly formGroup: UntypedFormGroup = this.formBuilder.group({});
+  @Output() applied = new EventEmitter<{ params: HttpParams; count: number }>();
+  @Output() reset = new EventEmitter<void>();
+  @Output() closed = new EventEmitter<void>();
+
+  readonly formGroup: FormGroup = this.formBuilder.group({});
+
+  /** Number of fields currently committed to the table query. */
+  readonly appliedCount = signal(0);
+  /** True when the form differs from the applied state — drives Apply enablement. */
+  readonly dirty = signal(false);
+  readonly hasFormValues = computed(() => this.dirty() || this.appliedCount() > 0);
+
+  /** Snapshot of the last-applied form values, used to detect dirtiness. */
+  private appliedSnapshot: Record<string, unknown> = {};
 
   ngOnInit(): void {
-    this.filterOptions?.forEach((filterOption: FilterOptions) => {
-      this.formGroup.addControl(filterOption.field, new UntypedFormControl());
-    });
+    for (const option of this.filterOptions ?? []) {
+      this.formGroup.addControl(option.field, new FormControl<unknown>(null));
+    }
+    this.formGroup.valueChanges.subscribe(() => this.recomputeDirty());
   }
 
   onEnter(): void {
-    this.search();
+    this.apply();
   }
 
-  reset(): void {
-    this.formGroup.reset();
-    this.onReset.emit();
-  }
-
-  search(): void {
-    let params: HttpParams = new HttpParams();
-    for (const [key, value] of Object.entries(this.formGroup.value)) {
-      if (value) {
-        params = params.append(key, value as string);
-      }
+  apply(): void {
+    let params = new HttpParams();
+    let count = 0;
+    const snapshot: Record<string, unknown> = {};
+    for (const [key, raw] of Object.entries(this.formGroup.value)) {
+      // Treat empty strings, null, and undefined as "not applied" so users
+      // can clear an individual field by deleting its text.
+      if (raw === '' || raw == null) continue;
+      params = params.append(key, String(raw));
+      snapshot[key] = raw;
+      count++;
     }
-    this.onSearch.emit({ params });
+    this.appliedSnapshot = snapshot;
+    this.appliedCount.set(count);
+    this.dirty.set(false);
+    this.applied.emit({ params, count });
   }
 
-  /**
-   * Bridge between the legacy filter-options config (`{ displayBy, valueBy }`)
-   * and `cb-select-input`'s `displayWith` / `valueWith` callbacks.
-   * Returns a function that reads `option[displayBy]` / `option[valueBy]`.
-   */
+  clear(): void {
+    this.formGroup.reset();
+    this.appliedSnapshot = {};
+    this.appliedCount.set(0);
+    this.dirty.set(false);
+    this.reset.emit();
+  }
+
+  close(): void {
+    this.closed.emit();
+  }
+
+  /** `cb-select-input` callback — read `option[displayBy]` from the legacy config. */
   displayBy(filterOption: FilterOptions): (opt: any) => string {
     const key = filterOption?.matSelectOptions?.displayBy;
     return (opt: any) => (opt && key ? String(opt[key]) : '');
   }
 
+  /** `cb-select-input` callback — read `option[valueBy]` from the legacy config. */
   valueBy(filterOption: FilterOptions): (opt: any) => unknown {
     const key = filterOption?.matSelectOptions?.valueBy;
     return (opt: any) => (opt && key ? opt[key] : opt);
+  }
+
+  private recomputeDirty(): void {
+    const current = this.formGroup.value as Record<string, unknown>;
+    // Compare normalized maps (empty/null treated identically) so toggling a
+    // field between '' and null doesn't flag dirty.
+    const norm = (v: unknown) => (v === '' || v == null ? null : v);
+    const keys = new Set([...Object.keys(current), ...Object.keys(this.appliedSnapshot)]);
+    for (const k of keys) {
+      if (norm(current[k]) !== norm(this.appliedSnapshot[k])) {
+        this.dirty.set(true);
+        return;
+      }
+    }
+    this.dirty.set(false);
   }
 }

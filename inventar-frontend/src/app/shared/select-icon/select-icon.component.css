@@ -3,23 +3,128 @@
     width: 100%;
 }
 
-.icon-trigger {
-    width: 100%;
-    cursor: pointer;
+/* ---------- Trigger — visually identical to cb-labeled-form-input ---------- */
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
-.icon-trigger__label {
+.form-field label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.input-wrapper {
+    appearance: none;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    padding: 11px;
+    border: 1px solid;
+    border-radius: 6px;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.icon-trigger__text {
-    padding-top: 3px;
+.input-wrapper:focus-visible {
+    border-color: var(--app-accent) !important;
+    box-shadow: 0 0 0 3px var(--app-accent-soft);
+    outline: none;
 }
 
-.icon-trigger__input {
-    cursor: pointer;
+.input-wrapper:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
 }
+
+.input-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+    flex-shrink: 0;
+}
+
+.input-icon--muted {
+    opacity: 0.55;
+}
+
+.input-value {
+    flex: 1 1 auto;
+    font-size: 16px;
+    line-height: 1.5;
+    transform: scale(0.875);
+    transform-origin: left center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.input-value--placeholder {
+    color: #9ca3af;
+}
+
+.input-chevron {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+/* The search field inside the picker is its own `cb-labeled-form-input`
+   instance with its own FormControl, so this rule reaches only the
+   trigger's wrapper. */
+:host(.ng-invalid.ng-touched) .input-wrapper {
+    border-color: var(--app-danger) !important;
+}
+
+:host(.ng-invalid.ng-touched) .input-wrapper:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-danger) 18%, transparent);
+}
+
+:host(.ng-invalid.ng-touched) .input-value--placeholder {
+    color: var(--app-danger);
+}
+
+:host-context(.dark-theme) .form-field {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+:host-context(.dark-theme) .input-wrapper {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+:host-context(.dark-theme) .input-icon,
+:host-context(.dark-theme) .input-chevron {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+:host-context(.light-theme) .form-field {
+    color: #1a1a1a;
+}
+
+:host-context(.light-theme) .input-wrapper {
+    background-color: #f9fafb;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: rgba(0, 0, 0, 0.9);
+}
+
+:host-context(.light-theme) .input-icon,
+:host-context(.light-theme) .input-chevron {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- Fullscreen icon picker panel ---------- */
 
 .icon-select-backdrop {
     position: fixed;
@@ -33,105 +138,181 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: min(720px, calc(100vw - 24px));
-    height: min(620px, calc(100vh - 32px));
+    width: min(820px, calc(100vw - 24px));
+    height: min(680px, calc(100vh - 32px));
     max-width: 100vw;
     max-height: 100vh;
     z-index: 1100;
-    background: var(--secondary);
+    background: var(--app-surface);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: var(--app-radius-lg, 12px);
     box-shadow:
-        0px 11px 15px -7px rgba(0, 0, 0, 0.2),
-        0px 24px 38px 3px rgba(0, 0, 0, 0.14),
-        0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+        0px 11px 15px -7px rgba(0, 0, 0, 0.18),
+        0px 24px 38px 3px rgba(0, 0, 0, 0.12),
+        0px 9px 46px 8px rgba(0, 0, 0, 0.08);
 }
 
-.actions {
+.icon-select__header {
     padding: 8px 12px;
     display: flex;
     align-items: center;
-    background: var(--secondary);
+    gap: 4px;
+    background: var(--app-surface);
     flex-shrink: 0;
 }
 
-.actions__icon {
-    color: var(--card-title);
+.icon-select__back-icon {
+    color: var(--app-text);
 }
 
-.actions__label {
-    font-size: 16px;
-    padding-top: 4px;
-    cursor: pointer;
-    color: var(--card-title);
-    margin-left: 4px;
+.icon-select__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--app-font-display);
+    color: var(--app-text);
+    letter-spacing: -0.01em;
 }
 
+/* The search uses `cb-labeled-form-input` for full chrome consistency with
+   the rest of the app's text inputs — only spacing inside the panel is
+   managed here. */
+.icon-select__search {
+    display: block;
+    margin: 8px 16px 12px;
+}
+
+/* Tile grid — refined: subtle border, no heavy shadow, muted icon colour
+   so a wall of 100+ icons reads as a calm palette, not a bold mosaic. */
 .icons {
     overflow-y: auto;
     overflow-x: hidden;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 14px;
-    padding: 16px 24px;
-    background: var(--secondary);
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 10px;
+    padding: 8px 16px 16px;
+    background: var(--app-surface);
     flex: 1 1 auto;
     min-height: 0;
     align-content: start;
 }
 
 .icon {
+    appearance: none;
+    cursor: pointer;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    transition: box-shadow 400ms cubic-bezier(0.25, 0.8, 0.25, 1), background 200ms ease;
-    cursor: pointer;
     aspect-ratio: 1;
-    border-radius: 6px;
-    flex-direction: column;
-    background: var(--primary);
     padding: 8px;
-    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid var(--app-border);
+    background: var(--app-bg-elevated);
+    color: var(--app-text-muted);
     text-align: center;
-    color: var(--primary-text);
+    box-sizing: border-box;
+    font: inherit;
+    transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
 .icon:hover {
-    box-shadow:
-        0px 5px 5px -3px rgba(0, 0, 0, 0.2),
-        0px 8px 10px 1px rgba(0, 0, 0, 0.14),
-        0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+    background: var(--app-accent-soft);
+    border-color: var(--app-accent);
+    color: var(--app-accent);
+}
+
+.icon:focus-visible {
+    outline: none;
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 3px var(--app-accent-soft);
+    color: var(--app-accent);
 }
 
 .icon mat-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 36px;
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
     color: inherit;
-    transition: color 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .icon span {
     margin-top: 6px;
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.2;
     word-break: break-word;
+    color: var(--app-text-muted);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .icon--selected {
-    background: var(--light);
-    color: white;
+    background: var(--app-accent-soft);
+    border-color: var(--app-accent);
+    color: var(--app-accent);
 }
 
-.selected-icon {
-    margin-right: 10px;
-    font-size: 20px;
-    height: 20px;
-    width: 20px;
-    margin-top: -2px;
+.icon--selected span {
+    color: var(--app-accent);
+    font-weight: 600;
+}
+
+/* Empty state when search has no matches */
+.icons-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex: 1 1 auto;
+    padding: 32px;
+    text-align: center;
+    color: var(--app-text-muted);
+}
+
+.icons-empty__icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    color: var(--app-text-muted);
+    opacity: 0.6;
+}
+
+.icons-empty__text {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--app-text);
+}
+
+.icons-empty__text strong {
+    color: var(--app-text);
+}
+
+.icons-empty__clear {
+    appearance: none;
+    cursor: pointer;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    color: var(--app-text);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 140ms ease, border-color 140ms ease;
+}
+
+.icons-empty__clear:hover,
+.icons-empty__clear:focus-visible {
+    background: var(--app-bg-elevated);
+    border-color: var(--app-accent);
+    color: var(--app-accent);
+    outline: none;
 }
 
 @media screen and (max-width: 767px) {
@@ -148,19 +329,23 @@
         transform: none;
     }
 
+    .icon-select__search {
+        margin: 8px 12px 10px;
+    }
+
     .icons {
-        grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
-        gap: 10px;
-        padding: 12px 14px;
+        grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+        gap: 8px;
+        padding: 8px 12px 14px;
     }
 
     .icon mat-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 28px;
+        width: 24px;
+        height: 24px;
+        font-size: 24px;
     }
 
     .icon span {
-        font-size: 11px;
+        font-size: 10px;
     }
 }

@@ -1,10 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  Output,
+  signal,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FilterComponent } from './filter/filter.component';
-import { filterAnimation } from './filter/filter.animations';
 import { FilterOptions } from './filter/filter.models';
 import { TableActionInput } from './TableActionInput';
 
@@ -13,20 +20,19 @@ import { TableActionInput } from './TableActionInput';
   templateUrl: './table-actions.component.html',
   styleUrls: ['./table-actions.component.css'],
   imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, FilterComponent],
-  animations: [filterAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableActionsComponent {
-  @HostBinding('class.table-actions--mobile-search-open')
-  get mobileSearchPanelOpen(): boolean {
-    return this.mobileToolbar && this.showSearchInput;
+  @HostBinding('class.table-actions--filter-open')
+  get filterPanelOpen(): boolean {
+    return this.filterOpen();
   }
 
   @Input() tableActionInput: TableActionInput;
   @Input() filterOptions: FilterOptions[];
   /** Hide icon + page title (e.g. when the page shows a dedicated title above the toolbar). */
   @Input() hideEmbeddedTitle = false;
-  /** No primary-colored bar; actions sit on the page background (mobile list pages). */
+  /** No primary-coloured bar; actions sit on the page background (mobile list pages). */
   @Input() mobileToolbar = false;
 
   @Output() onRefresh = new EventEmitter<void>();
@@ -34,10 +40,10 @@ export class TableActionsComponent {
   @Output() onSearch = new EventEmitter<{ params: any }>();
   @Output() onReset = new EventEmitter<void>();
 
-  showSearchInput = false;
-
-  readonly containerId = 'actions-container-id';
-  readonly searchIconId = 'search-icon-id';
+  /** Whether the filter panel is expanded under the toolbar. */
+  readonly filterOpen = signal(false);
+  /** How many filter fields are currently feeding the table query. */
+  readonly appliedFilterCount = signal(0);
 
   refresh(): void {
     this.onRefresh.emit();
@@ -47,41 +53,21 @@ export class TableActionsComponent {
     this.onOpenDialog.emit();
   }
 
-  openSearchInput(): void {
-    this.showSearchInput = true;
+  toggleFilter(): void {
+    this.filterOpen.update((v) => !v);
   }
 
-  reset(): void {
+  closeFilter(): void {
+    this.filterOpen.set(false);
+  }
+
+  onFilterApplied(payload: { params: any; count: number }): void {
+    this.appliedFilterCount.set(payload.count);
+    this.onSearch.emit({ params: payload.params });
+  }
+
+  onFilterReset(): void {
+    this.appliedFilterCount.set(0);
     this.onReset.emit();
-    this.showSearchInput = false;
-  }
-
-  search(payload: { params: any }): void {
-    this.onSearch.emit(payload);
-    this.showSearchInput = false;
-  }
-
-  @HostListener('window:click', ['$event'])
-  keyEvent(event: any): void {
-    const elem = document.getElementById(this.containerId);
-    const option = document.getElementsByTagName('mat-option');
-    let close = true;
-    if (option.length !== 0) {
-      for (let i = 0; i < option.length; i++) {
-        const opt = option[i];
-        if (opt?.contains(event.target)) {
-          close = false;
-          break;
-        }
-      }
-    }
-    const t = document.getElementsByClassName('cdk-overlay-transparent-backdrop');
-    if (t.length > 0) {
-      close = false;
-    }
-
-    if (!elem?.contains(event.target) && event.target.id !== this.searchIconId && close) {
-      this.showSearchInput = false;
-    }
   }
 }

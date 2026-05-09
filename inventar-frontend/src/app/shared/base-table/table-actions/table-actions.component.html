@@ -1,27 +1,65 @@
-<!-- TABLE - ACTIONS: CREATE, REFRESH, SEARCH -->
-<div class="main-action-container"
-    [class.main-action-container--toolbar-only]="hideEmbeddedTitle"
-    [class.main-action-container--mobile]="mobileToolbar"
-    [id]="containerId">
-    <div class="title-container" *ngIf="!showSearchInput && !hideEmbeddedTitle">
-        <mat-icon class="primary-icon">{{tableActionInput?.icon}}</mat-icon>
-        <span class="title">{{tableActionInput?.pageName}}</span>
+<div
+    class="ta"
+    [class.ta--toolbar-only]="hideEmbeddedTitle"
+    [class.ta--mobile]="mobileToolbar"
+>
+    <div class="ta__toolbar">
+        @if (!hideEmbeddedTitle) {
+            <div class="ta__title">
+                <mat-icon class="primary-icon">{{ tableActionInput?.icon }}</mat-icon>
+                <span class="ta__title-text">{{ tableActionInput?.pageName }}</span>
+            </div>
+        }
+
+        <div class="ta__actions">
+            <button
+                type="button"
+                class="ta__icon-btn"
+                [class.ta__icon-btn--active]="filterOpen() || appliedFilterCount() > 0"
+                matTooltip="Filters"
+                matTooltipClass="sidebar-tooltip"
+                matTooltipPosition="above"
+                mat-icon-button
+                (click)="toggleFilter()"
+                [attr.aria-expanded]="filterOpen()"
+                aria-label="Toggle filters"
+            >
+                <mat-icon class="primary-icon">search</mat-icon>
+                @if (appliedFilterCount() > 0) {
+                    <span class="ta__icon-badge" aria-hidden="true">{{ appliedFilterCount() }}</span>
+                }
+            </button>
+            @if (!tableActionInput?.extra?.hideInsertButton) {
+                <button
+                    type="button"
+                    matTooltip="Insert"
+                    matTooltipClass="sidebar-tooltip"
+                    matTooltipPosition="above"
+                    mat-icon-button
+                    (click)="openDialog()"
+                >
+                    <mat-icon class="primary-icon">add</mat-icon>
+                </button>
+            }
+            <button
+                type="button"
+                matTooltip="Refresh"
+                matTooltipClass="sidebar-tooltip"
+                matTooltipPosition="above"
+                mat-icon-button
+                (click)="refresh()"
+            >
+                <mat-icon class="primary-icon">refresh</mat-icon>
+            </button>
+        </div>
     </div>
 
-    <div *ngIf="showSearchInput" style="height: 67.5px"></div>
-
-    <filter *ngIf="showSearchInput" (onReset)="reset()" (onSearch)="search($event)" [filterOptions]="filterOptions" [@filterAnimation] class="filter"></filter>
-
-    <div class="table-actions title table-toolbar-buttons"
-        *ngIf="!showSearchInput">
-        <button matTooltip="Search" matTooltipClass="sidebar-tooltip" matTooltipPosition="above" mat-icon-button (click)="openSearchInput()">
-            <mat-icon class="primary-icon" [id]="searchIconId">search</mat-icon>
-        </button>
-        <button matTooltip="Insert" matTooltipClass="sidebar-tooltip" *ngIf="!tableActionInput?.extra?.hideInsertButton" matTooltipPosition="above" mat-icon-button (click)="openDialog()">
-            <mat-icon class="primary-icon">add</mat-icon>
-        </button>
-        <button matTooltip="Refresh" matTooltipClass="sidebar-tooltip" matTooltipPosition="above" mat-icon-button (click)="refresh()">
-            <mat-icon class="primary-icon">refresh</mat-icon>
-        </button>
-    </div>
+    @if (filterOpen()) {
+        <filter
+            [filterOptions]="filterOptions"
+            (applied)="onFilterApplied($event)"
+            (reset)="onFilterReset()"
+            (closed)="closeFilter()"
+        ></filter>
+    }
 </div>

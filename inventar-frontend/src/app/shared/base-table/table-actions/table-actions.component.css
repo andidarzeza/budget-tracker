@@ -1,4 +1,33 @@
-.title-container {
+.ta {
+    background: var(--app-surface);
+    border-bottom: 1px solid var(--app-border);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.ta--mobile {
+    background: transparent;
+    border-bottom: none;
+    padding: 0;
+    box-sizing: border-box;
+    min-height: 0;
+}
+
+/* Toolbar row -------------------------------------------------------------- */
+
+.ta__toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.ta--toolbar-only .ta__toolbar {
+    justify-content: flex-end;
+}
+
+.ta__title {
     display: flex;
     align-items: center;
     padding: 14px 24px;
@@ -7,91 +36,86 @@
     font-family: var(--app-font-display);
     letter-spacing: -0.01em;
     color: var(--app-text);
-}
-
-.main-action-container {
-    border-bottom: 1px solid var(--app-border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--app-surface);
-    position: relative;
-}
-
-.main-action-container--toolbar-only {
-    justify-content: flex-end;
-}
-
-.main-action-container--mobile {
-    background: transparent;
-    border-bottom: none;
-    padding: 0;
-    box-sizing: border-box;
-    align-items: center;
-    min-height: 0;
-}
-
-.main-action-container--mobile .primary-icon {
-    color: var(--app-accent) !important;
-}
-
-.main-action-container--mobile .table-actions.table-toolbar-buttons {
-    padding: 0;
-}
-
-:host(.table-actions--mobile-search-open) .main-action-container--mobile {
-    width: 100%;
     min-width: 0;
 }
 
-.table-toolbar-buttons {
+.ta__title .primary-icon {
+    color: var(--app-accent);
+    flex-shrink: 0;
+}
+
+.ta__title-text {
+    margin-left: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ta__actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     flex-shrink: 0;
     gap: 4px;
+    padding-right: 8px;
 }
 
-.title {
-    margin-left: 12px;
-    margin-top: 0;
+.ta--mobile .ta__actions {
+    padding: 0;
 }
 
-.filter {
-    overflow: hidden;
+.ta--mobile .primary-icon {
+    color: var(--app-accent) !important;
+}
+
+/* Filter toggle button — adds an active state and a tiny count badge */
+
+.ta__icon-btn {
+    position: relative;
+}
+
+.ta__icon-btn--active .primary-icon {
+    color: var(--app-accent) !important;
+}
+
+.ta__icon-badge {
     position: absolute;
-    top: 0;
-    width: 100%;
-    z-index: 2;
-    border-radius: var(--app-radius-md);
-    background: var(--app-bg-elevated);
-    border: 1px solid var(--app-border);
-    box-shadow: var(--app-shadow-lg);
+    top: 4px;
+    right: 4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--app-accent);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+    pointer-events: none;
 }
+
+/* Responsive --------------------------------------------------------------- */
 
 @media only screen and (max-width: 500px) {
-    .title-container {
+    .ta__title {
         padding: 12px 12px;
         font-size: 1rem;
     }
 
-    .title-container > mat-icon {
+    .ta__title > mat-icon {
         font-size: 19px !important;
         width: 19px !important;
         height: 19px !important;
     }
 
-    .title {
-        margin-left: 0;
+    .ta__title-text {
+        margin-left: 8px;
     }
 }
 
 @media only screen and (max-height: 600px) {
-    .title {
-        margin-left: 6px;
-    }
-
-    .title-container {
+    .ta__title {
         padding: 14px 16px;
         font-size: 1rem;
     }

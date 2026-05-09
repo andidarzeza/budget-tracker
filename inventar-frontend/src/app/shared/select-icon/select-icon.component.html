@@ -1,37 +1,71 @@
-<mat-form-field (click)="open()" class="primary-text icon-trigger" appearance="outline">
-    <mat-label class="icon-trigger__label">
-        <mat-icon class="selected-icon primary-text" *ngIf="value">
-            {{value}}
-        </mat-icon>
-        <span class="primary-text icon-trigger__text">
-            {{value ? value : 'Select Icon'}}
-        </span>
-    </mat-label>
-    <input class="icon-trigger__input" readonly type="text" autocomplete="off" matInput>
-    <mat-error>This field is required.</mat-error>
-</mat-form-field>
+<div class="form-field">
+    <label>{{ label }}</label>
+    <button
+        type="button"
+        class="input-wrapper"
+        [class.input-wrapper--placeholder]="!value"
+        [disabled]="disabled"
+        [attr.aria-haspopup]="'dialog'"
+        [attr.aria-expanded]="showIconSelect()"
+        (click)="open()"
+    >
+        @if (value) {
+            <mat-icon class="input-icon">{{ value }}</mat-icon>
+            <span class="input-value">{{ value }}</span>
+        } @else {
+            <mat-icon class="input-icon input-icon--muted">add_circle_outline</mat-icon>
+            <span class="input-value input-value--placeholder">{{ placeholder }}</span>
+        }
+        <mat-icon class="input-chevron" aria-hidden="true">expand_more</mat-icon>
+    </button>
+</div>
 
-<ng-container *ngIf="showIconSelect">
+@if (showIconSelect()) {
     <div class="icon-select-backdrop" [@fadeAnimation] (click)="close()"></div>
 
     <div [@panelAnimation] class="icon-select" role="dialog" aria-label="Select an icon">
-        <div class="actions">
-            <button mat-icon-button (click)="close()" aria-label="Back">
-                <mat-icon class="actions__icon">keyboard_arrow_left</mat-icon>
+        <header class="icon-select__header">
+            <button type="button" mat-icon-button (click)="close()" aria-label="Back">
+                <mat-icon class="icon-select__back-icon">keyboard_arrow_left</mat-icon>
             </button>
-            <span class="actions__label" (click)="close()">Back</span>
-        </div>
+            <h2 class="icon-select__title">Select an icon</h2>
+        </header>
+
+        <cb-labeled-form-input
+            class="icon-select__search"
+            label=""
+            icon="search"
+            placeholder="Search icons…"
+            [control]="$any(searchControl)"
+        ></cb-labeled-form-input>
 
         <mat-divider></mat-divider>
 
-        <div class="icons">
-            <div *ngFor="let icon of icons"
-                 class="icon"
-                 [class.icon--selected]="value === icon"
-                 (click)="select(icon)">
-                <mat-icon>{{icon}}</mat-icon>
-                <span>{{icon}}</span>
+        @if (filteredIcons().length) {
+            <div class="icons">
+                @for (icon of filteredIcons(); track icon) {
+                    <button
+                        type="button"
+                        class="icon"
+                        [class.icon--selected]="value === icon"
+                        (click)="select(icon)"
+                        [attr.aria-label]="icon"
+                    >
+                        <mat-icon>{{ icon }}</mat-icon>
+                        <span>{{ icon }}</span>
+                    </button>
+                }
             </div>
-        </div>
+        } @else {
+            <div class="icons-empty">
+                <mat-icon class="icons-empty__icon">search_off</mat-icon>
+                <p class="icons-empty__text">
+                    No icons match "<strong>{{ query() }}</strong>"
+                </p>
+                <button type="button" class="icons-empty__clear" (click)="clearSearch()">
+                    Clear search
+                </button>
+            </div>
+        }
     </div>
-</ng-container>
+}

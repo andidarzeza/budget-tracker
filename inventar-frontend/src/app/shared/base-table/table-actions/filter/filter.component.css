@@ -1,42 +1,171 @@
-.filter-container {
-    background: var(--app-surface);
-    border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-lg);
-    box-shadow: var(--app-shadow-xs);
+:host {
+    display: block;
+    /* The animation animates `height` from 0 → '*' on enter, so the host
+       must be a block-level container that respects auto height. */
     overflow: hidden;
 }
 
-.filter-form {
-    width: 100%;
-    padding: 16px 16px 4px;
+.filter-panel {
+    background: var(--app-surface);
+    border-bottom: 1px solid var(--app-border);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Head */
+.filter-panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--app-border);
+}
+
+.filter-panel__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--app-text);
+    font-family: var(--app-font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+}
+
+.filter-panel__title-icon {
+    color: var(--app-accent);
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.filter-panel__badge {
+    background: var(--app-accent-soft);
+    color: var(--app-accent);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.filter-panel__icon-btn {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    padding: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--app-text-muted, var(--app-text));
+    transition: background 140ms ease, color 140ms ease;
+}
+
+.filter-panel__icon-btn:hover,
+.filter-panel__icon-btn:focus-visible {
+    background: var(--app-bg-elevated);
+    color: var(--app-text);
+    outline: none;
+}
+
+.filter-panel__icon-btn .mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+}
+
+/* Form grid */
+.filter-panel__form {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 14px 16px;
+    padding: 16px;
     box-sizing: border-box;
 }
 
-.filter-cell {
-    width: 100%;
+.filter-panel__cell {
     min-width: 0;
 }
 
-.my-form-field {
-    width: 100%;
-}
-
-/* Align mat-select height with the labeled-form-input wrapper (both ~44px tall). */
-.filter-cell .my-form-field .mat-mdc-text-field-wrapper {
-    background: var(--app-surface);
-}
-
-.filter-actions {
-    padding: 14px 16px 18px;
-    width: 100%;
+/* Actions */
+.filter-panel__actions {
     display: flex;
     justify-content: flex-end;
-    box-sizing: border-box;
+    gap: 8px;
+    padding: 12px 16px 16px;
+    border-top: 1px solid var(--app-border);
 }
 
-.filter-option {
+.filter-panel__btn {
+    appearance: none;
+    cursor: pointer;
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: background 140ms ease, border-color 140ms ease, color 140ms ease, opacity 140ms ease;
+}
+
+.filter-panel__btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.filter-panel__btn .mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+}
+
+.filter-panel__btn--ghost {
+    background: transparent;
+    color: var(--app-text);
+    border-color: var(--app-border);
+}
+
+.filter-panel__btn--ghost:hover:not(:disabled),
+.filter-panel__btn--ghost:focus-visible:not(:disabled) {
     background: var(--app-bg-elevated);
+    outline: none;
+}
+
+.filter-panel__btn--primary {
+    background: var(--app-accent);
+    color: white;
+    border-color: var(--app-accent);
+}
+
+.filter-panel__btn--primary:hover:not(:disabled),
+.filter-panel__btn--primary:focus-visible:not(:disabled) {
+    background: var(--app-accent-strong, var(--app-accent));
+    outline: none;
+}
+
+@media only screen and (max-width: 600px) {
+    .filter-panel__head {
+        padding: 10px 12px;
+    }
+
+    .filter-panel__form {
+        padding: 12px;
+        grid-template-columns: 1fr;
+    }
+
+    .filter-panel__actions {
+        padding: 10px 12px 14px;
+    }
 }

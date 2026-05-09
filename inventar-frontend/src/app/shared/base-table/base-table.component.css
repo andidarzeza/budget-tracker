@@ -94,16 +94,23 @@
     background: var(--app-bg);
 }
 
-.mobile-page-toolbar-row:has(table-actions.table-actions--mobile-search-open) .mobile-page-head {
+/* When the filter panel is open on mobile, let table-actions span the full
+   row (and hide the page title above) so the filter form has room to breathe.
+   The flag is set as a host class on `<table-actions>`. */
+.mobile-page-toolbar-row:has(table-actions.table-actions--filter-open) .mobile-page-head {
     display: none;
 }
 
-.mobile-page-toolbar-row:has(table-actions.table-actions--mobile-search-open) {
+.mobile-page-toolbar-row:has(table-actions.table-actions--filter-open) {
     grid-template-columns: 1fr;
 }
 
-.mobile-page-toolbar-row:has(table-actions.table-actions--mobile-search-open) table-actions {
+.mobile-page-toolbar-row:has(table-actions.table-actions--filter-open) table-actions {
     grid-column: 1 / -1;
+    /* `justify-self: end` (set on every table-actions below) sizes the host
+       to its content. Override it so the panel can span the full row. */
+    justify-self: stretch;
+    width: 100%;
 }
 
 .mobile-page-toolbar-row > table-actions {

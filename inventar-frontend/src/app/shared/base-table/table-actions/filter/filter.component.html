@@ -1,35 +1,74 @@
-<div style="width: 100%;" class="filter-container">
+<section class="filter-panel" @panelIn>
+    <header class="filter-panel__head">
+        <div class="filter-panel__title">
+            <mat-icon class="filter-panel__title-icon" aria-hidden="true">filter_list</mat-icon>
+            <span class="filter-panel__title-text">Filters</span>
+            @if (appliedCount() > 0) {
+                <span class="filter-panel__badge" aria-label="Active filter count">
+                    {{ appliedCount() }} active
+                </span>
+            }
+        </div>
+        <button
+            type="button"
+            class="filter-panel__icon-btn"
+            (click)="close()"
+            aria-label="Close filters"
+        >
+            <mat-icon>close</mat-icon>
+        </button>
+    </header>
 
-
-    <filter-header></filter-header>
-
-    <mat-divider></mat-divider>
-
-    <form [formGroup]="formGroup" class="filter-form" (keydown.enter)="onEnter()">
-        <ng-container *ngFor="let filterOption of filterOptions">
-            <div [ngSwitch]="filterOption.type" class="filter-cell">
-                <cb-labeled-form-input *ngSwitchCase="'text'"
-                    [label]="filterOption.label"
-                    [type]="'text'"
-                    [control]="$any(formGroup.get(filterOption.field))">
-                </cb-labeled-form-input>
-
-                <cb-labeled-form-input *ngSwitchCase="'number'"
-                    [label]="filterOption.label"
-                    [type]="'number'"
-                    [control]="$any(formGroup.get(filterOption.field))">
-                </cb-labeled-form-input>
-
-                <cb-select-input *ngSwitchCase="'select'"
-                    [label]="filterOption.label"
-                    [control]="$any(formGroup.get(filterOption.field))"
-                    [options]="filterOption?.matSelectOptions?.options || []"
-                    [displayWith]="$any(displayBy(filterOption))"
-                    [valueWith]="$any(valueBy(filterOption))">
-                </cb-select-input>
+    <form [formGroup]="formGroup" class="filter-panel__form" (keydown.enter)="onEnter()">
+        @for (filterOption of filterOptions; track filterOption.field) {
+            <div class="filter-panel__cell">
+                @switch (filterOption.type) {
+                    @case ('text') {
+                        <cb-labeled-form-input
+                            [label]="filterOption.label"
+                            type="text"
+                            [control]="$any(formGroup.get(filterOption.field))"
+                        ></cb-labeled-form-input>
+                    }
+                    @case ('number') {
+                        <cb-labeled-form-input
+                            [label]="filterOption.label"
+                            type="number"
+                            [control]="$any(formGroup.get(filterOption.field))"
+                        ></cb-labeled-form-input>
+                    }
+                    @case ('select') {
+                        <cb-select-input
+                            [label]="filterOption.label"
+                            [control]="$any(formGroup.get(filterOption.field))"
+                            [options]="filterOption?.matSelectOptions?.options || []"
+                            [displayWith]="$any(displayBy(filterOption))"
+                            [valueWith]="$any(valueBy(filterOption))"
+                        ></cb-select-input>
+                    }
+                }
             </div>
-        </ng-container>
+        }
     </form>
 
-    <filter-actions (onReset)="reset()" (onSearch)="search()" class="filter-actions"></filter-actions>
-</div>
+    <footer class="filter-panel__actions">
+        <button
+            type="button"
+            class="filter-panel__btn filter-panel__btn--ghost"
+            (click)="clear()"
+            [disabled]="!hasFormValues()"
+        >
+            <mat-icon>refresh</mat-icon>
+            <span>Reset</span>
+        </button>
+        <button
+            type="button"
+            class="filter-panel__btn filter-panel__btn--primary"
+            (click)="apply()"
+            [disabled]="!dirty()"
+        >
+            <mat-icon>search</mat-icon>
+            <span>Apply</span>
+        </button>
+    </footer>
+</section>
