@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 /**
  * Date field that mirrors the chrome of `cb-labeled-form-input` (same border,
@@ -28,10 +30,21 @@ import { MatIconModule } from '@angular/material/icon';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabeledDateInputComponent {
+  private readonly breakpointService = inject(BreakpointService);
+
   @Input({ required: true }) control!: FormControl<Date | null>;
   @Input() inputId = '';
   @Input() label = 'Date';
   @Input() placeholder = '';
+
+  /**
+   * Switches `<mat-datepicker>` into its full-screen modal mode on phones, so
+   * the calendar gets the comfortable touch targets and centred layout
+   * Material designed for handheld viewports.
+   */
+  readonly touchUi = toSignal(this.breakpointService.useTableCardLayout$, {
+    initialValue: this.breakpointService.matchesMobileCreateLayout(),
+  });
 
   get required(): boolean {
     return this.control?.hasValidator(Validators.required) ?? false;

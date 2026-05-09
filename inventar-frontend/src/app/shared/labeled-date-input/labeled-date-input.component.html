@@ -19,7 +19,7 @@
       (focus)="picker.open()"
     />
     <mat-icon class="input-icon">calendar_today</mat-icon>
-    <mat-datepicker #picker></mat-datepicker>
+    <mat-datepicker #picker [touchUi]="touchUi()"></mat-datepicker>
     @if (displayError) {
       <div class="error-message">
         @if (control.errors?.["required"]) {
