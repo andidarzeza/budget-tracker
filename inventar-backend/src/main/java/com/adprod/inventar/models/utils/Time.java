@@ -6,4 +6,5 @@ public class Time {
     public final static Integer MINUTE = 60 * SECOND;
     public final static Integer HOUR = 60 * MINUTE;
     public final static Integer DAY = 24 * HOUR;
+    public final static Integer WEEK = 7 * DAY;
 }

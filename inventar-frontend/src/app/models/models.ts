@@ -124,7 +124,8 @@ export interface User {
     username: string;
     firstName: string;
     lastName: string;
-    jwt: string;
+    /** JWT bearer token returned by the backend's `LoginResponse#token`. */
+    token: string;
 }
 
 export interface Theme {
