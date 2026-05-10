@@ -66,6 +66,10 @@
         width: 100%;
         margin-left: 0;
     }
+
+    .application-container {
+        height: auto;
+    }
 }
 
 .mobile-nav-backdrop {
