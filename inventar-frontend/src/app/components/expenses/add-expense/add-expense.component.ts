@@ -20,7 +20,6 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
 import { filter, mergeMap, observeOn, tap } from 'rxjs/operators';
-import { inOutAnimation } from 'src/app/animations';
 import { Category, CategoryType, EntityType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -49,7 +48,6 @@ interface AddExpenseDialogData {
   selector: 'app-add-expense',
   templateUrl: './add-expense.component.html',
   styleUrls: ['./add-expense.component.css'],
-  animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
   imports: [
