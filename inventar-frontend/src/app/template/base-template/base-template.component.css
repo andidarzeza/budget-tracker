@@ -30,6 +30,9 @@
     min-height: 0;
     overflow: hidden;
     background: var(--app-bg);
+}
+
+.application:has(nav-bar) {
     padding-top: var(--app-toolbar-height, 68px);
 }
 

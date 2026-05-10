@@ -1,3 +1,50 @@
+<ng-container *ngIf="isPageMode; else dialogShell">
+    <section class="form-page">
+        <header class="form-page__header">
+            <button type="button" class="form-page__back" (click)="closeDialog(false)" aria-label="Back">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h1 class="form-page__title">{{ isEditMode ? 'Edit category' : 'New category' }}</h1>
+        </header>
+
+        <div class="form-page__body">
+            <form [formGroup]="categoryGroup" class="dialog-form form-page__panel">
+                <cb-labeled-form-input
+                    label="Category"
+                    type="text"
+                    [control]="$any(categoryGroup.get('category'))">
+                </cb-labeled-form-input>
+
+                <cb-select-input
+                    label="Category Type"
+                    [control]="$any(categoryGroup.get('categoryType'))"
+                    [options]="categoryTypes">
+                </cb-select-input>
+
+                <div>
+                    <select-icon formControlName="icon"></select-icon>
+                </div>
+
+                <cb-labeled-textarea
+                    label="Description"
+                    placeholder="Write a note…"
+                    [control]="$any(categoryGroup.get('description'))">
+                </cb-labeled-textarea>
+            </form>
+        </div>
+
+        <footer class="form-page__footer">
+            <button type="button" class="dialog-btn dialog-btn--secondary" (click)="closeDialog(false)">
+                Cancel
+            </button>
+            <button type="button" class="dialog-btn dialog-btn--primary" (click)="add()">
+                {{ isEditMode ? 'Save changes' : 'Save category' }}
+            </button>
+        </footer>
+    </section>
+</ng-container>
+
+<ng-template #dialogShell>
 <create-form [loadingData]="loadingData" [loadingMessage]="loadingMessage" icon="list_alt" [entity]="entity" [editMode]="isEditMode" (close)="closeDialog($event)" (create)="add()">
 
     <form [formGroup]="categoryGroup" class="dialog-form">
@@ -26,3 +73,4 @@
         </cb-labeled-textarea>
     </form>
 </create-form>
+</ng-template>

@@ -48,8 +48,8 @@ const routes: Routes = [
   },
   {
     path: 'categories',
-    loadComponent: () =>
-      import('./components/categories/categories.component').then((m) => m.CategoriesComponent),
+    loadChildren: () =>
+      import('./components/categories/categories.routes').then((m) => m.CATEGORIES_ROUTES),
     canActivate: [AuthGuardService],
   },
   {

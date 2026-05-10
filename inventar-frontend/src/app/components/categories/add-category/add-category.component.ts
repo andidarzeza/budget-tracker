@@ -1,14 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, DestroyRef, Inject, inject } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, Inject, inject, OnInit, Optional } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
 import { filter, map, observeOn } from 'rxjs/operators';
 import { EntityType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { NavBarService } from 'src/app/services/nav-bar.service';
+import { SideBarService } from 'src/app/services/side-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
@@ -24,6 +28,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    MatIconModule,
     CreateFormComponent,
     LabeledFormInputComponent,
     LabeledTextareaComponent,
@@ -31,20 +36,23 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     SelectIconComponent,
   ],
 })
-export class AddCategoryComponent implements AfterViewInit {
+export class AddCategoryComponent implements OnInit, AfterViewInit {
   readonly sharedService = inject(SharedService);
   private readonly toaster = inject(ToastrService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly categoriesService = inject(CategoriesService);
   readonly accountService = inject(AccountService);
+  private readonly navBarService = inject(NavBarService);
+  private readonly sideBarService = inject(SideBarService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   loadingData = false;
   loadingMessage = 'Please wait…';
   savingEntity = false;
   entity: EntityType = EntityType.CATEGORY;
-  showIconSelect = false;
   readonly isEditMode: boolean;
+  readonly isPageMode: boolean;
 
   categoryTypes = ['INCOME', 'EXPENSE'];
 
@@ -56,10 +64,18 @@ export class AddCategoryComponent implements AfterViewInit {
   });
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<AddCategoryComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+    @Optional() public dialogRef: MatDialogRef<AddCategoryComponent> | null = null,
   ) {
+    this.isPageMode = !this.dialogRef;
     this.isEditMode = this.data?.id !== undefined;
+  }
+
+  ngOnInit(): void {
+    if (this.isPageMode) {
+      this.navBarService.displayNavBar = false;
+      this.sideBarService.displaySidebar = false;
+    }
   }
 
   ngAfterViewInit(): void {
@@ -111,7 +127,11 @@ export class AddCategoryComponent implements AfterViewInit {
   }
 
   closeDialog(update: boolean): void {
-    this.dialogRef.close(update);
+    if (this.dialogRef) {
+      this.dialogRef.close(update);
+      return;
+    }
+    this.router.navigate(['/categories']);
   }
 
   get category() {
