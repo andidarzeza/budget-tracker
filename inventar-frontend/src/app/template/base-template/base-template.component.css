@@ -30,6 +30,7 @@
     min-height: 0;
     overflow: hidden;
     background: var(--app-bg);
+    padding-top: var(--app-toolbar-height, 68px);
 }
 
 .app-width {
@@ -69,6 +70,20 @@
 
     .application-container {
         height: auto;
+    }
+
+    .application {
+        height: auto;
+        overflow: visible;
+    }
+
+    .content-container {
+        overflow-y: visible;
+    }
+
+    .application-container {
+        height: auto;
+        overflow: visible;
     }
 }
 
