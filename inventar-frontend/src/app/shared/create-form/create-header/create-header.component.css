@@ -3,7 +3,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
-    padding: 20px 20px 18px 22px;
+    padding: max(20px, env(safe-area-inset-top, 20px)) 20px 18px 22px;
     background: var(--app-bg-elevated);
     border-bottom: 1px solid var(--app-border);
     box-sizing: border-box;
