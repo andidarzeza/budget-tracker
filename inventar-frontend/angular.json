@@ -22,6 +22,7 @@
             "assets": [
               "src/favicon.ico",
               "src/favicon.svg",
+              "src/manifest.json",
               "src/assets"
             ],
             "styles": [
@@ -128,6 +129,7 @@
             "assets": [
               "src/favicon.ico",
               "src/favicon.svg",
+              "src/manifest.json",
               "src/assets"
             ],
             "styles": [
