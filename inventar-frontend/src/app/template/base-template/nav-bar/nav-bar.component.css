@@ -9,14 +9,19 @@
     justify-content: space-between !important;
     align-items: center !important;
     z-index: 14 !important;
-    min-height: var(--app-toolbar-height, 68px) !important;
-    height: var(--app-toolbar-height, 68px) !important;
-    padding: 8px 20px !important;
+    /* In standalone PWA mode with black-translucent status bar the toolbar starts
+       at the very top of the screen. Add the safe-area inset to the height and
+       to padding-top so icons clear the clock / battery row. */
+    min-height: calc(var(--app-toolbar-height, 68px) + env(safe-area-inset-top, 0px)) !important;
+    height: calc(var(--app-toolbar-height, 68px) + env(safe-area-inset-top, 0px)) !important;
+    padding: max(8px, env(safe-area-inset-top, 8px)) 20px 8px !important;
     box-sizing: border-box !important;
     background: var(--app-bg-elevated) !important;
     color: var(--app-text) !important;
     border-bottom: 1px solid var(--app-border);
     box-shadow: none;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .menu-container {
@@ -128,7 +133,7 @@
 @media only screen and (max-width: 599px) {
     .toolbar {
         left: 0;
-        padding: 6px 12px !important;
+        padding: max(6px, env(safe-area-inset-top, 6px)) 12px 6px !important;
     }
 
     .menu-container {
