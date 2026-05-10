@@ -47,6 +47,9 @@ html,
 body {
     height: 100%;
     overflow-x: hidden;
+    /* Prevent iOS Safari from auto-scaling text, which shifts the viewport. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 @media only screen and (max-width: 600px) {

@@ -45,6 +45,10 @@
       transform-origin: left top;
       caret-color: transparent;
 
+      @media only screen and (max-width: 600px) {
+        transform: none;
+      }
+
       &::placeholder {
         color: #9ca3af;
       }

@@ -43,6 +43,10 @@
       transform: scale(0.875);
       transform-origin: left top;
 
+      @media only screen and (max-width: 600px) {
+        transform: none;
+      }
+
       &::placeholder {
         color: #9ca3af;
       }
