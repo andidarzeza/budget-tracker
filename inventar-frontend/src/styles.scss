@@ -49,6 +49,18 @@ body {
     overflow-x: hidden;
 }
 
+@media only screen and (max-width: 600px) {
+    html,
+    body {
+        height: auto;
+    }
+
+    app-root,
+    base-template {
+        height: auto;
+    }
+}
+
 body {
     margin: 0;
     font-family: var(--app-font-sans);
