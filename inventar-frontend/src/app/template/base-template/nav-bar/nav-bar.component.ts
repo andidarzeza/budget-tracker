@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -50,11 +51,26 @@ export class NavBarComponent implements OnInit {
   /** Same breakpoint as mobile table cards (≤767px). */
   readonly isMobileLayout = signal(false);
 
+  /** Wall-clock time + browser-derived city for the navbar user chip. */
+  readonly now = signal(new Date());
+  readonly location = computed(() => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      const tail = tz.split('/').pop() || '';
+      return tail.replace(/_/g, ' ') || 'Local';
+    } catch {
+      return 'Local';
+    }
+  });
+
   configuration: IConfiguration;
   readonly EXPERIMENTAL_MODE = environment.experimentalMode;
 
   ngOnInit(): void {
     this.clearLegacyAccentOverride();
+    interval(1000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.now.set(new Date()));
     this.breakpointService.useTableCardLayout$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((mobile) => this.isMobileLayout.set(mobile));

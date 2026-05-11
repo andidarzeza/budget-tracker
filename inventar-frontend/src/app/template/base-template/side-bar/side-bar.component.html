@@ -9,11 +9,11 @@
     [style.height]="'100%'"
     [style.z-index]="mobileDrawer ? 13 : 2">
     <div class="logo-container">
-        <a routerLink="/dashboard" class="sidebar-brand"
+        <a routerLink="/welcome" class="sidebar-brand"
             (click)="onBrandClick()"
-            [matTooltip]="sideBarService.isOpened ? '' : 'Budget Tracker'"
+            [matTooltip]="sideBarService.isOpened ? '' : 'Financa'"
             matTooltipPosition="below"
-            aria-label="Budget Tracker — Home">
+            aria-label="Financa — Home">
             <div class="sidebar-brand-mark">
                 <div class="sidebar-brand-ring">
                     <div class="sidebar-brand-core"></div>
@@ -21,8 +21,8 @@
             </div>
             @if (sideBarService.isOpened) {
                 <div class="sidebar-brand-text">
-                    <span class="sidebar-brand-title">Budget</span>
-                    <span class="sidebar-brand-accent">Tracker</span>
+                    <span class="sidebar-brand-title">Financa</span>
+                    <span class="sidebar-brand-accent">App</span>
                 </div>
             }
         </a>

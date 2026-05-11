@@ -66,7 +66,7 @@ export class LoginComponent {
     // user to a guarded route bounces back through `logout()` and briefly
     // mounts the next component, which causes a fullscreen-spinner flash.
     if (this.authenticationService.getToken()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/welcome']);
     }
   }
 
@@ -95,7 +95,7 @@ export class LoginComponent {
               .pipe(catchError(() => of(null)))
               .subscribe(() => {
                 localStorage.setItem('account', only.id);
-                this.stopSpinner(() => this.router.navigate(['/dashboard']));
+                this.stopSpinner(() => this.router.navigate(['/welcome']));
               });
             return;
           }

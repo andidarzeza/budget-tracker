@@ -22,6 +22,12 @@ const routes: Routes = [
       import('./components/register/register.component').then((m) => m.RegisterComponent),
   },
   {
+    path: 'welcome',
+    loadComponent: () =>
+      import('./components/welcome/welcome.component').then((m) => m.WelcomeComponent),
+    canActivate: [AuthGuardService],
+  },
+  {
     path: 'dashboard',
     loadComponent: () =>
       import('./components/dashboard/dashboard.component').then((m) => m.DashboardComponent),

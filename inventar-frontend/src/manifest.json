@@ -2,7 +2,7 @@
   "name": "Financa",
   "short_name": "Financa",
   "description": "Personal budget tracker",
-  "start_url": "/dashboard",
+  "start_url": "/welcome",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f8fafc",

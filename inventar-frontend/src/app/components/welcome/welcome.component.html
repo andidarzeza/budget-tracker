@@ -1,0 +1,153 @@
+<section class="welcome">
+
+    <div class="welcome__topbar">
+        <div class="welcome__status" aria-live="polite">
+            <span class="welcome__status-dot" aria-hidden="true"></span>
+            <span class="welcome__status-text">All systems calm</span>
+        </div>
+
+        <div class="welcome__actions" *ngIf="firstName">
+            <button type="button" class="welcome__icon-btn"
+                (click)="toggleDarkMode()"
+                [matTooltip]="themeService.themeValue === 'dark-theme' ? 'Switch to light' : 'Switch to dark'"
+                matTooltipPosition="below"
+                aria-label="Toggle theme">
+                <mat-icon>{{ themeService.themeValue === 'dark-theme' ? 'wb_sunny' : 'nights_stay' }}</mat-icon>
+            </button>
+
+            <button type="button" class="welcome__user"
+                [matMenuTriggerFor]="userMenu"
+                aria-label="Account menu">
+                <span class="welcome__user-meta">
+                    <span class="welcome__user-time">{{ now() | date:'HH:mm' }}</span>
+                    <span class="welcome__user-sep" aria-hidden="true">·</span>
+                    <span class="welcome__user-loc">{{ location() }}</span>
+                </span>
+                <span class="welcome__avatar" aria-hidden="true">{{ initials }}</span>
+                <span class="welcome__user-name">{{ fullName | titlecase }}</span>
+                <mat-icon class="welcome__user-caret" aria-hidden="true">expand_more</mat-icon>
+            </button>
+
+            <mat-menu #userMenu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="switchAccount()">
+                    <mat-icon>swap_horiz</mat-icon>
+                    <span>Switch account</span>
+                </button>
+                <button mat-menu-item (click)="logout()">
+                    <mat-icon>logout</mat-icon>
+                    <span>Logout</span>
+                </button>
+            </mat-menu>
+        </div>
+    </div>
+
+    <div class="welcome__grid">
+
+        <div class="welcome__hero">
+            <div class="hero-date">
+                <span class="hero-date__day">{{ now() | date:'d' }}</span>
+                <div class="hero-date__meta">
+                    <span class="hero-date__month">{{ now() | date:'MMMM yyyy' }}</span>
+                    <span class="hero-date__weekday">{{ now() | date:'EEEE' }}</span>
+                </div>
+            </div>
+
+            <h1 class="hero-greeting">
+                {{ greeting }}<ng-container *ngIf="fullName">, <em class="hero-greeting__name">{{ fullName | titlecase }}</em></ng-container>.
+            </h1>
+
+            <p class="hero-subtitle">
+                A quiet place to begin. Everything you need is one click away —
+                your books are tucked off-stage for now.
+            </p>
+
+            <div class="hero-actions">
+                <button type="button" class="hero-action hero-action--primary"
+                    (click)="go('/expenses')">
+                    <mat-icon>add</mat-icon>
+                    <span>Add expense</span>
+                </button>
+                <button type="button" class="hero-action"
+                    (click)="go('/dashboard')">
+                    <mat-icon>insights</mat-icon>
+                    <span>Open dashboard</span>
+                </button>
+            </div>
+        </div>
+
+        <aside class="welcome__aside">
+            <article class="card card--time">
+                <header class="card__head">
+                    <span class="card__eyebrow">Now · {{ location() }}</span>
+                    <span class="card__live">
+                        <span class="card__live-dot" aria-hidden="true"></span>
+                        Live
+                    </span>
+                </header>
+                <div class="card__body card__body--time">
+                    <div class="time-display">
+                        <span class="time-display__icon" aria-hidden="true">
+                            <svg viewBox="0 0 48 48" width="44" height="44">
+                                <circle cx="34" cy="18" r="9" fill="#fbbf24"/>
+                                <ellipse cx="22" cy="26" rx="14" ry="8" fill="#cbd5e1"/>
+                                <ellipse cx="26" cy="28" rx="16" ry="9" fill="#e2e8f0"/>
+                            </svg>
+                        </span>
+                        <div class="time-display__main">
+                            <span class="time-display__value">{{ now() | date:'HH:mm' }}</span>
+                            <span class="time-display__label">{{ now() | date:'EEEE, MMM d' }}</span>
+                        </div>
+                    </div>
+                    <ul class="time-stats" aria-label="Time details">
+                        <li><span class="time-stats__label">Seconds</span><span class="time-stats__value">{{ now() | date:'ss' }}</span></li>
+                        <li><span class="time-stats__label">Week</span><span class="time-stats__value">W{{ (now() | date:'w') || '–' }}</span></li>
+                        <li><span class="time-stats__label">Zone</span><span class="time-stats__value">{{ tzAbbrev() }}</span></li>
+                    </ul>
+                </div>
+            </article>
+
+            <article class="card card--news">
+                <header class="card__head">
+                    <span class="card__eyebrow">Top headlines</span>
+                    <a class="card__link" href="https://news.ycombinator.com" target="_blank" rel="noopener">More →</a>
+                </header>
+                <ul class="news-list" *ngIf="news().length > 0; else newsLoading">
+                    <li class="news-item" *ngFor="let item of news()">
+                        <a class="news-item__link" *ngIf="item.url; else newsItemPlain"
+                            [href]="item.url" target="_blank" rel="noopener">
+                            <div class="news-item__meta">
+                                <span class="news-item__badge" [attr.data-tone]="item.badgeTone">{{ item.badge }}</span>
+                                <span class="news-item__date" *ngIf="item.date">· {{ item.date }}</span>
+                            </div>
+                            <p class="news-item__title">{{ item.title }}</p>
+                        </a>
+                        <ng-template #newsItemPlain>
+                            <div class="news-item__meta">
+                                <span class="news-item__badge" [attr.data-tone]="item.badgeTone">{{ item.badge }}</span>
+                                <span class="news-item__date" *ngIf="item.date">· {{ item.date }}</span>
+                            </div>
+                            <p class="news-item__title">{{ item.title }}</p>
+                        </ng-template>
+                    </li>
+                </ul>
+                <ng-template #newsLoading>
+                    <p class="news-loading">Loading headlines…</p>
+                </ng-template>
+            </article>
+        </aside>
+
+    </div>
+
+    <div class="welcome__waves" aria-hidden="true">
+        <svg viewBox="0 0 2880 320" preserveAspectRatio="none" class="welcome__wave welcome__wave--back">
+            <path d="M0,150 C240,90 480,210 720,170 C960,130 1200,210 1440,150 C1680,90 1920,210 2160,170 C2400,130 2640,210 2880,150 L2880,320 L0,320 Z"/>
+        </svg>
+        <svg viewBox="0 0 2880 320" preserveAspectRatio="none" class="welcome__wave welcome__wave--mid">
+            <path d="M0,200 C240,160 480,250 720,220 C960,190 1200,250 1440,200 C1680,160 1920,250 2160,220 C2400,190 2640,250 2880,200 L2880,320 L0,320 Z"/>
+        </svg>
+        <svg viewBox="0 0 2880 320" preserveAspectRatio="none" class="welcome__wave welcome__wave--front">
+            <path d="M0,250 C240,220 480,285 720,270 C960,255 1200,285 1440,250 C1680,220 1920,285 2160,270 C2400,255 2640,285 2880,250 L2880,320 L0,320 Z"/>
+        </svg>
+    </div>
+
+</section>

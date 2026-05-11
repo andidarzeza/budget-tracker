@@ -9,45 +9,39 @@
     } @else {
         <span></span>
     }
-    <div class="menu-container">
+    <div class="nav-actions">
 
-        <button mat-icon-button
-            [matTooltip]="themeService?.themeValue == 'dark-theme'
-            ? 'Switch to Light Theme'
-            : 'Switch to Dark Theme'"
-        class="menu-item pointer" (click)="toggleDarkMode()">
-            @if (themeService?.themeValue == 'light-theme') {
-                <i style="font-size: 24px;" class="material-icons primary-icon">nights_stay</i>
-            } @else {
-                <mat-icon class="fullscreen-icon primary-icon">wb_sunny</mat-icon>
-            }
+        <button type="button" class="nav-icon-btn"
+            (click)="toggleDarkMode()"
+            [matTooltip]="themeService?.themeValue === 'dark-theme' ? 'Switch to light' : 'Switch to dark'"
+            matTooltipPosition="below"
+            aria-label="Toggle theme">
+            <mat-icon>{{ themeService?.themeValue === 'dark-theme' ? 'wb_sunny' : 'nights_stay' }}</mat-icon>
         </button>
 
-        <div class="flex-centered">
-            <button type="button" class="user-name-button" mat-icon-button [matMenuTriggerFor]="userMenu"
-                aria-label="Account menu">
-                <div class="user-name fw-500">
-                    {{ firstName?.charAt(0) | uppercase }}{{ lastName?.charAt(0) | uppercase }}
-                </div>
-            </button>
-            <div [matMenuTriggerFor]="userMenu" class="pointer arrow-down-container">
-                <mat-icon class="menu-item primary-icon" style="margin-right: 0;">keyboard_arrow_down
-                </mat-icon>
-            </div>
+        <button type="button" class="nav-user"
+            [matMenuTriggerFor]="userMenu"
+            aria-label="Account menu">
+            <span class="nav-user-meta">
+                <span class="nav-user-time">{{ now() | date:'HH:mm' }}</span>
+                <span class="nav-user-sep" aria-hidden="true">·</span>
+                <span class="nav-user-loc">{{ location() }}</span>
+            </span>
+            <span class="nav-avatar" aria-hidden="true">
+                {{ firstName?.charAt(0) | uppercase }}{{ lastName?.charAt(0) | uppercase }}
+            </span>
+            <span class="nav-user-name">{{ firstName | titlecase }} {{ lastName | titlecase }}</span>
+            <mat-icon class="nav-user-caret" aria-hidden="true">expand_more</mat-icon>
+        </button>
 
-            <mat-menu xPosition="before" class="user-menu" #userMenu="matMenu">
-                <button mat-menu-item>Logged in as
-                    {{ firstName | titlecase }}
-                    {{ lastName | titlecase }}</button>
-                <mat-divider style="width: 100%;"></mat-divider>
-                <button (click)="switchAccount()" mat-menu-item>
-                    <mat-icon>account_circle</mat-icon>Switch Account
-                </button>
-                <mat-divider style="width: 100%;"></mat-divider>
-                <button (click)="logout()" mat-menu-item>
-                    <mat-icon>exit_to_app</mat-icon>Logout
-                </button>
-            </mat-menu>
+        <mat-menu xPosition="before" class="user-menu" #userMenu="matMenu">
+            <button (click)="switchAccount()" mat-menu-item>
+                <mat-icon>swap_horiz</mat-icon>Switch Account
+            </button>
+            <button (click)="logout()" mat-menu-item>
+                <mat-icon>logout</mat-icon>Logout
+            </button>
+        </mat-menu>
 
             <mat-menu #balance="matMenu">
                <div (click)="$event.stopPropagation()" class="balance-info">
@@ -78,7 +72,6 @@
                </div>
             </mat-menu>
 
-        </div>
     </div>
 </mat-toolbar>
 }
