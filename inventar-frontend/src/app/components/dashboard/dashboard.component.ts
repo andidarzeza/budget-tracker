@@ -18,10 +18,14 @@ import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { inOutAnimation } from 'src/app/animations';
+import { HttpParams } from '@angular/common/http';
 import {
   Account,
+  CategoryType,
   CurrencyTotalDTO,
   DashboardDTO,
+  Expense,
+  Income,
   RangeType,
   TimelineExpenseDTO,
   TimelineIncomeDTO,
@@ -30,10 +34,14 @@ import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { CategoriesService } from 'src/app/services/pages/categories.service';
+import { ExpenseService } from 'src/app/services/pages/expense.service';
+import { IncomeService } from 'src/app/services/pages/income.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { ChartUtils } from 'src/app/utils/chart';
+import { buildParams } from 'src/app/utils/param-bulder';
 import {
   CREATE_DIALOG_DESKTOP_CONFIGURATION,
   CREATE_DIALOG_MOBILE_CONFIGURATION,
@@ -118,6 +126,9 @@ export class DashboardComponent implements AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly breakpointService = inject(BreakpointService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly expenseService = inject(ExpenseService);
+  private readonly incomeService = inject(IncomeService);
+  private readonly categoryService = inject(CategoriesService);
 
   from!: Date;
   to!: Date;
@@ -187,10 +198,24 @@ export class DashboardComponent implements AfterViewInit {
     return !!d && !this.incomeRows().length;
   });
 
+  /** Category-name → category-id maps so we can resolve a breakdown row
+      (which knows only the display name) to the id the filter API expects. */
+  private expenseCategoriesByName = signal<Map<string, string>>(new Map());
+  private incomeCategoriesByName = signal<Map<string, string>>(new Map());
+
+  /** "Story" panel state — when set, a list of transactions for the selected
+      category + currency + current period renders above the breakdown card. */
+  storyOpen = signal(false);
+  storyKind = signal<'expense' | 'income'>('expense');
+  storyCategory = signal<CategoryRow | null>(null);
+  storyItems = signal<(Expense | Income)[]>([]);
+  storyLoading = signal(false);
+
   constructor() {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
     this.fetchAccount();
+    this.fetchCategoryMaps();
   }
 
   ngAfterViewInit(): void {
@@ -275,6 +300,99 @@ export class DashboardComponent implements AfterViewInit {
         catchError(() => of(null)),
       )
       .subscribe((account) => this.account.set(account));
+  }
+
+  /**
+   * Build name → id lookups for both expense and income categories. The
+   * breakdown rows only carry the display name; we need the id to filter
+   * the expense / income endpoints when a user drills into a row.
+   */
+  private fetchCategoryMaps(): void {
+    const accountId = this.accountService.getAccount();
+    if (!accountId) return;
+    const buildMap = (rows: any[] | null): Map<string, string> => {
+      const map = new Map<string, string>();
+      for (const c of rows ?? []) {
+        if (c?.category && c?.id) map.set(c.category, c.id);
+      }
+      return map;
+    };
+    this.categoryService
+      .findByUsage(accountId, CategoryType.EXPENSE)
+      .pipe(takeUntilDestroyed(this.destroyRef), catchError(() => of([])))
+      .subscribe((rows: any) => this.expenseCategoriesByName.set(buildMap(rows)));
+    this.categoryService
+      .findByUsage(accountId, CategoryType.INCOME)
+      .pipe(takeUntilDestroyed(this.destroyRef), catchError(() => of([])))
+      .subscribe((rows: any) => this.incomeCategoriesByName.set(buildMap(rows)));
+  }
+
+  /**
+   * Open the drill-down "story" panel for a breakdown row: fetch the actual
+   * transactions in this (category, currency) for the current dashboard
+   * period and render them above the breakdown card. Date filtering is
+   * applied client-side so we don't depend on the backend honoring
+   * `from`/`to` on the expense/income list endpoint.
+   */
+  openCategoryStory(kind: 'expense' | 'income', row: CategoryRow): void {
+    this.storyOpen.set(true);
+    this.storyKind.set(kind);
+    this.storyCategory.set(row);
+    this.storyItems.set([]);
+    this.storyLoading.set(true);
+
+    const accountId = this.accountService.getAccount();
+    if (!accountId) {
+      this.storyLoading.set(false);
+      return;
+    }
+    const map = kind === 'expense' ? this.expenseCategoriesByName() : this.incomeCategoriesByName();
+    const categoryId = map.get(row.name);
+    if (!categoryId) {
+      this.storyLoading.set(false);
+      return;
+    }
+
+    const baseParams = new HttpParams()
+      .append('account', accountId)
+      .append('category', categoryId);
+    const params = buildParams(0, 500, 'createdTime,desc', baseParams);
+    const service$ =
+      kind === 'expense'
+        ? this.expenseService.findAll(params)
+        : this.incomeService.findAll(params);
+
+    const fromMs = this.from?.getTime() ?? Number.NEGATIVE_INFINITY;
+    const toMs = this.to?.getTime() ?? Number.POSITIVE_INFINITY;
+
+    service$
+      .pipe(takeUntilDestroyed(this.destroyRef), catchError(() => of(null)))
+      .subscribe((res: any) => {
+        const all = (res?.data ?? res ?? []) as (Expense | Income)[];
+        const inPeriod = all
+          .filter((e: any) => (e?.currency ?? row.currency) === row.currency)
+          .filter((e: any) => {
+            const t = new Date(e.createdTime).getTime();
+            return Number.isFinite(t) && t >= fromMs && t <= toMs;
+          });
+        this.storyItems.set(inPeriod);
+        this.storyLoading.set(false);
+      });
+  }
+
+  closeStory(): void {
+    this.storyOpen.set(false);
+    this.storyCategory.set(null);
+    this.storyItems.set([]);
+  }
+
+  /**
+   * Amount accessor for the story rows — expenses use `moneySpent`, incomes
+   * use `incoming`. Keeps the template a single loop instead of duplicating
+   * it per kind.
+   */
+  storyAmount(item: any): number {
+    return Number(item?.moneySpent ?? item?.incoming ?? 0);
   }
 
   private refresh(): void {

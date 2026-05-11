@@ -442,6 +442,11 @@
     flex: 1 1 auto;
     max-height: 360px;
     overflow-y: auto;
+    /* The clickable rows use `margin: 0 -8px` to extend the hover area into
+       the card's padding; since `overflow-y: auto` would otherwise force the
+       browser to compute `overflow-x` as `auto` (showing a horizontal
+       scrollbar), pin it to `hidden` explicitly. */
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
@@ -458,6 +463,170 @@
 
 .cat-row:first-child {
     border-top: 0;
+}
+
+.cat-row--clickable {
+    cursor: pointer;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-left: -8px;
+    margin-right: -8px;
+    border-radius: var(--app-radius-sm);
+    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
+}
+
+.cat-row--clickable:hover {
+    background: var(--app-surface-hover);
+}
+
+.cat-row--active {
+    background: var(--app-accent-soft);
+}
+
+/* —— Breakdown stack: positioning context for the overlayed story panel.
+   `display: flex` + `flex: 1 1 auto` on the breakdown card make the card
+   stretch to fill the grid row height (matching the chart card on the left)
+   regardless of how many category rows are inside. Without that, the card
+   would shrink to its content and the dashboard row would look uneven. */
+.breakdown-stack {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.breakdown-stack > .panel--breakdown {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* —— Story panel (drill-down): overlays the breakdown card exactly,
+   so the underlying card's height keeps the dashboard row aligned. —— */
+.panel--story {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel__header--story {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.story-back {
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid var(--app-border);
+    background: transparent;
+    color: var(--app-text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
+                color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
+                border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
+}
+
+.story-back:hover {
+    border-color: var(--app-accent);
+    color: var(--app-accent);
+}
+
+.story-back mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+.story-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.story-total {
+    font-family: var(--app-font-display, var(--app-font-sans));
+    font-weight: 700;
+    font-size: 1.1rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.story-total--exp {
+    color: var(--app-danger);
+}
+
+.story-total--inc {
+    color: var(--app-success);
+}
+
+.story-loading {
+    padding: 14px 0;
+    font-size: 0.88rem;
+    color: var(--app-text-muted);
+    text-align: center;
+}
+
+.story-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.story-item {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--app-border);
+}
+
+.story-item:first-child {
+    border-top: 0;
+}
+
+.story-item__date {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--app-text-subtle);
+    text-transform: uppercase;
+}
+
+.story-item__desc {
+    font-size: 0.92rem;
+    color: var(--app-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.story-item__amount {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.story-item__amount--exp {
+    color: var(--app-danger);
+}
+
+.story-item__amount--inc {
+    color: var(--app-success);
 }
 
 .cat-row__icon {
@@ -522,7 +691,7 @@
 }
 
 .cat-row__amount--exp {
-    color: var(--app-text);
+    color: var(--app-danger);
 }
 
 .breakdown-empty {
@@ -602,6 +771,14 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
+    }
+
+    /* Story header stays horizontal on mobile: back button · title · total
+       reads as one row regardless of viewport width. */
+    .panel__header--story {
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
     }
 
     .line-chart-wrap {

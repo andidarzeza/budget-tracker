@@ -141,38 +141,79 @@
                 </div>
             </mat-card>
 
-            <mat-card class="panel panel--breakdown">
-                <header class="panel__header">
-                    <h3 class="panel__title">Breakdown</h3>
-                    <span class="panel__hint">By category</span>
-                </header>
+            <div class="breakdown-stack">
+                @if (storyOpen() && storyKind() === 'expense') {
+                    <mat-card class="panel panel--story">
+                        <header class="panel__header panel__header--story">
+                            <button type="button" class="story-back" (click)="closeStory()" aria-label="Close drill-down">
+                                <mat-icon>arrow_back</mat-icon>
+                            </button>
+                            <div class="story-title-wrap">
+                                <h3 class="panel__title">{{ storyCategory()?.name }}</h3>
+                                <span class="panel__hint">{{ storyCategory()?.currency }} · where it went</span>
+                            </div>
+                            <span class="story-total story-total--exp">
+                                −{{ storyCategory()?.total | number : '1.0-2' }}
+                            </span>
+                        </header>
 
-                @if (expenseRows().length) {
-                    <ul class="cat-list">
-                        @for (r of expenseRows(); track r.name + r.currency) {
-                            <li class="cat-row">
-                                <span class="cat-row__icon cat-row__icon--exp">
-                                    <mat-icon>{{ r.icon }}</mat-icon>
-                                </span>
-                                <span class="cat-row__main">
-                                    <span class="cat-row__title">{{ r.name }}</span>
-                                    <span class="cat-row__sub">{{ r.currency }}</span>
-                                </span>
-                                <span class="cat-row__amount cat-row__amount--exp">
-                                    −{{ r.total | number : '1.0-2' }}
-                                </span>
-                            </li>
+                        @if (storyLoading()) {
+                            <div class="story-loading">Loading transactions…</div>
+                        } @else if (storyItems().length) {
+                            <ul class="story-list">
+                                @for (e of storyItems(); track $any(e).id) {
+                                    <li class="story-item">
+                                        <span class="story-item__date">{{ $any(e).createdTime | date : 'MMM d' }}</span>
+                                        <span class="story-item__desc">{{ $any(e).description || '—' }}</span>
+                                        <span class="story-item__amount story-item__amount--exp">
+                                            −{{ storyAmount(e) | number : '1.0-2' }}
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        } @else {
+                            <div class="breakdown-empty">
+                                <mat-icon class="breakdown-empty__icon">receipt_long</mat-icon>
+                                <span class="breakdown-empty__text">No transactions for this category in the selected period.</span>
+                            </div>
                         }
-                    </ul>
+                    </mat-card>
                 }
 
-                @if (expensesEmpty()) {
-                    <div class="breakdown-empty">
-                        <mat-icon class="breakdown-empty__icon">receipt_long</mat-icon>
-                        <span class="breakdown-empty__text">No expenses in this period.</span>
-                    </div>
-                }
-            </mat-card>
+                <mat-card class="panel panel--breakdown">
+                    <header class="panel__header">
+                        <h3 class="panel__title">Breakdown</h3>
+                        <span class="panel__hint">By category</span>
+                    </header>
+
+                    @if (expenseRows().length) {
+                        <ul class="cat-list">
+                            @for (r of expenseRows(); track r.name + r.currency) {
+                                <li class="cat-row cat-row--clickable" (click)="openCategoryStory('expense', r)"
+                                    [class.cat-row--active]="storyOpen() && storyKind() === 'expense' && storyCategory()?.name === r.name && storyCategory()?.currency === r.currency">
+                                    <span class="cat-row__icon cat-row__icon--exp">
+                                        <mat-icon>{{ r.icon }}</mat-icon>
+                                    </span>
+                                    <span class="cat-row__main">
+                                        <span class="cat-row__title">{{ r.name }}</span>
+                                        <span class="cat-row__sub">{{ r.currency }}</span>
+                                    </span>
+                                    <span class="cat-row__amount cat-row__amount--exp">
+                                        −{{ r.total | number : '1.0-2' }}
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                    @if (expensesEmpty()) {
+                        <div class="breakdown-empty">
+                            <mat-icon class="breakdown-empty__icon">receipt_long</mat-icon>
+                            <span class="breakdown-empty__text">No expenses in this period.</span>
+                        </div>
+                    }
+                </mat-card>
+            </div>
         </div>
     </section>
 
@@ -194,38 +235,79 @@
                 </div>
             </mat-card>
 
-            <mat-card class="panel panel--breakdown">
-                <header class="panel__header">
-                    <h3 class="panel__title">Breakdown</h3>
-                    <span class="panel__hint">By source</span>
-                </header>
+            <div class="breakdown-stack">
+                @if (storyOpen() && storyKind() === 'income') {
+                    <mat-card class="panel panel--story">
+                        <header class="panel__header panel__header--story">
+                            <button type="button" class="story-back" (click)="closeStory()" aria-label="Close drill-down">
+                                <mat-icon>arrow_back</mat-icon>
+                            </button>
+                            <div class="story-title-wrap">
+                                <h3 class="panel__title">{{ storyCategory()?.name }}</h3>
+                                <span class="panel__hint">{{ storyCategory()?.currency }} · where it came from</span>
+                            </div>
+                            <span class="story-total story-total--inc">
+                                +{{ storyCategory()?.total | number : '1.0-2' }}
+                            </span>
+                        </header>
 
-                @if (incomeRows().length) {
-                    <ul class="cat-list">
-                        @for (r of incomeRows(); track r.name + r.currency) {
-                            <li class="cat-row">
-                                <span class="cat-row__icon cat-row__icon--inc">
-                                    <mat-icon>{{ r.icon }}</mat-icon>
-                                </span>
-                                <span class="cat-row__main">
-                                    <span class="cat-row__title">{{ r.name }}</span>
-                                    <span class="cat-row__sub">{{ r.currency }}</span>
-                                </span>
-                                <span class="cat-row__amount cat-row__amount--inc">
-                                    +{{ r.total | number : '1.0-2' }}
-                                </span>
-                            </li>
+                        @if (storyLoading()) {
+                            <div class="story-loading">Loading transactions…</div>
+                        } @else if (storyItems().length) {
+                            <ul class="story-list">
+                                @for (e of storyItems(); track $any(e).id) {
+                                    <li class="story-item">
+                                        <span class="story-item__date">{{ $any(e).createdTime | date : 'MMM d' }}</span>
+                                        <span class="story-item__desc">{{ $any(e).description || '—' }}</span>
+                                        <span class="story-item__amount story-item__amount--inc">
+                                            +{{ storyAmount(e) | number : '1.0-2' }}
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        } @else {
+                            <div class="breakdown-empty">
+                                <mat-icon class="breakdown-empty__icon">savings</mat-icon>
+                                <span class="breakdown-empty__text">No transactions for this source in the selected period.</span>
+                            </div>
                         }
-                    </ul>
+                    </mat-card>
                 }
 
-                @if (incomesEmpty()) {
-                    <div class="breakdown-empty">
-                        <mat-icon class="breakdown-empty__icon">savings</mat-icon>
-                        <span class="breakdown-empty__text">No income in this period.</span>
-                    </div>
-                }
-            </mat-card>
+                <mat-card class="panel panel--breakdown">
+                    <header class="panel__header">
+                        <h3 class="panel__title">Breakdown</h3>
+                        <span class="panel__hint">By source</span>
+                    </header>
+
+                    @if (incomeRows().length) {
+                        <ul class="cat-list">
+                            @for (r of incomeRows(); track r.name + r.currency) {
+                                <li class="cat-row cat-row--clickable" (click)="openCategoryStory('income', r)"
+                                    [class.cat-row--active]="storyOpen() && storyKind() === 'income' && storyCategory()?.name === r.name && storyCategory()?.currency === r.currency">
+                                    <span class="cat-row__icon cat-row__icon--inc">
+                                        <mat-icon>{{ r.icon }}</mat-icon>
+                                    </span>
+                                    <span class="cat-row__main">
+                                        <span class="cat-row__title">{{ r.name }}</span>
+                                        <span class="cat-row__sub">{{ r.currency }}</span>
+                                    </span>
+                                    <span class="cat-row__amount cat-row__amount--inc">
+                                        +{{ r.total | number : '1.0-2' }}
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                    @if (incomesEmpty()) {
+                        <div class="breakdown-empty">
+                            <mat-icon class="breakdown-empty__icon">savings</mat-icon>
+                            <span class="breakdown-empty__text">No income in this period.</span>
+                        </div>
+                    }
+                </mat-card>
+            </div>
         </div>
     </section>
 </div>
