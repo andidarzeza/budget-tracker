@@ -647,12 +647,22 @@
 
 @media (max-width: 599px) {
     .welcome {
-        padding: 14px 18px 18px;
+        /* Standalone PWA on notched iPhones: env(safe-area-inset-top) ≈ 47–59px
+           so the topbar clears the Dynamic Island / status bar. In Safari
+           browser the inset is ~0 and the 14px baseline takes over. */
+        padding: max(14px, env(safe-area-inset-top, 14px)) 18px 18px;
         gap: 20px;
     }
 
-    .welcome__user-meta {
+    .welcome__user-meta,
+    .welcome__status {
         display: none;
+    }
+
+    /* With the status pill removed, the lone user chip would otherwise
+       fall to the start of the topbar — pin it to the right. */
+    .welcome__topbar {
+        justify-content: flex-end;
     }
 
     .welcome__user {
@@ -675,6 +685,15 @@
 
     .hero-subtitle {
         font-size: 0.9rem;
+    }
+
+    /* Mobile quick actions: two equal-width pills sharing the row, with
+       their content centered inside each. */
+    .hero-action {
+        flex: 1 1 0;
+        min-width: 0;
+        justify-content: center;
+        padding: 10px 14px;
     }
 
     /* On phones the news card is generous; trim to one item so the page

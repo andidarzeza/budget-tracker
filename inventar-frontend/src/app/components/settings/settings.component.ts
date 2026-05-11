@@ -24,6 +24,8 @@ import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES } from 'src/environments/environment';
 
 const BASE_CURRENCY_KEY = 'baseCurrency';
+const LANDING_PAGE_KEY = 'defaultLandingPage';
+const DEFAULT_LANDING_PAGE = '/welcome';
 
 @Component({
   selector: 'app-settings',
@@ -52,6 +54,9 @@ export class SettingsComponent implements OnInit {
 
   readonly currencies = CURRENCIES;
 
+  /** Routes the user can be dropped onto right after sign-in. */
+  readonly landingPages: readonly string[] = ['/welcome', '/dashboard'];
+
   /** Live signal so the toggle reflects external theme changes (nav-bar). */
   readonly darkMode = signal(this.themeService.themeValue === 'dark-theme');
 
@@ -60,8 +65,25 @@ export class SettingsComponent implements OnInit {
     localStorage.getItem(BASE_CURRENCY_KEY) || CURRENCIES[0],
   );
 
+  /** Default landing page after login — persisted to localStorage. */
+  readonly landingPageControl = new FormControl<string | null>(
+    localStorage.getItem(LANDING_PAGE_KEY) || DEFAULT_LANDING_PAGE,
+  );
+
   /** Currency option label: "🇺🇸 USD". */
   readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
+
+  /** Route option label — `/welcome` → "Welcome page" etc. */
+  readonly displayLandingPage = (p: string): string => {
+    switch (p) {
+      case '/welcome':
+        return 'Welcome page';
+      case '/dashboard':
+        return 'Dashboard';
+      default:
+        return p;
+    }
+  };
 
   /** User initials for the avatar; falls back to "?" when no user. */
   readonly initials = computed(() => {
@@ -100,6 +122,16 @@ export class SettingsComponent implements OnInit {
           localStorage.setItem(BASE_CURRENCY_KEY, value);
         } else {
           localStorage.removeItem(BASE_CURRENCY_KEY);
+        }
+      });
+
+    this.landingPageControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        if (value) {
+          localStorage.setItem(LANDING_PAGE_KEY, value);
+        } else {
+          localStorage.removeItem(LANDING_PAGE_KEY);
         }
       });
   }

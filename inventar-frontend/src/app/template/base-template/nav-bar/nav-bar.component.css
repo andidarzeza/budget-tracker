@@ -151,16 +151,19 @@
         gap: 6px;
     }
 
-    .nav-user-name,
+    /* Mirror the welcome page chip on mobile: hide the time/location meta
+       but keep the user's name and dropdown caret visible. */
     .nav-user-meta {
         display: none;
     }
 
     .nav-user {
-        padding: 4px;
+        padding: 4px 12px 4px 4px;
     }
 
-    .nav-user-caret {
-        display: none;
+    .nav-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
     }
 }

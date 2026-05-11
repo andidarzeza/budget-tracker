@@ -48,6 +48,24 @@
                 </cb-select-input>
             </div>
         </div>
+
+        <div class="settings-row">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">home</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Default page after login</span>
+                <span class="settings-row__desc">Where you land right after signing in.</span>
+            </div>
+            <div class="settings-row__trailing settings-row__trailing--currency">
+                <cb-select-input
+                    label=""
+                    [control]="$any(landingPageControl)"
+                    [options]="landingPages"
+                    [displayWith]="displayLandingPage">
+                </cb-select-input>
+            </div>
+        </div>
     </section>
 
     <!-- ──── Account ──── -->
