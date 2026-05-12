@@ -100,6 +100,23 @@
     -webkit-transform: translateZ(0);
 }
 
+/* In iOS PWA mode, `bottom: 0` anchors to the safe-area edge (above the
+   home indicator), so the page bg shows in the gesture zone underneath
+   the footer. This pseudo-element extends the footer's bg down through
+   that zone so the buttons appear flush against a continuous bar. In
+   regular browser mode `env(safe-area-inset-bottom)` is 0, so the strip
+   has zero height and is invisible. */
+.form-page__footer::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-bottom, 0px);
+    background: var(--app-bg-elevated);
+    pointer-events: none;
+}
+
 .form-page__footer .dialog-btn {
     flex: 1 1 0;
     justify-content: center;
