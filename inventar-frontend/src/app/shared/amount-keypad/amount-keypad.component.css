@@ -9,6 +9,12 @@
   gap: 12px;
   width: 100%;
   box-sizing: border-box;
+  /* Lock down all browser-handled gestures inside the keypad. With
+     `none`, iOS won't try to start a pan/scroll when a touch begins on a
+     button or the gaps between them, so taps land reliably even if the
+     finger drifts a few pixels. Clicks still fire. Outside the keypad
+     (e.g. the wizard nav above), the page scrolls normally. */
+  touch-action: none;
 }
 
 .amount-keypad__grid {
@@ -21,7 +27,7 @@
 .amount-keypad__key {
   appearance: none;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  touch-action: none;
   margin: 0;
   border: 1.5px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
   border-radius: 16px;
@@ -58,7 +64,7 @@
 .amount-keypad__clear {
   appearance: none;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  touch-action: none;
   align-self: center;
   min-width: 96px;
   min-height: 40px;
