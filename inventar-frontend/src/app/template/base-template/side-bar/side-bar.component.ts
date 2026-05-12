@@ -16,8 +16,8 @@ import { MenuItem, SideBarMode } from '../base-template.models';
  *  (which lives in the first ~15 px). Touches between INNER and OUTER
  *  start the drawer drag; touches at clientX < INNER are left to the
  *  browser's back gesture. */
-const EDGE_SWIPE_ZONE_INNER_PX = 30;
-const EDGE_SWIPE_ZONE_OUTER_PX = 70;
+const EDGE_SWIPE_ZONE_INNER_PX = 20;
+const EDGE_SWIPE_ZONE_OUTER_PX = 80;
 /** Horizontal movement (in px) required before we commit a touch to the
  *  drawer drag — below this, taps/vertical scrolls pass through. */
 const DRAG_COMMIT_THRESHOLD_PX = 8;
