@@ -6,7 +6,8 @@
 .amount-keypad {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: stretch;
+  gap: 14px;
   width: 100%;
   box-sizing: border-box;
   /* Lock down all browser-handled gestures inside the keypad. With
@@ -17,10 +18,16 @@
   touch-action: none;
 }
 
+/* Grid uses `gap: 0` so each cell's full bounding box is tappable — the
+   "empty space" between visible buttons is actually part of the nearest
+   button's hit area, the same way the iPhone Calculator behaves. The
+   visible circular face is painted by a pseudo-element inset from the
+   cell edges; the button element itself has no border-radius, so its
+   square hit area extends into what looks like the gap. */
 .amount-keypad__grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
   width: 100%;
 }
 
@@ -28,37 +35,50 @@
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
+  position: relative;
+  /* New stacking context so the `::before` z-index is scoped to the
+     button and doesn't fall behind anything outside it. */
+  isolation: isolate;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   margin: 0;
-  border: 1.5px solid color-mix(in srgb, var(--field-outline) 60%, transparent);
-  border-radius: 16px;
-  background: var(--secondary);
-  color: var(--card-title);
+  border: 0;
+  background: transparent;
+  aspect-ratio: 1 / 1;
+
+  color: var(--app-text);
   font-family: "Source Sans Pro", Roboto, "Helvetica Neue", sans-serif;
-  font-size: clamp(1.5rem, 5vw, 1.9rem);
-  font-weight: 700;
+  font-size: clamp(1.6rem, 6vw, 2.1rem);
+  font-weight: 500;
   line-height: 1;
-  min-height: 72px;
-  padding: 16px 12px;
   cursor: pointer;
   box-sizing: border-box;
-  transition:
-    background 0.12s ease,
-    border-color 0.12s ease,
-    transform 0.08s ease;
 }
 
-.amount-keypad__key:active {
-  transform: scale(0.97);
-  background: var(--option-hover);
+.amount-keypad__key::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  background-color: var(--app-surface);
+  border-radius: 50%;
+  z-index: -1;
+  transition: background-color 0.12s ease, transform 0.08s ease;
+}
+
+.amount-keypad__key:active::before {
+  background-color: var(--app-surface-hover);
+  transform: scale(0.96);
 }
 
 .amount-keypad__key--muted {
-  font-weight: 800;
-  opacity: 0.95;
+  font-weight: 600;
 }
 
 .amount-keypad__key--wide {
-  font-size: clamp(1.2rem, 4vw, 1.5rem);
+  font-size: clamp(1.4rem, 5vw, 1.8rem);
 }
 
 .amount-keypad__clear {
@@ -66,9 +86,9 @@
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
   align-self: center;
-  min-width: 96px;
-  min-height: 40px;
-  padding: 8px 18px;
+  min-width: 120px;
+  min-height: 42px;
+  padding: 10px 24px;
   border-radius: 999px;
   border: 1.5px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
   background: transparent;
@@ -80,7 +100,7 @@
   text-transform: uppercase;
   cursor: pointer;
   box-sizing: border-box;
-  opacity: 0.85;
+  transition: background 0.12s ease;
 }
 
 .amount-keypad__clear:active {
