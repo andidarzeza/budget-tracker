@@ -93,7 +93,13 @@ export class AddExpenseComponent implements OnInit {
   readonly savingEntity = signal(false);
   entity: EntityType = EntityType.EXPENSE;
   readonly categories = signal<Category[]>([]);
-  baseCurrency = localStorage.getItem('baseCurrency');
+  /** Resolved at use site (in `ngOnInit`) so we pick up `baseCurrency`
+   *  even if it was written by the configuration call after the component
+   *  was constructed but before init runs. Falls back to the first known
+   *  currency so the picker never opens unselected. */
+  private get resolvedBaseCurrency(): string {
+    return localStorage.getItem('baseCurrency') || CURRENCIES[0];
+  }
   readonly loadingData = signal(false);
   readonly loadingMessage = signal('Loading…');
   readonly isEditMode: boolean;
@@ -150,7 +156,7 @@ export class AddExpenseComponent implements OnInit {
       this.navBarService.displayNavBar = false;
       this.sideBarService.displaySidebar = false;
     }
-    this.formGroup.get('currency')?.setValue(this.baseCurrency);
+    this.formGroup.get('currency')?.setValue(this.resolvedBaseCurrency);
     if (this.isQrPrefillMode) {
       const scannedAmount = Number(this.expense?.moneySpent);
       if (Number.isFinite(scannedAmount)) {

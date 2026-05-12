@@ -112,7 +112,13 @@ export class AddIncomeComponent implements OnInit {
    */
   readonly isPageMode: boolean;
 
-  baseCurrency = localStorage.getItem('baseCurrency');
+  /** Resolved at use site (in `ngOnInit`) so we pick up `baseCurrency`
+   *  even if it was written by the configuration call after the component
+   *  was constructed but before init runs. Falls back to the first known
+   *  currency so the picker never opens unselected. */
+  private get resolvedBaseCurrency(): string {
+    return localStorage.getItem('baseCurrency') || CURRENCIES[0];
+  }
 
   currencies = CURRENCIES;
   entity: EntityType = EntityType.INCOME;
@@ -161,7 +167,7 @@ export class AddIncomeComponent implements OnInit {
       this.navBarService.displayNavBar = false;
       this.sideBarService.displaySidebar = false;
     }
-    this.formGroup.get('currency')?.setValue(this.baseCurrency);
+    this.formGroup.get('currency')?.setValue(this.resolvedBaseCurrency);
     if (!this.isEditMode) {
       this.wizardStep.set(0);
     }

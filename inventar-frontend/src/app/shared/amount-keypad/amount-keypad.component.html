@@ -12,7 +12,7 @@
     <button type="button" class="amount-keypad__key amount-keypad__key--muted" (pointerdown)="onDecimal(); $event.preventDefault()">.</button>
     <button type="button" class="amount-keypad__key" (pointerdown)="onDigit('0'); $event.preventDefault()">0</button>
     <button type="button" class="amount-keypad__key amount-keypad__key--wide" (pointerdown)="onBackspace(); $event.preventDefault()" aria-label="Delete last digit">
-      ⌫
+      <mat-icon>backspace</mat-icon>
     </button>
   </div>
   <button type="button" class="amount-keypad__clear" (pointerdown)="onClear(); $event.preventDefault()">Clear</button>

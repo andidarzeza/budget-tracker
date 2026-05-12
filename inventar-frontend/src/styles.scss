@@ -1256,6 +1256,14 @@ html.cdk-global-scrollblock {
     line-height: 1;
 }
 
+/* Default mat-menu sizes to content (each row is just a flag + 3-letter
+   code), which makes the dropdown noticeably narrower than the trigger.
+   Force it to at least match a reasonable width so the panel lines up
+   under the trigger button. */
+.wizard-amount-currency-menu.mat-mdc-menu-panel {
+    min-width: 180px;
+}
+
 .wizard-amount-currency-menu .mat-mdc-menu-item.wizard-amount-currency-menu-item {
     min-height: 48px;
 }
@@ -1305,18 +1313,28 @@ html.cdk-global-scrollblock {
     background: transparent;
     justify-content: flex-end;
     align-items: center;
+    /* Clip anything that still doesn't fit instead of bleeding into the
+       currency panel on the left. */
+    overflow: hidden;
 }
 
 .amount-keypad-display__value {
-    flex: 0 0 auto;
+    /* `1 1 auto` + `min-width: 0` lets the value shrink within its parent
+       flex container instead of pushing into the currency picker. The
+       lower clamp() floor lets the font scale down for longer numbers
+       while still staying readable. */
+    flex: 1 1 auto;
+    min-width: 0;
     font-variant-numeric: tabular-nums;
-    font-size: clamp(2rem, 9vw, 3rem);
+    font-size: clamp(1.3rem, 7vw, 3rem);
     font-weight: 800;
     letter-spacing: -0.02em;
     color: var(--app-text);
     line-height: 1.05;
     text-align: right;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
 }
 
 .wizard-amount-currency.mat-mdc-form-field,

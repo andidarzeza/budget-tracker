@@ -19,7 +19,7 @@
                 <p>Sign in to continue to your dashboard and manage your finances.</p>
             </div>
 
-            <form [formGroup]="loginGroup" autocomplete="off" class="login-form">
+            <form [formGroup]="loginGroup" autocomplete="off" class="login-form" (ngSubmit)="login()">
                 <cb-labeled-form-input class="full-width"
                     [inputId]="'login-username'"
                     [label]="'Username'"
@@ -39,7 +39,7 @@
                 </cb-labeled-form-input>
 
                 <div class="actions">
-                    <button type="button" [disabled]="showSpinner()" class="primary-action" mat-stroked-button (click)="login()">
+                    <button type="submit" [disabled]="showSpinner()" class="primary-action" mat-stroked-button>
                         Sign in
                     </button>
                     <span class="divider-label">or</span>
