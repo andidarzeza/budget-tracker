@@ -7,19 +7,16 @@
 .form-page {
     display: flex;
     flex-direction: column;
-    /* `100dvh` (dynamic viewport height) so the page tracks the visible
-       area including iOS safe zones. `100vh` is a fallback for older
-       browsers. With this, the sticky footer below always has a viewport-
-       sized container to anchor against. */
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 100%;
     background: var(--app-bg);
     color: var(--app-text);
 }
 
 .form-page__header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 10;
     display: flex;
     align-items: center;
@@ -29,6 +26,8 @@
     border-bottom: 1px solid var(--app-border);
     box-sizing: border-box;
     min-height: var(--app-toolbar-height, 56px);
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .form-page__back {
@@ -61,10 +60,7 @@
 
 .form-page__body {
     flex: 1 1 auto;
-    /* Header and footer are now sticky (in flow), so the body doesn't need
-       to leave room for fixed-positioned bars. Padding here is just the
-       form's internal breathing room. */
-    padding: 20px 18px 24px;
+    padding: calc(var(--app-toolbar-height, 56px) + env(safe-area-inset-top, 0px) + 20px) 18px calc(68px + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
 }
 
@@ -87,24 +83,21 @@
 }
 
 .form-page__footer {
-    /* Sticky instead of fixed — avoids the iOS PWA bug where a fixed
-       footer's hit-test region desyncs from its visual position after
-       repeated taps, leaving the buttons "look right but unclickable"
-       until the user scrolls. Combined with `min-height: 100dvh` on
-       `.form-page` and `flex: 1` on the body, the footer stays pinned to
-       the viewport bottom whether or not the content scrolls. */
-    position: sticky;
+    position: fixed;
     bottom: 0;
-    margin-top: auto;
+    left: 0;
+    right: 0;
     z-index: 10;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     gap: 10px;
-    padding: 14px 18px max(14px, env(safe-area-inset-bottom));
+    padding: 14px 18px;
     background: var(--app-bg-elevated);
     border-top: 1px solid var(--app-border);
     box-sizing: border-box;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 .form-page__footer .dialog-btn {
     flex: 1 1 0;
