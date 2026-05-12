@@ -36,29 +36,40 @@
     animation: form-loading-card-enter 360ms var(--app-easing-emphasized, cubic-bezier(0.3, 0, 0, 1)) both;
 }
 
+/* Single-element conic-gradient sweep. See `.app-spinner` in styles.scss
+   for the rationale — same visual language so dialog + table spinners
+   look identical. */
 .form-loading-spinner {
     position: relative;
     width: 44px;
     height: 44px;
+    --spinner-thickness: 3px;
 }
 
-.form-loading-spinner__track,
+.form-loading-spinner__track {
+    display: none;
+}
+
 .form-loading-spinner__arc {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    border: 3px solid transparent;
-    box-sizing: border-box;
-}
-
-.form-loading-spinner__track {
-    border-color: var(--app-border);
-}
-
-.form-loading-spinner__arc {
-    border-top-color: var(--app-accent);
-    border-right-color: var(--app-accent);
-    animation: form-loading-spin 720ms linear infinite;
+    background: conic-gradient(
+        from -90deg,
+        color-mix(in srgb, var(--app-accent) 0%, transparent),
+        var(--app-accent)
+    );
+    -webkit-mask: radial-gradient(
+        circle closest-side,
+        transparent calc(100% - var(--spinner-thickness)),
+        #000 calc(100% - var(--spinner-thickness) + 0.5px)
+    );
+    mask: radial-gradient(
+        circle closest-side,
+        transparent calc(100% - var(--spinner-thickness)),
+        #000 calc(100% - var(--spinner-thickness) + 0.5px)
+    );
+    animation: form-loading-spin 850ms linear infinite;
 }
 
 .form-loading-text {

@@ -72,14 +72,20 @@
   content: '';
   position: absolute;
   inset: 5px;
-  background-color: var(--app-surface);
+  /* Tinted version of the page bg so the circle always reads as a button
+     against `--app-bg`: in light theme `--app-text` is dark → near-white
+     bg mixed with 8% black → light-gray button on slate-50 page; in dark
+     theme `--app-text` is light → near-black bg mixed with 8% white →
+     dark-gray button on near-black page. Both yield clear contrast
+     without needing theme-specific overrides. */
+  background-color: color-mix(in srgb, var(--app-text) 8%, var(--app-bg));
   border-radius: 50%;
   z-index: -1;
   transition: background-color 0.12s ease, transform 0.08s ease;
 }
 
 .amount-keypad__key:active::before {
-  background-color: var(--app-surface-hover);
+  background-color: color-mix(in srgb, var(--app-text) 16%, var(--app-bg));
   transform: scale(0.96);
 }
 

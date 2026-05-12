@@ -639,52 +639,56 @@ html.cdk-global-scrollblock {
     -webkit-backdrop-filter: blur(6px);
 }
 
-/* CSS-only circular spinner. Pure visual — text comes from a sibling label. */
+/* Single-element conic-gradient sweep. The arc fades from transparent to
+   the accent color across one full revolution, so when it spins it reads
+   as a comet/sweep — no separate static "track" ring layered behind. */
 .app-spinner {
     display: inline-block;
     position: relative;
     flex-shrink: 0;
     width: 40px;
     height: 40px;
+    --spinner-thickness: 3px;
 }
 
 .app-spinner--sm {
     width: 28px;
     height: 28px;
+    --spinner-thickness: 2.5px;
 }
 
 .app-spinner--lg {
     width: 56px;
     height: 56px;
+    --spinner-thickness: 4px;
 }
 
-.app-spinner__track,
+.app-spinner__track {
+    /* Folded into the arc's gradient — kept as a sink so existing markup
+       still mounts. */
+    display: none;
+}
+
 .app-spinner__arc {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    border: 3px solid transparent;
-    box-sizing: border-box;
-}
-
-.app-spinner--sm .app-spinner__track,
-.app-spinner--sm .app-spinner__arc {
-    border-width: 2.5px;
-}
-
-.app-spinner--lg .app-spinner__track,
-.app-spinner--lg .app-spinner__arc {
-    border-width: 4px;
-}
-
-.app-spinner__track {
-    border-color: var(--app-border);
-}
-
-.app-spinner__arc {
-    border-top-color: var(--app-accent);
-    border-right-color: var(--app-accent);
-    animation: app-spin 720ms linear infinite;
+    background: conic-gradient(
+        from -90deg,
+        color-mix(in srgb, var(--app-accent) 0%, transparent),
+        var(--app-accent)
+    );
+    -webkit-mask: radial-gradient(
+        circle closest-side,
+        transparent calc(100% - var(--spinner-thickness)),
+        #000 calc(100% - var(--spinner-thickness) + 0.5px)
+    );
+    mask: radial-gradient(
+        circle closest-side,
+        transparent calc(100% - var(--spinner-thickness)),
+        #000 calc(100% - var(--spinner-thickness) + 0.5px)
+    );
+    animation: app-spin 850ms linear infinite;
 }
 
 .app-loading-label {
