@@ -10,9 +10,14 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { MenuItem, SideBarMode } from '../base-template.models';
 
-/** How close to the left edge a touch must start to count as an "open"
- *  swipe. Matches the comfortable iOS edge-gesture zone. */
-const EDGE_SWIPE_ZONE_PX = 24;
+/** Horizontal band (in px from the left viewport edge) where a touch
+ *  qualifies as an "open" swipe. Starts inset from the very edge so it
+ *  doesn't overlap iOS Safari / Android Chrome's native back-swipe zone
+ *  (which lives in the first ~15 px). Touches between INNER and OUTER
+ *  start the drawer drag; touches at clientX < INNER are left to the
+ *  browser's back gesture. */
+const EDGE_SWIPE_ZONE_INNER_PX = 20;
+const EDGE_SWIPE_ZONE_OUTER_PX = 55;
 /** Horizontal movement (in px) required before we commit a touch to the
  *  drawer drag — below this, taps/vertical scrolls pass through. */
 const DRAG_COMMIT_THRESHOLD_PX = 8;
@@ -164,17 +169,15 @@ export class SideBarComponent implements OnChanges, AfterViewInit, OnDestroy {
     const isOpen = this.sideBarService.mobileMenuOpen;
     const drawerWidth = sidebar.getBoundingClientRect().width;
 
-    // Closed → only start tracking if the touch lands in the edge zone
-    // AND we're in standalone (PWA) mode. In a regular browser tab iOS
-    // Safari / Chrome reserve the screen edge for their native back-swipe
-    // and we can't override it from web code, so we'd just fight the OS.
-    // Drag-to-close starts on the drawer itself (already on screen), so
-    // the OS doesn't claim it — keep that path enabled everywhere.
-    const inEdgeZone = touch.clientX < EDGE_SWIPE_ZONE_PX;
+    // Closed → only start tracking if the touch lands in the inset edge
+    // band. The first ~15 px from the screen edge is reserved for iOS
+    // Safari / Android Chrome's native back-swipe (which web code can't
+    // override), so we start our zone just outside it. Drag-to-close
+    // starts inside the drawer (already on screen) so the OS doesn't
+    // claim it — keep that path enabled everywhere.
+    const inEdgeZone =
+      touch.clientX >= EDGE_SWIPE_ZONE_INNER_PX && touch.clientX <= EDGE_SWIPE_ZONE_OUTER_PX;
     const inOpenDrawer = isOpen && touch.clientX <= drawerWidth;
-    if (inEdgeZone && !isOpen && !this.isStandaloneDisplay()) {
-      return;
-    }
     if (!inEdgeZone && !inOpenDrawer) {
       return;
     }
@@ -187,15 +190,6 @@ export class SideBarComponent implements OnChanges, AfterViewInit, OnDestroy {
       drawerWidth,
       committed: false,
     };
-  }
-
-  private isStandaloneDisplay(): boolean {
-    // Modern check (works on iOS PWAs and Android TWAs) + the legacy iOS
-    // `navigator.standalone` flag for older Safari.
-    return (
-      window.matchMedia?.('(display-mode: standalone)').matches === true ||
-      (window.navigator as { standalone?: boolean }).standalone === true
-    );
   }
 
   private handleTouchMove(e: TouchEvent): void {
