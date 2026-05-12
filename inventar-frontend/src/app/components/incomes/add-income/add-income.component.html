@@ -37,8 +37,9 @@
                                     <span class="category-tile__label">{{ category?.category }}</span>
                                     <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
                                 </span>
-                                <span class="category-tile__check" aria-hidden="true"
-                                    *ngIf="formGroup.get('categoryID')?.value == category.id">✓</span>
+                                <span class="category-tile__check" aria-hidden="true">
+                                    <mat-icon>check</mat-icon>
+                                </span>
                             </button>
                         </div>
                         <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">
@@ -193,8 +194,9 @@
                                     <span class="category-tile__label">{{ category?.category }}</span>
                                     <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
                                 </span>
-                                <span class="category-tile__check" aria-hidden="true"
-                                    *ngIf="formGroup.get('categoryID')?.value == category.id">✓</span>
+                                <span class="category-tile__check" aria-hidden="true">
+                                    <mat-icon>check</mat-icon>
+                                </span>
                             </button>
                         </div>
                         <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">

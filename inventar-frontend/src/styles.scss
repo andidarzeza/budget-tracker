@@ -967,10 +967,15 @@ html.cdk-global-scrollblock {
         transform 0.08s ease;
 }
 
-.category-tile:hover {
-    border-color: var(--app-accent);
-    background: var(--app-surface-hover);
-    box-shadow: var(--app-shadow-sm);
+/* Only pointer devices with real hover (mouse) get the accent border.
+   On touch devices, :hover sticks after a tap/drag, so scrolling through
+   the list would leave a purple border behind on the last touched card. */
+@media (hover: hover) and (pointer: fine) {
+    .category-tile:hover {
+        border-color: var(--app-accent);
+        background: var(--app-surface-hover);
+        box-shadow: var(--app-shadow-sm);
+    }
 }
 
 .category-tile:active {
@@ -1072,10 +1077,27 @@ html.cdk-global-scrollblock {
 .category-tile__check {
     flex-shrink: 0;
     color: var(--app-accent);
-    font-weight: 700;
-    font-size: 1.4rem;
-    line-height: 1;
     align-self: center;
+    /* Always reserved so long descriptions don't shift the card height
+       when selection toggles. Visibility flips on the selected modifier. */
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+}
+
+.category-tile--selected .category-tile__check {
+    visibility: visible;
+}
+
+.category-tile__check .mat-icon,
+.category-tile__check mat-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    line-height: 24px;
 }
 
 .category-pick-list__item {
