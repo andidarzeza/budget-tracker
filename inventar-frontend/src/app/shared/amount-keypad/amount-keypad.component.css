@@ -16,6 +16,11 @@
      finger drifts a few pixels. Clicks still fire. Outside the keypad
      (e.g. the wizard nav above), the page scrolls normally. */
   touch-action: none;
+  /* Long-press on a key shouldn't pop the iOS text-selection bubble or
+     start a desktop drag-select on the digit glyph. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* Grid uses `gap: 0` so each cell's full bounding box is tappable — the
@@ -32,7 +37,7 @@
   /* Cap the keypad so buttons stay around iPhone-Calculator size on
      phones (cells ~90px) instead of stretching the full content width.
      Centered when narrower than its container. */
-  max-width: 280px;
+  max-width: 300px;
   margin: 0 auto;
 }
 
