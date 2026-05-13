@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -11,7 +13,7 @@ import { ExpenseDetailComponent } from './expense-detail/expense-detail.componen
 import { QrScannerDialogComponent } from './qr-scanner-dialog/qr-scanner-dialog.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
-import { CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
+import { Category, CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
@@ -25,6 +27,9 @@ import { FilterService } from 'src/app/core/services/filter.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
+import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -35,9 +40,13 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     CommonModule,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     MatSidenavModule,
     BaseTableComponent,
     ExpenseDetailComponent,
+    IconButtonComponent,
+    PillButtonComponent,
+    ...TOOLTIP_IMPORTS,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -65,6 +74,127 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     pageName: "Expenses",
     icon: 'attach_money'
   };
+
+  /** Same breakpoint as table-card layout (≤767px) — switches the page from
+   *  the dense desktop table to the mobile ledger view. */
+  readonly isMobile = toSignal(this.breakpointService.useTableCardLayout$, { initialValue: false });
+
+  /** Row data, hoisted to a signal so the date grouping below can stay reactive. */
+  private readonly rows = toSignal(this.data$, { initialValue: [] as Expense[] });
+
+  /** Category name → metadata (icon, type). Populated alongside the filter
+   *  options in `ngOnInit`; we key on the joined `category` string the API
+   *  returns on each expense row. */
+  readonly categoriesByName = signal<Map<string, Category>>(new Map());
+
+  /** Expenses bucketed by yyyy-mm-dd, newest day first. Each bucket carries
+   *  a human label ("TODAY" / "YESTERDAY" / "MON, 12 MAR") and its items. */
+  readonly groupedRows = computed(() => {
+    const items = [...this.rows()].sort(
+      (a, b) => new Date(b.createdTime).getTime() - new Date(a.createdTime).getTime(),
+    );
+    const buckets = new Map<string, { key: string; date: Date; items: Expense[] }>();
+    for (const item of items) {
+      const d = new Date(item.createdTime);
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      if (!buckets.has(key)) {
+        buckets.set(key, { key, date: d, items: [] });
+      }
+      buckets.get(key)!.items.push(item);
+    }
+    return Array.from(buckets.values()).map((b) => ({
+      key: b.key,
+      label: this.dayLabel(b.date),
+      items: b.items,
+    }));
+  });
+
+  /** "This week" summary card. Multi-currency expenses can't be added across
+   *  ISO codes, so we pick the dominant currency for this week (most rows)
+   *  and total just that subset — a simple, defensible single-number summary. */
+  readonly weekSummary = computed(() => {
+    const items = this.rows();
+    const monday = this.startOfWeek(new Date());
+    const inWeek = items.filter((e) => new Date(e.createdTime) >= monday);
+    if (inWeek.length === 0) {
+      return { count: 0, total: 0, currency: '' };
+    }
+    const byCurrency = new Map<string, { total: number; count: number }>();
+    for (const e of inWeek) {
+      const c = e.currency || 'ALL';
+      const bucket = byCurrency.get(c) ?? { total: 0, count: 0 };
+      bucket.total += Number(e.moneySpent) || 0;
+      bucket.count += 1;
+      byCurrency.set(c, bucket);
+    }
+    // Pick the currency with the most expenses this week (tiebreak: biggest total).
+    let pickCurrency = '';
+    let pickCount = -1;
+    let pickTotal = -1;
+    for (const [code, b] of byCurrency) {
+      if (b.count > pickCount || (b.count === pickCount && b.total > pickTotal)) {
+        pickCurrency = code;
+        pickCount = b.count;
+        pickTotal = b.total;
+      }
+    }
+    return {
+      count: inWeek.length,
+      total: byCurrency.get(pickCurrency)?.total ?? 0,
+      currency: pickCurrency,
+    };
+  });
+
+  iconFor(row: Expense & { category?: string }): string {
+    const cat = this.categoriesByName().get(row.category ?? '');
+    return cat?.icon || 'receipt';
+  }
+
+  /** Pastel tile background for a category's icon, keyed by category name so
+   *  every row of the same category renders in the same color. */
+  iconBg(name: string | null | undefined): string {
+    return `color-mix(in srgb, hsl(${this.hueFor(name ?? '')}, 65%, 55%) 18%, transparent)`;
+  }
+
+  /** Solid icon color on the tile — same hue as the background, fully opaque. */
+  iconFg(name: string | null | undefined): string {
+    return `hsl(${this.hueFor(name ?? '')}, 55%, 45%)`;
+  }
+
+  /** Day-section header ("TODAY" / "YESTERDAY" / "MON, MAR 3" — all caps). */
+  private dayLabel(date: Date): string {
+    const today = this.startOfDay(new Date());
+    const target = this.startOfDay(date);
+    const diffDays = Math.round((today.getTime() - target.getTime()) / 86_400_000);
+    if (diffDays === 0) return 'TODAY';
+    if (diffDays === 1) return 'YESTERDAY';
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
+  }
+
+  private startOfDay(d: Date): Date {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
+  /** Monday 00:00 of the current week (ISO week — Monday is day 1). */
+  private startOfWeek(d: Date): Date {
+    const start = this.startOfDay(d);
+    const day = start.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    const offset = (day + 6) % 7; // days since Monday
+    start.setDate(start.getDate() - offset);
+    return start;
+  }
+
+  /** Stable hue (0..360) derived from category name → consistent tile colors. */
+  private hueFor(name: string): number {
+    if (!name) return 215;
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = (hash * 31 + name.charCodeAt(i)) | 0;
+    }
+    // 7 evenly-spaced hues spanning the wheel (amber, blue, pink, violet, green, red, teal).
+    const palette = [32, 215, 340, 270, 145, 8, 195];
+    return palette[Math.abs(hash) % palette.length];
+  }
 
   constructor(
     public dialog: DialogService,
@@ -102,6 +232,14 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
         displayBy: "category",
         valueBy: "id"
       };
+      // The mobile ledger view looks up icons by the joined category name the
+      // API returns on each expense row — build that lookup from the same
+      // payload we just fetched for the filter dropdown.
+      const map = new Map<string, Category>();
+      for (const c of (res.data ?? []) as Category[]) {
+        if (c?.category) map.set(c.category, c);
+      }
+      this.categoriesByName.set(map);
     });
     this.query();
   }

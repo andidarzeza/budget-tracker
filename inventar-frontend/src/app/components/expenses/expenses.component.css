@@ -19,3 +19,277 @@
     background-color: var(--app-accent-hover);
     box-shadow: 0 16px 32px -8px rgba(99, 102, 241, 0.5);
 }
+
+/* ============================================================================
+ * Mobile "ledger" — iOS-style classic list (mockup V1).
+ * Layout: page title → THIS-WEEK summary card → day-grouped rounded cards,
+ * each card stacking multiple rows of (colored tile · title · amount/time).
+ * Tapping a row opens the existing edit dialog.
+ * ========================================================================== */
+.ledger {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 16px 16px 96px; /* bottom clearance for the QR FAB */
+    background: var(--app-bg);
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+.ledger__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.ledger__page-title {
+    margin: 0;
+    font-family: var(--app-font-display);
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--app-text);
+}
+
+.ledger__head-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── This-week summary card ──────────────────────────────────────────── */
+.ledger-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: var(--app-bg-elevated);
+    border: 1px solid var(--app-border);
+    box-shadow: var(--app-shadow-xs);
+}
+
+.ledger-summary__main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.ledger-summary__label {
+    font-family: var(--app-font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--app-text-subtle);
+}
+
+.ledger-summary__total {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: var(--app-font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--app-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.ledger-summary__currency {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--app-text-subtle);
+}
+
+.ledger-summary__meta {
+    text-align: right;
+}
+
+.ledger-summary__count {
+    font-size: 0.82rem;
+    color: var(--app-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Empty state ──────────────────────────────────────────────────────── */
+.ledger__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px 16px;
+    text-align: center;
+    border: 1px dashed var(--app-border);
+    border-radius: 16px;
+    background: var(--app-bg-elevated);
+}
+
+.ledger__empty-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+    color: var(--app-text-subtle);
+}
+
+.ledger__empty-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--app-text);
+}
+
+.ledger__empty-hint {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--app-text-muted);
+}
+
+/* ── Day section ──────────────────────────────────────────────────────── */
+.ledger-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ledger-section__label {
+    margin: 0 4px;
+    font-family: var(--app-font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--app-text-subtle);
+}
+
+.ledger-section__card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    background: var(--app-bg-elevated);
+    border: 1px solid var(--app-border);
+    overflow: hidden;
+    box-shadow: var(--app-shadow-xs);
+}
+
+/* ── Row ──────────────────────────────────────────────────────────────── */
+.ledger-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-right: 8px;
+    border-bottom: 1px solid var(--app-border);
+}
+
+.ledger-item--last {
+    border-bottom: 0;
+}
+
+.ledger-item__main {
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    background: transparent;
+    border: 0;
+    padding: 12px 0 12px 14px;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
+}
+
+.ledger-item__main:active {
+    background: color-mix(in srgb, var(--app-accent) 7%, transparent);
+}
+
+.ledger-item__menu-trigger {
+    flex-shrink: 0;
+}
+
+.ledger-item__tile {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ledger-item__tile mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+}
+
+.ledger-item__body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ledger-item__title {
+    font-family: var(--app-font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--app-text);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ledger-item__subtitle {
+    font-size: 0.84rem;
+    color: var(--app-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ledger-item__amount {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.ledger-item__value {
+    font-family: var(--app-font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--app-text);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    letter-spacing: -0.005em;
+}
+
+.ledger-item__currency {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--app-text-subtle);
+    margin-left: 2px;
+    letter-spacing: 0.04em;
+}
+
+.ledger-item__time {
+    font-size: 0.78rem;
+    color: var(--app-text-subtle);
+    font-variant-numeric: tabular-nums;
+}
