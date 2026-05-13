@@ -1,67 +1,154 @@
-<div class="projects-page">
+@if (isMobile()) {
+    <section class="ledger">
+        <header class="ledger__head">
+            <h1 class="ledger__page-title">Projects</h1>
+            <div class="ledger__head-actions">
+                <button type="button" cb-pill-button variant="primary" icon="add"
+                    (click)="openAddDialog()">
+                    New
+                </button>
+                <button type="button" cb-icon-button [matMenuTriggerFor]="ledgerMenu"
+                    matTooltip="More" matTooltipPosition="below" aria-label="More options">
+                    <mat-icon>more_horiz</mat-icon>
+                </button>
+            </div>
+        </header>
 
-    <header class="projects-header">
-        <div class="projects-header__title-row">
-            <mat-icon class="projects-header__icon" aria-hidden="true">flag</mat-icon>
-            <h1 class="projects-header__title">Projects</h1>
-        </div>
-        <p class="projects-header__subtitle">Set savings goals and track contributions toward them.</p>
-        <button type="button" cb-pill-button variant="primary" icon="add" (click)="openAddDialog()">
-            New project
-        </button>
-    </header>
-
-    <!-- Empty state (after fetch) -->
-    <ng-container *ngIf="projects() as rows">
-        <div *ngIf="rows.length === 0" class="projects-empty">
-            <mat-icon class="projects-empty__icon">flag</mat-icon>
-            <p class="projects-empty__title">No projects yet</p>
-            <p class="projects-empty__hint">Create your first goal — a trip, a new car, an emergency fund.</p>
-            <button type="button" cb-pill-button variant="primary" icon="add" (click)="openAddDialog()">
-                New project
+        <mat-menu #ledgerMenu="matMenu">
+            <button mat-menu-item (click)="refresh()">
+                <mat-icon>refresh</mat-icon>
+                <span>Refresh</span>
             </button>
-        </div>
+        </mat-menu>
 
-        <div *ngIf="rows.length > 0" class="projects-grid">
-            <article *ngFor="let view of rows; trackBy: trackById" class="project-card" (click)="open(view)" tabindex="0"
-                (keyup.enter)="open(view)">
-                <header class="project-card__head">
-                    <span class="project-card__icon-wrap" aria-hidden="true">
-                        <mat-icon class="project-card__icon">{{ view.project.icon || 'flag' }}</mat-icon>
-                    </span>
-                    <div class="project-card__title-block">
-                        <h3 class="project-card__title">{{ view.project.name }}</h3>
-                        <p *ngIf="view.project.description" class="project-card__desc">{{ view.project.description }}</p>
-                    </div>
-                </header>
-
-                <div class="project-card__progress">
-                    <div class="project-card__progress-row">
-                        <span class="project-card__saved">
-                            {{ primaryProgress(view).saved | number : '1.0-2' }} {{ view.project.targetCurrency }}
-                        </span>
-                        <span class="project-card__target">
-                            of {{ view.project.targetAmount | number : '1.0-2' }} {{ view.project.targetCurrency }}
-                        </span>
-                    </div>
-                    <div class="project-card__bar" [attr.aria-label]="'Progress ' + primaryProgress(view).pct + '%'">
-                        <div class="project-card__bar-fill" [style.width.%]="primaryProgress(view).pct"></div>
-                    </div>
-                    <div class="project-card__progress-meta">
-                        <span class="project-card__pct">{{ primaryProgress(view).pct }}%</span>
-                        <span *ngIf="primaryProgress(view).pct >= 100" class="project-card__complete">Goal reached</span>
-                    </div>
+        @if (summary().total > 0) {
+            <article class="ledger-summary">
+                <div class="ledger-summary__main">
+                    <span class="ledger-summary__label">All projects</span>
+                    <span class="ledger-summary__total">{{ summary().total }}</span>
                 </div>
-
-                <div *ngIf="otherTotals(view).length" class="project-card__extras">
-                    <span class="project-card__extras-label">Also saved</span>
-                    <span class="project-card__extras-list">
-                        <span *ngFor="let t of otherTotals(view)" class="project-card__extra">
-                            {{ t.total | number : '1.0-2' }} {{ t._id }}
-                        </span>
+                <div class="ledger-summary__meta">
+                    <span class="ledger-summary__count">
+                        {{ summary().completed }} completed
                     </span>
                 </div>
             </article>
-        </div>
-    </ng-container>
-</div>
+        }
+
+        <ng-container *ngIf="projects() as rows">
+            @if (rows.length === 0) {
+                <div class="ledger__empty">
+                    <mat-icon class="ledger__empty-icon">flag</mat-icon>
+                    <p class="ledger__empty-title">No projects yet</p>
+                    <p class="ledger__empty-hint">Create your first goal — a trip, a new car, an emergency fund.</p>
+                </div>
+            }
+        </ng-container>
+
+        @for (group of groupedRows(); track group.key) {
+            <section class="ledger-section">
+                <h2 class="ledger-section__label">{{ group.label }}</h2>
+                <article class="ledger-section__card">
+                    @for (view of group.items; track view.project.id; let last = $last) {
+                        <div class="ledger-item" [class.ledger-item--last]="last">
+                            <button type="button" class="ledger-item__main"
+                                (click)="open(view)"
+                                [attr.aria-label]="'Open ' + view.project.name">
+                                <span class="ledger-item__tile"
+                                    [style.background-color]="iconBg(view.project.name)"
+                                    [style.color]="iconFg(view.project.name)"
+                                    aria-hidden="true">
+                                    <mat-icon>{{ view.project.icon || 'flag' }}</mat-icon>
+                                </span>
+                                <span class="ledger-item__body">
+                                    <span class="ledger-item__title">{{ view.project.name }}</span>
+                                    <span class="ledger-item__subtitle">
+                                        {{ primaryProgress(view).saved | number : '1.0-2' }}
+                                        of {{ view.project.targetAmount | number : '1.0-2' }}
+                                        {{ view.project.targetCurrency }}
+                                    </span>
+                                </span>
+                                <span class="ledger-item__amount">
+                                    <span class="ledger-item__value">{{ primaryProgress(view).pct }}%</span>
+                                    @if (primaryProgress(view).pct >= 100) {
+                                        <span class="ledger-item__time">Goal reached</span>
+                                    } @else {
+                                        <span class="ledger-item__time">In progress</span>
+                                    }
+                                </span>
+                            </button>
+                        </div>
+                    }
+                </article>
+            </section>
+        }
+    </section>
+} @else {
+    <div class="projects-page">
+
+        <header class="projects-header">
+            <div class="projects-header__title-row">
+                <mat-icon class="projects-header__icon" aria-hidden="true">flag</mat-icon>
+                <h1 class="projects-header__title">Projects</h1>
+            </div>
+            <p class="projects-header__subtitle">Set savings goals and track contributions toward them.</p>
+            <button type="button" cb-pill-button variant="primary" icon="add" (click)="openAddDialog()">
+                New project
+            </button>
+        </header>
+
+        <!-- Empty state (after fetch) -->
+        <ng-container *ngIf="projects() as rows">
+            <div *ngIf="rows.length === 0" class="projects-empty">
+                <mat-icon class="projects-empty__icon">flag</mat-icon>
+                <p class="projects-empty__title">No projects yet</p>
+                <p class="projects-empty__hint">Create your first goal — a trip, a new car, an emergency fund.</p>
+                <button type="button" cb-pill-button variant="primary" icon="add" (click)="openAddDialog()">
+                    New project
+                </button>
+            </div>
+
+            <div *ngIf="rows.length > 0" class="projects-grid">
+                <article *ngFor="let view of rows; trackBy: trackById" class="project-card" (click)="open(view)" tabindex="0"
+                    (keyup.enter)="open(view)">
+                    <header class="project-card__head">
+                        <span class="project-card__icon-wrap" aria-hidden="true">
+                            <mat-icon class="project-card__icon">{{ view.project.icon || 'flag' }}</mat-icon>
+                        </span>
+                        <div class="project-card__title-block">
+                            <h3 class="project-card__title">{{ view.project.name }}</h3>
+                            <p *ngIf="view.project.description" class="project-card__desc">{{ view.project.description }}</p>
+                        </div>
+                    </header>
+
+                    <div class="project-card__progress">
+                        <div class="project-card__progress-row">
+                            <span class="project-card__saved">
+                                {{ primaryProgress(view).saved | number : '1.0-2' }} {{ view.project.targetCurrency }}
+                            </span>
+                            <span class="project-card__target">
+                                of {{ view.project.targetAmount | number : '1.0-2' }} {{ view.project.targetCurrency }}
+                            </span>
+                        </div>
+                        <div class="project-card__bar" [attr.aria-label]="'Progress ' + primaryProgress(view).pct + '%'">
+                            <div class="project-card__bar-fill" [style.width.%]="primaryProgress(view).pct"></div>
+                        </div>
+                        <div class="project-card__progress-meta">
+                            <span class="project-card__pct">{{ primaryProgress(view).pct }}%</span>
+                            <span *ngIf="primaryProgress(view).pct >= 100" class="project-card__complete">Goal reached</span>
+                        </div>
+                    </div>
+
+                    <div *ngIf="otherTotals(view).length" class="project-card__extras">
+                        <span class="project-card__extras-label">Also saved</span>
+                        <span class="project-card__extras-list">
+                            <span *ngFor="let t of otherTotals(view)" class="project-card__extra">
+                                {{ t.total | number : '1.0-2' }} {{ t._id }}
+                            </span>
+                        </span>
+                    </div>
+                </article>
+            </div>
+        </ng-container>
+    </div>
+}

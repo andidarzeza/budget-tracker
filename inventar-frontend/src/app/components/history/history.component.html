@@ -5,16 +5,106 @@
         </history-details>
     </mat-drawer>
 
-    <base-table [data]="data$ | async" [columnDefinition]="columnDefinition"
-        [total]="totalItems$ | async"
-        (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
-        (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)" (loadMore)="loadMore()"
-        [loading]="loading()"
-        [pageIndex]="page" [loadingMore]="loadingMore()"
-        [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()"
-        (onRefresh)="refresh()" (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
-        (layoutModeChange)="refresh()" [displayEditAction]="false"
-        [displayViewAction]="false">
-    </base-table>
+    @if (isMobile()) {
+        <section class="ledger">
+            <header class="ledger__head">
+                <h1 class="ledger__page-title">History</h1>
+                <div class="ledger__head-actions">
+                    <button type="button" cb-icon-button [matMenuTriggerFor]="ledgerMenu"
+                        matTooltip="More" matTooltipPosition="below" aria-label="More options">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+                </div>
+            </header>
+
+            <mat-menu #ledgerMenu="matMenu">
+                <button mat-menu-item (click)="refresh()">
+                    <mat-icon>refresh</mat-icon>
+                    <span>Refresh</span>
+                </button>
+            </mat-menu>
+
+            @if (groupedRows().length === 0 && !loading()) {
+                <div class="ledger__empty">
+                    <mat-icon class="ledger__empty-icon">history</mat-icon>
+                    <p class="ledger__empty-title">No activity yet</p>
+                    <p class="ledger__empty-hint">Actions you take across the app will show up here.</p>
+                </div>
+            }
+
+            @for (group of groupedRows(); track group.key) {
+                <section class="ledger-section">
+                    <h2 class="ledger-section__label">{{ group.label }}</h2>
+                    <article class="ledger-section__card">
+                        @for (item of group.items; track item.id; let last = $last) {
+                            <div class="ledger-item" [class.ledger-item--last]="last">
+                                <button type="button" class="ledger-item__main"
+                                    (click)="viewDetails(item.id)"
+                                    [attr.aria-label]="titleFor(item)">
+                                    <span class="ledger-item__tile"
+                                        [style.background-color]="iconBg(item)"
+                                        [style.color]="iconFg(item)"
+                                        aria-hidden="true">
+                                        <mat-icon>{{ iconFor(item) }}</mat-icon>
+                                    </span>
+                                    <span class="ledger-item__body">
+                                        <span class="ledger-item__title">{{ titleFor(item) }}</span>
+                                        @if (item.message) {
+                                            <span class="ledger-item__subtitle">{{ item.message }}</span>
+                                        }
+                                    </span>
+                                    <span class="ledger-item__amount">
+                                        <span class="ledger-item__time">{{ item.date | date:'HH:mm' }}</span>
+                                    </span>
+                                </button>
+                                <button type="button" cb-icon-button size="sm" class="ledger-item__menu-trigger"
+                                    [matMenuTriggerFor]="itemMenu"
+                                    matTooltip="More" matTooltipPosition="left"
+                                    aria-label="More actions">
+                                    <mat-icon>more_vert</mat-icon>
+                                </button>
+                                <mat-menu #itemMenu="matMenu" xPosition="before">
+                                    <button mat-menu-item (click)="viewDetails(item.id)">
+                                        <mat-icon>visibility</mat-icon>
+                                        <span>View</span>
+                                    </button>
+                                    <button mat-menu-item (click)="openDeleteConfirmDialog(item.id)">
+                                        <mat-icon>delete</mat-icon>
+                                        <span>Delete</span>
+                                    </button>
+                                </mat-menu>
+                            </div>
+                        }
+                    </article>
+                </section>
+            }
+
+            @if (hasMore()) {
+                <div #loadSentinel class="ledger__sentinel" aria-hidden="true"></div>
+            }
+
+            @if (loadingMore()) {
+                <div class="ledger__loading" role="status" aria-live="polite">
+                    <span class="app-spinner app-spinner--sm" aria-hidden="true">
+                        <span class="app-spinner__track"></span>
+                        <span class="app-spinner__arc"></span>
+                    </span>
+                    <span>Loading more…</span>
+                </div>
+            }
+        </section>
+    } @else {
+        <base-table [data]="data$ | async" [columnDefinition]="columnDefinition"
+            [total]="totalItems$ | async"
+            (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
+            (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)" (loadMore)="loadMore()"
+            [loading]="loading()"
+            [pageIndex]="page" [loadingMore]="loadingMore()"
+            [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()"
+            (onRefresh)="refresh()" (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
+            (layoutModeChange)="refresh()" [displayEditAction]="false"
+            [displayViewAction]="false">
+        </base-table>
+    }
 
 </mat-drawer-container>

@@ -5,17 +5,121 @@
         </app-category-detail>
     </mat-drawer>
 
+    @if (isMobile()) {
+        <section class="ledger">
+            <header class="ledger__head">
+                <h1 class="ledger__page-title">Categories</h1>
+                <div class="ledger__head-actions">
+                    <button type="button" cb-pill-button variant="primary" icon="add"
+                        (click)="openAddEditForm()">
+                        New
+                    </button>
+                    <button type="button" cb-icon-button [matMenuTriggerFor]="ledgerMenu"
+                        matTooltip="More" matTooltipPosition="below" aria-label="More options">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+                </div>
+            </header>
 
-    <base-table [data]="data$ | async" [columnDefinition]="columnDefinition"
-        (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
-        (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)" (loadMore)="loadMore()"
-        [loading]="loading()"
-        [pageIndex]="page" [loadingMore]="loadingMore()"
-        [filterOptions]="filterOptions"
-        [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="refresh()"
-        (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
-        (layoutModeChange)="refresh()"
-        [total]="totalItems$ | async"
-        [displayEditAction]="true" [displayDeleteAction]="true"
-        [displayViewAction]="false"></base-table>
+            <mat-menu #ledgerMenu="matMenu">
+                <button mat-menu-item (click)="refresh()">
+                    <mat-icon>refresh</mat-icon>
+                    <span>Refresh</span>
+                </button>
+            </mat-menu>
+
+            @if (summary().total > 0) {
+                <article class="ledger-summary">
+                    <div class="ledger-summary__main">
+                        <span class="ledger-summary__label">All categories</span>
+                        <span class="ledger-summary__total">{{ summary().total }}</span>
+                    </div>
+                    <div class="ledger-summary__meta">
+                        <span class="ledger-summary__count">
+                            {{ summary().expense }} expense · {{ summary().income }} income
+                        </span>
+                    </div>
+                </article>
+            }
+
+            @if (groupedRows().length === 0 && !loading()) {
+                <div class="ledger__empty">
+                    <mat-icon class="ledger__empty-icon">list_alt</mat-icon>
+                    <p class="ledger__empty-title">No categories yet</p>
+                    <p class="ledger__empty-hint">Tap "New" to create your first category.</p>
+                </div>
+            }
+
+            @for (group of groupedRows(); track group.key) {
+                <section class="ledger-section">
+                    <h2 class="ledger-section__label">{{ group.label }}</h2>
+                    <article class="ledger-section__card">
+                        @for (item of group.items; track item.id; let last = $last) {
+                            <div class="ledger-item" [class.ledger-item--last]="last">
+                                <button type="button" class="ledger-item__main"
+                                    (click)="openAddEditForm(item)"
+                                    [attr.aria-label]="'Edit ' + (item.category || 'category')">
+                                    <span class="ledger-item__tile"
+                                        [style.background-color]="iconBg(item.category)"
+                                        [style.color]="iconFg(item.category)"
+                                        aria-hidden="true">
+                                        <mat-icon>{{ iconFor(item) }}</mat-icon>
+                                    </span>
+                                    <span class="ledger-item__body">
+                                        <span class="ledger-item__title">{{ item.category || 'Category' }}</span>
+                                        @if (item.description) {
+                                            <span class="ledger-item__subtitle">{{ item.description }}</span>
+                                        }
+                                    </span>
+                                </button>
+                                <button type="button" cb-icon-button size="sm" class="ledger-item__menu-trigger"
+                                    [matMenuTriggerFor]="itemMenu"
+                                    matTooltip="More" matTooltipPosition="left"
+                                    aria-label="More actions">
+                                    <mat-icon>more_vert</mat-icon>
+                                </button>
+                                <mat-menu #itemMenu="matMenu" xPosition="before">
+                                    <button mat-menu-item (click)="openAddEditForm(item)">
+                                        <mat-icon>edit</mat-icon>
+                                        <span>Edit</span>
+                                    </button>
+                                    <button mat-menu-item (click)="openDeleteConfirmDialog(item.id)">
+                                        <mat-icon>delete</mat-icon>
+                                        <span>Delete</span>
+                                    </button>
+                                </mat-menu>
+                            </div>
+                        }
+                    </article>
+                </section>
+            }
+
+            @if (hasMore()) {
+                <div #loadSentinel class="ledger__sentinel" aria-hidden="true"></div>
+            }
+
+            @if (loadingMore()) {
+                <div class="ledger__loading" role="status" aria-live="polite">
+                    <span class="app-spinner app-spinner--sm" aria-hidden="true">
+                        <span class="app-spinner__track"></span>
+                        <span class="app-spinner__arc"></span>
+                    </span>
+                    <span>Loading more…</span>
+                </div>
+            }
+        </section>
+    } @else {
+        <base-table [data]="data$ | async" [columnDefinition]="columnDefinition"
+            (onDeleteConfirmation)="openDeleteConfirmDialog($event)" (onAddEditForm)="openAddEditForm($event)"
+            (onViewDetails)="viewDetails($event)" (nextPage)="onNextPage($event)" (loadMore)="loadMore()"
+            [loading]="loading()"
+            [pageIndex]="page" [loadingMore]="loadingMore()"
+            [filterOptions]="filterOptions"
+            [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()" (onRefresh)="refresh()"
+            (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
+            (layoutModeChange)="refresh()"
+            [total]="totalItems$ | async"
+            [displayEditAction]="true" [displayDeleteAction]="true"
+            [displayViewAction]="false"></base-table>
+    }
 </mat-drawer-container>
