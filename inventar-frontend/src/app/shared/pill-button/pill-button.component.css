@@ -54,6 +54,21 @@
     color: var(--app-on-accent, #ffffff);
 }
 
+/* Destructive variant — red fill for confirming irreversible actions. */
+:host(.cb-pill-button--danger) {
+    background: var(--app-danger);
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 6px 16px -4px rgba(220, 38, 38, 0.45);
+}
+
+:host(.cb-pill-button--danger):hover:not(:disabled) {
+    filter: brightness(1.06);
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 10px 22px -6px rgba(220, 38, 38, 0.55);
+}
+
 /* Stretches the pill to fill its parent — used on auth forms where the
    actions stack full-width. Doesn't change padding/font, so the pill stays
    visually identical to the auto-width version. */

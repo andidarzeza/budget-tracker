@@ -12,6 +12,7 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ProjectService } from 'src/app/services/pages/project.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddProjectComponent } from './add-project/add-project.component';
 
@@ -20,7 +21,7 @@ import { AddProjectComponent } from './add-project/add-project.component';
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, PillButtonComponent],
 })
 export class ProjectsComponent implements OnInit {
   private readonly projectService = inject(ProjectService);

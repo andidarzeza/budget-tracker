@@ -17,6 +17,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
+import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectIconComponent } from 'src/app/shared/select-icon/select-icon.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -32,6 +33,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     CreateFormComponent,
     LabeledFormInputComponent,
     LabeledTextareaComponent,
+    PillButtonComponent,
     SelectInputComponent,
     SelectIconComponent,
   ],

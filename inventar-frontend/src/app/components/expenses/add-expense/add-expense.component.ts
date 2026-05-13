@@ -32,6 +32,7 @@ import { CreateFormComponent } from 'src/app/shared/create-form/create-form.comp
 import { LabeledDateInputComponent } from 'src/app/shared/labeled-date-input/labeled-date-input.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
+import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { toBareLocalIso } from 'src/app/utils/local-iso';
@@ -59,6 +60,7 @@ interface AddExpenseDialogData {
     LabeledDateInputComponent,
     LabeledFormInputComponent,
     LabeledTextareaComponent,
+    PillButtonComponent,
     SelectInputComponent,
     AmountKeypadComponent,
     FlagPipe,

@@ -1,8 +1,8 @@
 <footer class="dialog-footer">
-    <button type="button" class="dialog-btn dialog-btn--secondary" (click)="onCancel()">
+    <button type="button" cb-pill-button icon="close" (click)="onCancel()">
         Cancel
     </button>
-    <button type="button" class="dialog-btn dialog-btn--primary" (click)="add()">
+    <button type="button" cb-pill-button variant="primary" icon="check" (click)="add()">
         {{ editMode ? 'Save changes' : 'Save' }}
     </button>
 </footer>

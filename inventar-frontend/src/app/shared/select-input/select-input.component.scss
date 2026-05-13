@@ -81,6 +81,12 @@
   }
 }
 
+/* Specificity note: the theme overrides below use
+   `:host-context(.light-theme) .select-trigger { border-color: … !important }`
+   (specificity 0,2,1), which would otherwise beat a plain
+   `.required-field { border-color … !important }` (0,1,0) — leaving the
+   resting border grey when the field is invalid. We replicate the rule
+   under both theme contexts so the danger border wins consistently. */
 .required-field {
   border-color: var(--app-danger) !important;
 
@@ -90,6 +96,11 @@
     border-color: var(--app-danger) !important;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-danger) 18%, transparent) !important;
   }
+}
+
+:host-context(.light-theme) .select-trigger.required-field,
+:host-context(.dark-theme) .select-trigger.required-field {
+  border-color: var(--app-danger) !important;
 }
 
 @keyframes select-input-error-slide-in {

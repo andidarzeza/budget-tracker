@@ -2,12 +2,13 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { SharedService } from 'src/app/services/shared.service';
+import { PillButtonComponent } from '../pill-button/pill-button.component';
 
 @Component({
   selector: 'app-not-found',
   templateUrl: './not-found.component.html',
   styleUrls: ['./not-found.component.css'],
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, PillButtonComponent],
 })
 export class NotFoundComponent {
   private readonly route = inject(Router);

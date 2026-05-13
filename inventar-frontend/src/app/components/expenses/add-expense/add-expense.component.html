@@ -102,19 +102,19 @@
         </div>
 
         <footer class="form-page__footer">
-            <button type="button" class="dialog-btn dialog-btn--secondary" (click)="closeDialog(false)">
+            <button type="button" cb-pill-button icon="close" (click)="closeDialog(false)">
                 Cancel
             </button>
-            <button *ngIf="wizardStep() > 0" type="button" class="dialog-btn dialog-btn--secondary"
+            <button *ngIf="wizardStep() > 0" type="button" cb-pill-button icon="arrow_back"
                 (click)="wizardBack()">
                 Back
             </button>
-            <button *ngIf="wizardStep() < lastWizardStep()" type="button" class="dialog-btn dialog-btn--primary"
-                (click)="wizardNext()">
+            <button *ngIf="wizardStep() < lastWizardStep()" type="button" cb-pill-button variant="primary"
+                icon="arrow_forward" (click)="wizardNext()">
                 Next
             </button>
-            <button *ngIf="wizardStep() === lastWizardStep()" type="button" class="dialog-btn dialog-btn--primary"
-                (click)="add()">
+            <button *ngIf="wizardStep() === lastWizardStep()" type="button" cb-pill-button variant="primary"
+                icon="check" (click)="add()">
                 Save expense
             </button>
         </footer>
@@ -314,20 +314,20 @@
     <footer *ngIf="!isEditMode && isWizardMobile()"
         class="dialog-footer dialog-footer-slot create-wizard__footer">
         <div class="create-wizard__footer-row">
-            <button type="button" class="dialog-btn dialog-btn--secondary" (click)="closeDialog(false)">
+            <button type="button" cb-pill-button icon="close" (click)="closeDialog(false)">
                 Cancel
             </button>
             <div class="create-wizard__footer-actions">
-                <button *ngIf="wizardStep() > 0" type="button" class="dialog-btn dialog-btn--secondary"
+                <button *ngIf="wizardStep() > 0" type="button" cb-pill-button icon="arrow_back"
                     (click)="wizardBack()">
                     Back
                 </button>
-                <button *ngIf="wizardStep() < lastWizardStep()" type="button" class="dialog-btn dialog-btn--primary"
-                    (click)="wizardNext()">
+                <button *ngIf="wizardStep() < lastWizardStep()" type="button" cb-pill-button variant="primary"
+                    icon="arrow_forward" (click)="wizardNext()">
                     Next
                 </button>
-                <button *ngIf="wizardStep() === lastWizardStep()" type="button" class="dialog-btn dialog-btn--primary"
-                    (click)="add()">
+                <button *ngIf="wizardStep() === lastWizardStep()" type="button" cb-pill-button variant="primary"
+                    icon="check" (click)="add()">
                     Save expense
                 </button>
             </div>

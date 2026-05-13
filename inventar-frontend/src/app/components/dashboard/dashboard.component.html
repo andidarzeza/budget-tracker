@@ -35,9 +35,8 @@
         } @else {
             <div class="balance-empty">
                 <span>No balance set yet.</span>
-                <button type="button" class="balance-empty__cta" (click)="openEditBalance()">
-                    <mat-icon aria-hidden="true">add</mat-icon>
-                    <span>Set balance</span>
+                <button type="button" cb-pill-button variant="primary" icon="add" (click)="openEditBalance()">
+                    Set balance
                 </button>
             </div>
         }

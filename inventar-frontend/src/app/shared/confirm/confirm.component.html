@@ -17,10 +17,10 @@
     </div>
 
     <footer class="confirm-dialog-footer">
-        <button type="button" class="dialog-btn dialog-btn--secondary" (click)="closeDialog()">
+        <button type="button" cb-pill-button icon="close" (click)="closeDialog()">
             Cancel
         </button>
-        <button type="button" class="dialog-btn dialog-btn--danger" (click)="confirm()">
+        <button type="button" cb-pill-button variant="danger" icon="delete" (click)="confirm()">
             Delete
         </button>
     </footer>

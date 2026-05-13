@@ -99,7 +99,7 @@
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
 }
-.form-page__footer .dialog-btn {
+.form-page__footer .cb-pill-button {
     flex: 1 1 0;
     justify-content: center;
 }

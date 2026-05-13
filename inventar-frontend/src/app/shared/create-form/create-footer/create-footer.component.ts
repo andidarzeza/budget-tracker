@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { PillButtonComponent } from '../../pill-button/pill-button.component';
 
 @Component({
   selector: 'create-footer',
   templateUrl: './create-footer.component.html',
   styleUrls: ['./create-footer.component.css'],
+  imports: [PillButtonComponent],
 })
 export class CreateFooterComponent {
   @Input() editMode: boolean;

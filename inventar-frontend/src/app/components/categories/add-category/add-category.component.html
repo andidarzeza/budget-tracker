@@ -34,10 +34,10 @@
         </div>
 
         <footer class="form-page__footer">
-            <button type="button" class="dialog-btn dialog-btn--secondary" (click)="closeDialog(false)">
+            <button type="button" cb-pill-button icon="close" (click)="closeDialog(false)">
                 Cancel
             </button>
-            <button type="button" class="dialog-btn dialog-btn--primary" (click)="add()">
+            <button type="button" cb-pill-button variant="primary" icon="check" (click)="add()">
                 {{ isEditMode ? 'Save changes' : 'Save category' }}
             </button>
         </footer>

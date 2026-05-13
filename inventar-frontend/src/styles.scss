@@ -1349,10 +1349,16 @@ html.cdk-global-scrollblock {
 /* ============================================================================
  * Dialog forms
  * ========================================================================== */
+/* Vertical rhythm note: errors from the labeled inputs are absolutely
+   positioned ~32px below their wrapper (see `.error-message` rules in
+   `labeled-form-input`, `select-input`, `labeled-date-input`). The gaps
+   below give that error space room to render without overlapping the
+   label of the next field. Mirrors the spacing on the sign-in / sign-up
+   forms (`register.component.css`). */
 .dialog-form {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 24px;
     position: relative;
     width: 100%;
     box-sizing: border-box;
@@ -1361,7 +1367,7 @@ html.cdk-global-scrollblock {
 .dialog-form__row {
     display: grid;
     grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(104px, 0.75fr);
-    gap: 16px 20px;
+    gap: 24px 20px;
     align-items: flex-start;
     width: 100%;
 }
@@ -1406,13 +1412,7 @@ html.cdk-global-scrollblock {
     .dialog-form__row,
     .dialog-form__row--category {
         grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .dialog-form__row .mat-form-field + .mat-form-field,
-    .dialog-form__row--category .mat-form-field + .mat-form-field,
-    .dialog-form__row--category .mat-form-field + .dialog-form__icon-slot {
-        margin-top: 4px;
+        gap: 24px;
     }
 }
 

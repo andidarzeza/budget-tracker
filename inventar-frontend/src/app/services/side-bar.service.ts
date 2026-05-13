@@ -3,6 +3,9 @@ import { BehaviorSubject } from 'rxjs';
 import { SIDEBAR_WIDTH } from 'src/environments/environment';
 import { SharedService } from './shared.service';
 
+/** Collapsed-rail width used when the desktop sidebar is closed. */
+const SIDEBAR_RAIL_WIDTH = 76;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +19,10 @@ export class SideBarService {
   private readonly mobileMenuOpenSubject = new BehaviorSubject(false);
   readonly mobileMenuOpen$ = this.mobileMenuOpenSubject.asObservable();
 
-  constructor(public sharedService: SharedService) { }
+  /** Current horizontal space (px) occupied by the sidebar on desktop.
+   *  Emits 0 on mobile so consumers (e.g. the navbar) can align flush-left. */
+  private readonly currentWidthSubject = new BehaviorSubject<number>(SIDEBAR_RAIL_WIDTH);
+  readonly currentWidth$ = this.currentWidthSubject.asObservable();
 
   get mobileMenuOpen(): boolean {
     return this.mobileMenuOpenSubject.value;
@@ -35,6 +41,9 @@ export class SideBarService {
     if (!isDesktop) {
       this.closeMobileMenu();
       this.isOpened = true;
+      this.currentWidthSubject.next(0);
+    } else {
+      this.currentWidthSubject.next(this.isOpened ? this.sidebarWidth : SIDEBAR_RAIL_WIDTH);
     }
   }
 
@@ -61,6 +70,7 @@ export class SideBarService {
       }
 
     }
+    this.currentWidthSubject.next(this.sidebarWidth);
   }
 
   closeSideBar(): void {
@@ -72,12 +82,12 @@ export class SideBarService {
     if (!sideBar) {
       return;
     }
-    sideBar.style.width = '76px';
+    sideBar.style.width = `${SIDEBAR_RAIL_WIDTH}px`;
     localStorage.setItem('fms-sidebar', 'false');
     if (shadow) {
       shadow.style.opacity = '0';
       shadow.style.pointerEvents = 'none';
     }
-
+    this.currentWidthSubject.next(SIDEBAR_RAIL_WIDTH);
   }
 }

@@ -6,9 +6,8 @@
             <h1 class="projects-header__title">Projects</h1>
         </div>
         <p class="projects-header__subtitle">Set savings goals and track contributions toward them.</p>
-        <button type="button" class="projects-header__cta" (click)="openAddDialog()">
-            <mat-icon class="projects-header__cta-icon" aria-hidden="true">add</mat-icon>
-            <span>New project</span>
+        <button type="button" cb-pill-button variant="primary" icon="add" (click)="openAddDialog()">
+            New project
         </button>
     </header>
 
@@ -18,9 +17,8 @@
             <mat-icon class="projects-empty__icon">flag</mat-icon>
             <p class="projects-empty__title">No projects yet</p>
             <p class="projects-empty__hint">Create your first goal — a trip, a new car, an emergency fund.</p>
-            <button type="button" class="projects-empty__cta" (click)="openAddDialog()">
-                <mat-icon aria-hidden="true">add</mat-icon>
-                <span>New project</span>
+            <button type="button" cb-pill-button variant="primary" icon="add" (click)="openAddDialog()">
+                New project
             </button>
         </div>
 
