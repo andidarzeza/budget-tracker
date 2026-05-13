@@ -20,6 +20,7 @@
                 <table-header [columnDefinitions]="columnDefinition"></table-header>
                 <table-body [displayEditAction]="displayEditAction"
                     [displayDeleteAction]="displayDeleteAction" [data]="data"
+                    [displayViewAction]="displayViewAction"
                     [columnDefinitions]="columnDefinition" [infiniteScrollEnabled]="false"
                     (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
                     (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"></table-body>
@@ -50,15 +51,20 @@
             </table-actions>
         </div>
         <div class="mobile-cards-viewport">
-            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading" role="status" aria-live="polite">
+            <!-- Mobile: no full-screen overlay. A low-key inline indicator
+                 matches the "Loading more…" footer style so the page
+                 doesn't blank out under a backdrop on every refresh. -->
+            <div *ngIf="loading" class="table-cards-loading mobile-cards-initial-loading"
+                role="status" aria-live="polite">
                 <span class="app-spinner app-spinner--sm" aria-hidden="true">
                     <span class="app-spinner__track"></span>
                     <span class="app-spinner__arc"></span>
                 </span>
-                <p class="app-loading-label">Loading data…</p>
+                <span>Loading data…</span>
             </div>
-            <table-body [displayEditAction]="displayEditAction"
+            <table-body *ngIf="!loading" [displayEditAction]="displayEditAction"
                 [displayDeleteAction]="displayDeleteAction" [data]="data"
+                [displayViewAction]="displayViewAction"
                 [columnDefinitions]="columnDefinition"
                 [infiniteScrollEnabled]="true"
                 [hasMore]="hasMoreData"
@@ -66,7 +72,7 @@
                 (loadMore)="emitLoadMore()"
                 (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
                 (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"></table-body>
-            <table-message [total]="data?.length"></table-message>
+            <table-message *ngIf="!loading" [total]="data?.length"></table-message>
         </div>
     </div>
 </ng-container>

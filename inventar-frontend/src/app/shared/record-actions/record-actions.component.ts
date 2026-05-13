@@ -17,6 +17,7 @@ export class RecordActionsComponent {
 
   @Input() displayEditAction = true;
   @Input() displayDeleteAction = true;
+  @Input() displayViewAction = true;
 
   emitDeleteAction(event: Event): void {
     event.stopPropagation();

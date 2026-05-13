@@ -24,6 +24,7 @@
                 <ng-container *ngSwitchCase="'actions'">
                     <record-actions (openViewDrawer)="viewDetails(element?.id)"
                         [displayDeleteAction]="displayDeleteAction" [displayEditAction]="displayEditAction"
+                        [displayViewAction]="displayViewAction"
                         (openEditForm)="openAddEditForm(element)"
                         (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></record-actions>
                 </ng-container>
@@ -66,9 +67,11 @@
                     </div>
                 </div>
             </div>
-            <footer class="table-card-footer">
+            <footer class="table-card-footer"
+                *ngIf="displayEditAction || displayDeleteAction || displayViewAction">
                 <record-actions (openViewDrawer)="viewDetails(element?.id)"
                     [displayDeleteAction]="displayDeleteAction" [displayEditAction]="displayEditAction"
+                    [displayViewAction]="displayViewAction"
                     (openEditForm)="openAddEditForm(element)"
                     (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></record-actions>
             </footer>

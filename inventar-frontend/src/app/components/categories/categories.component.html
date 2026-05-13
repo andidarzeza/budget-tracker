@@ -16,5 +16,6 @@
         (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
         (layoutModeChange)="refresh()"
         [total]="totalItems$ | async"
-        [displayEditAction]="true" [displayDeleteAction]="true"></base-table>
+        [displayEditAction]="true" [displayDeleteAction]="true"
+        [displayViewAction]="false"></base-table>
 </mat-drawer-container>

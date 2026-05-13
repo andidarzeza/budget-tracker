@@ -54,6 +54,7 @@ export class BaseTableComponent implements OnInit, OnDestroy {
   @Input() filterOptions: FilterOptions[];
   @Input() displayEditAction: boolean;
   @Input() displayDeleteAction: boolean;
+  @Input() displayViewAction = true;
 
   /** Current page index for server-side mat-paginator (0-based). */
   @Input() pageIndex = 0;

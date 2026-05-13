@@ -13,7 +13,8 @@
         [pageIndex]="page" [loadingMore]="loadingMore()"
         [filterOptions]="filterOptions" [tableActionInput]="tableActionInput" (onOpenDialog)="openAddEditForm()"
         (onRefresh)="refresh()" (onSearch)="onSearch($event)" (onReset)="resetAndQuery()"
-        (layoutModeChange)="refresh()" [displayEditAction]="false">
+        (layoutModeChange)="refresh()" [displayEditAction]="false"
+        [displayViewAction]="false">
     </base-table>
 
 </mat-drawer-container>

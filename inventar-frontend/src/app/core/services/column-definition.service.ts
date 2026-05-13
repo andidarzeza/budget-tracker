@@ -113,11 +113,6 @@ export class ColumnDefinitionService {
       column: 'user',
       label: 'User',
       type: 'string'
-    },
-    {
-      column: 'actions',
-      label: 'Actions',
-      type: 'actions'
     }
   ];
 

@@ -180,3 +180,16 @@
         border-radius: var(--app-radius-md);
     }
 }
+
+/* Inline initial-load indicator for the mobile card view. Mirrors the
+   "Loading more…" footer rendered by `table-body` so the spinner sits
+   above the cards as a low-key row instead of a full-screen backdrop. */
+.table-cards-loading.mobile-cards-initial-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 12px;
+    font-size: 14px;
+    color: var(--app-text-muted);
+}

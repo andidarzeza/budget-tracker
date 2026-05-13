@@ -52,6 +52,7 @@ export class TableBodyComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() data: any[];
   @Input() displayEditAction: boolean;
   @Input() displayDeleteAction: boolean;
+  @Input() displayViewAction = true;
   /** When true, loads more rows when the sentinel nears the viewport (mobile cards). */
   @Input() infiniteScrollEnabled = false;
   @Input() hasMore = false;

@@ -5,22 +5,22 @@
         "link": "/dashboard"
     },
     {
-        "icon": "attach_money",
+        "icon": "trending_down",
         "text": "Expenses",
         "link": "/expenses"
     },
     {
-        "icon": "transit_enterexit",
+        "icon": "trending_up",
         "text": "Incomes",
         "link": "/incomes"
     },
     {
-        "icon": "list_alt",
+        "icon": "category",
         "text": "Categories",
         "link": "/categories"
     },
     {
-        "icon": "flag",
+        "icon": "folder_special",
         "text": "Projects",
         "link": "/projects"
     },

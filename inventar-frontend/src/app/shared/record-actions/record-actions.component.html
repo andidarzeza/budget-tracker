@@ -1,6 +1,6 @@
 <div class="record-actions-container">
     <div class="record-actions-inner">
-        <button matTooltip="View" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" mat-icon-button color="primary" (click)="emitViewAction($event)">
+        <button matTooltip="View" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayViewAction" mat-icon-button color="primary" (click)="emitViewAction($event)">
             <mat-icon class="view-action">open_in_new</mat-icon>
         </button>
         <button matTooltip="Edit" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayEditAction" mat-icon-button (click)="emitEditAction($event)">

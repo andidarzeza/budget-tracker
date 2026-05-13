@@ -28,8 +28,9 @@
         (onReset)="resetAndQuery()"
         (layoutModeChange)="refresh()"
         [total]="totalItems$ | async"
-        [displayEditAction]="true" 
+        [displayEditAction]="true"
         [displayDeleteAction]="true"
+        [displayViewAction]="false"
     ></base-table>
 
 </mat-drawer-container>
