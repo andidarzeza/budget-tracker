@@ -16,12 +16,15 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
-import { CURRENCIES } from 'src/environments/environment';
+import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { ToastrService } from 'ngx-toastr';
 
 const BASE_CURRENCY_KEY = 'baseCurrency';
 const LANDING_PAGE_KEY = 'defaultLandingPage';
@@ -38,6 +41,7 @@ const DEFAULT_LANDING_PAGE = '/welcome';
     ReactiveFormsModule,
     MatIconModule,
     MatSlideToggleModule,
+    PillButtonComponent,
     SelectInputComponent,
   ],
 })
@@ -51,6 +55,12 @@ export class SettingsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly flagPipe = inject(FlagPipe);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly notificationService = inject(NotificationService);
+  private readonly toaster = inject(ToastrService);
+
+  /** Disables the test button while a notification is pending. */
+  readonly notificationTestPending = signal(false);
+  readonly notificationsSupported = this.notificationService.isSupported();
 
   readonly currencies = CURRENCIES;
 
@@ -160,5 +170,44 @@ export class SettingsComponent implements OnInit {
 
   logout(): void {
     this.authenticationService.logout();
+  }
+
+  /** Schedules a notification 10s out so we can verify the device's
+   *  rendering. Must be invoked from a user gesture (button click) so
+   *  iOS Safari accepts the permission prompt. */
+  async sendTestNotification(): Promise<void> {
+    if (this.notificationTestPending()) return;
+    this.notificationTestPending.set(true);
+    try {
+      await this.notificationService.scheduleTestNotification(10_000);
+      this.toaster.info(
+        'A test notification will appear in 10 seconds.',
+        'Scheduled',
+        TOASTER_CONFIGURATION,
+      );
+      setTimeout(() => this.notificationTestPending.set(false), 10_000);
+    } catch (err) {
+      this.notificationTestPending.set(false);
+      const code = (err as Error)?.message;
+      if (code === 'UNSUPPORTED') {
+        this.toaster.error(
+          'Add Financa to your Home Screen and open it as an app to test notifications on iOS.',
+          'Not supported here',
+          TOASTER_CONFIGURATION,
+        );
+      } else if (code === 'NOT_GRANTED') {
+        this.toaster.error(
+          'Notifications are blocked. Enable them from your device settings.',
+          'Permission denied',
+          TOASTER_CONFIGURATION,
+        );
+      } else {
+        this.toaster.error(
+          'Could not schedule the notification — check the console for details.',
+          'Something went wrong',
+          TOASTER_CONFIGURATION,
+        );
+      }
+    }
   }
 }
