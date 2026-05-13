@@ -8,9 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [MatIconModule],
 })
 export class AllTimeHeaderComponent implements OnInit {
-  date = new Date();
-  from = new Date(this.date.getFullYear(), 0, 1);
-  to = new Date(this.date.getFullYear() + 1, 0, 1);
+  /** "All time" really means "everything". Anchor `from` far enough in the
+   *  past that no realistic record falls before it, and `to` far enough in
+   *  the future that nothing falls after — the backend then returns every
+   *  transaction grouped by `yyyy-MM` for the timeline charts. */
+  from = new Date(Date.UTC(1970, 0, 1));
+  to = new Date(Date.UTC(2100, 0, 1));
 
   @Output() onChange = new EventEmitter<{ from: Date; to: Date }>();
 

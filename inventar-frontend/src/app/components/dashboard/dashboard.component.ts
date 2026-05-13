@@ -48,6 +48,7 @@ import {
   TOASTER_CONFIGURATION,
 } from 'src/environments/environment';
 import { AllTimeHeaderComponent } from './all-time-header/all-time-header.component';
+import { BalanceDetailComponent, BalanceDetailData } from './balance-detail/balance-detail.component';
 import { CustomRangePickerComponent } from './custom-range-picker/custom-range-picker.component';
 import { DayPickerComponent } from './day-picker/day-picker.component';
 import { EditBalanceComponent } from './edit-balance/edit-balance.component';
@@ -124,7 +125,7 @@ export class DashboardComponent implements AfterViewInit {
   private readonly routeSpinnerService = inject(RouteSpinnerService);
   private readonly accountService = inject(AccountService);
   private readonly dialog = inject(MatDialog);
-  private readonly breakpointService = inject(BreakpointService);
+  readonly breakpointService = inject(BreakpointService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly expenseService = inject(ExpenseService);
   private readonly incomeService = inject(IncomeService);
@@ -235,6 +236,26 @@ export class DashboardComponent implements AfterViewInit {
     const next = !this.balanceHidden();
     this.balanceHidden.set(next);
     localStorage.setItem(BALANCE_HIDDEN_KEY, next ? '1' : '0');
+  }
+
+  openBalanceDetail(row: BalanceRow): void {
+    // The chip itself only truncates on mobile (the desktop layout sizes
+    // chips to content so the full amount is already visible). Skip the
+    // dialog on desktop — opening it there would be redundant.
+    if (!this.breakpointService.matchesMobileCreateLayout()) {
+      return;
+    }
+    const data: BalanceDetailData = {
+      currency: row.currency,
+      amount: row.amount,
+      hidden: this.balanceHidden(),
+    };
+    this.dialog.open(BalanceDetailComponent, {
+      data,
+      panelClass: 'balance-detail-dialog',
+      autoFocus: false,
+      maxWidth: '92vw',
+    });
   }
 
   openEditBalance(): void {
@@ -474,11 +495,6 @@ export class DashboardComponent implements AfterViewInit {
       to: this.to,
     });
 
-    if (this.selectedRange() === 'MAX') {
-      this.chartUtil.updateLineSeries(canvasId, []);
-      return;
-    }
-
     const rows = Array.isArray(timeline) ? timeline : [];
     const valueOf = (r: TimelineExpenseDTO | TimelineIncomeDTO): number =>
       kind === 'expense'
@@ -489,6 +505,64 @@ export class DashboardComponent implements AfterViewInit {
       c && String(c).trim() ? String(c).trim() : 'Other';
 
     const currencies = [...new Set(rows.map((r) => currencyLabel(r.currency)))].sort();
+
+    // MAX: backend buckets are `yyyy-MM`. Roll those up into per-year totals
+    // for each currency and label the X-axis with the actual years that
+    // appear in the data (filling any gaps so the axis is contiguous).
+    if (this.selectedRange() === 'MAX') {
+      if (!rows.length) {
+        this.chartUtil.setLineLabels(canvasId, []);
+        this.chartUtil.updateLineSeries(canvasId, []);
+        return;
+      }
+      const yearOf = (id: string | number | undefined | null): number | null => {
+        const m = String(id ?? '').trim().match(/^(\d{4})/);
+        return m ? Number(m[1]) : null;
+      };
+      const yearSet = new Set<number>();
+      for (const r of rows) {
+        const y = yearOf(r._id);
+        if (y != null) yearSet.add(y);
+      }
+      if (yearSet.size === 0) {
+        this.chartUtil.setLineLabels(canvasId, []);
+        this.chartUtil.updateLineSeries(canvasId, []);
+        return;
+      }
+      // If the user only has data in one or two years the chart looks
+      // lonely — extend the window to a minimum span (anchored on the most
+      // recent year present) so the X-axis reads as a real timeline.
+      // Earlier years just plot at 0.
+      const MIN_YEARS = 5;
+      const dataMaxY = Math.max(...yearSet);
+      const dataMinY = Math.min(...yearSet);
+      const spanMinY =
+        dataMaxY - dataMinY + 1 < MIN_YEARS ? dataMaxY - MIN_YEARS + 1 : dataMinY;
+      const years: number[] = [];
+      for (let y = spanMinY; y <= dataMaxY; y++) years.push(y);
+
+      const totalsByCurrencyYear = new Map<string, Map<number, number>>();
+      for (const r of rows) {
+        const y = yearOf(r._id);
+        if (y == null) continue;
+        const cur = currencyLabel(r.currency);
+        let inner = totalsByCurrencyYear.get(cur);
+        if (!inner) {
+          inner = new Map();
+          totalsByCurrencyYear.set(cur, inner);
+        }
+        inner.set(y, (inner.get(y) ?? 0) + valueOf(r));
+      }
+
+      const maxSeries = currencies.map((cur) => ({
+        label: cur,
+        data: years.map((y) => totalsByCurrencyYear.get(cur)?.get(y) ?? 0),
+      }));
+
+      this.chartUtil.setLineLabels(canvasId, years.map(String));
+      this.chartUtil.updateLineSeries(canvasId, maxSeries);
+      return;
+    }
 
     const valueByKey = new Map<string, number>();
     for (const r of rows) {

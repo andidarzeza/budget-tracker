@@ -22,13 +22,14 @@
         @if (balanceRows().length) {
             <div class="balance-card__rows">
                 @for (row of balanceRows(); track row.currency) {
-                    <div class="balance-row">
+                    <button type="button" class="balance-row" (click)="openBalanceDetail(row)"
+                        [attr.aria-label]="row.currency + ' balance details'">
                         <span class="balance-row__flag" aria-hidden="true">{{ row.currency | flag }}</span>
                         <span class="balance-row__currency">{{ row.currency }}</span>
                         <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
                             {{ balanceHidden() ? '••••••' : (row.amount | number : '1.0-2') }}
                         </span>
-                    </div>
+                    </button>
                 }
             </div>
         } @else {
@@ -131,7 +132,8 @@
         </header>
 
         <div class="dashboard-section__body">
-            <mat-card class="panel panel--chart">
+            <mat-card class="panel panel--chart"
+                [class.panel--hidden]="((breakpointService.useTableCardLayout$ | async) === true) && expensesEmpty()">
                 <header class="panel__header">
                     <h3 class="panel__title">Expense trend</h3>
                     <span class="panel__hint">One line per currency</span>
@@ -225,7 +227,8 @@
         </header>
 
         <div class="dashboard-section__body">
-            <mat-card class="panel panel--chart">
+            <mat-card class="panel panel--chart"
+                [class.panel--hidden]="((breakpointService.useTableCardLayout$ | async) === true) && incomesEmpty()">
                 <header class="panel__header">
                     <h3 class="panel__title">Income trend</h3>
                     <span class="panel__hint">One line per currency</span>

@@ -121,38 +121,8 @@
     margin-top: 1.4rem;
 }
 
-.actions > button {
-    width: 100%;
-    min-height: 50px;
-    border-radius: var(--app-radius-md);
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.primary-action {
-    background: linear-gradient(135deg, var(--indigo-500) 0%, var(--indigo-600) 100%) !important;
-    color: #ffffff !important;
-    /* `mat-stroked-button` adds a 1px border by default; clear it so the
-       indigo fill stays edge-to-edge and matches the login primary button. */
-    border-color: transparent !important;
-    box-shadow: none !important;
-    transition: transform var(--app-motion-fast) var(--app-easing-standard) !important;
-}
-
-.primary-action:hover {
-    transform: translateY(-1px);
-}
-
-.secondary-action {
-    border: 1px solid var(--app-border) !important;
-    color: var(--app-text) !important;
-    background: var(--app-surface) !important;
-}
-
-.secondary-action:hover {
-    border-color: var(--app-accent) !important;
-    background: var(--app-surface-hover) !important;
-}
+/* Buttons themselves are styled by the shared
+   `<button cb-pill-button>` component — see `shared/pill-button`. */
 
 .divider-label {
     color: var(--app-text-subtle);
@@ -219,7 +189,7 @@
         margin-top: 0.45rem;
     }
 
-    .actions > button {
+    .actions > button[cb-pill-button] {
         min-height: 48px;
     }
 

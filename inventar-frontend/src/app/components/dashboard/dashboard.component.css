@@ -97,6 +97,9 @@
     color: var(--app-text);
 }
 
+/* Mobile default: equal-width grid so chips line up tidily on narrow
+   screens. Long amounts truncate (see `.balance-row__amount`) — tapping
+   the chip opens a dialog that shows the full untruncated value. */
 .balance-card__rows {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -104,6 +107,13 @@
 }
 
 .balance-row {
+    /* The row is a clickable <button> — reset the native chrome so it
+       still reads as a chip. */
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
     display: grid;
     grid-template-columns: auto auto minmax(0, 1fr);
     align-items: center;
@@ -112,6 +122,58 @@
     border-radius: var(--app-radius-md);
     background: var(--app-surface-muted);
     border: 1px solid var(--app-border);
+    transition:
+        background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
+        border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
+        transform 0.08s ease;
+}
+
+.balance-row:hover {
+    border-color: var(--app-accent);
+    background: var(--app-surface-hover);
+}
+
+.balance-row:active {
+    transform: scale(0.99);
+}
+
+.balance-row:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--app-accent-soft-strong);
+}
+
+/* Desktop: drop the equal-width grid and let each chip size to its
+   content so the full amount is always visible even with many currencies
+   side-by-side. The min-width keeps narrow values (e.g. small balances)
+   from looking too cramped. The dialog drill-down is mobile-only — the
+   chip is purely informational here, so suppress the click affordance. */
+@media (min-width: 768px) {
+    .balance-card__rows {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .balance-row {
+        display: inline-flex;
+        gap: 12px;
+        min-width: 180px;
+        cursor: default;
+    }
+
+    .balance-row:hover {
+        border-color: var(--app-border);
+        background: var(--app-surface-muted);
+    }
+
+    .balance-row:active {
+        transform: none;
+    }
+
+    .balance-row__amount {
+        /* Chip is content-sized on desktop, so nothing should ever clip. */
+        overflow: visible;
+        text-overflow: clip;
+    }
 }
 
 .balance-row__flag {
@@ -388,6 +450,13 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
+}
+
+/* Hides a panel without unmounting its children. Used to keep the chart
+   canvases attached so the cached Chart.js instance keeps working when the
+   panel becomes visible again (an `*ngIf` would tear the canvas down). */
+.panel--hidden {
+    display: none !important;
 }
 
 .panel__header {

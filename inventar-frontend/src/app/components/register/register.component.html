@@ -59,11 +59,13 @@
                 </cb-labeled-form-input>
 
                 <div class="actions">
-                    <button type="button" [disabled]="showSpinner()" mat-stroked-button class="primary-action" (click)="login()">
+                    <button type="button" cb-pill-button variant="primary" icon="person_add" block
+                        [disabled]="showSpinner()" (click)="login()">
                         Create account
                     </button>
                     <span class="divider-label">or</span>
-                    <button type="button" [disabled]="showSpinner()" mat-stroked-button class="secondary-action" (click)="navigate('/login')">
+                    <button type="button" cb-pill-button icon="arrow_back" block
+                        [disabled]="showSpinner()" (click)="navigate('/login')">
                         Back to sign in
                     </button>
                 </div>

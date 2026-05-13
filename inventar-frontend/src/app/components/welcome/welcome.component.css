@@ -273,62 +273,13 @@
     color: var(--app-text-muted);
 }
 
+/* Pill styling moved to shared/pill-button (used here via
+   `<button cb-pill-button>`). Only the row layout stays local. */
 .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 6px;
-}
-
-.hero-action {
-    appearance: none;
-    -webkit-tap-highlight-color: transparent;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px 10px 14px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--app-bg-elevated) 86%, transparent);
-    border: 1px solid var(--app-border);
-    color: var(--app-text);
-    font-family: var(--app-font-sans);
-    font-size: 0.92rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                transform 0.08s ease,
-                box-shadow var(--app-motion-base, 200ms) var(--app-easing-standard, ease);
-}
-
-.hero-action:hover {
-    border-color: var(--app-accent);
-    color: var(--app-accent);
-}
-
-.hero-action:active {
-    transform: scale(0.98);
-}
-
-.hero-action mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-}
-
-.hero-action--primary {
-    background: var(--app-accent);
-    border-color: transparent;
-    color: var(--app-on-accent, #ffffff);
-    box-shadow: var(--app-shadow-accent);
-}
-
-.hero-action--primary:hover {
-    background: var(--app-accent-hover, var(--app-accent));
-    border-color: transparent;
-    color: var(--app-on-accent, #ffffff);
-    box-shadow: 0 12px 24px -6px rgba(99, 102, 241, 0.45);
 }
 
 /* ----- Side cards (right column) ----- */
@@ -688,12 +639,12 @@
         font-size: 0.9rem;
     }
 
-    /* Mobile quick actions: two equal-width pills sharing the row, with
-       their content centered inside each. */
-    .hero-action {
+    /* Mobile quick actions: two equal-width pills sharing the row. The
+       shared pill component already centers its content; we just need to
+       let the host stretch via flex. */
+    .hero-actions > button[cb-pill-button] {
         flex: 1 1 0;
         min-width: 0;
-        justify-content: center;
         padding: 10px 14px;
     }
 

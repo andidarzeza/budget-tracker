@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -30,6 +31,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     MatCardModule,
     AuthVisualComponent,
     LabeledFormInputComponent,
+    PillButtonComponent,
   ],
 })
 export class RegisterComponent {

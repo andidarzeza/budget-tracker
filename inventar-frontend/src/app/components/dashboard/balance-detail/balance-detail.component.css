@@ -1,0 +1,106 @@
+.balance-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 22px 24px 20px;
+    min-width: min(340px, 80vw);
+    color: var(--app-text);
+    font-family: var(--app-font-sans);
+}
+
+.balance-detail__head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.balance-detail__flag {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.balance-detail__heading {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.balance-detail__currency {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--app-text);
+}
+
+.balance-detail__label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--app-text-subtle);
+}
+
+.balance-detail__close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--app-text-muted);
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--app-motion-fast) var(--app-easing-standard),
+                color var(--app-motion-fast) var(--app-easing-standard);
+}
+
+.balance-detail__close:hover {
+    background: var(--app-surface-hover);
+    color: var(--app-text);
+}
+
+.balance-detail__amount-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 18px;
+    border-radius: var(--app-radius-md);
+    background: var(--app-surface-muted);
+    border: 1px solid var(--app-border);
+}
+
+.balance-detail__amount {
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    font-size: clamp(1.7rem, 6vw, 2.4rem);
+    letter-spacing: -0.02em;
+    color: var(--app-text);
+    word-break: break-all;
+}
+
+.balance-detail__amount--hidden {
+    letter-spacing: 4px;
+    color: var(--app-text-subtle);
+}
+
+.balance-detail__hidden-tag {
+    align-self: flex-start;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--app-text-subtle);
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+}
+
+.balance-detail__actions {
+    display: flex;
+}

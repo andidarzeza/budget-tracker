@@ -116,6 +116,16 @@ export class ChartUtils {
     chart.update();
   }
 
+  /** Override the X-axis labels directly. Used by the MAX range, where the
+   *  label set depends on what years appear in the data, not the range
+   *  alone — see the MAX branch in `dashboard.updateLineSeries`. */
+  setLineLabels(canvasId: string, labels: (string | number)[]): void {
+    const chart = this.charts.get(canvasId);
+    if (!chart) return;
+    chart.data.labels = labels;
+    chart.update();
+  }
+
   /**
    * "MMM d" labels for every day in `[from, to)` — `to` is exclusive (matches
    * the convention used by every dashboard picker, where `to` is the start of

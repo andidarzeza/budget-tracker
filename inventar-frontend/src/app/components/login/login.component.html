@@ -39,16 +39,17 @@
                 </cb-labeled-form-input>
 
                 <div class="actions">
-                    <button type="submit" [disabled]="showSpinner()" class="primary-action" mat-stroked-button>
+                    <button type="submit" cb-pill-button variant="primary" icon="login" block
+                        [disabled]="showSpinner()">
                         Sign in
                     </button>
                     <span class="divider-label">or</span>
 
-                    <button type="button" [disabled]="showSpinner()" class="secondary-action" mat-stroked-button
+                    <button type="button" cb-pill-button icon="person_add" block
+                        [disabled]="showSpinner()"
                         (click)="navigate('/register')">
                         Create account
                     </button>
-
                 </div>
             </form>
         </mat-card>

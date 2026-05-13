@@ -21,6 +21,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 
 interface NewsItem {
   badge: string;
@@ -63,7 +64,7 @@ const FALLBACK_NEWS: readonly NewsItem[] = [
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, MatIconModule, MatMenuModule, MatTooltipModule],
+  imports: [CommonModule, RouterModule, MatIconModule, MatMenuModule, MatTooltipModule, PillButtonComponent],
 })
 export class WelcomeComponent implements OnInit {
   private readonly auth = inject(AuthenticationService);

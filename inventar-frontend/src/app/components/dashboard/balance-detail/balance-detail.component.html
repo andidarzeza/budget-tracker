@@ -1,0 +1,25 @@
+<div class="balance-detail">
+    <header class="balance-detail__head">
+        <span class="balance-detail__flag" aria-hidden="true">{{ data.currency | flag }}</span>
+        <div class="balance-detail__heading">
+            <h2 class="balance-detail__currency">{{ data.currency }}</h2>
+            <span class="balance-detail__label">Balance</span>
+        </div>
+        <button type="button" class="balance-detail__close" mat-dialog-close aria-label="Close">
+            <mat-icon>close</mat-icon>
+        </button>
+    </header>
+
+    <div class="balance-detail__amount-wrap">
+        <span class="balance-detail__amount" [class.balance-detail__amount--hidden]="data.hidden">
+            {{ data.hidden ? '••••••' : (data.amount | number : '1.0-2') }}
+        </span>
+        <span *ngIf="data.hidden" class="balance-detail__hidden-tag">Hidden</span>
+    </div>
+
+    <footer class="balance-detail__actions">
+        <button type="button" cb-pill-button block (click)="close()">
+            Close
+        </button>
+    </footer>
+</div>

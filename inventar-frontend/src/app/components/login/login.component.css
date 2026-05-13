@@ -121,39 +121,8 @@ button {
     margin-top: 1.4rem;
 }
 
-.actions > button {
-    width: 100%;
-    min-height: 50px;
-    border-radius: var(--app-radius-md);
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-.primary-action {
-    background: linear-gradient(135deg, var(--indigo-500) 0%, var(--indigo-600) 100%) !important;
-    color: #ffffff !important;
-    /* Buttons use `mat-stroked-button`, which adds a 1px border + no
-       elevation shadow. Clear the border so the indigo fill is edge-to-edge
-       and skip the heavy raised-button shadow that looked out of place. */
-    border-color: transparent !important;
-    box-shadow: none !important;
-    transition: transform var(--app-motion-fast) var(--app-easing-standard) !important;
-}
-
-.primary-action:hover {
-    transform: translateY(-1px);
-}
-
-.secondary-action {
-    background: var(--app-surface) !important;
-    color: var(--app-text) !important;
-    border: 1px solid var(--app-border) !important;
-}
-
-.secondary-action:hover {
-    background: var(--app-surface-hover) !important;
-    border-color: var(--app-accent) !important;
-}
+/* Buttons themselves are styled by the shared
+   `<button cb-pill-button>` component — see `shared/pill-button`. */
 
 .divider-label {
     color: var(--app-text-subtle);
@@ -227,7 +196,7 @@ input {
         font-size: 0.88rem;
     }
 
-    .actions > button {
+    .actions > button[cb-pill-button] {
         min-height: 48px;
     }
 
