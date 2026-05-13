@@ -16,12 +16,13 @@ import { Category } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 
 @Component({
   selector: 'app-category-detail',
   templateUrl: './category-detail.component.html',
   styleUrls: ['./category-detail.component.css'],
-  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent],
+  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
 })
 export class CategoryDetailComponent implements OnInit {
   private readonly categoriesService = inject(CategoriesService);

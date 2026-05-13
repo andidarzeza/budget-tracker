@@ -19,6 +19,7 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { environment } from 'src/environments/environment';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { CurrencySymbolPipe } from '../../pipes/currency-symbol/currency-symbol.pipe';
 import { FlagPipe } from '../../pipes/flag-pipe/flag.pipe';
 
@@ -38,6 +39,7 @@ import { FlagPipe } from '../../pipes/flag-pipe/flag.pipe';
     IconButtonComponent,
     FlagPipe,
     CurrencySymbolPipe,
+    ...TOOLTIP_IMPORTS,
   ],
 })
 export class NavBarComponent implements OnInit {

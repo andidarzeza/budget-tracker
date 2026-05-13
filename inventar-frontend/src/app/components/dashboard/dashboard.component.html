@@ -10,10 +10,13 @@
             <div class="balance-card__actions">
                 <button type="button" cb-icon-button
                     (click)="toggleBalanceVisibility()"
+                    [matTooltip]="balanceHidden() ? 'Show balance' : 'Hide balance'"
+                    matTooltipPosition="below"
                     [attr.aria-label]="balanceHidden() ? 'Show balance' : 'Hide balance'">
                     <mat-icon>{{ balanceHidden() ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
-                <button type="button" cb-icon-button (click)="openEditBalance()" aria-label="Edit balance">
+                <button type="button" cb-icon-button (click)="openEditBalance()"
+                    matTooltip="Edit balance" matTooltipPosition="below" aria-label="Edit balance">
                     <mat-icon>edit</mat-icon>
                 </button>
             </div>
@@ -146,7 +149,8 @@
                 @if (storyOpen() && storyKind() === 'expense') {
                     <mat-card class="panel panel--story">
                         <header class="panel__header panel__header--story">
-                            <button type="button" cb-icon-button (click)="closeStory()" aria-label="Close drill-down">
+                            <button type="button" cb-icon-button (click)="closeStory()"
+                                matTooltip="Back" matTooltipPosition="below" aria-label="Close drill-down">
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
                             <div class="story-title-wrap">
@@ -241,7 +245,8 @@
                 @if (storyOpen() && storyKind() === 'income') {
                     <mat-card class="panel panel--story">
                         <header class="panel__header panel__header--story">
-                            <button type="button" cb-icon-button (click)="closeStory()" aria-label="Close drill-down">
+                            <button type="button" cb-icon-button (click)="closeStory()"
+                                matTooltip="Back" matTooltipPosition="below" aria-label="Close drill-down">
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
                             <div class="story-title-wrap">

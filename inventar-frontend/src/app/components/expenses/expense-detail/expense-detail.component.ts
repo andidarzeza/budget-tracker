@@ -9,13 +9,14 @@ import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'app-expense-detail',
   templateUrl: './expense-detail.component.html',
   styleUrls: ['./expense-detail.component.css'],
-  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent],
+  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
 })
 export class ExpenseDetailComponent extends Unsubscribe implements OnInit, OnChanges, OnDestroy {
   private readonly expenseService = inject(ExpenseService);

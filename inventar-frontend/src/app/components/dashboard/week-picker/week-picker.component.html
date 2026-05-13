@@ -1,5 +1,6 @@
 <div class="dash-picker">
-    <button type="button" cb-icon-button (click)="previousWeek()" aria-label="Previous week">
+    <button type="button" cb-icon-button (click)="previousWeek()"
+        matTooltip="Previous week" matTooltipPosition="below" aria-label="Previous week">
         <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
 
@@ -8,7 +9,8 @@
         <span class="dash-picker__text">{{from | date: 'dd MMM'}} – {{displayEnd | date: 'dd MMM yyyy'}}</span>
     </button>
 
-    <button type="button" cb-icon-button (click)="nextWeek()" aria-label="Next week">
+    <button type="button" cb-icon-button (click)="nextWeek()"
+        matTooltip="Next week" matTooltipPosition="below" aria-label="Next week">
         <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
 

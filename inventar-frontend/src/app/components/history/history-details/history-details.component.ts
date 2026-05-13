@@ -19,12 +19,13 @@ import { History } from 'src/app/models/models';
 import { HistoryService } from 'src/app/services/pages/history.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 
 @Component({
   selector: 'history-details',
   templateUrl: './history-details.component.html',
   styleUrls: ['./history-details.component.css'],
-  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent],
+  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
 })
 export class HistoryDetailsComponent implements OnInit, OnChanges {
   private readonly historyService = inject(HistoryService);

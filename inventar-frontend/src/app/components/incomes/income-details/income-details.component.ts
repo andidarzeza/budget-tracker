@@ -21,12 +21,13 @@ import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 
 @Component({
   selector: 'app-income-details',
   templateUrl: './income-details.component.html',
   styleUrls: ['./income-details.component.css'],
-  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent],
+  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
 })
 export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
   private readonly incomeService = inject(IncomeService);

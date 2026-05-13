@@ -5,7 +5,8 @@
       <h2>Scan receipt QR</h2>
       <p>Center the code inside the frame and hold steady for a moment.</p>
     </div>
-    <button type="button" cb-icon-button aria-label="Close scanner" (click)="close()">
+    <button type="button" cb-icon-button (click)="close()"
+      matTooltip="Close" matTooltipPosition="below" aria-label="Close scanner">
       <mat-icon>close</mat-icon>
     </button>
   </div>

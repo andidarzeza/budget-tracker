@@ -23,6 +23,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 
 interface NewsItem {
   badge: string;
@@ -65,7 +66,7 @@ const FALLBACK_NEWS: readonly NewsItem[] = [
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, MatIconModule, MatMenuModule, MatTooltipModule, IconButtonComponent, PillButtonComponent],
+  imports: [CommonModule, RouterModule, MatIconModule, MatMenuModule, MatTooltipModule, IconButtonComponent, PillButtonComponent, ...TOOLTIP_IMPORTS],
 })
 export class WelcomeComponent implements OnInit {
   private readonly auth = inject(AuthenticationService);

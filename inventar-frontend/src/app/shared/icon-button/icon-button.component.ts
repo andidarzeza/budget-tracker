@@ -9,11 +9,11 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
  * rings, the `disabled` attribute, and form/menu triggers keep working
  * without forwarding inputs. Project the icon as content:
  *
- *   <button cb-icon-button aria-label="Edit">
+ *   <button cb-icon-button matTooltip="Edit" aria-label="Edit">
  *     <mat-icon>edit</mat-icon>
  *   </button>
  *
- *   <button cb-icon-button variant="danger" size="sm" aria-label="Delete">
+ *   <button cb-icon-button variant="danger" size="sm" matTooltip="Delete" aria-label="Delete">
  *     <mat-icon>delete</mat-icon>
  *   </button>
  *
@@ -22,6 +22,11 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
  *            actions like delete / clear).
  *   size     'md' (40px, default) | 'sm' (32px, for inline-row actions like
  *            row delete or input-suffix clear).
+ *
+ * Tooltips: add `matTooltip="…"` like any Material button. Consumers must
+ * import both `MatTooltipModule` and `TooltipMobileGuardDirective` (see
+ * `shared/tooltip-mobile-guard`) — the latter auto-disables tooltips on
+ * the table-card mobile breakpoint (≤767px).
  */
 @Component({
   selector: 'button[cb-icon-button]',

@@ -29,3 +29,32 @@
 .view-action {
     color: var(--light);
 }
+
+/* On the card layout (≤767px), the dense `size="sm"` (32px) hit-targets
+   used in desktop table rows are too small for touch. Promote them back to
+   the default 40px and right-align inside the card footer. */
+@media (max-width: 767px) {
+    .record-actions-container {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .record-actions-inner {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 8px;
+        padding-right: 0;
+    }
+
+    .record-actions-inner ::ng-deep .cb-icon-button.cb-icon-button--sm {
+        width: 40px;
+        height: 40px;
+    }
+
+    .record-actions-inner ::ng-deep .cb-icon-button.cb-icon-button--sm mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+}

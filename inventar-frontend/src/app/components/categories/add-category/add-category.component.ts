@@ -21,6 +21,7 @@ import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labele
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectIconComponent } from 'src/app/shared/select-icon/select-icon.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -38,6 +39,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     PillButtonComponent,
     SelectInputComponent,
     SelectIconComponent,
+    ...TOOLTIP_IMPORTS,
   ],
 })
 export class AddCategoryComponent implements OnInit, AfterViewInit {

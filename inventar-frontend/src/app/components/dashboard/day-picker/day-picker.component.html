@@ -1,5 +1,6 @@
 <div class="dash-picker">
-    <button type="button" cb-icon-button (click)="previousDay()" aria-label="Previous day">
+    <button type="button" cb-icon-button (click)="previousDay()"
+        matTooltip="Previous day" matTooltipPosition="below" aria-label="Previous day">
         <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
 
@@ -8,7 +9,8 @@
         <span class="dash-picker__text">{{from | date: 'EEE, dd MMM yyyy'}}</span>
     </button>
 
-    <button type="button" cb-icon-button (click)="nextDay()" aria-label="Next day">
+    <button type="button" cb-icon-button (click)="nextDay()"
+        matTooltip="Next day" matTooltipPosition="below" aria-label="Next day">
         <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
 

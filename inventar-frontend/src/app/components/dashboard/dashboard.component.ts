@@ -41,6 +41,7 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { ChartUtils } from 'src/app/utils/chart';
 import { buildParams } from 'src/app/utils/param-bulder';
@@ -118,6 +119,7 @@ const INCOME_LINE = 'income-line';
     IconButtonComponent,
     PillButtonComponent,
     FlagPipe,
+    ...TOOLTIP_IMPORTS,
   ],
 })
 export class DashboardComponent implements AfterViewInit {

@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 
 @Component({
   selector: 'week-picker',
@@ -21,6 +22,7 @@ import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.comp
     MatInputModule,
     MatNativeDateModule,
     IconButtonComponent,
+    ...TOOLTIP_IMPORTS,
   ],
 })
 export class WeekPickerComponent implements OnInit {

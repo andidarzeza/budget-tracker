@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { FilterOptions } from './filter.models';
 
 /**
@@ -42,6 +43,7 @@ import { FilterOptions } from './filter.models';
     IconButtonComponent,
     LabeledFormInputComponent,
     SelectInputComponent,
+    ...TOOLTIP_IMPORTS,
   ],
   animations: [
     trigger('panelIn', [

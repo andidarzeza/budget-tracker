@@ -22,6 +22,7 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { AddContributionComponent } from '../add-contribution/add-contribution.component';
@@ -32,7 +33,7 @@ import { AddProjectComponent } from '../add-project/add-project.component';
   templateUrl: './project-detail.component.html',
   styleUrls: ['./project-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatIconModule, IconButtonComponent, PillButtonComponent, FlagPipe, CustomDatePipe],
+  imports: [CommonModule, MatIconModule, IconButtonComponent, PillButtonComponent, FlagPipe, CustomDatePipe, ...TOOLTIP_IMPORTS],
 })
 export class ProjectDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

@@ -10,6 +10,7 @@ import { AccountService } from 'src/app/services/account.service';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
 
@@ -31,6 +32,7 @@ interface EditBalanceData {
     IconButtonComponent,
     LabeledFormInputComponent,
     FlagPipe,
+    ...TOOLTIP_IMPORTS,
   ],
 })
 export class EditBalanceComponent {

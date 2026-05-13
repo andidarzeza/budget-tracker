@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, inject, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, inject, Input, OnChanges, OnDestroy, signal, SimpleChanges } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { MenuItem, SideBarMode } from '../base-template.models';
 
 /** Horizontal band (in px from the left viewport edge) where a touch
@@ -38,6 +41,7 @@ const FLICK_VELOCITY_PX_PER_MS = 0.4;
     RouterLink,
     RouterLinkActive,
     IconButtonComponent,
+    ...TOOLTIP_IMPORTS,
   ],
 })
 export class SideBarComponent implements OnChanges, AfterViewInit, OnDestroy {
@@ -46,11 +50,24 @@ export class SideBarComponent implements OnChanges, AfterViewInit, OnDestroy {
   readonly sideBarService = inject(SideBarService);
   readonly router = inject(Router);
   private readonly routeSpinnerService = inject(RouteSpinnerService);
+  private readonly breakpoint = inject(BreakpointService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** Mirrors the table-card mobile breakpoint (≤767px). Tooltips on the
+   *  sidebar brand/items are suppressed below this width — touch users get
+   *  the labels by opening the drawer instead. */
+  readonly isMobile = signal(false);
 
   @Input() navigation: MenuItem[];
   @Input() sideBarMode: SideBarMode;
   /** Slides in from the left as a half-width overlay (narrow screens). */
   @Input() mobileDrawer = false;
+
+  constructor() {
+    this.breakpoint.useTableCardLayout$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((mobile) => this.isMobile.set(mobile));
+  }
 
   selIndex = 1;
 

@@ -4,12 +4,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IconButtonComponent } from '../icon-button/icon-button.component';
+import { TOOLTIP_IMPORTS } from '../tooltip-mobile-guard/tooltip-imports';
 
 @Component({
   selector: 'record-actions',
   templateUrl: './record-actions.component.html',
   styleUrls: ['./record-actions.component.css'],
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, IconButtonComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
 })
 export class RecordActionsComponent {
   @Output() openEditForm = new EventEmitter<void>();

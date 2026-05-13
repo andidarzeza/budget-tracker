@@ -25,7 +25,8 @@
 
     <div [@panelAnimation] class="icon-select" role="dialog" aria-label="Select an icon">
         <header class="icon-select__header">
-            <button type="button" cb-icon-button (click)="close()" aria-label="Back">
+            <button type="button" cb-icon-button (click)="close()"
+                matTooltip="Back" matTooltipPosition="below" aria-label="Back">
                 <mat-icon>keyboard_arrow_left</mat-icon>
             </button>
             <h2 class="icon-select__title">Select an icon</h2>

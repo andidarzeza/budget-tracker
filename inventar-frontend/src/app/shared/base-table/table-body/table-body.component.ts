@@ -25,6 +25,7 @@ import { ColumnDefinition } from 'src/app/models/models';
 import { CustomDatePipe } from 'src/app/pipes/custom-date.pipe';
 import { ColumnWidthPipe } from '../column-width/column-width.pipe';
 import { RecordActionsComponent } from '../../record-actions/record-actions.component';
+import { TOOLTIP_IMPORTS } from '../../tooltip-mobile-guard/tooltip-imports';
 
 @Component({
   selector: 'table-body',
@@ -41,6 +42,7 @@ import { RecordActionsComponent } from '../../record-actions/record-actions.comp
     ColumnWidthPipe,
     CustomDatePipe,
     RecordActionsComponent,
+    ...TOOLTIP_IMPORTS,
   ],
   animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,

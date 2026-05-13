@@ -23,7 +23,7 @@
             </cb-labeled-form-input>
             <button type="button" cb-icon-button variant="danger" size="sm" (click)="clearCurrency(code)"
                 [disabled]="!formGroup.get(code)?.value && formGroup.get(code)?.value !== 0"
-                aria-label="Clear">
+                matTooltip="Clear" matTooltipPosition="left" aria-label="Clear">
                 <mat-icon>backspace</mat-icon>
             </button>
         </div>

@@ -15,6 +15,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { IconButtonComponent } from '../icon-button/icon-button.component';
 import { LabeledFormInputComponent } from '../labeled-form-input/labeled-form-input.component';
+import { TOOLTIP_IMPORTS } from '../tooltip-mobile-guard/tooltip-imports';
 
 /**
  * Form field that opens a fullscreen icon grid. The trigger is styled to
@@ -36,6 +37,7 @@ import { LabeledFormInputComponent } from '../labeled-form-input/labeled-form-in
     MatIconModule,
     IconButtonComponent,
     LabeledFormInputComponent,
+    ...TOOLTIP_IMPORTS,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [

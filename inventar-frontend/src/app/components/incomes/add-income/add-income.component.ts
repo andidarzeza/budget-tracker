@@ -36,6 +36,7 @@ import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.comp
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
+import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { pickEntryTimestamp } from 'src/app/utils/local-iso';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -60,6 +61,7 @@ import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment'
     SelectInputComponent,
     AmountKeypadComponent,
     FlagPipe,
+    ...TOOLTIP_IMPORTS,
   ],
 })
 export class AddIncomeComponent implements OnInit {

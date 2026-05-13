@@ -12,6 +12,7 @@
         <a routerLink="/welcome" class="sidebar-brand"
             (click)="onBrandClick()"
             [matTooltip]="sideBarService.isOpened ? '' : 'Financa'"
+            [matTooltipDisabled]="isMobile()"
             matTooltipPosition="below"
             aria-label="Financa — Home">
             <div class="sidebar-brand-mark">
@@ -36,6 +37,7 @@
                 routerLinkActive="router-link-active"
                 (click)="onNavItemClick(i)"
                 [matTooltip]="item.text"
+                [matTooltipDisabled]="isMobile()"
                 matTooltipPosition="below"
                 matTooltipClass="sidebar-tooltip">
                 <mat-icon class="primary-icon sidebar-icon">{{ item.icon }}</mat-icon>
@@ -49,6 +51,7 @@
     @if (!mobileDrawer) {
         <div style="position: absolute; bottom: 30px;left: 50%;transform: translateX(-50%);">
             <button type="button" cb-icon-button (click)="sideBarService.toggleSideBar()"
+                matTooltip="Toggle sidebar" matTooltipPosition="right"
                 aria-label="Toggle sidebar">
                 <mat-icon>compare_arrows</mat-icon>
             </button>

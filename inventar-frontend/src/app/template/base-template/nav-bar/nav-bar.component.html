@@ -3,7 +3,9 @@
 
     @if (isMobileLayout()) {
         <button type="button" cb-icon-button
-            (click)="sidebarService.toggleMobileMenu()" aria-label="Open navigation menu">
+            (click)="sidebarService.toggleMobileMenu()"
+            matTooltip="Open navigation menu" matTooltipPosition="below"
+            aria-label="Open navigation menu">
             <mat-icon>menu</mat-icon>
         </button>
     } @else {

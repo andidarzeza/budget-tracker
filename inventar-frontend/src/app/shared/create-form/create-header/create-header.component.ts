@@ -4,12 +4,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { EntityType } from 'src/app/models/models';
 import { IconButtonComponent } from '../../icon-button/icon-button.component';
+import { TOOLTIP_IMPORTS } from '../../tooltip-mobile-guard/tooltip-imports';
 
 @Component({
   selector: 'create-header',
   templateUrl: './create-header.component.html',
   styleUrls: ['./create-header.component.css'],
-  imports: [CommonModule, MatButtonModule, MatIconModule, IconButtonComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
 })
 export class CreateHeaderComponent {
   @Output() close = new EventEmitter<boolean>();
