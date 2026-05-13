@@ -108,36 +108,6 @@
         </button>
     </section>
 
-    <!-- ──── Notifications (testing) ──── -->
-    <section class="app-card settings-section">
-        <header class="settings-section__head">
-            <h2 class="settings-section__title">Notifications</h2>
-            <p class="settings-section__hint">
-                Test how a push notification looks on your device. iOS only delivers these when
-                Financa is installed to the Home Screen and opened as an app.
-            </p>
-        </header>
-
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">notifications_active</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Send a test notification</span>
-                <span class="settings-row__desc">
-                    Fires a random message after 10 seconds.
-                    Keep the app open until it arrives.
-                </span>
-            </div>
-            <button type="button" cb-pill-button variant="primary" icon="send"
-                class="settings-row__trailing"
-                [disabled]="notificationTestPending() || !notificationsSupported"
-                (click)="sendTestNotification()">
-                {{ notificationTestPending() ? 'Waiting…' : 'Send' }}
-            </button>
-        </div>
-    </section>
-
     <!-- ──── About ──── -->
     <section class="app-card settings-section">
         <header class="settings-section__head">

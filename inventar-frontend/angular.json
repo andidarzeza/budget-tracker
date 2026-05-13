@@ -23,7 +23,6 @@
               "src/favicon.ico",
               "src/favicon.svg",
               "src/manifest.json",
-              "src/notification-sw.js",
               "src/assets"
             ],
             "styles": [
@@ -131,7 +130,6 @@
               "src/favicon.ico",
               "src/favicon.svg",
               "src/manifest.json",
-              "src/notification-sw.js",
               "src/assets"
             ],
             "styles": [
