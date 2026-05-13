@@ -8,13 +8,14 @@ import { Category, Expense } from 'src/app/models/models';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { Unsubscribe } from 'src/app/shared/unsubscribe';
 
 @Component({
   selector: 'app-expense-detail',
   templateUrl: './expense-detail.component.html',
   styleUrls: ['./expense-detail.component.css'],
-  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent],
 })
 export class ExpenseDetailComponent extends Unsubscribe implements OnInit, OnChanges, OnDestroy {
   private readonly expenseService = inject(ExpenseService);

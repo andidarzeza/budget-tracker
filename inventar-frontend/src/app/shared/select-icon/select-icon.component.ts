@@ -13,6 +13,7 @@ import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/f
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { IconButtonComponent } from '../icon-button/icon-button.component';
 import { LabeledFormInputComponent } from '../labeled-form-input/labeled-form-input.component';
 
 /**
@@ -33,6 +34,7 @@ import { LabeledFormInputComponent } from '../labeled-form-input/labeled-form-in
     MatButtonModule,
     MatDividerModule,
     MatIconModule,
+    IconButtonComponent,
     LabeledFormInputComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

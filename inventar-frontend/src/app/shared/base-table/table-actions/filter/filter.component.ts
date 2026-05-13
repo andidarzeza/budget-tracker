@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FilterOptions } from './filter.models';
@@ -38,6 +39,7 @@ import { FilterOptions } from './filter.models';
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,
+    IconButtonComponent,
     LabeledFormInputComponent,
     SelectInputComponent,
   ],

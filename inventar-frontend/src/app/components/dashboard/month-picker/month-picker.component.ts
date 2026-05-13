@@ -6,6 +6,7 @@ import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 
 @Component({
   selector: 'month-picker',
@@ -19,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
     MatIconModule,
     MatInputModule,
     MatNativeDateModule,
+    IconButtonComponent,
   ],
 })
 export class MonthPickerComponent implements OnInit {

@@ -7,7 +7,7 @@
         </div>
 
         <div class="welcome__actions" *ngIf="firstName">
-            <button type="button" class="welcome__icon-btn"
+            <button type="button" cb-icon-button
                 (click)="toggleDarkMode()"
                 [matTooltip]="themeService.themeValue === 'dark-theme' ? 'Switch to light' : 'Switch to dark'"
                 matTooltipPosition="below"

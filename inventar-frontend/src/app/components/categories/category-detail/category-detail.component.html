@@ -3,10 +3,8 @@
         {{name | titlecase}}
     </span>
     <div class="actions">
-        <button mat-icon-button class="close-button" (click)="closeDrawer()">
-            <mat-icon class="{{sharedService.theme}}-icon">
-                close
-            </mat-icon>
+        <button type="button" cb-icon-button (click)="closeDrawer()" aria-label="Close">
+            <mat-icon>close</mat-icon>
         </button>
     </div>
 </div>

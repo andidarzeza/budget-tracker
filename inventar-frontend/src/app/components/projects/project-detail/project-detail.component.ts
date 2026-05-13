@@ -20,6 +20,7 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ProjectService } from 'src/app/services/pages/project.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -31,7 +32,7 @@ import { AddProjectComponent } from '../add-project/add-project.component';
   templateUrl: './project-detail.component.html',
   styleUrls: ['./project-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatIconModule, PillButtonComponent, FlagPipe, CustomDatePipe],
+  imports: [CommonModule, MatIconModule, IconButtonComponent, PillButtonComponent, FlagPipe, CustomDatePipe],
 })
 export class ProjectDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

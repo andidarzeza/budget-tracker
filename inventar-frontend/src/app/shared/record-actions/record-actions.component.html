@@ -1,12 +1,18 @@
 <div class="record-actions-container">
     <div class="record-actions-inner">
-        <button matTooltip="View" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayViewAction" mat-icon-button color="primary" (click)="emitViewAction($event)">
-            <mat-icon class="view-action">open_in_new</mat-icon>
+        <button type="button" *ngIf="displayViewAction" cb-icon-button size="sm"
+            matTooltip="View" matTooltipPosition="below" matTooltipClass="sidebar-tooltip"
+            (click)="emitViewAction($event)" aria-label="View">
+            <mat-icon>open_in_new</mat-icon>
         </button>
-        <button matTooltip="Edit" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayEditAction" mat-icon-button (click)="emitEditAction($event)">
+        <button type="button" *ngIf="displayEditAction" cb-icon-button size="sm"
+            matTooltip="Edit" matTooltipPosition="below" matTooltipClass="sidebar-tooltip"
+            (click)="emitEditAction($event)" aria-label="Edit">
             <mat-icon>edit</mat-icon>
         </button>
-        <button matTooltip="Delete" matTooltipPosition="below" matTooltipClass="sidebar-tooltip" *ngIf="displayDeleteAction" mat-icon-button color="warn" (click)="emitDeleteAction($event)">
+        <button type="button" *ngIf="displayDeleteAction" cb-icon-button variant="danger" size="sm"
+            matTooltip="Delete" matTooltipPosition="below" matTooltipClass="sidebar-tooltip"
+            (click)="emitDeleteAction($event)" aria-label="Delete">
             <mat-icon>delete</mat-icon>
         </button>
     </div>

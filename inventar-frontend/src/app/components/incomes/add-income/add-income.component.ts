@@ -32,6 +32,7 @@ import { AmountKeypadComponent } from 'src/app/shared/amount-keypad/amount-keypa
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
 import { LabeledDateInputComponent } from 'src/app/shared/labeled-date-input/labeled-date-input.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
@@ -53,6 +54,7 @@ import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment'
     CreateFormComponent,
     LabeledDateInputComponent,
     LabeledFormInputComponent,
+    IconButtonComponent,
     LabeledTextareaComponent,
     PillButtonComponent,
     SelectInputComponent,

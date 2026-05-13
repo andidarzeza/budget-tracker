@@ -39,6 +39,7 @@ import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { ChartUtils } from 'src/app/utils/chart';
@@ -114,6 +115,7 @@ const INCOME_LINE = 'income-line';
     YearPickerComponent,
     AllTimeHeaderComponent,
     CustomRangePickerComponent,
+    IconButtonComponent,
     PillButtonComponent,
     FlagPipe,
   ],

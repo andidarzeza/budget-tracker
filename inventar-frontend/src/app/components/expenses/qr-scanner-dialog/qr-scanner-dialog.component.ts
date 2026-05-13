@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import jsQR from 'jsqr';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 
 interface DetectedBarcodeLike {
   rawValue?: string;
@@ -22,7 +23,7 @@ const JSQR_MAX_DIMENSION = 960;
   selector: 'app-qr-scanner-dialog',
   templateUrl: './qr-scanner-dialog.component.html',
   styleUrls: ['./qr-scanner-dialog.component.css'],
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, IconButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QrScannerDialogComponent implements OnInit, OnDestroy {

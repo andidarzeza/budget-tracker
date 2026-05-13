@@ -1,0 +1,59 @@
+/* Single source of truth for the circular icon-only button affordance.
+   Mirrors `.nav-icon-btn` in the toolbar so every dialog close, picker
+   chevron, balance action, etc. feels consistent. */
+:host {
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--app-bg-elevated) 86%, transparent);
+    border: 1px solid var(--app-border);
+    color: var(--app-text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    transition:
+        background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
+        color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
+        border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
+}
+
+:host:hover:not(:disabled) {
+    color: var(--app-accent);
+    border-color: var(--app-accent);
+}
+
+:host:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+:host ::ng-deep mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+}
+
+/* Destructive variant — red accent on hover for delete / clear. */
+:host(.cb-icon-button--danger):hover:not(:disabled) {
+    color: var(--app-danger);
+    border-color: var(--app-danger);
+}
+
+/* Compact variant for inline-row actions (e.g. row delete, input clear). */
+:host(.cb-icon-button--sm) {
+    width: 32px;
+    height: 32px;
+}
+
+:host(.cb-icon-button--sm) ::ng-deep mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+}

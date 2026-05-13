@@ -1,5 +1,5 @@
 <div class="dash-picker">
-    <button mat-icon-button class="dash-picker__nav" (click)="previousMonth()" aria-label="Previous month">
+    <button type="button" cb-icon-button (click)="previousMonth()" aria-label="Previous month">
         <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
 
@@ -8,7 +8,7 @@
         <span class="dash-picker__text">{{from | date: 'MMMM yyyy'}}</span>
     </button>
 
-    <button mat-icon-button class="dash-picker__nav" (click)="nextMonth()" aria-label="Next month">
+    <button type="button" cb-icon-button (click)="nextMonth()" aria-label="Next month">
         <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
 

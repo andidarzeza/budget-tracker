@@ -16,12 +16,12 @@
             <span class="edit-balance-form__flag" aria-hidden="true">{{ code | flag }}</span>
             <span class="edit-balance-form__code">{{ code }}</span>
             <cb-labeled-form-input class="dialog-form__field edit-balance-form__field"
-                label="Amount"
+                label=""
                 type="number"
                 placeholder="0.00"
                 [control]="$any(formGroup.get(code))">
             </cb-labeled-form-input>
-            <button type="button" class="edit-balance-form__clear" (click)="clearCurrency(code)"
+            <button type="button" cb-icon-button variant="danger" size="sm" (click)="clearCurrency(code)"
                 [disabled]="!formGroup.get(code)?.value && formGroup.get(code)?.value !== 0"
                 aria-label="Clear">
                 <mat-icon>backspace</mat-icon>

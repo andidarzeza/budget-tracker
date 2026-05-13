@@ -74,8 +74,9 @@
     position: relative;
 }
 
-.ta__icon-btn--active .primary-icon {
+.ta__icon-btn--active {
     color: var(--app-accent) !important;
+    border-color: var(--app-accent) !important;
 }
 
 .ta__icon-badge {

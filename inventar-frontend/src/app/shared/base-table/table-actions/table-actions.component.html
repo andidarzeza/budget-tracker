@@ -14,17 +14,17 @@
         <div class="ta__actions">
             <button
                 type="button"
+                cb-icon-button
                 class="ta__icon-btn"
                 [class.ta__icon-btn--active]="filterOpen() || appliedFilterCount() > 0"
                 matTooltip="Filters"
                 matTooltipClass="sidebar-tooltip"
                 matTooltipPosition="above"
-                mat-icon-button
                 (click)="toggleFilter()"
                 [attr.aria-expanded]="filterOpen()"
                 aria-label="Toggle filters"
             >
-                <mat-icon class="primary-icon">search</mat-icon>
+                <mat-icon>search</mat-icon>
                 @if (appliedFilterCount() > 0) {
                     <span class="ta__icon-badge" aria-hidden="true">{{ appliedFilterCount() }}</span>
                 }
@@ -32,24 +32,26 @@
             @if (!tableActionInput?.extra?.hideInsertButton) {
                 <button
                     type="button"
+                    cb-icon-button
                     matTooltip="Insert"
                     matTooltipClass="sidebar-tooltip"
                     matTooltipPosition="above"
-                    mat-icon-button
                     (click)="openDialog()"
+                    aria-label="Insert"
                 >
-                    <mat-icon class="primary-icon">add</mat-icon>
+                    <mat-icon>add</mat-icon>
                 </button>
             }
             <button
                 type="button"
+                cb-icon-button
                 matTooltip="Refresh"
                 matTooltipClass="sidebar-tooltip"
                 matTooltipPosition="above"
-                mat-icon-button
                 (click)="refresh()"
+                aria-label="Refresh"
             >
-                <mat-icon class="primary-icon">refresh</mat-icon>
+                <mat-icon>refresh</mat-icon>
             </button>
         </div>
     </div>

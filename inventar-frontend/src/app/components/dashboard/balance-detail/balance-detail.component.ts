@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 
 export interface BalanceDetailData {
@@ -21,7 +22,7 @@ export interface BalanceDetailData {
   templateUrl: './balance-detail.component.html',
   styleUrls: ['./balance-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatDialogModule, MatIconModule, FlagPipe, PillButtonComponent],
+  imports: [CommonModule, MatDialogModule, MatIconModule, FlagPipe, IconButtonComponent, PillButtonComponent],
 })
 export class BalanceDetailComponent {
   readonly data = inject<BalanceDetailData>(MAT_DIALOG_DATA);

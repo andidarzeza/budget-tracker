@@ -7,10 +7,10 @@
             <span>Projects</span>
         </button>
         <div class="pd-toolbar__spacer"></div>
-        <button type="button" class="pd-icon-btn" *ngIf="view()" (click)="openEdit()" aria-label="Edit project">
+        <button type="button" cb-icon-button *ngIf="view()" (click)="openEdit()" aria-label="Edit project">
             <mat-icon>edit</mat-icon>
         </button>
-        <button type="button" class="pd-icon-btn pd-icon-btn--danger" *ngIf="view()" (click)="deleteProject()"
+        <button type="button" cb-icon-button variant="danger" *ngIf="view()" (click)="deleteProject()"
             aria-label="Delete project">
             <mat-icon>delete</mat-icon>
         </button>
@@ -92,7 +92,7 @@
                             </div>
                             <p *ngIf="c.description" class="pd-row__desc">{{ c.description }}</p>
                         </div>
-                        <button type="button" class="pd-row__delete" (click)="deleteContribution(c)"
+                        <button type="button" cb-icon-button variant="danger" size="sm" (click)="deleteContribution(c)"
                             aria-label="Delete contribution">
                             <mat-icon>delete_outline</mat-icon>
                         </button>

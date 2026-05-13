@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EntityType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -27,6 +28,7 @@ interface EditBalanceData {
     ReactiveFormsModule,
     MatIconModule,
     CreateFormComponent,
+    IconButtonComponent,
     LabeledFormInputComponent,
     FlagPipe,
   ],

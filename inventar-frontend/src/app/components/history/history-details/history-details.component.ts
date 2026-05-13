@@ -18,12 +18,13 @@ import { Observable } from 'rxjs';
 import { History } from 'src/app/models/models';
 import { HistoryService } from 'src/app/services/pages/history.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 
 @Component({
   selector: 'history-details',
   templateUrl: './history-details.component.html',
   styleUrls: ['./history-details.component.css'],
-  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent],
 })
 export class HistoryDetailsComponent implements OnInit, OnChanges {
   private readonly historyService = inject(HistoryService);

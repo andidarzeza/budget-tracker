@@ -6,7 +6,7 @@
 .edit-balance-form {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 16px;
 }
 
 .edit-balance-form__intro {

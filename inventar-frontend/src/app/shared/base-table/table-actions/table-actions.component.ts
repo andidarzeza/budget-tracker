@@ -11,6 +11,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { IconButtonComponent } from '../../icon-button/icon-button.component';
 import { FilterComponent } from './filter/filter.component';
 import { FilterOptions } from './filter/filter.models';
 import { TableActionInput } from './TableActionInput';
@@ -19,7 +20,7 @@ import { TableActionInput } from './TableActionInput';
   selector: 'table-actions',
   templateUrl: './table-actions.component.html',
   styleUrls: ['./table-actions.component.css'],
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, FilterComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, IconButtonComponent, FilterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableActionsComponent {

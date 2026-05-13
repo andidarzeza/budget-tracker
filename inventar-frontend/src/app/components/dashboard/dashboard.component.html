@@ -8,12 +8,12 @@
             </span>
             <h2 class="balance-card__title">My balance</h2>
             <div class="balance-card__actions">
-                <button type="button" class="balance-card__btn"
+                <button type="button" cb-icon-button
                     (click)="toggleBalanceVisibility()"
                     [attr.aria-label]="balanceHidden() ? 'Show balance' : 'Hide balance'">
                     <mat-icon>{{ balanceHidden() ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
-                <button type="button" class="balance-card__btn" (click)="openEditBalance()" aria-label="Edit balance">
+                <button type="button" cb-icon-button (click)="openEditBalance()" aria-label="Edit balance">
                     <mat-icon>edit</mat-icon>
                 </button>
             </div>
@@ -146,7 +146,7 @@
                 @if (storyOpen() && storyKind() === 'expense') {
                     <mat-card class="panel panel--story">
                         <header class="panel__header panel__header--story">
-                            <button type="button" class="story-back" (click)="closeStory()" aria-label="Close drill-down">
+                            <button type="button" cb-icon-button (click)="closeStory()" aria-label="Close drill-down">
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
                             <div class="story-title-wrap">
@@ -241,7 +241,7 @@
                 @if (storyOpen() && storyKind() === 'income') {
                     <mat-card class="panel panel--story">
                         <header class="panel__header panel__header--story">
-                            <button type="button" class="story-back" (click)="closeStory()" aria-label="Close drill-down">
+                            <button type="button" cb-icon-button (click)="closeStory()" aria-label="Close drill-down">
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
                             <div class="story-title-wrap">

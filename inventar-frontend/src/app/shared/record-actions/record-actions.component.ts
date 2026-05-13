@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { IconButtonComponent } from '../icon-button/icon-button.component';
 
 @Component({
   selector: 'record-actions',
   templateUrl: './record-actions.component.html',
   styleUrls: ['./record-actions.component.css'],
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, IconButtonComponent],
 })
 export class RecordActionsComponent {
   @Output() openEditForm = new EventEmitter<void>();

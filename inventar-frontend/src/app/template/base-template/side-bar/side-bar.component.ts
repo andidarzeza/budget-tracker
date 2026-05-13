@@ -8,6 +8,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { MenuItem, SideBarMode } from '../base-template.models';
 
 /** Horizontal band (in px from the left viewport edge) where a touch
@@ -36,6 +37,7 @@ const FLICK_VELOCITY_PX_PER_MS = 0.4;
     MatTooltipModule,
     RouterLink,
     RouterLinkActive,
+    IconButtonComponent,
   ],
 })
 export class SideBarComponent implements OnChanges, AfterViewInit, OnDestroy {

@@ -48,10 +48,9 @@
 
     @if (!mobileDrawer) {
         <div style="position: absolute; bottom: 30px;left: 50%;transform: translateX(-50%);">
-            <button class="menu-item" mat-icon-button (click)="sideBarService.toggleSideBar()">
-                <mat-icon class="primary-icon">
-                    compare_arrows
-                </mat-icon>
+            <button type="button" cb-icon-button (click)="sideBarService.toggleSideBar()"
+                aria-label="Toggle sidebar">
+                <mat-icon>compare_arrows</mat-icon>
             </button>
         </div>
     }

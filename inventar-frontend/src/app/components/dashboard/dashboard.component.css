@@ -75,26 +75,36 @@
     gap: 4px;
 }
 
+/* Glass pill — mirrors `.nav-icon-btn` in the toolbar so the show/hide
+   and edit balance affordances feel consistent with the theme toggle. */
 .balance-card__btn {
     appearance: none;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    color: var(--app-text-muted);
-    width: 36px;
-    height: 36px;
+    -webkit-tap-highlight-color: transparent;
+    width: 40px;
+    height: 40px;
     border-radius: 999px;
+    background: color-mix(in srgb, var(--app-bg-elevated) 86%, transparent);
+    border: 1px solid var(--app-border);
+    color: var(--app-text-muted);
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     transition:
-        background var(--app-motion-base) var(--app-easing-standard),
-        color var(--app-motion-base) var(--app-easing-standard);
+        background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
+        color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
+        border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
 }
 
 .balance-card__btn:hover {
-    background: var(--app-surface-hover);
-    color: var(--app-text);
+    color: var(--app-accent);
+    border-color: var(--app-accent);
+}
+
+.balance-card__btn mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
 }
 
 /* Mobile default: equal-width grid so chips line up tidily on narrow

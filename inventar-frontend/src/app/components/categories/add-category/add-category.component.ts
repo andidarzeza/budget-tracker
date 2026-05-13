@@ -16,6 +16,7 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectIconComponent } from 'src/app/shared/select-icon/select-icon.component';
@@ -32,6 +33,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     MatIconModule,
     CreateFormComponent,
     LabeledFormInputComponent,
+    IconButtonComponent,
     LabeledTextareaComponent,
     PillButtonComponent,
     SelectInputComponent,

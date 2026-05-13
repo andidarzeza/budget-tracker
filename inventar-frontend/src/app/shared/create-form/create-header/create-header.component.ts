@@ -3,12 +3,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { EntityType } from 'src/app/models/models';
+import { IconButtonComponent } from '../../icon-button/icon-button.component';
 
 @Component({
   selector: 'create-header',
   templateUrl: './create-header.component.html',
   styleUrls: ['./create-header.component.css'],
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, IconButtonComponent],
 })
 export class CreateHeaderComponent {
   @Output() close = new EventEmitter<boolean>();

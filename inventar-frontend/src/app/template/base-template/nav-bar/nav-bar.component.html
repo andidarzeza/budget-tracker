@@ -2,9 +2,9 @@
 <mat-toolbar class="toolbar" [style.left.px]="isMobileLayout() ? 0 : sidebarOffset()">
 
     @if (isMobileLayout()) {
-        <button type="button" mat-icon-button class="nav-menu-button"
+        <button type="button" cb-icon-button
             (click)="sidebarService.toggleMobileMenu()" aria-label="Open navigation menu">
-            <mat-icon class="primary-icon">menu</mat-icon>
+            <mat-icon>menu</mat-icon>
         </button>
     } @else {
         <nav class="nav-breadcrumbs" aria-label="Breadcrumb">
@@ -34,7 +34,7 @@
     }
     <div class="nav-actions">
 
-        <button type="button" class="nav-icon-btn"
+        <button type="button" cb-icon-button
             (click)="toggleDarkMode()"
             [matTooltip]="themeService?.themeValue === 'dark-theme' ? 'Switch to light' : 'Switch to dark'"
             matTooltipPosition="below"

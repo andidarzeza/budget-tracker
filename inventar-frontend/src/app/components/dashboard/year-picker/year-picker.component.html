@@ -1,5 +1,5 @@
 <div class="dash-picker">
-    <button mat-icon-button class="dash-picker__nav" (click)="previousYear()" aria-label="Previous year">
+    <button type="button" cb-icon-button (click)="previousYear()" aria-label="Previous year">
         <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
 
@@ -8,7 +8,7 @@
         <span class="dash-picker__text">{{from | date: 'yyyy'}}</span>
     </button>
 
-    <button mat-icon-button class="dash-picker__nav" (click)="nextYear()" aria-label="Next year">
+    <button type="button" cb-icon-button (click)="nextYear()" aria-label="Next year">
         <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
 
