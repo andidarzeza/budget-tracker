@@ -113,6 +113,20 @@
                     </article>
                 </section>
             }
+
+            @if (hasMore()) {
+                <div #loadSentinel class="ledger__sentinel" aria-hidden="true"></div>
+            }
+
+            @if (loadingMore()) {
+                <div class="ledger__loading" role="status" aria-live="polite">
+                    <span class="app-spinner app-spinner--sm" aria-hidden="true">
+                        <span class="app-spinner__track"></span>
+                        <span class="app-spinner__arc"></span>
+                    </span>
+                    <span>Loading more…</span>
+                </div>
+            }
         </section>
     } @else {
         <base-table [data]="data$ | async" [columnDefinition]="columnDefinition"

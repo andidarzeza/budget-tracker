@@ -293,3 +293,22 @@
     color: var(--app-text-subtle);
     font-variant-numeric: tabular-nums;
 }
+
+/* Infinite-scroll sentinel — invisible probe at the bottom of the list;
+   the IntersectionObserver fires `loadMore()` when it enters the viewport. */
+.ledger__sentinel {
+    height: 1px;
+    margin-top: -1px;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.ledger__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    color: var(--app-text-muted);
+    font-size: 0.88rem;
+}

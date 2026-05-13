@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -81,6 +81,22 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
 
   /** Row data, hoisted to a signal so the date grouping below can stay reactive. */
   private readonly rows = toSignal(this.data$, { initialValue: [] as Expense[] });
+
+  /** Total count from the API, used to decide when to stop paging on mobile
+   *  (`hasMore` toggles off once we've loaded all of them). */
+  private readonly totalSignal = toSignal(this.totalItems$, { initialValue: 0 });
+
+  /** More pages available on the server? Drives the infinite-scroll sentinel. */
+  readonly hasMore = computed(() => {
+    const total = this.totalSignal();
+    return total > 0 && this.rows().length < total;
+  });
+
+  /** Sentinel element at the bottom of the ledger; an IntersectionObserver
+   *  watches it and fires `loadMore()` (inherited from `BaseTable`) when the
+   *  user scrolls within ~120px of it. Re-attached whenever `hasMore` flips
+   *  or the sentinel is re-rendered. */
+  private readonly loadSentinel = viewChild<ElementRef<HTMLDivElement>>('loadSentinel');
 
   /** Category name → metadata (icon, type). Populated alongside the filter
    *  options in `ngOnInit`; we key on the joined `category` string the API
@@ -205,6 +221,27 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     // `delete()` chain — pass via `inject()` so the field below stays
     // available for the QR-prefill flow.
     super(dialog, inject(ExpenseService), toaster, accountService);
+
+    // Mobile ledger infinite scroll: observe a sentinel at the list bottom,
+    // emit `loadMore()` when it enters the viewport. The effect re-attaches
+    // the observer whenever the sentinel ref changes (toggled by `hasMore`)
+    // and Angular auto-cleans it when the component is destroyed.
+    effect((onCleanup) => {
+      const el = this.loadSentinel()?.nativeElement;
+      if (!el || !this.hasMore()) return;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting && !this.loadingMore()) {
+              this.loadMore();
+            }
+          }
+        },
+        { root: null, rootMargin: '120px', threshold: 0 },
+      );
+      observer.observe(el);
+      onCleanup(() => observer.disconnect());
+    });
   }
 
   /**
