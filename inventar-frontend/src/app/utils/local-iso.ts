@@ -30,9 +30,50 @@ export function pickEntryTimestamp(picked: Date): Date {
  */
 export function toBareLocalIso(picked: Date): string {
   const d = pickEntryTimestamp(picked);
+  return formatLocalDateTime(d);
+}
+
+/**
+ * Format an existing `Date` as a bare local ISO 8601 wall-clock string
+ * (`yyyy-MM-ddTHH:mm:ss`, **no offset**) — same format as `toBareLocalIso`
+ * but **without** the noon-snap from `pickEntryTimestamp`. Use when you
+ * already have a precise local timestamp you want preserved verbatim.
+ */
+export function formatLocalDateTime(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, '0');
   return (
     `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` +
     `T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
   );
+}
+
+/**
+ * Format a `Date` as an ISO 8601 instant (`…Z`, UTC) whose digits match
+ * the source's **local wall-clock** — i.e. take year/month/day/hour/min/sec
+ * from the local Date and emit them as if they were UTC. Day-18 local
+ * midnight becomes `2026-05-18T00:00:00.000Z` regardless of the runtime
+ * timezone, instead of `Date.toISOString()`'s default which shifts by the
+ * local UTC offset.
+ *
+ * Why this exists: the backend stores `Expense.createdTime` as
+ * `LocalDateTime` (no zone — see `toBareLocalIso`) but the dashboard
+ * query endpoints expect an `Instant` (`…Z`). Naively calling
+ * `Date.toISOString()` on the picker's boundaries shifts the comparison
+ * window by the local UTC offset, so an expense at 22:34 local on the
+ * 18th lands under day-19's filter. Sending the picker's wall-clock as
+ * UTC-tagged ISO keeps both sides of the comparison on the same clock.
+ */
+export function toLocalAsUtcIso(d: Date): string {
+  const utc = new Date(
+    Date.UTC(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      d.getHours(),
+      d.getMinutes(),
+      d.getSeconds(),
+      d.getMilliseconds(),
+    ),
+  );
+  return utc.toISOString();
 }
