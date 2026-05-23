@@ -30,7 +30,7 @@
                         <span class="balance-row__flag" aria-hidden="true">{{ row.currency | flag }}</span>
                         <span class="balance-row__currency">{{ row.currency }}</span>
                         <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                            {{ balanceHidden() ? '••••••' : (row.amount | number : '1.0-2') }}
+                            {{ balanceHidden() ? '••••••' : (row.amount | number : '1.2-2') }}
                         </span>
                     </button>
                 }
@@ -96,14 +96,14 @@
                     <div class="kpi-card__row">
                         <span class="kpi-card__label">Income</span>
                         <span class="kpi-card__value kpi-card__value--income">
-                            {{ b.income | number : '1.0-2' }}
+                            {{ b.income | number : '1.2-2' }}
                         </span>
                     </div>
 
                     <div class="kpi-card__row">
                         <span class="kpi-card__label">Expense</span>
                         <span class="kpi-card__value kpi-card__value--expense">
-                            {{ b.expense | number : '1.0-2' }}
+                            {{ b.expense | number : '1.2-2' }}
                         </span>
                     </div>
 
@@ -112,7 +112,7 @@
                         <span class="kpi-card__value"
                             [class.kpi-card__value--positive]="b.net >= 0"
                             [class.kpi-card__value--negative]="b.net < 0">
-                            {{ b.net > 0 ? '+' : '' }}{{ b.net | number : '1.0-2' }}
+                            {{ b.net > 0 ? '+' : '' }}{{ b.net | number : '1.2-2' }}
                         </span>
                     </div>
                 </article>
@@ -158,7 +158,7 @@
                                 <span class="panel__hint">{{ storyCategory()?.currency }} · where it went</span>
                             </div>
                             <span class="story-total story-total--exp">
-                                −{{ storyCategory()?.total | number : '1.0-2' }}
+                                −{{ storyCategory()?.total | number : '1.2-2' }}
                             </span>
                         </header>
 
@@ -171,7 +171,7 @@
                                         <span class="story-item__date">{{ $any(e).createdTime | date : 'MMM d' }}</span>
                                         <span class="story-item__desc">{{ $any(e).description || '—' }}</span>
                                         <span class="story-item__amount story-item__amount--exp">
-                                            −{{ storyAmount(e) | number : '1.0-2' }}
+                                            −{{ storyAmount(e) | number : '1.2-2' }}
                                         </span>
                                     </li>
                                 }
@@ -204,7 +204,7 @@
                                         <span class="cat-row__sub">{{ r.currency }}</span>
                                     </span>
                                     <span class="cat-row__amount cat-row__amount--exp">
-                                        −{{ r.total | number : '1.0-2' }}
+                                        −{{ r.total | number : '1.2-2' }}
                                     </span>
                                 </li>
                             }
@@ -254,7 +254,7 @@
                                 <span class="panel__hint">{{ storyCategory()?.currency }} · where it came from</span>
                             </div>
                             <span class="story-total story-total--inc">
-                                +{{ storyCategory()?.total | number : '1.0-2' }}
+                                +{{ storyCategory()?.total | number : '1.2-2' }}
                             </span>
                         </header>
 
@@ -267,7 +267,7 @@
                                         <span class="story-item__date">{{ $any(e).createdTime | date : 'MMM d' }}</span>
                                         <span class="story-item__desc">{{ $any(e).description || '—' }}</span>
                                         <span class="story-item__amount story-item__amount--inc">
-                                            +{{ storyAmount(e) | number : '1.0-2' }}
+                                            +{{ storyAmount(e) | number : '1.2-2' }}
                                         </span>
                                     </li>
                                 }
@@ -300,7 +300,7 @@
                                         <span class="cat-row__sub">{{ r.currency }}</span>
                                     </span>
                                     <span class="cat-row__amount cat-row__amount--inc">
-                                        +{{ r.total | number : '1.0-2' }}
+                                        +{{ r.total | number : '1.2-2' }}
                                     </span>
                                 </li>
                             }

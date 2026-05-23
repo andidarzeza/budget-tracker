@@ -13,7 +13,7 @@
 
     <div class="balance-detail__amount-wrap">
         <span class="balance-detail__amount" [class.balance-detail__amount--hidden]="data.hidden">
-            {{ data.hidden ? '••••••' : (data.amount | number : '1.0-2') }}
+            {{ data.hidden ? '••••••' : (data.amount | number : '1.2-2') }}
         </span>
         <span *ngIf="data.hidden" class="balance-detail__hidden-tag">Hidden</span>
     </div>
