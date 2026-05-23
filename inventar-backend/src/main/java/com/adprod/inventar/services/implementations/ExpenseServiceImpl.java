@@ -117,8 +117,8 @@ public class ExpenseServiceImpl implements ExpenseService {
         this.accountService.checkAccount(spending.getAccount());
         spending.setUser(securityContextService.username());
         Expense expense = (Expense) findOne(id).getBody();
-        double removeAndAddAmount = expense.getMoneySpent() - spending.getMoneySpent();
-        accountService.addToBalance(expense.getAccount(), expense.getCurrency(), removeAndAddAmount);
+        accountService.addToBalance(expense.getAccount(), expense.getCurrency(), expense.getMoneySpent());
+        accountService.removeFromBalance(spending.getAccount(), spending.getCurrency(), spending.getMoneySpent());
         spending.setId(id);
         spending.setCreatedTime(expense.getCreatedTime());
         spending.setLastModifiedDate(LocalDateTime.now());

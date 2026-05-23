@@ -100,8 +100,8 @@ public class IncomeServiceImpl implements IncomeService {
         accountService.checkAccount(income.getAccount());
         income.setUser(securityContextService.username());
         Income incomeDB = findOne(id);
-        double removeAndAddAmount =  income.getIncoming() - incomeDB.getIncoming();
-        this.accountService.addToBalance(income.getAccount(), income.getCurrency(), removeAndAddAmount);
+        this.accountService.removeFromBalance(incomeDB.getAccount(), incomeDB.getCurrency(), incomeDB.getIncoming());
+        this.accountService.addToBalance(income.getAccount(), income.getCurrency(), income.getIncoming());
         income.setId(id);
         income.setCreatedTime(incomeDB.getCreatedTime());
         income.setLastModifiedDate(new Date());
