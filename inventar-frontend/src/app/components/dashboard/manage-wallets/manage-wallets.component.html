@@ -1,0 +1,119 @@
+<create-form
+    [loadingData]="loading() || saving()"
+    loadingMessage="Working…"
+    icon="account_balance_wallet"
+    [entity]="entity"
+    [editMode]="true"
+    [hideDefaultFooter]="true"
+    (close)="close()">
+
+    <div class="manage-wallets">
+        <!-- List view -->
+        <ng-container *ngIf="!editing(); else walletForm">
+            <p class="manage-wallets__intro">
+                These are the bank accounts and cash you keep money in. Expenses and income draw from
+                whichever source you pick.
+            </p>
+
+            <ng-container *ngIf="bankWallets().length">
+                <h3 class="manage-wallets__group">
+                    <mat-icon aria-hidden="true">account_balance</mat-icon> Bank accounts
+                </h3>
+                <ul class="manage-wallets__list">
+                    <li *ngFor="let w of bankWallets()" class="wallet-item">
+                        <span class="wallet-item__flag" aria-hidden="true">{{ w.currency | flag }}</span>
+                        <span class="wallet-item__main">
+                            <span class="wallet-item__name">{{ w.name }}</span>
+                            <span class="wallet-item__meta">{{ w.currency }} · {{ w.balance | number : '1.2-2' }}</span>
+                        </span>
+                        <button type="button" cb-icon-button size="sm" (click)="startEdit(w)"
+                            matTooltip="Edit" matTooltipPosition="left" aria-label="Edit source">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button type="button" cb-icon-button variant="danger" size="sm" (click)="deleteWallet(w)"
+                            matTooltip="Delete" matTooltipPosition="left" aria-label="Delete source">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </li>
+                </ul>
+            </ng-container>
+
+            <ng-container *ngIf="cashWallets().length">
+                <h3 class="manage-wallets__group">
+                    <mat-icon aria-hidden="true">payments</mat-icon> Cash
+                </h3>
+                <ul class="manage-wallets__list">
+                    <li *ngFor="let w of cashWallets()" class="wallet-item">
+                        <span class="wallet-item__flag" aria-hidden="true">{{ w.currency | flag }}</span>
+                        <span class="wallet-item__main">
+                            <span class="wallet-item__name">{{ w.name }}</span>
+                            <span class="wallet-item__meta">{{ w.currency }} · {{ w.balance | number : '1.2-2' }}</span>
+                        </span>
+                        <button type="button" cb-icon-button size="sm" (click)="startEdit(w)"
+                            matTooltip="Edit" matTooltipPosition="left" aria-label="Edit source">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button type="button" cb-icon-button variant="danger" size="sm" (click)="deleteWallet(w)"
+                            matTooltip="Delete" matTooltipPosition="left" aria-label="Delete source">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </li>
+                </ul>
+            </ng-container>
+
+            <p *ngIf="!wallets().length && !loading()" class="manage-wallets__empty">
+                No sources yet. Add your first bank account or cash holding.
+            </p>
+        </ng-container>
+
+        <!-- Add / edit form -->
+        <ng-template #walletForm>
+            <form [formGroup]="formGroup" class="dialog-form">
+                <cb-labeled-form-input class="dialog-form__field"
+                    label="Name"
+                    placeholder="e.g. BKT, Wallet, Revolut"
+                    [control]="$any(formGroup.get('name'))">
+                </cb-labeled-form-input>
+
+                <div class="dialog-form__row">
+                    <cb-select-input class="dialog-form__field"
+                        label="Type"
+                        [control]="$any(formGroup.get('type'))"
+                        [options]="types"
+                        [displayWith]="displayType">
+                    </cb-select-input>
+
+                    <cb-select-input class="dialog-form__field"
+                        label="Currency"
+                        [control]="$any(formGroup.get('currency'))"
+                        [options]="currencies"
+                        [displayWith]="displayCurrency">
+                    </cb-select-input>
+                </div>
+
+                <cb-labeled-form-input class="dialog-form__field"
+                    label="Current balance"
+                    type="number"
+                    placeholder="0.00"
+                    [control]="$any(formGroup.get('balance'))">
+                </cb-labeled-form-input>
+            </form>
+        </ng-template>
+    </div>
+
+    <!-- Footer -->
+    <footer class="dialog-footer dialog-footer-slot manage-wallets__footer">
+        <ng-container *ngIf="!editing(); else editingFooter">
+            <button type="button" cb-pill-button icon="close" (click)="close()">Done</button>
+            <button type="button" cb-pill-button variant="primary" icon="add" (click)="startAdd()">
+                Add source
+            </button>
+        </ng-container>
+        <ng-template #editingFooter>
+            <button type="button" cb-pill-button icon="arrow_back" (click)="cancelEdit()">Back</button>
+            <button type="button" cb-pill-button variant="primary" icon="check" (click)="saveWallet()">
+                Save source
+            </button>
+        </ng-template>
+    </footer>
+</create-form>

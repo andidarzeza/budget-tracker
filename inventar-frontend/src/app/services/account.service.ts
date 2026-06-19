@@ -28,16 +28,6 @@ export class AccountService {
     }));
   }
 
-  /** Replace the account's per-currency balance map. Used by the dashboard "Edit balance" dialog. */
-  setBalance(id: string, balance: Record<string, number>): Observable<Account> {
-    return this.http.put<Account>(`${this.API_URl}/${id}/balance`, balance).pipe(
-      map(account => {
-        this.account = account;
-        return account;
-      })
-    );
-  }
-
   getAccount(): string {
     return localStorage.getItem("account");
   }

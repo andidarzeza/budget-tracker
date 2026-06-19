@@ -27,6 +27,8 @@ public class Expense {
     private String user;
     private String currency;
     private String account;
+    /** Money source this expense was paid from. Its currency drives {@link #currency}. */
+    private String walletId;
     /**
      * If non-null, this expense was created automatically as a side-effect of adding the
      * referenced project {@link Contribution}. Deleting either side of the link cleans

@@ -18,7 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Optional;
 
 
@@ -46,7 +45,7 @@ public class UserServiceImpl implements UserService {
                     request.getLastName()
             );
             repository.save(user);
-            accountService.save(new Account(null, "titl", user.getUsername(), new HashMap<>()));
+            accountService.save(new Account(null, "titl", user.getUsername()));
             configurationService.save(new Configuration(null, false, true, user.getUsername(), "ALL"));
 //            historyService.save(historyService.from(REGISTRATION, USER));
             return ResponseEntity.ok(new ResponseMessage("Registration Successful"));

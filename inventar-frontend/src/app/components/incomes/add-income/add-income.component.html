@@ -52,28 +52,29 @@
                         <div class="wizard-amount-layout">
                             <div class="wizard-amount-display-row">
                                 <div class="wizard-amount-currency-panel">
-                                    <span class="wizard-amount-currency-panel__label">Currency</span>
-                                    <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="pageWizardCurrencyMenu"
-                                        aria-haspopup="menu" aria-label="Currency, tap to change">
-                                        <ng-container *ngIf="formGroup.get('currency')?.value as cur; else pageIncomePickCurrency">
+                                    <span class="wizard-amount-currency-panel__label">Source</span>
+                                    <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="pageWizardSourceMenu"
+                                        aria-haspopup="menu" aria-label="Source, tap to change">
+                                        <ng-container *ngIf="currentSource() as src; else pageIncomePickSource">
                                             <span class="wizard-amount-currency-trigger__inner">
-                                                <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ cur | flag }}</span>
-                                                <span class="wizard-amount-currency-chip__code">{{ cur }}</span>
+                                                <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ src.currency | flag }}</span>
+                                                <span class="wizard-amount-currency-chip__code">{{ src.name }}</span>
                                             </span>
                                         </ng-container>
-                                        <ng-template #pageIncomePickCurrency>
+                                        <ng-template #pageIncomePickSource>
                                             <span class="wizard-amount-currency-trigger__placeholder">Choose…</span>
                                         </ng-template>
                                         <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
                                     </button>
-                                    <mat-menu #pageWizardCurrencyMenu="matMenu" class="wizard-amount-currency-menu">
-                                        <button mat-menu-item type="button" *ngFor="let c of currencies"
+                                    <mat-menu #pageWizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
+                                        <button mat-menu-item type="button" *ngFor="let w of sources()"
                                             class="wizard-amount-currency-menu-item"
-                                            [class.wizard-amount-currency-menu-item--active]="formGroup.get('currency')?.value === c"
-                                            (click)="selectWizardCurrency(c)">
-                                            <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ c | flag }}</span>
-                                            <span>{{ c }}</span>
+                                            [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
+                                            (click)="selectWizardSource($any(w.id))">
+                                            <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ w.currency | flag }}</span>
+                                            <span>{{ w.name }} · {{ w.currency }}</span>
                                         </button>
+                                        <button mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
                                     </mat-menu>
                                 </div>
                                 <div class="amount-keypad-display amount-keypad-display--in-row" aria-live="polite">
@@ -129,7 +130,7 @@
     <form [formGroup]="formGroup" class="dialog-form">
         <!-- Single-screen form: edit (any size) OR desktop create. -->
         <ng-container *ngIf="isEditMode || !isWizardMobile()">
-            <div class="dialog-form__row">
+            <div class="dialog-form__row dialog-form__row--equal">
                 <cb-select-input class="dialog-form__field"
                     label="Income Category"
                     emptyText="No categories yet"
@@ -146,10 +147,12 @@
                 </cb-labeled-form-input>
 
                 <cb-select-input class="dialog-form__field"
-                    label="Currency"
-                    [control]="$any(formGroup.get('currency'))"
-                    [options]="currencies"
-                    [displayWith]="displayCurrency">
+                    label="Deposit to"
+                    emptyText="No sources yet"
+                    [control]="$any(formGroup.get('walletId'))"
+                    [options]="sources()"
+                    [displayWith]="displaySource"
+                    [valueWith]="$any(sourceIdValue)">
                 </cb-select-input>
             </div>
 
@@ -225,28 +228,29 @@
                         <div class="wizard-amount-layout">
                             <div class="wizard-amount-display-row">
                                 <div class="wizard-amount-currency-panel">
-                                    <span class="wizard-amount-currency-panel__label">Currency</span>
-                                    <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="wizardCurrencyMenu"
-                                        aria-haspopup="menu" aria-label="Currency, tap to change">
-                                        <ng-container *ngIf="formGroup.get('currency')?.value as cur; else pickCurrencyInc">
+                                    <span class="wizard-amount-currency-panel__label">Source</span>
+                                    <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="wizardSourceMenu"
+                                        aria-haspopup="menu" aria-label="Source, tap to change">
+                                        <ng-container *ngIf="currentSource() as src; else pickSourceInc">
                                             <span class="wizard-amount-currency-trigger__inner">
-                                                <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ cur | flag }}</span>
-                                                <span class="wizard-amount-currency-chip__code">{{ cur }}</span>
+                                                <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ src.currency | flag }}</span>
+                                                <span class="wizard-amount-currency-chip__code">{{ src.name }}</span>
                                             </span>
                                         </ng-container>
-                                        <ng-template #pickCurrencyInc>
+                                        <ng-template #pickSourceInc>
                                             <span class="wizard-amount-currency-trigger__placeholder">Choose…</span>
                                         </ng-template>
                                         <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
                                     </button>
-                                    <mat-menu #wizardCurrencyMenu="matMenu" class="wizard-amount-currency-menu">
-                                        <button mat-menu-item type="button" *ngFor="let c of currencies"
+                                    <mat-menu #wizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
+                                        <button mat-menu-item type="button" *ngFor="let w of sources()"
                                             class="wizard-amount-currency-menu-item"
-                                            [class.wizard-amount-currency-menu-item--active]="formGroup.get('currency')?.value === c"
-                                            (click)="selectWizardCurrency(c)">
-                                            <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ c | flag }}</span>
-                                            <span>{{ c }}</span>
+                                            [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
+                                            (click)="selectWizardSource($any(w.id))">
+                                            <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ w.currency | flag }}</span>
+                                            <span>{{ w.name }} · {{ w.currency }}</span>
                                         </button>
+                                        <button mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
                                     </mat-menu>
                                 </div>
                                 <div class="amount-keypad-display amount-keypad-display--in-row" aria-live="polite">
@@ -260,7 +264,7 @@
                         </div>
                     </ng-container>
                     <ng-template #incomeWizardStep1Desktop>
-                        <p class="create-wizard__intro">Enter how much you received and pick a currency.</p>
+                        <p class="create-wizard__intro">Enter how much you received and pick where it goes.</p>
                         <div class="dialog-form__row dialog-form__row--wizard-amount">
                             <cb-labeled-form-input class="dialog-form__field"
                                 label="Income amount"
@@ -268,10 +272,12 @@
                                 [control]="$any(formGroup.get('incoming'))">
                             </cb-labeled-form-input>
                             <cb-select-input class="dialog-form__field"
-                                label="Currency"
-                                [control]="$any(formGroup.get('currency'))"
-                                [options]="currencies"
-                                [displayWith]="displayCurrency">
+                                label="Deposit to"
+                                emptyText="No sources yet"
+                                [control]="$any(formGroup.get('walletId'))"
+                                [options]="sources()"
+                                [displayWith]="displaySource"
+                                [valueWith]="$any(sourceIdValue)">
                             </cb-select-input>
                         </div>
                         <p *ngIf="formGroup.get('incoming')?.invalid && formGroup.get('incoming')?.touched"

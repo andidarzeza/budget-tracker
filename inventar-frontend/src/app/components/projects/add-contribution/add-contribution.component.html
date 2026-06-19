@@ -11,10 +11,12 @@
             </cb-labeled-form-input>
 
             <cb-select-input class="dialog-form__field"
-                label="Currency"
-                [control]="$any(formGroup.get('currency'))"
-                [options]="currencies"
-                [displayWith]="displayCurrency">
+                label="Funded from"
+                emptyText="No sources yet"
+                [control]="$any(formGroup.get('walletId'))"
+                [options]="sources()"
+                [displayWith]="displaySource"
+                [valueWith]="$any(sourceIdValue)">
             </cb-select-input>
         </div>
 
@@ -26,7 +28,7 @@
 
         <p class="contribution-hint">
             <mat-icon class="contribution-hint__icon" aria-hidden="true">info</mat-icon>
-            <span>This contribution will also be recorded as an expense under <strong>Savings</strong>, reducing your account balance.</span>
+            <span>This contribution will also be recorded as an expense under <strong>Savings</strong>, reducing the selected source's balance.</span>
         </p>
     </form>
 </create-form>

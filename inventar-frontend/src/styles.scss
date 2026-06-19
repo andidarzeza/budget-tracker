@@ -1376,6 +1376,12 @@ html.cdk-global-scrollblock {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
 }
 
+/* Three equal columns — used where each field (e.g. category / amount / source)
+   deserves the same room so longer values like a source label don't truncate. */
+.dialog-form__row--equal {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
 .dialog-form__row--wizard-amount {
     grid-template-columns: minmax(0, 1.25fr) minmax(120px, 0.85fr);
 }
@@ -1410,7 +1416,8 @@ html.cdk-global-scrollblock {
 
 @media screen and (max-width: 700px) {
     .dialog-form__row,
-    .dialog-form__row--category {
+    .dialog-form__row--category,
+    .dialog-form__row--equal {
         grid-template-columns: 1fr;
         gap: 24px;
     }

@@ -7,8 +7,10 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Map;
-
+/**
+ * A workspace/ledger owned by a user (e.g. "Personal", "Business"). Money now lives on
+ * {@link Wallet}s scoped to an account, not on the account itself.
+ */
 @Document
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,5 +21,4 @@ public class Account {
     private String id;
     private String title;
     private String username;
-    private Map<String, Double> balance;
 }

@@ -32,7 +32,7 @@ export const TOASTER_CONFIGURATION = {
 
 /** Create / add dialogs on tablet & desktop (classic centered dialog). */
 export const CREATE_DIALOG_DESKTOP_CONFIGURATION = {
-  width: '800px',
+  width: '880px',
   maxWidth: '96vw',
   maxHeight: '92vh',
   disableClose: true,

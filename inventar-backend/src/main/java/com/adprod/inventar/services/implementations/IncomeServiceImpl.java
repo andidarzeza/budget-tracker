@@ -13,6 +13,8 @@ import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.IncomeService;
 import com.adprod.inventar.services.SecurityContextService;
+import com.adprod.inventar.services.WalletService;
+import com.adprod.inventar.models.Wallet;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,7 @@ public class IncomeServiceImpl implements IncomeService {
     private final IncomeRepository incomeRepository;
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
+    private final WalletService walletService;
     private final HistoryService historyService;
     private final SecurityContextService securityContextService;
 
@@ -73,7 +76,9 @@ public class IncomeServiceImpl implements IncomeService {
     public ResponseEntity save(Income income) {
         this.accountService.checkAccount(income.getAccount());
         income.setUser(securityContextService.username());
-        accountService.addToBalance(income.getAccount(), income.getCurrency(), income.getIncoming());
+        Wallet wallet = resolveWallet(income.getWalletId(), income.getAccount());
+        income.setCurrency(wallet.getCurrency());
+        walletService.credit(wallet.getId(), income.getIncoming());
         incomeRepository.save(income);
         historyService.save(historyService.from(CREATE, INCOME, income.getAccount()));
         return ResponseEntity.ok(income);
@@ -89,7 +94,8 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public ResponseEntity delete(String id) {
         Income income = findOne(id);
-        accountService.removeFromBalance(income.getAccount(), income.getCurrency(), income.getIncoming());
+        // Reverse the deposit: pull the amount back out of the source it landed in.
+        reverse(income.getWalletId(), income.getIncoming());
         incomeRepository.delete(income);
         historyService.save(historyService.from(DELETE, INCOME, income.getAccount()));
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
@@ -100,8 +106,11 @@ public class IncomeServiceImpl implements IncomeService {
         accountService.checkAccount(income.getAccount());
         income.setUser(securityContextService.username());
         Income incomeDB = findOne(id);
-        this.accountService.removeFromBalance(incomeDB.getAccount(), incomeDB.getCurrency(), incomeDB.getIncoming());
-        this.accountService.addToBalance(income.getAccount(), income.getCurrency(), income.getIncoming());
+        // Reverse the old deposit, then re-deposit into the (possibly new) source.
+        reverse(incomeDB.getWalletId(), incomeDB.getIncoming());
+        Wallet wallet = resolveWallet(income.getWalletId(), income.getAccount());
+        income.setCurrency(wallet.getCurrency());
+        walletService.credit(wallet.getId(), income.getIncoming());
         income.setId(id);
         income.setCreatedTime(incomeDB.getCreatedTime());
         income.setLastModifiedDate(new Date());
@@ -109,5 +118,21 @@ public class IncomeServiceImpl implements IncomeService {
         historyService.save(historyService.from(UPDATE, INCOME, income.getAccount()));
         return ResponseEntity.ok(income);
 
+    }
+
+    /** Resolve a money source owned by the user and belonging to {@code account}. */
+    private Wallet resolveWallet(String walletId, String account) {
+        Wallet wallet = walletService.getOwned(walletId);
+        if (!Objects.equals(wallet.getAccount(), account)) {
+            throw new NotFoundException("Wallet " + walletId + " not found.");
+        }
+        return wallet;
+    }
+
+    /** Remove an amount from a source. No-op for legacy records without a source. */
+    private void reverse(String walletId, Double amount) {
+        if (Objects.nonNull(walletId)) {
+            walletService.debit(walletId, amount);
+        }
     }
 }

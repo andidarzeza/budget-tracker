@@ -128,6 +128,8 @@ export class AuthenticationService implements OnDestroy {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('baseCurrency');
     localStorage.removeItem('account');
+    localStorage.removeItem('defaultExpenseWalletId');
+    localStorage.removeItem('defaultIncomeWalletId');
     this.currentUserSubject.next(null);
   }
 

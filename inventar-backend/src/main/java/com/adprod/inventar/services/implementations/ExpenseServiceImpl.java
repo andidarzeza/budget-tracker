@@ -13,6 +13,7 @@ import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.ExpenseService;
 import com.adprod.inventar.services.SecurityContextService;
+import com.adprod.inventar.services.WalletService;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final CategoryRepository categoryRepository;
     private final ContributionRepository contributionRepository;
     private final AccountService accountService;
+    private final WalletService walletService;
     private final HistoryService historyService;
     private final SecurityContextService securityContextService;
 
@@ -82,7 +84,10 @@ public class ExpenseServiceImpl implements ExpenseService {
     public ResponseEntity save(Expense expense) {
         this.accountService.checkAccount(expense.getAccount());
         expense.setUser(securityContextService.username());
-        accountService.removeFromBalance(expense.getAccount(), expense.getCurrency(), expense.getMoneySpent());
+        Wallet wallet = resolveWallet(expense.getWalletId(), expense.getAccount());
+        // Currency always follows the chosen source so the two can never disagree.
+        expense.setCurrency(wallet.getCurrency());
+        walletService.debit(wallet.getId(), expense.getMoneySpent());
         expenseRepository.save(expense);
         historyService.save(historyService.from(EntityAction.CREATE, EXPENSE, expense.getAccount()));
         return ResponseEntity.ok(expense);
@@ -101,7 +106,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ResponseEntity delete(String id) {
         Expense expense = (Expense) findOne(id).getBody();
-        accountService.addToBalance(expense.getAccount(), expense.getCurrency(), expense.getMoneySpent());
+        refund(expense.getWalletId(), expense.getMoneySpent());
         expenseRepository.delete(expense);
         // Cascade: an expense auto-created from a project contribution and the contribution itself
         // are two views of the same event; deleting one always drops the other so they don't drift.
@@ -117,14 +122,36 @@ public class ExpenseServiceImpl implements ExpenseService {
         this.accountService.checkAccount(spending.getAccount());
         spending.setUser(securityContextService.username());
         Expense expense = (Expense) findOne(id).getBody();
-        accountService.addToBalance(expense.getAccount(), expense.getCurrency(), expense.getMoneySpent());
-        accountService.removeFromBalance(spending.getAccount(), spending.getCurrency(), spending.getMoneySpent());
+        // Refund the old source, then charge the new one — handles changing amount, source,
+        // and (via the source) currency in a single update.
+        refund(expense.getWalletId(), expense.getMoneySpent());
+        Wallet wallet = resolveWallet(spending.getWalletId(), spending.getAccount());
+        spending.setCurrency(wallet.getCurrency());
+        walletService.debit(wallet.getId(), spending.getMoneySpent());
         spending.setId(id);
         spending.setCreatedTime(expense.getCreatedTime());
         spending.setLastModifiedDate(LocalDateTime.now());
+        // Contributions own their linked expense; keep the link intact across edits.
+        spending.setContributionId(expense.getContributionId());
         expenseRepository.save(spending);
         historyService.save(historyService.from(EntityAction.UPDATE, EXPENSE, spending.getAccount()));
         return ResponseEntity.ok(spending);
+    }
+
+    /** Resolve a money source owned by the user and belonging to {@code account}. */
+    private Wallet resolveWallet(String walletId, String account) {
+        Wallet wallet = walletService.getOwned(walletId);
+        if (!Objects.equals(wallet.getAccount(), account)) {
+            throw new NotFoundException("Wallet " + walletId + " not found.");
+        }
+        return wallet;
+    }
+
+    /** Add an amount back to a source. No-op for legacy records without a source. */
+    private void refund(String walletId, Double amount) {
+        if (Objects.nonNull(walletId)) {
+            walletService.credit(walletId, amount);
+        }
     }
 
     @Override

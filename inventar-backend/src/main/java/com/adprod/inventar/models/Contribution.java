@@ -30,4 +30,6 @@ public class Contribution {
     private String description;
     private String user;
     private String account;
+    /** Money source the contribution was funded from. Its currency drives {@link #currency}. */
+    private String walletId;
 }

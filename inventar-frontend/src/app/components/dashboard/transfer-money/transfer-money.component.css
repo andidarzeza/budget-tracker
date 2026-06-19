@@ -1,0 +1,48 @@
+.transfer-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--app-space-3);
+}
+
+.transfer-form__intro {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--app-text-subtle);
+}
+
+.transfer-form__arrow {
+    display: flex;
+    justify-content: center;
+    color: var(--app-text-subtle);
+    margin: calc(-1 * var(--app-space-2)) 0;
+}
+
+.transfer-form__arrow mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.transfer-form__hint {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--app-space-2);
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--app-text-subtle);
+}
+
+.transfer-form__hint-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--app-accent);
+    flex: 0 0 auto;
+}
+
+.transfer-form__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--app-space-3);
+}

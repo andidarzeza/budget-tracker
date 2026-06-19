@@ -15,33 +15,146 @@
                     [attr.aria-label]="balanceHidden() ? 'Show balance' : 'Hide balance'">
                     <mat-icon>{{ balanceHidden() ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
-                <button type="button" cb-icon-button (click)="openEditBalance()"
-                    matTooltip="Edit balance" matTooltipPosition="below" aria-label="Edit balance">
-                    <mat-icon>edit</mat-icon>
+                <button type="button" cb-icon-button (click)="openTransfer()"
+                    matTooltip="Move money" matTooltipPosition="below" aria-label="Move money between sources">
+                    <mat-icon>swap_horiz</mat-icon>
+                </button>
+                <button type="button" cb-icon-button (click)="openManageSources()"
+                    matTooltip="Manage sources" matTooltipPosition="below" aria-label="Manage sources">
+                    <mat-icon>tune</mat-icon>
+                </button>
+                <button type="button" cb-icon-button (click)="toggleOverview()"
+                    [matTooltip]="overviewCollapsed() ? 'Expand' : 'Collapse'" matTooltipPosition="below"
+                    [attr.aria-expanded]="!overviewCollapsed()"
+                    [attr.aria-label]="overviewCollapsed() ? 'Expand balance and projects' : 'Collapse balance and projects'">
+                    <mat-icon>{{ overviewCollapsed() ? 'expand_more' : 'expand_less' }}</mat-icon>
                 </button>
             </div>
         </header>
 
-        @if (balanceRows().length) {
+        @if (!overviewCollapsed()) {
+        <div class="balance-card__body">
+          <div class="balance-card__sources">
+        @if (hasAnyWallet()) {
+            @if (bankWallets().length) {
+                <h3 class="balance-group__title">
+                    <mat-icon class="balance-group__icon" aria-hidden="true">account_balance</mat-icon>
+                    Bank accounts
+                </h3>
+                <div class="balance-card__rows">
+                    @for (w of bankWallets(); track w.id) {
+                        <button type="button" class="balance-row" (click)="openWalletDetail(w)"
+                            [attr.aria-label]="w.name + ' balance details'">
+                            <span class="balance-row__flag" aria-hidden="true">{{ w.currency | flag }}</span>
+                            <span class="balance-row__currency">{{ w.name }} · {{ w.currency }}</span>
+                            <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
+                                {{ balanceHidden() ? '••••••' : (w.balance | number : '1.2-2') }}
+                            </span>
+                        </button>
+                    }
+                </div>
+            }
+            @if (cashWallets().length) {
+                <h3 class="balance-group__title">
+                    <mat-icon class="balance-group__icon" aria-hidden="true">payments</mat-icon>
+                    Cash
+                </h3>
+                <div class="balance-card__rows">
+                    @for (w of cashWallets(); track w.id) {
+                        <button type="button" class="balance-row" (click)="openWalletDetail(w)"
+                            [attr.aria-label]="w.name + ' balance details'">
+                            <span class="balance-row__flag" aria-hidden="true">{{ w.currency | flag }}</span>
+                            <span class="balance-row__currency">{{ w.name }} · {{ w.currency }}</span>
+                            <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
+                                {{ balanceHidden() ? '••••••' : (w.balance | number : '1.2-2') }}
+                            </span>
+                        </button>
+                    }
+                </div>
+            }
+        } @else {
+            <div class="balance-empty">
+                <span>No bank or cash sources yet.</span>
+                <button type="button" cb-pill-button variant="primary" icon="add" (click)="openManageSources()">
+                    Add a source
+                </button>
+            </div>
+        }
+
+        @if (projectCards().length) {
+            <h3 class="balance-group__title">
+                <mat-icon class="balance-group__icon" aria-hidden="true">savings</mat-icon>
+                Projects
+            </h3>
             <div class="balance-card__rows">
-                @for (row of balanceRows(); track row.currency) {
-                    <button type="button" class="balance-row" (click)="openBalanceDetail(row)"
-                        [attr.aria-label]="row.currency + ' balance details'">
-                        <span class="balance-row__flag" aria-hidden="true">{{ row.currency | flag }}</span>
-                        <span class="balance-row__currency">{{ row.currency }}</span>
+                @for (p of projectCards(); track p.id) {
+                    <button type="button" class="balance-row" (click)="goToProject(p.id)"
+                        [attr.aria-label]="p.name + ' project details'">
+                        <span class="balance-row__flag" aria-hidden="true">{{ p.currency | flag }}</span>
+                        <span class="balance-row__currency">{{ p.name }} · {{ p.currency }}</span>
                         <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                            {{ balanceHidden() ? '••••••' : (row.amount | number : '1.2-2') }}
+                            {{ balanceHidden() ? '••••••' : (p.saved | number : '1.2-2') }}
                         </span>
                     </button>
                 }
             </div>
-        } @else {
-            <div class="balance-empty">
-                <span>No balance set yet.</span>
-                <button type="button" cb-pill-button variant="primary" icon="add" (click)="openEditBalance()">
-                    Set balance
-                </button>
-            </div>
+        }
+          </div>
+
+          @if (accountTotals().length) {
+            <aside class="balance-card__recap" aria-label="Totals">
+                <div class="recap-block">
+                    <h3 class="recap-block__title">Total in accounts</h3>
+                    <div class="recap-list">
+                        @for (t of accountTotals(); track t.currency) {
+                            <div class="recap-row">
+                                <span class="recap-row__flag" aria-hidden="true">{{ t.currency | flag }}</span>
+                                <span class="recap-row__currency">{{ t.currency }}</span>
+                                <span class="recap-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
+                                    {{ balanceHidden() ? '••••••' : (t.total | number : '1.2-2') }}
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                @if (projectSavedTotals().length) {
+                    <div class="recap-block">
+                        <h3 class="recap-block__title">In projects</h3>
+                        <div class="recap-list">
+                            @for (t of projectSavedTotals(); track t.currency) {
+                                <div class="recap-row">
+                                    <span class="recap-row__flag" aria-hidden="true">{{ t.currency | flag }}</span>
+                                    <span class="recap-row__currency">{{ t.currency }}</span>
+                                    <span class="recap-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
+                                        {{ balanceHidden() ? '••••••' : (t.total | number : '1.2-2') }}
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="recap-block recap-block--grand">
+                    <h3 class="recap-block__title">
+                        Grand total
+                        <span class="recap-block__hint">accounts + projects</span>
+                    </h3>
+                    <div class="recap-list">
+                        @for (t of grandTotals(); track t.currency) {
+                            <div class="recap-row recap-row--grand">
+                                <span class="recap-row__flag" aria-hidden="true">{{ t.currency | flag }}</span>
+                                <span class="recap-row__currency">{{ t.currency }}</span>
+                                <span class="recap-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
+                                    {{ balanceHidden() ? '••••••' : (t.total | number : '1.2-2') }}
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </aside>
+          }
+        </div>
         }
     </section>
 

@@ -1,6 +1,36 @@
 export interface Account {
     id: string;
-    balance: any;
+}
+
+/** A movement of money between two wallets (e.g. ATM withdrawal: bank → cash). */
+export interface Transfer {
+    id?: string;
+    fromWalletId: string;
+    toWalletId: string;
+    amountFrom: number;
+    amountTo?: number;
+    fromCurrency?: string;
+    toCurrency?: string;
+    description?: string;
+    account?: string;
+    createdTime?: Date;
+}
+
+/** A bank account or cash holding. Money now lives here, not on the account. */
+export type WalletType = 'BANK' | 'CASH';
+
+export interface Wallet {
+    id?: string;
+    name: string;
+    type: WalletType;
+    currency: string;
+    balance: number;
+    icon?: string;
+    archived?: boolean;
+    account?: string;
+    user?: string;
+    createdTime?: Date;
+    lastModifiedDate?: Date;
 }
 
 export interface Category {
@@ -66,6 +96,8 @@ export interface Expense {
     categoryID: string;
     user: string;
     currency: string;
+    /** Money source this expense was paid from. */
+    walletId?: string;
 }
 
 export interface History {
@@ -118,6 +150,9 @@ export interface Income {
     incoming: number;
     description: string;
     categoryID: string;
+    currency?: string;
+    /** Money source this income was deposited into. */
+    walletId?: string;
 }
 
 export interface User {
@@ -170,12 +205,14 @@ export interface Contribution {
     id?: string;
     projectId?: string;
     amount: number;
-    currency: string;
+    currency?: string;
     description?: string;
     createdTime?: Date;
     lastModifiedDate?: Date;
     user?: string;
     account?: string;
+    /** Money source the contribution was funded from. */
+    walletId?: string;
 }
 
 /** Backend `ProjectViewDTO`: a project plus its current per-currency saved totals. */

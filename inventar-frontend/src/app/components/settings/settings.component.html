@@ -36,8 +36,8 @@
                 <mat-icon class="settings-row__icon">payments</mat-icon>
             </span>
             <div class="settings-row__main">
-                <span class="settings-row__title">Base currency</span>
-                <span class="settings-row__desc">Default for new expenses, incomes, and projects.</span>
+                <span class="settings-row__title">Project currency</span>
+                <span class="settings-row__desc">Default target currency for new savings goals.</span>
             </div>
             <div class="settings-row__trailing settings-row__trailing--currency">
                 <cb-select-input
@@ -63,6 +63,54 @@
                     [control]="$any(landingPageControl)"
                     [options]="landingPages"
                     [displayWith]="displayLandingPage">
+                </cb-select-input>
+            </div>
+        </div>
+    </section>
+
+    <!-- ──── Default sources ──── -->
+    <section class="app-card settings-section">
+        <header class="settings-section__head">
+            <h2 class="settings-section__title">Default sources</h2>
+            <p class="settings-section__hint">Which bank or cash source new expenses and income use by default.</p>
+        </header>
+
+        <div class="settings-row">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">south_west</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Default expense source</span>
+                <span class="settings-row__desc">Pre-selected as "Paid from" on a new expense.</span>
+            </div>
+            <div class="settings-row__trailing settings-row__trailing--currency settings-row__trailing--source">
+                <cb-select-input
+                    label=""
+                    emptyText="No sources yet"
+                    [control]="$any(defaultExpenseWalletControl)"
+                    [options]="sources()"
+                    [displayWith]="displaySource"
+                    [valueWith]="$any(sourceIdValue)">
+                </cb-select-input>
+            </div>
+        </div>
+
+        <div class="settings-row">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">north_east</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Default income deposit</span>
+                <span class="settings-row__desc">Pre-selected as "Deposit to" on a new income.</span>
+            </div>
+            <div class="settings-row__trailing settings-row__trailing--currency settings-row__trailing--source">
+                <cb-select-input
+                    label=""
+                    emptyText="No sources yet"
+                    [control]="$any(defaultIncomeWalletControl)"
+                    [options]="sources()"
+                    [displayWith]="displaySource"
+                    [valueWith]="$any(sourceIdValue)">
                 </cb-select-input>
             </div>
         </div>

@@ -10,6 +10,8 @@ import com.adprod.inventar.repositories.ProjectRepository;
 import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.ProjectService;
 import com.adprod.inventar.services.SecurityContextService;
+import com.adprod.inventar.services.WalletService;
+import com.adprod.inventar.models.Wallet;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -35,6 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ExpenseRepository expenseRepository;
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
+    private final WalletService walletService;
     private final SecurityContextService securityContextService;
     private final MongoTemplate mongoTemplate;
 
@@ -126,15 +129,21 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new NotFoundException("Project " + projectId + " not found."));
         ensureOwned(project);
 
+        // The contribution is funded from a money source; its currency follows that source.
+        Wallet wallet = walletService.getOwned(contribution.getWalletId());
+        if (!Objects.equals(wallet.getAccount(), project.getAccount())) {
+            throw new NotFoundException("Wallet " + contribution.getWalletId() + " not found.");
+        }
         contribution.setProjectId(projectId);
         contribution.setUser(project.getUser());
         contribution.setAccount(project.getAccount());
+        contribution.setCurrency(wallet.getCurrency());
         contribution.setCreatedTime(LocalDateTime.now());
         contribution.setLastModifiedDate(contribution.getCreatedTime());
         contributionRepository.save(contribution);
 
         // Mirror the contribution as an expense so it shows up in the user's ledger and
-        // reduces the account balance — money set aside for a goal is, in practice, spent.
+        // reduces the source balance — money set aside for a goal is, in practice, spent.
         createLinkedExpense(project, contribution);
 
         return ResponseEntity.ok(contribution);
@@ -164,6 +173,7 @@ public class ProjectServiceImpl implements ProjectService {
         Expense expense = new Expense();
         expense.setUser(project.getUser());
         expense.setAccount(project.getAccount());
+        expense.setWalletId(contribution.getWalletId());
         expense.setMoneySpent(contribution.getAmount());
         expense.setCurrency(contribution.getCurrency());
         expense.setCategoryID(savings.getId());
@@ -172,7 +182,7 @@ public class ProjectServiceImpl implements ProjectService {
         expense.setCreatedTime(contribution.getCreatedTime());
         expense.setLastModifiedDate(contribution.getLastModifiedDate());
 
-        accountService.removeFromBalance(expense.getAccount(), expense.getCurrency(), expense.getMoneySpent());
+        walletService.debit(contribution.getWalletId(), expense.getMoneySpent());
         expenseRepository.save(expense);
     }
 
@@ -183,7 +193,9 @@ public class ProjectServiceImpl implements ProjectService {
     private void removeLinkedExpense(String contributionId) {
         if (contributionId == null) return;
         expenseRepository.findByContributionId(contributionId).ifPresent(expense -> {
-            accountService.addToBalance(expense.getAccount(), expense.getCurrency(), expense.getMoneySpent());
+            if (Objects.nonNull(expense.getWalletId())) {
+                walletService.credit(expense.getWalletId(), expense.getMoneySpent());
+            }
             expenseRepository.delete(expense);
         });
     }

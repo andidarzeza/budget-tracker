@@ -12,14 +12,16 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastrService } from 'ngx-toastr';
-import { Contribution, EntityType } from 'src/app/models/models';
+import { Contribution, EntityType, Wallet } from 'src/app/models/models';
+import { AccountService } from 'src/app/services/account.service';
 import { ProjectService } from 'src/app/services/pages/project.service';
+import { WalletService } from 'src/app/services/pages/wallet.service';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
-import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 interface AddContributionData {
   projectId: string;
@@ -46,6 +48,8 @@ export class AddContributionComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<AddContributionComponent>);
   private readonly projectService = inject(ProjectService);
+  private readonly walletService = inject(WalletService);
+  private readonly accountService = inject(AccountService);
   private readonly toaster = inject(ToastrService);
   private readonly flagPipe = inject(FlagPipe);
   private readonly destroyRef = inject(DestroyRef);
@@ -58,19 +62,32 @@ export class AddContributionComponent {
   readonly entity: EntityType = EntityType.INCOME;
   readonly isEditMode = false;
 
-  readonly currencies = CURRENCIES;
-  /** Currency option label: "🇺🇸 USD". */
-  readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
+  /** Money sources (bank/cash) the contribution can be funded from. */
+  readonly sources = signal<Wallet[]>([]);
+  /** Source option label: "🏦 BKT · 🇪🇺 EUR". */
+  readonly displaySource = (w: Wallet) =>
+    `${w?.type === 'BANK' ? '🏦' : '💵'} ${w?.name} · ${this.flagPipe.transform(w?.currency)} ${w?.currency}`;
+  /** Sources store the id on the form control. */
+  readonly sourceIdValue = (w: Wallet) => w?.id ?? null;
   formGroup: FormGroup;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: AddContributionData) {
-    const defaultCurrency =
-      this.data?.defaultCurrency || localStorage.getItem('baseCurrency') || CURRENCIES[0];
     this.formGroup = this.formBuilder.group({
       amount: ['', [Validators.required, Validators.min(0.01)]],
-      currency: [defaultCurrency, Validators.required],
+      // The source funds the contribution; its currency is applied server-side.
+      walletId: ['', Validators.required],
       description: [''],
     });
+    this.loadSources();
+  }
+
+  private loadSources(): void {
+    const accountId = this.accountService.getAccount();
+    if (!accountId) return;
+    this.walletService
+      .list(accountId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((wallets) => this.sources.set((wallets ?? []).filter((w) => !w.archived)));
   }
 
   add(): void {

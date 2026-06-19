@@ -172,8 +172,16 @@
     width: 160px;
 }
 
-/* Hide the empty label space on the embedded currency picker so the row
-   visually balances without an orphan label gap above it. */
+/* Source labels ("🏦 BKT · 🇪🇺 EUR") are longer than a currency code, so give
+   their picker more room — but let it shrink so the row never overflows. */
+.settings-row__trailing--source {
+    width: 280px;
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+/* Hide the empty label space on the embedded pickers so the row visually
+   balances without an orphan label gap above it. */
 .settings-row__trailing--currency cb-select-input ::ng-deep label {
     display: none;
 }
@@ -315,6 +323,10 @@
 
     .settings-row__trailing--currency {
         width: 130px;
+    }
+
+    .settings-row__trailing--source {
+        width: 190px;
     }
 
     .settings-row__desc {

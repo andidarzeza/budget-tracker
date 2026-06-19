@@ -19,16 +19,18 @@ import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { inOutAnimation } from 'src/app/animations';
 import { HttpParams } from '@angular/common/http';
+import { Router } from '@angular/router';
 import {
-  Account,
   CategoryType,
   CurrencyTotalDTO,
   DashboardDTO,
   Expense,
   Income,
+  ProjectView,
   RangeType,
   TimelineExpenseDTO,
   TimelineIncomeDTO,
+  Wallet,
 } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -37,6 +39,8 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
+import { ProjectService } from 'src/app/services/pages/project.service';
+import { WalletService } from 'src/app/services/pages/wallet.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
@@ -54,7 +58,8 @@ import { AllTimeHeaderComponent } from './all-time-header/all-time-header.compon
 import { BalanceDetailComponent, BalanceDetailData } from './balance-detail/balance-detail.component';
 import { CustomRangePickerComponent } from './custom-range-picker/custom-range-picker.component';
 import { DayPickerComponent } from './day-picker/day-picker.component';
-import { EditBalanceComponent } from './edit-balance/edit-balance.component';
+import { ManageWalletsComponent } from './manage-wallets/manage-wallets.component';
+import { TransferMoneyComponent } from './transfer-money/transfer-money.component';
 import { MonthPickerComponent } from './month-picker/month-picker.component';
 import { WeekPickerComponent } from './week-picker/week-picker.component';
 import { YearPickerComponent } from './year-picker/year-picker.component';
@@ -69,9 +74,28 @@ interface CurrencyBalance {
 interface BalanceRow {
   currency: string;
   amount: number;
+  name?: string;
+}
+
+/** One recap row: a running total for a single currency. */
+interface CurrencyTotal {
+  currency: string;
+  total: number;
+}
+
+/** A project rendered on the balance dashboard: saved-vs-target in the target currency. */
+interface ProjectCard {
+  id?: string;
+  name: string;
+  icon: string;
+  currency: string;
+  saved: number;
+  target: number;
+  pct: number;
 }
 
 const BALANCE_HIDDEN_KEY = 'dashboard.balanceHidden';
+const OVERVIEW_COLLAPSED_KEY = 'dashboard.overviewCollapsed';
 const SELECTED_RANGE_KEY = 'dashboard.selectedRange';
 /** Valid `RangeType` values, used to validate a stored range before trusting it. */
 const RANGE_VALUES: ReadonlySet<RangeType> = new Set<RangeType>([
@@ -136,6 +160,9 @@ export class DashboardComponent implements AfterViewInit {
   private readonly expenseService = inject(ExpenseService);
   private readonly incomeService = inject(IncomeService);
   private readonly categoryService = inject(CategoriesService);
+  private readonly walletService = inject(WalletService);
+  private readonly projectService = inject(ProjectService);
+  private readonly router = inject(Router);
 
   from!: Date;
   to!: Date;
@@ -145,18 +172,83 @@ export class DashboardComponent implements AfterViewInit {
 
   dashboardData = signal<DashboardDTO | null>(null);
 
-  /** Current per-currency balance straight from the user's account (Edit balance dialog updates this). */
-  account = signal<Account | null>(null);
+  /** Money sources (bank + cash) for the active workspace. */
+  wallets = signal<Wallet[]>([]);
+  /** Savings projects for the active workspace, with their per-currency totals. */
+  projects = signal<ProjectView[]>([]);
   /** Privacy toggle — value persisted in localStorage so it sticks across reloads. */
   balanceHidden = signal<boolean>(localStorage.getItem(BALANCE_HIDDEN_KEY) === '1');
+  /** Balance + projects overview collapsed state — persisted so it sticks across reloads. */
+  overviewCollapsed = signal<boolean>(localStorage.getItem(OVERVIEW_COLLAPSED_KEY) === '1');
 
-  balanceRows = computed<BalanceRow[]>(() => {
-    const balance = this.account()?.balance ?? {};
-    return Object.entries(balance)
-      .filter(([, amount]) => typeof amount === 'number' && amount !== 0)
-      .map(([currency, amount]) => ({ currency, amount: amount as number }))
+  /** Active bank accounts, sorted by name. */
+  bankWallets = computed<Wallet[]>(() => this.activeWalletsOfType('BANK'));
+  /** Active cash holdings, sorted by name. */
+  cashWallets = computed<Wallet[]>(() => this.activeWalletsOfType('CASH'));
+  /** True when the workspace has at least one active source. */
+  hasAnyWallet = computed<boolean>(() => this.wallets().some((w) => !w.archived));
+
+  /** Project cards: saved-vs-target progress in each project's target currency. */
+  projectCards = computed<ProjectCard[]>(() =>
+    this.projects().map((v) => {
+      const target = v.project.targetAmount || 0;
+      const cur = (v.project.targetCurrency || '').toUpperCase();
+      const saved = (v.totalsByCurrency || []).find((t) => (t._id || '').toUpperCase() === cur)?.total ?? 0;
+      const pct = target > 0 ? Math.min(100, Math.round((saved / target) * 100)) : 0;
+      return {
+        id: v.project.id,
+        name: v.project.name,
+        icon: v.project.icon || 'savings',
+        currency: cur,
+        saved,
+        target,
+        pct,
+      };
+    }),
+  );
+
+  private activeWalletsOfType(type: Wallet['type']): Wallet[] {
+    return this.wallets()
+      .filter((w) => !w.archived && w.type === type)
+      .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  }
+
+  /** Total money held across all active sources, grouped by currency. */
+  accountTotals = computed<CurrencyTotal[]>(() =>
+    DashboardComponent.sumByCurrency(
+      this.wallets()
+        .filter((w) => !w.archived)
+        .map((w) => ({ currency: w.currency, total: w.balance ?? 0 })),
+    ),
+  );
+
+  /** Money set aside in projects (all contributions), grouped by currency. */
+  projectSavedTotals = computed<CurrencyTotal[]>(() =>
+    DashboardComponent.sumByCurrency(
+      this.projects().flatMap((v) =>
+        (v.totalsByCurrency || []).map((t) => ({ currency: t._id, total: t.total ?? 0 })),
+      ),
+    ),
+  );
+
+  /** Everything you own: account balances plus money saved in projects, by currency. */
+  grandTotals = computed<CurrencyTotal[]>(() =>
+    DashboardComponent.sumByCurrency([...this.accountTotals(), ...this.projectSavedTotals()]),
+  );
+
+  /** Sum rows by (uppercased) currency, dropping blanks and net-zero currencies. */
+  private static sumByCurrency(rows: CurrencyTotal[]): CurrencyTotal[] {
+    const map = new Map<string, number>();
+    for (const r of rows) {
+      const currency = (r.currency || '').toUpperCase();
+      if (!currency) continue;
+      map.set(currency, (map.get(currency) ?? 0) + (r.total ?? 0));
+    }
+    return [...map.entries()]
+      .map(([currency, total]) => ({ currency, total }))
+      .filter((r) => r.total !== 0)
       .sort((a, b) => a.currency.localeCompare(b.currency));
-  });
+  }
 
   /** Per-currency Income / Expense / Net for the KPI strip. */
   balances = computed<CurrencyBalance[]>(() => {
@@ -221,7 +313,8 @@ export class DashboardComponent implements AfterViewInit {
   constructor() {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
-    this.fetchAccount();
+    this.fetchWallets();
+    this.fetchProjects();
     this.fetchCategoryMaps();
   }
 
@@ -244,7 +337,19 @@ export class DashboardComponent implements AfterViewInit {
     localStorage.setItem(BALANCE_HIDDEN_KEY, next ? '1' : '0');
   }
 
-  openBalanceDetail(row: BalanceRow): void {
+  goToProject(id?: string): void {
+    if (id) {
+      this.router.navigate(['/projects', id]);
+    }
+  }
+
+  toggleOverview(): void {
+    const next = !this.overviewCollapsed();
+    this.overviewCollapsed.set(next);
+    localStorage.setItem(OVERVIEW_COLLAPSED_KEY, next ? '1' : '0');
+  }
+
+  openWalletDetail(wallet: Wallet): void {
     // The chip itself only truncates on mobile (the desktop layout sizes
     // chips to content so the full amount is already visible). Skip the
     // dialog on desktop — opening it there would be redundant.
@@ -252,8 +357,8 @@ export class DashboardComponent implements AfterViewInit {
       return;
     }
     const data: BalanceDetailData = {
-      currency: row.currency,
-      amount: row.amount,
+      currency: wallet.currency,
+      amount: wallet.balance ?? 0,
       hidden: this.balanceHidden(),
     };
     this.dialog.open(BalanceDetailComponent, {
@@ -264,28 +369,45 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
 
-  openEditBalance(): void {
+  openTransfer(): void {
+    const accountId = this.accountService.getAccount();
+    if (!accountId) return;
+    const mobile = this.breakpointService.matchesMobileCreateLayout();
+    const ref = this.dialog.open(TransferMoneyComponent, {
+      panelClass: mobile ? ['create-dialog', 'create-dialog--fullscreen'] : ['create-dialog'],
+      ...(mobile ? CREATE_DIALOG_MOBILE_CONFIGURATION : CREATE_DIALOG_DESKTOP_CONFIGURATION),
+      autoFocus: false,
+      data: { accountId },
+    });
+    ref
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((moved) => {
+        if (moved) {
+          this.fetchWallets();
+        }
+      });
+  }
+
+  openManageSources(): void {
     const accountId = this.accountService.getAccount();
     if (!accountId) return;
     // Match the create-dialog configuration used by every other dialog so the wrapper
     // (header / footer / mobile fullscreen) renders consistently.
     const mobile = this.breakpointService.matchesMobileCreateLayout();
-    const ref = this.dialog.open(EditBalanceComponent, {
+    const ref = this.dialog.open(ManageWalletsComponent, {
       panelClass: mobile ? ['create-dialog', 'create-dialog--fullscreen'] : ['create-dialog'],
       ...(mobile ? CREATE_DIALOG_MOBILE_CONFIGURATION : CREATE_DIALOG_DESKTOP_CONFIGURATION),
       autoFocus: false,
-      data: {
-        accountId,
-        balance: this.account()?.balance ?? {},
-      },
+      data: { accountId },
     });
     ref
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((updated) => {
-        // Dialog returns the saved Account on success, null on cancel.
-        if (updated) {
-          this.account.set(updated);
+      .subscribe((changed) => {
+        // Dialog returns true when any source was added / edited / removed.
+        if (changed) {
+          this.fetchWallets();
         }
       });
   }
@@ -317,16 +439,28 @@ export class DashboardComponent implements AfterViewInit {
     return { from: this.from, to: this.to };
   }
 
-  private fetchAccount(): void {
+  private fetchWallets(): void {
     const accountId = this.accountService.getAccount();
     if (!accountId) return;
-    this.accountService
-      .findOne(accountId)
+    this.walletService
+      .list(accountId)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        catchError(() => of(null)),
+        catchError(() => of([] as Wallet[])),
       )
-      .subscribe((account) => this.account.set(account));
+      .subscribe((wallets) => this.wallets.set(wallets ?? []));
+  }
+
+  private fetchProjects(): void {
+    const accountId = this.accountService.getAccount();
+    if (!accountId) return;
+    this.projectService
+      .list(accountId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(() => of([] as ProjectView[])),
+      )
+      .subscribe((projects) => this.projects.set(projects ?? []));
   }
 
   /**
@@ -434,9 +568,10 @@ export class DashboardComponent implements AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef), catchError(this.catchError))
       .subscribe((data: DashboardDTO | null) => {
         this.dashboardData.set(data);
-        // The account balance is mutated by background services (expenses, contributions);
-        // refresh it whenever fresh dashboard data arrives.
-        this.fetchAccount();
+        // Source balances and project totals are mutated by expenses / incomes /
+        // contributions; refresh them whenever fresh dashboard data arrives.
+        this.fetchWallets();
+        this.fetchProjects();
       });
   }
 

@@ -15,7 +15,7 @@ export const TOASTER_CONFIGURATION = {
 };
 
 export const CREATE_DIALOG_DESKTOP_CONFIGURATION = {
-  width: '800px',
+  width: '880px',
   maxWidth: '96vw',
   maxHeight: '92vh',
   disableClose: true,

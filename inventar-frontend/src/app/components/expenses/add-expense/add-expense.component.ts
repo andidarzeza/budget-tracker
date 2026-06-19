@@ -20,12 +20,13 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
 import { filter, mergeMap, observeOn, tap } from 'rxjs/operators';
-import { Category, CategoryType, EntityType } from 'src/app/models/models';
+import { Category, CategoryType, EntityType, Wallet } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
+import { WalletService } from 'src/app/services/pages/wallet.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { AmountKeypadComponent } from 'src/app/shared/amount-keypad/amount-keypad.component';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
@@ -38,7 +39,7 @@ import { SelectInputComponent } from 'src/app/shared/select-input/select-input.c
 import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { toBareLocalIso } from 'src/app/utils/local-iso';
-import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 interface AddExpenseDialogData {
   id?: string;
@@ -81,15 +82,26 @@ export class AddExpenseComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly expenseService = inject(ExpenseService);
   private readonly categoryService = inject(CategoriesService);
+  private readonly walletService = inject(WalletService);
   readonly accountService = inject(AccountService);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** Currency option label: "🇺🇸 USD". */
-  readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;
   /** Category option label: just the name. */
   readonly displayCategory = (c: Category) => c?.category ?? '';
   /** Categories store the id on the form control. */
   readonly categoryIdValue = (c: Category) => c?.id ?? null;
+  /** Money sources (bank/cash) the expense can be paid from. */
+  readonly sources = signal<Wallet[]>([]);
+  /** Source option label: "🏦 BKT · 🇪🇺 EUR". */
+  readonly displaySource = (w: Wallet) =>
+    `${w?.type === 'BANK' ? '🏦' : '💵'} ${w?.name} · ${this.flagPipe.transform(w?.currency)} ${w?.currency}`;
+  /** Sources store the id on the form control. */
+  readonly sourceIdValue = (w: Wallet) => w?.id ?? null;
+  /** The currently selected source object, for trigger display in the wizard. */
+  currentSource(): Wallet | null {
+    const id = this.formGroup.get('walletId')?.value;
+    return this.sources().find((w) => w.id === id) ?? null;
+  }
 
   /** Fullscreen keypad / currency menu wizard only on narrow viewports (≤767px). */
   readonly isWizardMobile = toSignal(this.breakpointService.useTableCardLayout$, {
@@ -99,13 +111,6 @@ export class AddExpenseComponent implements OnInit {
   readonly savingEntity = signal(false);
   entity: EntityType = EntityType.EXPENSE;
   readonly categories = signal<Category[]>([]);
-  /** Resolved at use site (in `ngOnInit`) so we pick up `baseCurrency`
-   *  even if it was written by the configuration call after the component
-   *  was constructed but before init runs. Falls back to the first known
-   *  currency so the picker never opens unselected. */
-  private get resolvedBaseCurrency(): string {
-    return localStorage.getItem('baseCurrency') || CURRENCIES[0];
-  }
   readonly loadingData = signal(false);
   readonly loadingMessage = signal('Loading…');
   readonly isEditMode: boolean;
@@ -137,12 +142,12 @@ export class AddExpenseComponent implements OnInit {
     description: [''],
     categoryID: ['', Validators.required],
     moneySpent: ['', Validators.required],
-    currency: ['', Validators.required],
+    // Source the money is taken from; its currency drives `currency`.
+    walletId: ['', Validators.required],
+    currency: [''],
     // Transaction date — bound to the Material datepicker; defaults to today.
     createdTime: [new Date() as Date | null, Validators.required],
   });
-
-  currencies = CURRENCIES;
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public expense: AddExpenseDialogData | null = null,
@@ -162,7 +167,16 @@ export class AddExpenseComponent implements OnInit {
       this.navBarService.displayNavBar = false;
       this.sideBarService.displaySidebar = false;
     }
-    this.formGroup.get('currency')?.setValue(this.resolvedBaseCurrency);
+    // Currency always follows the chosen source — keep them in lock-step.
+    this.formGroup
+      .get('walletId')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((id) => {
+        const wallet = this.sources().find((w) => w.id === id);
+        if (wallet) {
+          this.formGroup.get('currency')?.setValue(wallet.currency, { emitEvent: false });
+        }
+      });
     if (this.isQrPrefillMode) {
       const scannedAmount = Number(this.expense?.moneySpent);
       if (Number.isFinite(scannedAmount)) {
@@ -171,13 +185,44 @@ export class AddExpenseComponent implements OnInit {
           scannedAmount.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false }),
         );
       }
-      this.formGroup.get('currency')?.setValue(this.expense?.currency || 'ALL');
       this.formGroup.get('description')?.setValue(this.expense?.description || '');
     }
     if (!this.isEditMode) {
       this.wizardStep.set(0);
     }
+    this.loadSources();
     this.getCategories();
+  }
+
+  private loadSources(): void {
+    const accountId = this.accountService.getAccount();
+    if (!accountId) return;
+    this.walletService
+      .list(accountId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((wallets) => {
+        // Only active sources can receive new transactions.
+        this.sources.set((wallets ?? []).filter((w) => !w.archived));
+        // On a new expense, pre-select the user's default source (Settings).
+        if (!this.isEditMode && !this.formGroup.get('walletId')?.value) {
+          const def = localStorage.getItem('defaultExpenseWalletId');
+          if (def && this.sources().some((w) => w.id === def)) {
+            this.formGroup.get('walletId')?.setValue(def);
+          }
+        }
+        // Re-apply the currency for the chosen source (e.g. edit mode loaded first).
+        const id = this.formGroup.get('walletId')?.value;
+        const wallet = this.sources().find((w) => w.id === id);
+        if (wallet) {
+          this.formGroup.get('currency')?.setValue(wallet.currency, { emitEvent: false });
+        }
+        this.cdr.markForCheck();
+      });
+  }
+
+  selectWizardSource(walletId: string): void {
+    this.formGroup.get('walletId')?.setValue(walletId);
+    this.formGroup.get('walletId')?.markAsTouched();
   }
 
   wizardNext(): void {
@@ -213,11 +258,6 @@ export class AddExpenseComponent implements OnInit {
   selectWizardCategory(categoryId: string | number): void {
     this.formGroup.get('categoryID')?.setValue(categoryId);
     this.formGroup.get('categoryID')?.markAsTouched();
-  }
-
-  selectWizardCurrency(code: string): void {
-    this.formGroup.get('currency')?.setValue(code);
-    this.formGroup.get('currency')?.markAsTouched();
   }
 
   closeDialog(update: boolean): void {
@@ -336,10 +376,10 @@ export class AddExpenseComponent implements OnInit {
       this.syncMoneySpentFromEntry(this.amountEntry());
     }
     const m = this.formGroup.get('moneySpent');
-    const cur = this.formGroup.get('currency');
+    const src = this.formGroup.get('walletId');
     m?.markAsTouched();
-    cur?.markAsTouched();
-    return !!(m?.valid && cur?.valid);
+    src?.markAsTouched();
+    return !!(m?.valid && src?.valid);
   }
 
   private getExpense(): Observable<any> {
