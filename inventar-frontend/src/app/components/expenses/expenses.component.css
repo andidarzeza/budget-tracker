@@ -20,5 +20,5 @@
 .mobile-qr-action__button.mat-mdc-fab:hover {
     transform: translateY(-2px);
     background-color: var(--app-accent-hover);
-    box-shadow: 0 16px 32px -8px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 16px 32px -8px color-mix(in srgb, var(--app-accent) 50%, transparent);
 }

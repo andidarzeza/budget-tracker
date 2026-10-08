@@ -40,15 +40,31 @@
                 <h3 class="balance-group__title">
                     <mat-icon class="balance-group__icon" aria-hidden="true">account_balance</mat-icon>
                     Bank accounts
+                    <span class="balance-group__count">{{ bankWallets().length }}</span>
                 </h3>
                 <div class="balance-card__rows">
                     @for (w of bankWallets(); track w.id) {
+                        @let brand = bankBrand(w);
                         <button type="button" class="balance-row" (click)="openWalletDetail(w)"
+                            [class]="brand ? 'balance-row balance-row--brand balance-row--' + brand.key : 'balance-row'"
                             [attr.aria-label]="w.name + ' balance details'">
-                            <span class="balance-row__flag" aria-hidden="true">{{ w.currency | flag }}</span>
-                            <span class="balance-row__currency">{{ w.name }} · {{ w.currency }}</span>
+                            @if (brand) {
+                                <span class="balance-row__brand">
+                                    <img class="brand-logo" [class.brand-logo--has-dark]="!!brand.logoDark"
+                                        [src]="brand.logo" [alt]="brand.name" />
+                                    @if (brand.logoDark) {
+                                        <img class="brand-logo brand-logo--dark" [src]="brand.logoDark" [alt]="brand.name" />
+                                    }
+                                </span>
+                            }
+                            <span class="balance-row__top">
+                                <span class="balance-row__name">{{ w.name }}</span>
+                                <span class="balance-row__badge"><span aria-hidden="true">{{ w.currency | flag }}</span> {{ w.currency }}</span>
+                            </span>
+                            <span class="balance-row__label">Balance</span>
                             <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
                                 {{ balanceHidden() ? '••••••' : (w.balance | number : '1.2-2') }}
+                                <span class="balance-row__code">{{ w.currency }}</span>
                             </span>
                         </button>
                     }
@@ -58,15 +74,24 @@
                 <h3 class="balance-group__title">
                     <mat-icon class="balance-group__icon" aria-hidden="true">payments</mat-icon>
                     Cash
+                    <span class="balance-group__count">{{ cashWallets().length }}</span>
                 </h3>
                 <div class="balance-card__rows">
                     @for (w of cashWallets(); track w.id) {
-                        <button type="button" class="balance-row" (click)="openWalletDetail(w)"
+                        <button type="button" class="balance-row balance-row--brand balance-row--cash" (click)="openWalletDetail(w)"
                             [attr.aria-label]="w.name + ' balance details'">
-                            <span class="balance-row__flag" aria-hidden="true">{{ w.currency | flag }}</span>
-                            <span class="balance-row__currency">{{ w.name }} · {{ w.currency }}</span>
+                            <span class="balance-row__brand balance-row__brand--cash">
+                                <mat-icon aria-hidden="true">payments</mat-icon>
+                                <span>Cash</span>
+                            </span>
+                            <span class="balance-row__top">
+                                <span class="balance-row__name">{{ w.name }}</span>
+                                <span class="balance-row__badge"><span aria-hidden="true">{{ w.currency | flag }}</span> {{ w.currency }}</span>
+                            </span>
+                            <span class="balance-row__label">Balance</span>
                             <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
                                 {{ balanceHidden() ? '••••••' : (w.balance | number : '1.2-2') }}
+                                <span class="balance-row__code">{{ w.currency }}</span>
                             </span>
                         </button>
                     }
@@ -85,16 +110,21 @@
             <h3 class="balance-group__title">
                 <mat-icon class="balance-group__icon" aria-hidden="true">savings</mat-icon>
                 Projects
+                    <span class="balance-group__count">{{ projectCards().length }}</span>
             </h3>
             <div class="balance-card__rows">
                 @for (p of projectCards(); track p.id) {
                     <button type="button" class="balance-row" (click)="goToProject(p.id)"
                         [attr.aria-label]="p.name + ' project details'">
-                        <span class="balance-row__flag" aria-hidden="true">{{ p.currency | flag }}</span>
-                        <span class="balance-row__currency">{{ p.name }} · {{ p.currency }}</span>
-                        <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                            {{ balanceHidden() ? '••••••' : (p.saved | number : '1.2-2') }}
-                        </span>
+                            <span class="balance-row__top">
+                                <span class="balance-row__name">{{ p.name }}</span>
+                                <span class="balance-row__badge"><span aria-hidden="true">{{ p.currency | flag }}</span> {{ p.currency }}</span>
+                            </span>
+                            <span class="balance-row__label">Saved</span>
+                            <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
+                                {{ balanceHidden() ? '••••••' : (p.saved | number : '1.2-2') }}
+                                <span class="balance-row__code">{{ p.currency }}</span>
+                            </span>
                     </button>
                 }
             </div>
@@ -103,8 +133,9 @@
 
           @if (accountTotals().length) {
             <aside class="balance-card__recap" aria-label="Totals">
+                <h3 class="recap__heading">Totals</h3>
                 <div class="recap-block">
-                    <h3 class="recap-block__title">Total in accounts</h3>
+                    <h3 class="recap-block__title">In bank &amp; cash</h3>
                     <div class="recap-list">
                         @for (t of accountTotals(); track t.currency) {
                             <div class="recap-row">
@@ -138,7 +169,7 @@
                 <div class="recap-block recap-block--grand">
                     <h3 class="recap-block__title">
                         Grand total
-                        <span class="recap-block__hint">accounts + projects</span>
+                        <span class="recap-block__hint">bank, cash &amp; projects</span>
                     </h3>
                     <div class="recap-list">
                         @for (t of grandTotals(); track t.currency) {

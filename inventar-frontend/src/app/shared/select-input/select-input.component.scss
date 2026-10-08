@@ -6,8 +6,9 @@
   gap: 0.25rem;
 
   label {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 550;
+    color: var(--app-text-muted);
   }
 
   .input-wrap {
@@ -42,7 +43,7 @@
     &:focus-visible,
     &.is-open {
       border-color: var(--app-accent) !important;
-      box-shadow: 0 0 0 3px var(--app-accent-soft);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 22%, transparent);
     }
   }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, DestroyRef, inject, Input, OnChanges, OnDestroy, signal, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, computed, DestroyRef, ElementRef, HostListener, inject, Input, OnChanges, OnDestroy, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -12,6 +12,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
+import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
 import { MenuItem, SideBarMode } from '../base-template.models';
 
 /** Horizontal band (in px from the left viewport edge) where a touch
@@ -41,6 +42,7 @@ const FLICK_VELOCITY_PX_PER_MS = 0.4;
     RouterLink,
     RouterLinkActive,
     IconButtonComponent,
+    ThemeSwitchComponent,
     ...TOOLTIP_IMPORTS,
   ],
 })
@@ -58,7 +60,9 @@ export class SideBarComponent implements OnChanges, AfterViewInit, OnDestroy {
    *  the labels by opening the drawer instead. */
   readonly isMobile = signal(false);
 
-  @Input() navigation: MenuItem[];
+  private readonly _navigation = signal<MenuItem[]>([]);
+  @Input() set navigation(items: MenuItem[]) { this._navigation.set(items ?? []); }
+  get navigation(): MenuItem[] { return this._navigation(); }
   @Input() sideBarMode: SideBarMode;
   /** Slides in from the left as a half-width overlay (narrow screens). */
   @Input() mobileDrawer = false;
@@ -70,6 +74,72 @@ export class SideBarComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   selIndex = 1;
+
+  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
+  readonly menuOpen = signal(false);
+  readonly query = signal('');
+  readonly filteredNavigation = computed(() => {
+    const q = this.query().trim().toLowerCase();
+    const items = this._navigation();
+    return q ? items.filter((i) => {
+      const hay = `${i.text} ${i.description ?? ''}`.toLowerCase();
+      return q.split(/\s+/).every((part) => hay.includes(part));
+    }) : items;
+  });
+
+  private static readonly HUES = [235, 262, 290, 330, 12, 30, 152, 175, 200];
+
+  /** Stable tint per label, same hashing as Workspace Manual's avatars. */
+  hueFor(name: string): number {
+    let hash = 0;
+    for (const ch of name) hash = (hash * 31 + ch.charCodeAt(0)) | 0;
+    return SideBarComponent.HUES[Math.abs(hash) % SideBarComponent.HUES.length];
+  }
+
+  readonly fullName = computed(() => {
+    const u = this.authenticationService.currentUserValue;
+    return [u?.firstName, u?.lastName].filter(Boolean).map((n: string) => n.charAt(0).toUpperCase() + n.slice(1)).join(' ') || 'Account';
+  });
+  readonly initials = computed(() => this.fullName().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase());
+  readonly userHue = computed(() => this.hueFor(this.fullName()));
+
+  @HostListener('window:keydown', ['$event'])
+  onKeydown(e: KeyboardEvent): void {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (this.mobileDrawer && !this.sideBarService.mobileMenuOpen) this.sideBarService.toggleMobileMenu();
+      this.searchInput?.nativeElement.focus();
+    }
+  }
+
+  openFirstMatch(): void {
+    const first = this.filteredNavigation()[0];
+    if (!first) return;
+    this.router.navigate([first.link]);
+    this.onNavItemClick(this.navigation.indexOf(first));
+    this.query.set('');
+    if (this.searchInput) {
+      this.searchInput.nativeElement.value = '';
+      this.searchInput.nativeElement.blur();
+    }
+  }
+
+  go(link: string): void {
+    this.menuOpen.set(false);
+    this.router.navigate([link]);
+    if (this.mobileDrawer) this.sideBarService.closeMobileMenu();
+  }
+
+  switchAccount(): void {
+    this.menuOpen.set(false);
+    localStorage.removeItem('account');
+    this.router.navigate(['/account']);
+  }
+
+  logout(): void {
+    this.menuOpen.set(false);
+    this.authenticationService.logout();
+  }
 
   /** Active drag state. Null when the user isn't dragging. */
   private dragState: {
@@ -120,14 +190,8 @@ export class SideBarComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   private applyStoredSidebarWidth(): void {
-    const sideBarStatus = localStorage.getItem('fms-sidebar');
-    if (sideBarStatus === 'true') {
-      this.sideBarService.isOpened = true;
-      this.sideBarService.openSideBar();
-    } else {
-      this.sideBarService.isOpened = false;
-      this.sideBarService.closeSideBar();
-    }
+    this.sideBarService.isOpened = true;
+    this.sideBarService.openSideBar();
   }
 
   activateSpinner(): void {

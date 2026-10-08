@@ -5,7 +5,7 @@
     text-align: center;
     font-family: var(--app-font-sans);
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
@@ -14,7 +14,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 16px 0;
+    padding: 10px 0;
     border-bottom: 1px solid var(--app-border);
-    background: var(--app-surface-muted);
+    background: var(--app-surface);
 }

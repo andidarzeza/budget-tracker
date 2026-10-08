@@ -15,14 +15,9 @@ import { forkJoin, interval, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
-import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { ThemeService } from 'src/app/services/theme.service';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
-import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 
 interface NewsItem {
@@ -66,7 +61,7 @@ const FALLBACK_NEWS: readonly NewsItem[] = [
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, MatIconModule, MatMenuModule, MatTooltipModule, IconButtonComponent, PillButtonComponent, ...TOOLTIP_IMPORTS],
+  imports: [CommonModule, RouterModule, MatIconModule, MatTooltipModule, ...TOOLTIP_IMPORTS],
 })
 export class WelcomeComponent implements OnInit {
   private readonly auth = inject(AuthenticationService);
@@ -74,8 +69,6 @@ export class WelcomeComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly navBarService = inject(NavBarService);
   private readonly sideBarService = inject(SideBarService);
-  readonly themeService = inject(ThemeService);
-  private readonly sharedService = inject(SharedService);
   /**
    * Plain HttpClient built on the raw backend so the auth interceptor does
    * NOT run for external calls (Hacker News). Otherwise our JWT gets sent to
@@ -121,13 +114,6 @@ export class WelcomeComponent implements OnInit {
     return [this.firstName, this.lastName].filter(Boolean).join(' ');
   }
 
-  get initials(): string {
-    const u = this.auth.currentUserValue;
-    const f = (u?.firstName || '').trim().charAt(0).toUpperCase();
-    const l = (u?.lastName || '').trim().charAt(0).toUpperCase();
-    return `${f}${l}`;
-  }
-
   get greeting(): string {
     const h = this.now().getHours();
     if (h < 5) return 'Good night';
@@ -137,30 +123,16 @@ export class WelcomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Welcome page renders its own header (status pill + user chip) and a
-    // full-bleed background; the app shell would only get in the way.
-    this.navBarService.displayNavBar = false;
-    this.sideBarService.displaySidebar = false;
+    // Lives inside the normal shell: the sidebar carries navigation, the
+    // theme switch and the account menu (the navbar only shows on mobile).
+    this.navBarService.displayNavBar = true;
+    this.sideBarService.displaySidebar = true;
 
     interval(1000)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.now.set(new Date()));
 
     this.loadNews();
-  }
-
-  toggleDarkMode(): void {
-    this.themeService.changeTheme();
-    this.sharedService.applyBodyTheme(this.themeService.themeValue);
-  }
-
-  logout(): void {
-    this.auth.logout();
-  }
-
-  switchAccount(): void {
-    localStorage.removeItem('account');
-    this.router.navigate(['/account']);
   }
 
   go(path: string): void {

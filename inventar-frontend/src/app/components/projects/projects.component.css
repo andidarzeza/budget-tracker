@@ -210,7 +210,7 @@
 
 .project-card__bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--app-accent), var(--violet-500));
+    background: linear-gradient(90deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)));
     border-radius: 999px;
     transition: width 320ms var(--app-easing-emphasized, ease);
 }

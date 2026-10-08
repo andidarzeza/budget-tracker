@@ -4,19 +4,21 @@
 .form-field {
   display: flex;
   flex-direction: column;
+  gap: 5px;
   gap: 0.25rem;
 
   label {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 550;
+    color: var(--app-text-muted);
   }
 
   .input-wrapper {
     display: flex;
     align-items: stretch;
-    padding: 11px;
+    padding: 8px 11px;
     border: 1px solid;
-    border-radius: 6px;
+    border-radius: 7px;
     box-sizing: border-box;
     transition:
       border-color 0.15s ease,
@@ -26,7 +28,7 @@
        bottom of this file (which use `!important` to set the resting border). */
     &:focus-within {
       border-color: var(--app-accent) !important;
-      box-shadow: 0 0 0 3px var(--app-accent-soft);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 22%, transparent);
     }
 
     textarea {
@@ -46,7 +48,7 @@
       width: calc(100% / 0.875);
 
       &::placeholder {
-        color: #9ca3af;
+        color: var(--app-text-subtle);
       }
     }
   }

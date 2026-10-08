@@ -129,7 +129,10 @@ public class ExpenseServiceImpl implements ExpenseService {
         spending.setCurrency(wallet.getCurrency());
         walletService.debit(wallet.getId(), spending.getMoneySpent());
         spending.setId(id);
-        spending.setCreatedTime(expense.getCreatedTime());
+        // The edit form sends the (possibly changed) date; keep the old one only if it's missing.
+        if (Objects.isNull(spending.getCreatedTime())) {
+            spending.setCreatedTime(expense.getCreatedTime());
+        }
         spending.setLastModifiedDate(LocalDateTime.now());
         // Contributions own their linked expense; keep the link intact across edits.
         spending.setContributionId(expense.getContributionId());

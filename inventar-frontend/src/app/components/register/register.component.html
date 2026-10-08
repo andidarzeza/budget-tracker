@@ -1,75 +1,52 @@
-<div class="register-container">
-    <section class="visual-panel" aria-hidden="true">
-        <auth-visual></auth-visual>
-    </section>
+<div class="lock-screen">
+    <div class="lock-glow" aria-hidden="true"></div>
+    <theme-switch class="lock-theme"></theme-switch>
 
-    <section class="form-panel">
-        <mat-card class="form-container">
-            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="showSpinner()" role="status" aria-live="polite">
-                <span class="app-spinner" aria-hidden="true">
-                    <span class="app-spinner__track"></span>
-                    <span class="app-spinner__arc"></span>
-                </span>
-                <p class="app-loading-label">Creating your account…</p>
+    <form class="lock-card" [formGroup]="registerGroup" autocomplete="off" (ngSubmit)="login()">
+        <div class="app-loading-overlay" [@inOutAnimation] *ngIf="showSpinner()" role="status" aria-live="polite">
+            <span class="app-spinner" aria-hidden="true">
+                <span class="app-spinner__track"></span>
+                <span class="app-spinner__arc"></span>
+            </span>
+            <p class="app-loading-label">Creating your account…</p>
+        </div>
+
+        <div class="lock-badge" aria-hidden="true">
+            <mat-icon>account_balance_wallet</mat-icon>
+        </div>
+        <div>
+            <h1>Create your account</h1>
+            <p class="lock-sub">Set up your profile to start tracking expenses and income.</p>
+        </div>
+
+        <div class="lock-fields">
+            <div class="lock-row">
+                <input id="register-first-name" class="lock-input" type="text" placeholder="First name"
+                    formControlName="firstName" autocomplete="given-name" autofocus
+                    [class.lock-input--invalid]="registerGroup.get('firstName')?.touched && registerGroup.get('firstName')?.invalid" />
+                <input id="register-last-name" class="lock-input" type="text" placeholder="Last name"
+                    formControlName="lastName" autocomplete="family-name"
+                    [class.lock-input--invalid]="registerGroup.get('lastName')?.touched && registerGroup.get('lastName')?.invalid" />
             </div>
+            <input id="register-username" class="lock-input" type="text" placeholder="Username"
+                formControlName="username" autocomplete="username"
+                [class.lock-input--invalid]="registerGroup.get('username')?.touched && registerGroup.get('username')?.invalid" />
+            <input id="register-password" class="lock-input" type="password" placeholder="Password"
+                formControlName="password" autocomplete="new-password"
+                [class.lock-input--invalid]="registerGroup.get('password')?.touched && registerGroup.get('password')?.invalid" />
+        </div>
 
-            <div class="form-header">
-                <span class="form-header-badge">Financa</span>
-                <h1>Create your account</h1>
-                <p>Set up your profile to start tracking expenses and income.</p>
-            </div>
+        <button type="submit" class="lock-btn-primary" [disabled]="showSpinner()">
+            Create account <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+        </button>
 
-            <form [formGroup]="registerGroup" autocomplete="off" class="register-form">
-                <div class="name-row">
-                    <cb-labeled-form-input class="full-width"
-                        [inputId]="'register-first-name'"
-                        [label]="'First Name'"
-                        [placeholder]="'Enter first name'"
-                        [icon]="'badge'"
-                        [control]="$any(registerGroup.get('firstName'))"
-                        [type]="'text'">
-                    </cb-labeled-form-input>
+        <p class="lock-switch">
+            Already have an account?
+            <button type="button" class="lock-link" [disabled]="showSpinner()" (click)="navigate('/login')">Sign in</button>
+        </p>
 
-                    <cb-labeled-form-input class="full-width"
-                        [inputId]="'register-last-name'"
-                        [label]="'Last Name'"
-                        [placeholder]="'Enter last name'"
-                        [icon]="'badge'"
-                        [control]="$any(registerGroup.get('lastName'))"
-                        [type]="'text'">
-                    </cb-labeled-form-input>
-                </div>
-
-                <cb-labeled-form-input class="full-width username-field"
-                    [inputId]="'register-username'"
-                    [label]="'Username'"
-                    [placeholder]="'Choose username'"
-                    [icon]="'person'"
-                    [control]="$any(registerGroup.get('username'))"
-                    [type]="'text'">
-                </cb-labeled-form-input>
-
-                <cb-labeled-form-input class="full-width password-field"
-                    [inputId]="'register-password'"
-                    [label]="'Password'"
-                    [placeholder]="'Create password'"
-                    [icon]="'lock'"
-                    [control]="$any(registerGroup.get('password'))"
-                    [type]="'password'">
-                </cb-labeled-form-input>
-
-                <div class="actions">
-                    <button type="button" cb-pill-button variant="primary" icon="person_add" block
-                        [disabled]="showSpinner()" (click)="login()">
-                        Create account
-                    </button>
-                    <span class="divider-label">or</span>
-                    <button type="button" cb-pill-button icon="arrow_back" block
-                        [disabled]="showSpinner()" (click)="navigate('/login')">
-                        Back to sign in
-                    </button>
-                </div>
-            </form>
-        </mat-card>
-    </section>
+        <p class="lock-foot">
+            <mat-icon aria-hidden="true">verified_user</mat-icon> Your books stay private to your account
+        </p>
+    </form>
 </div>

@@ -1,6 +1,6 @@
 /* ============================================================================
- * Editorial welcome page — magazine-style hero with serif greeting,
- * status pill + user chip, side panels, layered indigo/violet waves.
+ * Welcome page — Workspace Manual look: Inter throughout, a soft red glow
+ * at the top, bordered panels with small uppercase headers, compact buttons.
  * All colors pulled from the app theme tokens.
  * ========================================================================== */
 :host {
@@ -8,21 +8,9 @@
     width: 100%;
     height: 100dvh;
     overflow: hidden;
-    --welcome-serif: 'Fraunces', 'Newsreader', Georgia, 'Times New Roman', serif;
     --tone-new: var(--app-success, #16a34a);
     --tone-faster: var(--app-accent, #2563eb);
     --tone-beta: var(--app-warning, #ea580c);
-
-    /* Sea palette — soft sky → medium cyan → deep teal */
-    --sea-back: #bae6fd;
-    --sea-mid: #7dd3fc;
-    --sea-front: #0ea5e9;
-}
-
-:host-context(.dark-theme) {
-    --sea-back: #164e63;
-    --sea-mid: #155e75;
-    --sea-front: #0e7490;
 }
 
 .welcome {
@@ -38,7 +26,19 @@
     display: flex;
     flex-direction: column;
     gap: clamp(24px, 4vh, 64px);
-    justify-content: space-between;
+}
+
+/* Soft accent glow behind the top of the page (Workspace Manual lock screen) */
+.welcome__glow {
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    top: -320px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--app-accent) 22%, transparent), transparent);
+    pointer-events: none;
+    z-index: 0;
 }
 
 /* ----- Top bar (status pill + user chip) ----- */
@@ -55,18 +55,18 @@
 .welcome__status {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-family: var(--app-font-sans);
-    font-size: 0.7rem;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--app-text-muted);
 }
 
 .welcome__status-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: var(--app-success, #16a34a);
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--app-success, #16a34a) 20%, transparent);
@@ -78,106 +78,52 @@
     50%      { box-shadow: 0 0 0 8px color-mix(in srgb, var(--app-success, #16a34a) 8%, transparent); }
 }
 
-.welcome__actions {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.welcome__icon-btn {
+/* Buttons — Workspace Manual `.btn` */
+.wbtn {
     appearance: none;
     -webkit-tap-highlight-color: transparent;
-    width: 40px;
-    height: 40px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--app-bg-elevated) 86%, transparent);
-    border: 1px solid var(--app-border);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: var(--app-text-muted);
-    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
-}
-
-.welcome__icon-btn:hover {
-    color: var(--app-accent);
-    border-color: var(--app-accent);
-}
-
-.welcome__icon-btn mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-}
-
-.welcome__user {
-    appearance: none;
-    -webkit-tap-highlight-color: transparent;
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 10px 6px 6px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--app-bg-elevated) 86%, transparent);
-    border: 1px solid var(--app-border);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    font-family: var(--app-font-sans);
-    color: var(--app-text);
-    cursor: pointer;
-    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
-}
-
-.welcome__user:hover {
-    border-color: var(--app-accent);
-}
-
-.welcome__user-caret {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    color: var(--app-text-subtle);
-}
-
-.welcome__user-meta {
-    display: inline-flex;
-    align-items: center;
     gap: 6px;
-    padding-left: 8px;
-    font-size: 0.78rem;
-    color: var(--app-text-muted);
-    font-variant-numeric: tabular-nums;
-}
-
-.welcome__user-sep {
-    color: var(--app-text-subtle);
-}
-
-.welcome__avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--app-accent);
-    color: #ffffff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    box-shadow: var(--app-shadow-accent);
-}
-
-.welcome__user-name {
-    font-size: 0.92rem;
-    font-weight: 600;
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid var(--app-border-strong);
+    background: var(--app-surface);
     color: var(--app-text);
+    border-radius: 7px;
+    font: inherit;
+    font-family: var(--app-font-sans);
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: var(--app-shadow-sm);
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    white-space: nowrap;
+}
+
+.wbtn:hover {
+    background: var(--app-surface-muted);
+}
+
+.wbtn mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.wbtn--primary {
+    background: var(--app-accent);
+    border-color: var(--app-accent);
+    color: #fff;
+}
+
+.wbtn--primary:hover {
+    background: var(--app-accent-hover);
+}
+
+.wbtn--lg {
+    height: 42px;
+    font-size: 15px;
 }
 
 /* ----- Grid: hero (left) + side cards (right) ----- */
@@ -189,122 +135,116 @@
     gap: clamp(32px, 6vw, 96px);
     align-items: start;
     width: 100%;
+    margin-block: auto;
 }
 
 /* ----- Hero (left column) ----- */
 .welcome__hero {
     display: flex;
     flex-direction: column;
-    gap: clamp(20px, 3vw, 32px);
+    gap: clamp(16px, 2.4vw, 24px);
     animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes rise {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(4px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
 .hero-date {
     display: flex;
     align-items: flex-start;
-    gap: 18px;
-    font-family: var(--welcome-serif);
+    align-items: center;
+    gap: 12px;
+    font-family: var(--app-font-sans);
 }
 
+/* Date tile — same treatment as Workspace Manual's lock badge */
 .hero-date__day {
-    font-size: clamp(4rem, 9vw, 6.5rem);
-    font-weight: 400;
-    line-height: 0.9;
-    letter-spacing: -0.04em;
-    color: var(--app-text);
-    font-variant-numeric: oldstyle-nums;
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)));
+    color: #fff;
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--app-accent) 40%, transparent);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
 }
 
 .hero-date__meta {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding-top: 12px;
+    gap: 1px;
 }
 
 .hero-date__month {
-    font-family: var(--welcome-serif);
-    font-size: 1.15rem;
-    font-weight: 500;
+    font-family: var(--app-font-sans);
+    font-size: 14px;
+    font-weight: 600;
     color: var(--app-text);
     letter-spacing: -0.01em;
 }
 
 .hero-date__weekday {
     font-family: var(--app-font-sans);
-    font-size: 0.68rem;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--app-text-subtle);
 }
 
 .hero-greeting {
     margin: 0;
-    font-family: var(--welcome-serif);
-    font-size: clamp(2.4rem, 6.5vw, 4.5rem);
-    font-weight: 600;
-    line-height: 1.04;
+    font-family: var(--app-font-sans);
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
     letter-spacing: -0.025em;
     color: var(--app-text);
 }
 
 .hero-greeting__name {
-    font-style: italic;
-    font-weight: 600;
-    background: linear-gradient(135deg, var(--app-accent) 0%, var(--violet-500, #8b5cf6) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+    color: var(--app-accent);
 }
 
 .hero-subtitle {
     margin: 0;
-    max-width: 44ch;
+    max-width: 52ch;
     font-family: var(--app-font-sans);
-    font-size: clamp(0.95rem, 1.4vw, 1.05rem);
-    line-height: 1.55;
+    font-size: 15px;
+    line-height: 1.6;
     color: var(--app-text-muted);
 }
 
-/* Pill styling moved to shared/pill-button (used here via
-   `<button cb-pill-button>`). Only the row layout stays local. */
 .hero-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 6px;
+    gap: 8px;
+    margin-top: 4px;
 }
 
 /* ----- Side cards (right column) ----- */
 .welcome__aside {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 20px;
     width: 100%;
     animation: rise 700ms 80ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Panels — Workspace Manual `.panel` with a hairline-separated header */
 .card {
-    background: var(--app-bg-elevated);
+    background: var(--app-surface);
     border: 1px solid var(--app-border);
-    border-radius: 14px;
-    padding: 20px 22px;
+    border-radius: var(--app-radius-md, 10px);
     box-shadow: var(--app-shadow-sm);
     box-sizing: border-box;
-    transition: box-shadow var(--app-motion-base, 200ms) var(--app-easing-standard, ease),
-                transform var(--app-motion-base, 200ms) var(--app-easing-standard, ease);
-}
-
-.card:hover {
-    box-shadow: var(--app-shadow-md);
-    transform: translateY(-1px);
+    overflow: hidden;
 }
 
 .card__head {
@@ -312,14 +252,21 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 14px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--app-border);
+}
+
+.card__body,
+.news-list,
+.news-loading {
+    padding: 14px 16px;
 }
 
 .card__eyebrow {
     font-family: var(--app-font-sans);
-    font-size: 0.66rem;
-    font-weight: 700;
-    letter-spacing: 0.22em;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--app-text-subtle);
 }
@@ -329,9 +276,13 @@
     align-items: center;
     gap: 6px;
     font-family: var(--app-font-sans);
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--app-text-muted);
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--app-success, #16a34a) 14%, transparent);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--app-success, #16a34a);
 }
 
 .card__live-dot {
@@ -344,15 +295,14 @@
 
 .card__link {
     font-family: var(--app-font-sans);
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--app-text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--app-accent-text, var(--app-accent));
     text-decoration: none;
-    transition: color 160ms ease;
 }
 
 .card__link:hover {
-    color: var(--app-accent);
+    text-decoration: underline;
 }
 
 /* --- Time card --- */
@@ -392,18 +342,18 @@
 }
 
 .time-display__value {
-    font-family: var(--welcome-serif);
-    font-size: clamp(2rem, 4vw, 2.5rem);
-    font-weight: 500;
-    line-height: 1;
-    letter-spacing: -0.02em;
+    font-family: var(--app-font-sans);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
     color: var(--app-text);
-    font-variant-numeric: tabular-nums oldstyle-nums;
+    font-variant-numeric: tabular-nums;
 }
 
 .time-display__label {
     font-family: var(--app-font-sans);
-    font-size: 0.82rem;
+    font-size: 12px;
     color: var(--app-text-muted);
 }
 
@@ -423,7 +373,7 @@
     justify-content: flex-end;
     gap: 6px;
     font-family: var(--app-font-sans);
-    font-size: 0.78rem;
+    font-size: 12px;
     color: var(--app-text-muted);
 }
 
@@ -444,16 +394,17 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 .news-item {
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--app-border);
+    padding: 9px 0;
+    border-bottom: 1px dashed var(--app-border);
 }
 
 .news-item:last-child {
-    padding-bottom: 0;
     border-bottom: none;
 }
 
@@ -461,14 +412,14 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-bottom: 6px;
+    margin-bottom: 2px;
     font-family: var(--app-font-sans);
 }
 
 .news-item__badge {
-    font-size: 0.66rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
@@ -477,17 +428,17 @@
 .news-item__badge[data-tone="beta"]   { color: var(--tone-beta); }
 
 .news-item__date {
-    font-size: 0.74rem;
+    font-size: 12px;
     color: var(--app-text-subtle);
 }
 
 .news-item__title {
     margin: 0;
     font-family: var(--app-font-sans);
-    font-size: 0.92rem;
-    line-height: 1.4;
+    font-size: 14px;
+    line-height: 1.45;
     color: var(--app-text);
-    font-weight: 500;
+    font-weight: 550;
 }
 
 .news-item__link {
@@ -498,91 +449,14 @@
 }
 
 .news-item__link:hover .news-item__title {
-    color: var(--app-accent);
+    color: var(--app-accent-text, var(--app-accent));
 }
 
 .news-loading {
     margin: 0;
-    padding: 12px 0;
     font-family: var(--app-font-sans);
-    font-size: 0.85rem;
+    font-size: 13px;
     color: var(--app-text-subtle);
-}
-
-/* ----- Waves (bottom decoration) — three layers drift at different speeds
-   to create a calm ocean parallax. Each wave SVG is 200% wide and tiles a
-   full period in the second half, so a -50% translateX loops seamlessly. */
-.welcome__waves {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: min(clamp(180px, 30vw, 360px), 32vh);
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.welcome__wave {
-    position: absolute;
-    left: 0;
-    /* -2px hides any sub-pixel hairline between the SVG bottom and the page
-       background; the wave container clips with overflow:hidden. */
-    bottom: -2px;
-    width: 200%;
-    height: 100%;
-    display: block;
-    will-change: transform;
-}
-
-.welcome__wave--back path {
-    fill: var(--sea-back);
-}
-
-.welcome__wave--mid path {
-    fill: var(--sea-mid);
-}
-
-.welcome__wave--front path {
-    fill: var(--sea-front);
-}
-
-/* Depth-of-field on the farthest wave + slight saturation so it reads as
-   "horizon" rather than competing with the front wave. */
-.welcome__wave--back {
-    filter: blur(2px) saturate(0.85);
-    opacity: 0.9;
-    animation: wave-back 60s linear infinite;
-}
-
-.welcome__wave--mid {
-    animation: wave-mid 42s linear infinite;
-}
-
-.welcome__wave--front {
-    animation: wave-front 28s linear infinite;
-}
-
-/* Horizontal drift loops at -50% (the wave path repeats every half-width).
-   Vertical bob translates DOWN (positive Y) so the SVG bottom edge always
-   reaches at least the container floor — no white strip exposed. The extra
-   pixels at the bottom are clipped by the container's overflow:hidden. */
-@keyframes wave-back {
-    0%   { transform: translate3d(0,      0,    0); }
-    50%  { transform: translate3d(-25%,   12px, 0); }
-    100% { transform: translate3d(-50%,   0,    0); }
-}
-
-@keyframes wave-mid {
-    0%   { transform: translate3d(0,      0,    0); }
-    50%  { transform: translate3d(-25%,   8px,  0); }
-    100% { transform: translate3d(-50%,   0,    0); }
-}
-
-@keyframes wave-front {
-    0%   { transform: translate3d(0,      0,    0); }
-    50%  { transform: translate3d(-25%,   5px,  0); }
-    100% { transform: translate3d(-50%,   0,    0); }
 }
 
 /* ----- Responsive ----- */
@@ -606,46 +480,24 @@
         gap: 20px;
     }
 
-    .welcome__user-meta,
-    .welcome__status {
+    /* The status pill is the only thing in the topbar; drop the row. */
+    .welcome__topbar {
         display: none;
     }
 
-    /* With the status pill removed, the lone user chip would otherwise
-       fall to the start of the topbar — pin it to the right. */
-    .welcome__topbar {
-        justify-content: flex-end;
-    }
-
-    .welcome__user {
-        padding: 4px 12px 4px 4px;
-    }
-
-    .welcome__avatar {
-        width: 28px;
-        height: 28px;
-        font-size: 0.7rem;
-    }
-
-    .hero-date__day {
-        font-size: 3.4rem;
-    }
-
     .hero-greeting {
-        font-size: 2rem;
+        font-size: 1.6rem;
     }
 
     .hero-subtitle {
-        font-size: 0.9rem;
+        font-size: 14px;
     }
 
-    /* Mobile quick actions: two equal-width pills sharing the row. The
-       shared pill component already centers its content; we just need to
-       let the host stretch via flex. */
-    .hero-actions > button[cb-pill-button] {
+    /* Mobile quick actions: two equal-width buttons sharing the row. */
+    .hero-actions > .wbtn {
         flex: 1 1 0;
         min-width: 0;
-        padding: 10px 14px;
+        padding: 0 12px;
     }
 
     /* On phones the news card is generous; trim to one item so the page
@@ -654,8 +506,11 @@
         display: none;
     }
 
-    .card {
-        padding: 14px 16px;
+    .card__head,
+    .card__body,
+    .news-list {
+        padding-left: 14px;
+        padding-right: 14px;
     }
 
     .card__body--time {
@@ -678,9 +533,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .welcome__wave--front,
-    .welcome__wave--mid,
-    .welcome__wave--back,
     .welcome__status-dot,
     .card__live-dot,
     .welcome__hero,

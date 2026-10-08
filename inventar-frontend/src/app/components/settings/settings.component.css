@@ -206,7 +206,7 @@
     font-size: 1.1rem;
     font-weight: 700;
     color: #ffffff;
-    background: linear-gradient(135deg, var(--indigo-500), var(--violet-500));
+    background: linear-gradient(135deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)));
     box-shadow: var(--app-shadow-accent);
     flex-shrink: 0;
     letter-spacing: 0.02em;

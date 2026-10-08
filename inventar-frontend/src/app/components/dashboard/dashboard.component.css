@@ -42,8 +42,8 @@
 }
 
 .balance-card__icon-wrap {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--app-radius-sm);
     background: var(--app-accent-soft);
     display: inline-flex;
@@ -62,11 +62,9 @@
 
 .balance-card__title {
     margin: 0;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--app-text-subtle);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--app-text);
 }
 
 .balance-card__actions {
@@ -107,113 +105,261 @@
     height: 20px;
 }
 
-/* Mobile default: equal-width grid so chips line up tidily on narrow
-   screens. Long amounts truncate (see `.balance-row__amount`) — tapping
-   the chip opens a dialog that shows the full untruncated value. */
+/* Source cards: one card per bank account / cash source / project.
+   Name + currency badge on top, a small label, then the amount as the
+   focal point with its currency code right next to it. */
 .balance-card__rows {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
 }
 
 .balance-row {
-    /* The row is a clickable <button> — reset the native chrome so it
-       still reads as a chip. */
+    /* The card is a clickable <button> — reset the native chrome. */
     appearance: none;
     -webkit-tap-highlight-color: transparent;
     font-family: inherit;
+    color: inherit;
     text-align: left;
     cursor: pointer;
-    display: grid;
-    grid-template-columns: auto auto minmax(0, 1fr);
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    padding: 14px 16px 16px;
     border-radius: var(--app-radius-md);
-    background: var(--app-surface-muted);
+    background: var(--app-surface);
     border: 1px solid var(--app-border);
-    transition:
-        background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-        border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-        transform 0.08s ease;
+    box-shadow: var(--app-shadow-sm);
+    transition: border-color 0.12s, background 0.12s;
 }
 
 .balance-row:hover {
-    border-color: var(--app-accent);
-    background: var(--app-surface-hover);
-}
-
-.balance-row:active {
-    transform: scale(0.99);
+    border-color: var(--app-border-strong);
+    background: var(--app-surface-muted);
 }
 
 .balance-row:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--app-accent-soft-strong);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 22%, transparent);
 }
 
-/* Desktop: drop the equal-width grid and let each chip size to its
-   content so the full amount is always visible even with many currencies
-   side-by-side. The min-width keeps narrow values (e.g. small balances)
-   from looking too cramped. The dialog drill-down is mobile-only — the
-   chip is purely informational here, so suppress the click affordance. */
-@media (min-width: 768px) {
-    .balance-card__rows {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .balance-row {
-        display: inline-flex;
-        gap: 12px;
-        min-width: 180px;
-        cursor: default;
-    }
-
-    .balance-row:hover {
-        border-color: var(--app-border);
-        background: var(--app-surface-muted);
-    }
-
-    .balance-row:active {
-        transform: none;
-    }
-
-    .balance-row__amount {
-        /* Chip is content-sized on desktop, so nothing should ever clip. */
-        overflow: visible;
-        text-overflow: clip;
-    }
+.balance-row__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
 }
 
-.balance-row__flag {
-    font-size: 1.15rem;
-    line-height: 1;
+.balance-row__name {
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--app-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.balance-row__currency {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+.balance-row__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 99px;
+    background: var(--app-surface-muted);
+    box-shadow: inset 0 0 0 1px var(--app-border);
+    color: var(--app-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.balance-row__label {
+    font-size: 12px;
     color: var(--app-text-subtle);
 }
 
 .balance-row__amount {
-    text-align: right;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
     font-variant-numeric: tabular-nums;
-    font-weight: 800;
-    font-size: 1.15rem;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
     color: var(--app-text);
-    letter-spacing: -0.01em;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    transition: filter var(--app-motion-base) var(--app-easing-standard);
+}
+
+.balance-row__code {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--app-text-subtle);
 }
 
 .balance-row__amount--hidden {
     letter-spacing: 2px;
     color: var(--app-text-subtle);
+}
+
+/* —— Bank-branded source cards ——
+   A plate carries the bank's own logo (white in light mode, a faint brand
+   tint of the card surface in dark mode), a thin stripe of the brand colors
+   underneath, and the brand color tints the border and amount. */
+.balance-row--brand {
+    overflow: hidden;
+    border-color: color-mix(in srgb, var(--brand-primary) 35%, var(--app-border));
+}
+
+.balance-row--brand:hover {
+    border-color: color-mix(in srgb, var(--brand-primary) 55%, var(--app-border));
+}
+
+.balance-row__brand {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: -14px -16px 12px;
+    padding: 10px 16px 12px;
+    background: #ffffff;
+}
+
+.balance-row__brand::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--brand-stripe);
+}
+
+.balance-row__brand img {
+    display: block;
+    height: var(--brand-logo-height, 15px);
+    width: auto;
+    max-width: 100%;
+}
+
+/* Banks that ship a dark-mode logo swap to it in dark mode. */
+.balance-row__brand .brand-logo--dark {
+    display: none;
+}
+
+:host-context(.dark-theme) .balance-row__brand .brand-logo--has-dark {
+    display: none;
+}
+
+:host-context(.dark-theme) .balance-row__brand .brand-logo--dark {
+    display: block;
+}
+
+.balance-row--brand .balance-row__amount {
+    color: var(--brand-primary-text);
+}
+
+/* Intesa Sanpaolo — colors sampled from the official logo file. */
+.balance-row--isp {
+    --brand-primary: #008551;
+    --brand-primary-text: #00693f;
+    --brand-stripe: linear-gradient(90deg,
+        #008551 0 40%, #dfb72f 40% 55%, #006ba5 55% 70%, #ea8b43 70% 100%);
+}
+
+:host-context(.dark-theme) .balance-row--isp {
+    --brand-primary-text: #3fcf8e;
+}
+
+/* Dark mode: no white plate. The logo sits on the dark card with a faint
+   brand tint. */
+:host-context(.dark-theme) .balance-row__brand {
+    background: color-mix(in srgb, var(--brand-primary) 10%, var(--app-surface));
+}
+
+/* Intesa has no dark logo, so lift it a little to keep the green lettering readable. */
+:host-context(.dark-theme) .balance-row--isp .balance-row__brand img {
+    filter: brightness(1.6) saturate(1.1);
+}
+
+/* Tirana Bank — colors sampled from the official logo files. */
+.balance-row--tirana {
+    --brand-primary: #113681;
+    --brand-primary-text: #113681;
+    --brand-logo-height: 16px;
+    --brand-stripe: linear-gradient(90deg, #113681 0 78%, #f4b200 78% 100%);
+}
+
+:host-context(.dark-theme) .balance-row--tirana {
+    --brand-primary: #3d64c2;
+    --brand-primary-text: #8fb0f5;
+}
+
+/* Cash — no bank behind it, so the strip carries an icon + label on a
+   faint banknote-style pattern, in a warm "coin gold". */
+.balance-row--cash {
+    --brand-primary: #b7791f;
+    --brand-primary-text: #8a5a12;
+    --brand-stripe: linear-gradient(90deg, #b7791f 0 70%, #e2b24a 70% 100%);
+}
+
+:host-context(.dark-theme) .balance-row--cash {
+    --brand-primary: #d69e2e;
+    --brand-primary-text: #f2c66d;
+}
+
+.balance-row__brand--cash {
+    gap: 7px;
+    min-height: 15px;
+    color: var(--brand-primary-text);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background:
+        repeating-linear-gradient(135deg,
+            color-mix(in srgb, var(--brand-primary) 9%, transparent) 0 2px,
+            transparent 2px 9px),
+        color-mix(in srgb, var(--brand-primary) 7%, #ffffff);
+}
+
+:host-context(.dark-theme) .balance-row__brand--cash {
+    background:
+        repeating-linear-gradient(135deg,
+            color-mix(in srgb, var(--brand-primary) 10%, transparent) 0 2px,
+            transparent 2px 9px),
+        color-mix(in srgb, var(--brand-primary) 10%, var(--app-surface));
+}
+
+.balance-row__brand--cash mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    line-height: 16px;
+}
+
+/* Desktop: the drill-down dialog is mobile-only, so the card is purely
+   informational here — no click affordance. */
+@media (min-width: 768px) {
+    .balance-row {
+        cursor: default;
+    }
+
+    .balance-row:hover {
+        border-color: var(--app-border);
+        background: var(--app-surface);
+    }
+
+    .balance-row--brand:hover {
+        border-color: color-mix(in srgb, var(--brand-primary) 35%, var(--app-border));
+    }
 }
 
 .balance-empty {
@@ -275,7 +421,7 @@
     align-items: center;
     background: var(--app-surface-muted);
     border: 1px solid var(--app-border);
-    border-radius: 999px;
+    border-radius: 9px;
     padding: 3px;
     gap: 2px;
     flex-wrap: wrap;
@@ -292,7 +438,7 @@
     font-weight: 500;
     line-height: 1.2;
     color: var(--app-text-muted);
-    border-radius: 999px;
+    border-radius: 6px;
     transition:
         background var(--app-motion-base) var(--app-easing-standard),
         color var(--app-motion-base) var(--app-easing-standard),
@@ -306,9 +452,9 @@
 
 .range-option--active,
 .range-option--active:hover {
-    background: var(--app-accent);
-    color: var(--app-on-accent);
-    box-shadow: 0 1px 3px rgba(99, 102, 241, 0.4);
+    background: var(--app-surface);
+    color: var(--app-text);
+    box-shadow: var(--app-shadow-sm), inset 0 0 0 1px var(--app-border);
 }
 
 .control-bar__picker {
@@ -879,19 +1025,31 @@
     display: flex;
     align-items: center;
     gap: var(--app-space-2);
-    margin: var(--app-space-2) 0 0;
-    font-size: 0.78rem;
+    margin: var(--app-space-3) 0 0;
+    font-size: 13px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--app-text-subtle);
+    color: var(--app-text);
 }
 
 .balance-group__icon {
     font-size: 18px;
     width: 18px;
     height: 18px;
-    color: var(--app-accent);
+    color: var(--app-text-muted);
+}
+
+.balance-group__count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 99px;
+    background: var(--app-surface-muted);
+    box-shadow: inset 0 0 0 1px var(--app-border);
+    color: var(--app-text-muted);
+    font-size: 11px;
+    font-weight: 600;
 }
 
 /* ──── Balance card: sources on the left, totals recap on the right ──── */
@@ -911,7 +1069,7 @@
 
 .balance-card__recap {
     flex: 0 0 auto;
-    width: 260px;
+    width: 280px;
     display: flex;
     flex-direction: column;
     gap: var(--app-space-4);
@@ -919,10 +1077,17 @@
     border-left: 1px solid var(--app-border);
 }
 
+.recap__heading {
+    margin: var(--app-space-3) 0 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--app-text);
+}
+
 .recap-block {
     display: flex;
     flex-direction: column;
-    gap: var(--app-space-2);
+    gap: 6px;
 }
 
 .recap-block__title {
@@ -930,34 +1095,30 @@
     align-items: baseline;
     gap: var(--app-space-2);
     margin: 0;
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    font-size: 12px;
+    font-weight: 500;
     color: var(--app-text-subtle);
 }
 
 .recap-block__hint {
-    font-size: 0.66rem;
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0;
+    font-size: 11px;
+    font-weight: 400;
     color: var(--app-text-subtle);
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 .recap-list {
     display: flex;
     flex-direction: column;
-    gap: var(--app-space-2);
+    gap: 6px;
 }
 
 .recap-row {
     display: flex;
     align-items: center;
     gap: var(--app-space-2);
-    padding: var(--app-space-2) var(--app-space-3);
-    border-radius: var(--app-radius-md);
+    padding: 10px 12px;
+    border-radius: var(--app-radius-sm);
     background: var(--app-surface-muted);
     border: 1px solid var(--app-border);
 }
@@ -968,25 +1129,42 @@
 }
 
 .recap-row__currency {
+    font-size: 13px;
     font-weight: 600;
-    color: var(--app-text-subtle);
+    color: var(--app-text-muted);
 }
 
 .recap-row__amount {
     margin-left: auto;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 650;
     color: var(--app-text);
     font-variant-numeric: tabular-nums;
 }
 
-/* The grand total is the headline figure — give it a touch more emphasis. */
+/* Grand total is the headline figure: raised white card, bigger number. */
+.recap-block--grand {
+    padding-top: var(--app-space-3);
+    border-top: 1px dashed var(--app-border);
+}
+
+.recap-block--grand .recap-block__title {
+    color: var(--app-text);
+    font-weight: 600;
+}
+
 .recap-row--grand {
-    background: var(--app-accent-soft);
-    border-color: var(--app-accent-soft-strong, var(--app-border));
+    padding: 12px 14px;
+    background: var(--app-surface);
+    border-color: var(--app-border-strong);
+    box-shadow: var(--app-shadow-sm);
 }
 
 .recap-row--grand .recap-row__amount {
-    color: var(--app-accent);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--app-text);
 }
 
 /* Stack the recap under the sources on narrow viewports. */

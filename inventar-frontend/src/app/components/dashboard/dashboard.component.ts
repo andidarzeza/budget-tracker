@@ -183,6 +183,11 @@ export class DashboardComponent implements AfterViewInit {
 
   /** Active bank accounts, sorted by name. */
   bankWallets = computed<Wallet[]>(() => this.activeWalletsOfType('BANK'));
+
+  /** Bank whose branding a source card should wear, detected from its name. */
+  bankBrand(wallet: Wallet): BankBrand | null {
+    return BANK_BRANDS.find((brand) => brand.match.test(wallet.name ?? '')) ?? null;
+  }
   /** Active cash holdings, sorted by name. */
   cashWallets = computed<Wallet[]>(() => this.activeWalletsOfType('CASH'));
   /** True when the workspace has at least one active source. */
@@ -800,3 +805,29 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
 }
+
+interface BankBrand {
+  key: string;
+  name: string;
+  logo: string;
+  /** Optional variant for dark mode (e.g. white lettering). */
+  logoDark?: string;
+  match: RegExp;
+}
+
+/** Known banks: cards whose source name matches get the bank's logo and colors. */
+const BANK_BRANDS: BankBrand[] = [
+  {
+    key: 'isp',
+    name: 'Intesa Sanpaolo',
+    logo: 'assets/banks/intesa-sanpaolo.png',
+    match: /\b(isp|intesa|sanpaolo)\b/i,
+  },
+  {
+    key: 'tirana',
+    name: 'Tirana Bank',
+    logo: 'assets/banks/tirana-bank.png',
+    logoDark: 'assets/banks/tirana-bank-dark.png',
+    match: /\btirana\s*bank\b/i,
+  },
+];

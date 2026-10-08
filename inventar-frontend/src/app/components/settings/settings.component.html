@@ -21,14 +21,10 @@
                 <mat-icon class="settings-row__icon">dark_mode</mat-icon>
             </span>
             <div class="settings-row__main">
-                <span class="settings-row__title">Dark mode</span>
-                <span class="settings-row__desc">Switch the entire app to a darker palette.</span>
+                <span class="settings-row__title">Theme</span>
+                <span class="settings-row__desc">Light, dark, or follow your system setting.</span>
             </div>
-            <mat-slide-toggle class="settings-row__trailing"
-                [checked]="darkMode()"
-                (change)="toggleDarkMode($event.checked)"
-                aria-label="Toggle dark mode">
-            </mat-slide-toggle>
+            <theme-switch class="settings-row__trailing" style="width: 240px"></theme-switch>
         </div>
 
         <div class="settings-row">

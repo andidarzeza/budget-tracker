@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { SIDEBAR_WIDTH } from 'src/environments/environment';
 import { SharedService } from './shared.service';
 
 /** Collapsed-rail width used when the desktop sidebar is closed. */
@@ -11,7 +10,7 @@ const SIDEBAR_RAIL_WIDTH = 76;
 })
 export class SideBarService {
   public isOpened = false;
-  public sidebarWidth = SIDEBAR_WIDTH;
+  public sidebarWidth = 272;
   public displaySidebar = false;
   /** When false, width expand/collapse is handled by mobile drawer CSS only. */
   public desktopSidebarLayout = true;

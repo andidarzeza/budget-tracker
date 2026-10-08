@@ -1,62 +1,77 @@
 @if (authenticationService.currentUserValue) {
-<div id="sidebar"
+<aside id="sidebar"
     [ngClass]="{
         'sidebar--mobile-drawer': mobileDrawer,
         'sidebar--mobile-drawer--open': mobileDrawer && (sideBarService.mobileMenuOpen$ | async)
     }"
-    [ngStyle]="mobileDrawer ? {} : {'position': sideBarMode!='over' ? 'relative' : 'absolute', 'width': sideBarMode!='over' ? '250px' : '76px' }"
-    class="sidebar grad"
-    [style.height]="'100%'"
+    class="sidebar"
     [style.z-index]="mobileDrawer ? 13 : 2">
-    <div class="logo-container">
-        <a routerLink="/welcome" class="sidebar-brand"
-            (click)="onBrandClick()"
-            [matTooltip]="sideBarService.isOpened ? '' : 'Financa'"
-            [matTooltipDisabled]="isMobile()"
-            matTooltipPosition="below"
-            aria-label="Financa — Home">
-            <div class="sidebar-brand-mark">
-                <div class="sidebar-brand-ring">
-                    <div class="sidebar-brand-core"></div>
-                </div>
-            </div>
-            @if (sideBarService.isOpened) {
-                <div class="sidebar-brand-text">
-                    <span class="sidebar-brand-title">Financa</span>
-                    <span class="sidebar-brand-accent">App</span>
+
+    <div class="brand">
+        <a routerLink="/welcome" class="brand-link" (click)="onBrandClick()" aria-label="Financa — Home">
+            <span class="brand-mark"><mat-icon>account_balance_wallet</mat-icon></span>
+            <span class="brand-name">Financa</span>
+        </a>
+        <div class="menu-wrap">
+            <button type="button" class="icon-btn" title="More" aria-label="More" (click)="menuOpen.set(!menuOpen())">
+                <mat-icon>more_horiz</mat-icon>
+            </button>
+            @if (menuOpen()) {
+                <div class="menu-scrim" (click)="menuOpen.set(false)"></div>
+                <div class="menu" role="menu">
+                    <div class="menu-user">
+                        <span class="avatar" [style.--hue]="userHue()">{{ initials() }}</span>
+                        <span class="menu-user-text">
+                            <span class="menu-user-name">{{ fullName() }}</span>
+                            <span class="menu-user-sub">Signed in</span>
+                        </span>
+                    </div>
+                    <div class="menu-sep"></div>
+                    <button type="button" role="menuitem" (click)="go('/settings')"><mat-icon>settings</mat-icon> Settings</button>
+                    <button type="button" role="menuitem" (click)="switchAccount()"><mat-icon>swap_horiz</mat-icon> Switch account</button>
+                    <div class="menu-sep"></div>
+                    <button type="button" role="menuitem" (click)="logout()"><mat-icon>logout</mat-icon> Log out</button>
                 </div>
             }
-        </a>
-    </div>
-
-    <div class="menu-items">
-        <div id="active-item"></div>
-        @for (item of navigation; track item.link; let i = $index) {
-            <div class="opened-menu-item pointer"
-                [routerLink]="[item.link]"
-                routerLinkActive="router-link-active"
-                (click)="onNavItemClick(i)"
-                [matTooltip]="item.text"
-                [matTooltipDisabled]="isMobile()"
-                matTooltipPosition="below"
-                matTooltipClass="sidebar-tooltip">
-                <mat-icon class="primary-icon sidebar-icon">{{ item.icon }}</mat-icon>
-                @if (sideBarService.isOpened) {
-                    <span class="title">{{ item.text }}</span>
-                }
-            </div>
-        }
-    </div>
-
-    @if (!mobileDrawer) {
-        <div style="position: absolute; bottom: 30px;left: 50%;transform: translateX(-50%);">
-            <button type="button" cb-icon-button (click)="sideBarService.toggleSideBar()"
-                matTooltip="Toggle sidebar" matTooltipPosition="right"
-                aria-label="Toggle sidebar">
-                <mat-icon>compare_arrows</mat-icon>
-            </button>
         </div>
-    }
+    </div>
 
-</div>
+    <label class="search">
+        <mat-icon>search</mat-icon>
+        <input #searchInput placeholder="Search" [value]="query()"
+            (input)="query.set(searchInput.value)"
+            (keydown.escape)="query.set(''); searchInput.value = ''"
+            (keydown.enter)="openFirstMatch()" />
+        <kbd>⌘K</kbd>
+    </label>
+
+    <div class="sidebar-section"><span>Menu</span></div>
+
+    <nav class="ws-list">
+        @for (item of filteredNavigation(); track item.link) {
+            <a class="ws-item"
+                [routerLink]="[item.link]"
+                routerLinkActive="active"
+                (click)="onNavItemClick(navigation.indexOf(item))">
+                <span class="nav-icon">
+                    <mat-icon fontSet="material-symbols-rounded">{{ item.icon }}</mat-icon>
+                </span>
+                <span class="ws-item-text">
+                    <span class="ws-name">{{ item.text }}</span>
+                    @if (item.description) {
+                        <span class="ws-sub">{{ item.description }}</span>
+                    }
+                </span>
+            </a>
+        }
+        @if (filteredNavigation().length === 0) {
+            <p class="ws-empty">No matches</p>
+        }
+    </nav>
+
+    <theme-switch></theme-switch>
+    <button type="button" class="lock-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon> Log out
+    </button>
+</aside>
 }

@@ -2,36 +2,43 @@
     {
         "icon": "space_dashboard",
         "text": "Dashboard",
+        "description": "Balances & overview",
         "link": "/dashboard"
     },
     {
         "icon": "trending_down",
         "text": "Expenses",
+        "description": "Money going out",
         "link": "/expenses"
     },
     {
         "icon": "trending_up",
         "text": "Incomes",
+        "description": "Money coming in",
         "link": "/incomes"
     },
     {
         "icon": "category",
         "text": "Categories",
+        "description": "Group your transactions",
         "link": "/categories"
     },
     {
         "icon": "folder_special",
         "text": "Projects",
+        "description": "Savings goals",
         "link": "/projects"
     },
     {
         "icon": "history",
         "text": "History",
+        "description": "Recent changes",
         "link": "/history"
     },
     {
         "icon": "settings",
         "text": "Settings",
+        "description": "Preferences & account",
         "link": "/settings"
     }
 ]

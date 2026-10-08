@@ -112,7 +112,10 @@ public class IncomeServiceImpl implements IncomeService {
         income.setCurrency(wallet.getCurrency());
         walletService.credit(wallet.getId(), income.getIncoming());
         income.setId(id);
-        income.setCreatedTime(incomeDB.getCreatedTime());
+        // The edit form sends the (possibly changed) date; keep the old one only if it's missing.
+        if (Objects.isNull(income.getCreatedTime())) {
+            income.setCreatedTime(incomeDB.getCreatedTime());
+        }
         income.setLastModifiedDate(new Date());
         incomeRepository.save(income);
         historyService.save(historyService.from(UPDATE, INCOME, income.getAccount()));

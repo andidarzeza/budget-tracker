@@ -3,7 +3,9 @@
  * ----------------------------------------------------------------------------
  * Single source of truth for the app's visual language. Defines:
  *   1. Material 3 system tokens (--mat-sys-*) for both light and dark modes,
- *      so all Angular Material components inherit our indigo accent.
+ *      so all Angular Material components inherit our red accent.
+ *      The look mirrors the Workspace Manual app: neutral grays, a single
+ *      red accent (#e5383b), white canvas, hairline borders, soft shadows.
  *   2. App-level tokens (--app-*) for spacing, radius, shadow, typography.
  *   3. Legacy aliases (--light, --card, --secondary, etc.) so existing
  *      component CSS keeps working under the new look.
@@ -11,23 +13,25 @@
  * Theme switching is class-based: <body class="light-theme | dark-theme">.
  * -------------------------------------------------------------------------- */
 
-/* ---------- Brand palette (indigo) ---------- */
+/* ---------- Brand palette ----------
+ * The --indigo-* / --violet-* names are historical: components still
+ * reference them, so they now carry the red accent and its orange partner. */
 :root {
-    --indigo-50: #eef2ff;
-    --indigo-100: #e0e7ff;
-    --indigo-200: #c7d2fe;
-    --indigo-300: #a5b4fc;
-    --indigo-400: #818cf8;
-    --indigo-500: #6366f1;
-    --indigo-600: #4f46e5;
-    --indigo-700: #4338ca;
-    --indigo-800: #3730a3;
-    --indigo-900: #312e81;
-    --indigo-950: #1e1b4b;
+    --indigo-50: #fdeded;
+    --indigo-100: #fbd9da;
+    --indigo-200: #f6b3b5;
+    --indigo-300: #ff8b8e;
+    --indigo-400: #ef4449;
+    --indigo-500: #e5383b;
+    --indigo-600: #cc2b2e;
+    --indigo-700: #c4262a;
+    --indigo-800: #9e1f22;
+    --indigo-900: #6e1618;
+    --indigo-950: #351719;
 
-    --violet-400: #a78bfa;
-    --violet-500: #8b5cf6;
-    --violet-600: #7c3aed;
+    --violet-400: #ff9466;
+    --violet-500: #ff7a45;
+    --violet-600: #f0612a;
 
     /* Semantic colors */
     --success-400: #34d399;
@@ -40,18 +44,18 @@
     --warning-500: #f59e0b;
     --warning-600: #d97706;
 
-    /* Slate (neutrals) */
-    --slate-50: #f8fafc;
-    --slate-100: #f1f5f9;
-    --slate-200: #e2e8f0;
-    --slate-300: #cbd5e1;
-    --slate-400: #94a3b8;
-    --slate-500: #64748b;
-    --slate-600: #475569;
-    --slate-700: #334155;
-    --slate-800: #1e293b;
-    --slate-900: #0f172a;
-    --slate-950: #020617;
+    /* Neutrals (warm-free grays, named slate for compatibility) */
+    --slate-50: #fafafa;
+    --slate-100: #f6f6f7;
+    --slate-200: #e9e9ec;
+    --slate-300: #dadadf;
+    --slate-400: #9898a3;
+    --slate-500: #74747f;
+    --slate-600: #5c5c68;
+    --slate-700: #3f3f48;
+    --slate-800: #26262a;
+    --slate-900: #17171c;
+    --slate-950: #0e0e10;
 
     /* App-level: typography, radii, spacing, motion */
     --app-font-sans: "Inter", "Source Sans Pro", "Roboto", "Helvetica Neue",
@@ -59,11 +63,11 @@
     --app-font-display: "Inter", "Raleway", "Source Sans Pro", "Roboto", sans-serif;
     --app-font-numeric: "Inter", "Source Sans Pro", system-ui, sans-serif;
 
-    --app-radius-sm: 8px;
-    --app-radius-md: 12px;
-    --app-radius-lg: 16px;
-    --app-radius-xl: 20px;
-    --app-radius-2xl: 24px;
+    --app-radius-sm: 7px;
+    --app-radius-md: 10px;
+    --app-radius-lg: 14px;
+    --app-radius-xl: 16px;
+    --app-radius-2xl: 20px;
     --app-radius-full: 9999px;
 
     --app-space-1: 4px;
@@ -111,26 +115,26 @@
 
     --mat-sys-secondary: var(--violet-500);
     --mat-sys-on-secondary: #ffffff;
-    --mat-sys-secondary-container: #eee6ff;
-    --mat-sys-on-secondary-container: #2e1065;
+    --mat-sys-secondary-container: #ffe9df;
+    --mat-sys-on-secondary-container: #5a1e05;
 
     --mat-sys-tertiary: var(--violet-600);
     --mat-sys-on-tertiary: #ffffff;
-    --mat-sys-tertiary-container: #ede4ff;
-    --mat-sys-on-tertiary-container: #2e1065;
+    --mat-sys-tertiary-container: #ffe9df;
+    --mat-sys-on-tertiary-container: #5a1e05;
 
     --mat-sys-error: var(--danger-500);
     --mat-sys-on-error: #ffffff;
     --mat-sys-error-container: #fee2e2;
     --mat-sys-on-error-container: #7f1d1d;
 
-    --mat-sys-background: var(--slate-50);
+    --mat-sys-background: #ffffff;
     --mat-sys-on-background: var(--slate-900);
     --mat-sys-surface: #ffffff;
     --mat-sys-surface-dim: var(--slate-100);
     --mat-sys-surface-bright: #ffffff;
     --mat-sys-surface-container-lowest: #ffffff;
-    --mat-sys-surface-container-low: var(--slate-50);
+    --mat-sys-surface-container-low: #fafafa;
     --mat-sys-surface-container: var(--slate-100);
     --mat-sys-surface-container-high: var(--slate-200);
     --mat-sys-surface-container-highest: var(--slate-300);
@@ -143,8 +147,8 @@
 
     --mat-sys-outline: var(--slate-300);
     --mat-sys-outline-variant: var(--slate-200);
-    --mat-sys-shadow: rgba(15, 23, 42, 0.16);
-    --mat-sys-scrim: rgba(15, 23, 42, 0.32);
+    --mat-sys-shadow: rgb(16 16 24 / 0.16);
+    --mat-sys-scrim: rgb(10 10 14 / 0.45);
 
     /* Typescale (concise — we only override the most-used ones) */
     --mat-sys-body-large: 400 1rem / 1.5 var(--app-font-sans);
@@ -159,38 +163,39 @@
     --mat-sys-headline-small: 700 1.5rem / 1.25 var(--app-font-display);
 
     /* App tokens */
-    --app-bg: var(--slate-50);
+    --app-bg: #ffffff;
     --app-bg-elevated: #ffffff;
     --app-surface: #ffffff;
-    --app-surface-muted: var(--slate-100);
-    --app-surface-hover: var(--slate-100);
-    --app-border: var(--slate-200);
-    --app-border-strong: var(--slate-300);
-    --app-text: var(--slate-900);
-    --app-text-muted: var(--slate-500);
-    --app-text-subtle: var(--slate-400);
-    --app-accent: var(--indigo-500);
-    --app-accent-hover: var(--indigo-600);
-    --app-accent-soft: var(--indigo-50);
-    --app-accent-soft-strong: var(--indigo-100);
+    --app-surface-muted: #f6f6f7;
+    --app-surface-hover: #f6f6f7;
+    --app-border: #e9e9ec;
+    --app-border-strong: #dadadf;
+    --app-text: #17171c;
+    --app-text-muted: #5c5c68;
+    --app-text-subtle: #9898a3;
+    --app-accent: #e5383b;
+    --app-accent-hover: #cc2b2e;
+    --app-accent-soft: #fdeded;
+    --app-accent-soft-strong: #fbd9da;
+    --app-accent-text: #c4262a;
     --app-on-accent: #ffffff;
-    --app-success: var(--success-600);
-    --app-danger: var(--danger-600);
-    --app-warning: var(--warning-600);
+    --app-success: #1f9d55;
+    --app-danger: #d93c3c;
+    --app-warning: #b46a00;
 
-    --app-shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-    --app-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
-    --app-shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
-    --app-shadow-lg: 0 12px 32px -8px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.08);
-    --app-shadow-accent: 0 8px 20px -4px rgba(99, 102, 241, 0.4);
+    --app-shadow-xs: 0 1px 2px rgb(16 16 24 / 0.05);
+    --app-shadow-sm: 0 1px 2px rgb(16 16 24 / 0.05);
+    --app-shadow-md: 0 4px 16px rgb(16 16 24 / 0.08), 0 1px 3px rgb(16 16 24 / 0.06);
+    --app-shadow-lg: 0 24px 64px rgb(16 16 24 / 0.16), 0 2px 8px rgb(16 16 24 / 0.08);
+    --app-shadow-accent: 0 6px 20px color-mix(in srgb, #e5383b 40%, transparent);
 
-    /* Sidebar — light theme keeps brand-tinted shell for visual hierarchy */
-    --app-sidebar-bg: #ffffff;
-    --app-sidebar-text: var(--slate-700);
-    --app-sidebar-text-active: var(--indigo-600);
-    --app-sidebar-active-bg: var(--indigo-50);
-    --app-sidebar-hover-bg: var(--slate-100);
-    --app-sidebar-border: var(--slate-200);
+    /* Sidebar — quiet gray rail; the active item is a raised white chip */
+    --app-sidebar-bg: #fafafa;
+    --app-sidebar-text: #5c5c68;
+    --app-sidebar-text-active: #17171c;
+    --app-sidebar-active-bg: #ffffff;
+    --app-sidebar-hover-bg: #eeeef0;
+    --app-sidebar-border: #e9e9ec;
 
     /* ---------- Legacy aliases (preserve existing component CSS) ---------- */
     --primary: var(--app-bg-elevated);
@@ -212,7 +217,7 @@
     --search-confirm: var(--indigo-500);
     --logo-background: var(--indigo-500);
     --logo-color: #ffffff;
-    --gradient-logo: linear-gradient(135deg, var(--indigo-500), var(--violet-500));
+    --gradient-logo: linear-gradient(135deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)));
     --mat-sidenav-content-background-color: var(--app-bg);
     --mat-sidenav-container-background-color: var(--app-bg);
     --mat-sidenav-content-text-color: var(--app-text);
@@ -228,9 +233,9 @@
 
     /* M3 system tokens */
     --mat-sys-primary: var(--indigo-400);
-    --mat-sys-on-primary: var(--indigo-950);
-    --mat-sys-primary-container: var(--indigo-800);
-    --mat-sys-on-primary-container: var(--indigo-100);
+    --mat-sys-on-primary: #ffffff;
+    --mat-sys-primary-container: #4a1d20;
+    --mat-sys-on-primary-container: #ffd9da;
     --mat-sys-primary-fixed: var(--indigo-200);
     --mat-sys-primary-fixed-dim: var(--indigo-300);
     --mat-sys-on-primary-fixed: var(--indigo-900);
@@ -238,39 +243,39 @@
     --mat-sys-inverse-primary: var(--indigo-600);
 
     --mat-sys-secondary: var(--violet-400);
-    --mat-sys-on-secondary: #1a0b3d;
-    --mat-sys-secondary-container: #4c1d95;
-    --mat-sys-on-secondary-container: #ede4ff;
+    --mat-sys-on-secondary: #2a0e02;
+    --mat-sys-secondary-container: #4a2414;
+    --mat-sys-on-secondary-container: #ffe9df;
 
     --mat-sys-tertiary: var(--violet-400);
-    --mat-sys-on-tertiary: #1a0b3d;
-    --mat-sys-tertiary-container: #4c1d95;
-    --mat-sys-on-tertiary-container: #ede4ff;
+    --mat-sys-on-tertiary: #2a0e02;
+    --mat-sys-tertiary-container: #4a2414;
+    --mat-sys-on-tertiary-container: #ffe9df;
 
-    --mat-sys-error: #ff6b6b;
+    --mat-sys-error: #f06363;
     --mat-sys-on-error: #470000;
-    --mat-sys-error-container: #7f1d1d;
+    --mat-sys-error-container: #3a1a1c;
     --mat-sys-on-error-container: #fee2e2;
 
-    --mat-sys-background: #0b0d12;
-    --mat-sys-on-background: #e5e7ee;
-    --mat-sys-surface: #14161e;
-    --mat-sys-surface-dim: #0b0d12;
-    --mat-sys-surface-bright: #1f2230;
-    --mat-sys-surface-container-lowest: #0a0b10;
-    --mat-sys-surface-container-low: #0f1118;
-    --mat-sys-surface-container: #14161e;
-    --mat-sys-surface-container-high: #1c1f2a;
-    --mat-sys-surface-container-highest: #232737;
-    --mat-sys-on-surface: #e5e7ee;
-    --mat-sys-on-surface-variant: #aab0c0;
-    --mat-sys-surface-variant: #1c1f2a;
+    --mat-sys-background: #0e0e10;
+    --mat-sys-on-background: #ededf0;
+    --mat-sys-surface: #161618;
+    --mat-sys-surface-dim: #0e0e10;
+    --mat-sys-surface-bright: #27272b;
+    --mat-sys-surface-container-lowest: #0b0b0d;
+    --mat-sys-surface-container-low: #121214;
+    --mat-sys-surface-container: #161618;
+    --mat-sys-surface-container-high: #1d1d20;
+    --mat-sys-surface-container-highest: #27272b;
+    --mat-sys-on-surface: #ededf0;
+    --mat-sys-on-surface-variant: #a5a5ae;
+    --mat-sys-surface-variant: #1d1d20;
     --mat-sys-surface-tint: var(--indigo-400);
-    --mat-sys-inverse-surface: #e5e7ee;
-    --mat-sys-inverse-on-surface: #14161e;
+    --mat-sys-inverse-surface: #ededf0;
+    --mat-sys-inverse-on-surface: #161618;
 
-    --mat-sys-outline: #3a3f50;
-    --mat-sys-outline-variant: #2a2f3d;
+    --mat-sys-outline: #34343a;
+    --mat-sys-outline-variant: #26262a;
     --mat-sys-shadow: rgba(0, 0, 0, 0.6);
     --mat-sys-scrim: rgba(0, 0, 0, 0.6);
 
@@ -286,43 +291,44 @@
     --mat-sys-headline-small: 700 1.5rem / 1.25 var(--app-font-display);
 
     /* App tokens */
-    --app-bg: #0b0d12;
-    --app-bg-elevated: #14161e;
-    --app-surface: #14161e;
-    --app-surface-muted: #1c1f2a;
-    --app-surface-hover: #1c1f2a;
-    --app-border: #2a2f3d;
-    --app-border-strong: #3a3f50;
-    --app-text: #e5e7ee;
-    --app-text-muted: #aab0c0;
-    --app-text-subtle: #6b7185;
-    --app-accent: var(--indigo-400);
-    --app-accent-hover: var(--indigo-300);
-    --app-accent-soft: rgba(99, 102, 241, 0.16);
-    --app-accent-soft-strong: rgba(99, 102, 241, 0.24);
-    --app-on-accent: var(--indigo-950);
-    --app-success: var(--success-400);
-    --app-danger: #ff6b6b;
-    --app-warning: var(--warning-400);
+    --app-bg: #0e0e10;
+    --app-bg-elevated: #161618;
+    --app-surface: #161618;
+    --app-surface-muted: #1d1d20;
+    --app-surface-hover: #27272b;
+    --app-border: #26262a;
+    --app-border-strong: #34343a;
+    --app-text: #ededf0;
+    --app-text-muted: #a5a5ae;
+    --app-text-subtle: #6e6e78;
+    --app-accent: #ef4449;
+    --app-accent-hover: #f45f63;
+    --app-accent-soft: #351719;
+    --app-accent-soft-strong: #4a1d20;
+    --app-accent-text: #ff8b8e;
+    --app-on-accent: #ffffff;
+    --app-success: #4ade80;
+    --app-danger: #f06363;
+    --app-warning: #f0b04a;
 
-    --app-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-    --app-shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-    --app-shadow-md: 0 6px 16px -4px rgba(0, 0, 0, 0.55);
-    --app-shadow-lg: 0 16px 40px -10px rgba(0, 0, 0, 0.7);
-    --app-shadow-accent: 0 8px 24px -6px rgba(129, 140, 248, 0.5);
+    --app-shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
+    --app-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --app-shadow-md: 0 4px 16px rgb(0 0 0 / 0.4);
+    --app-shadow-lg: 0 24px 64px rgb(0 0 0 / 0.6);
+    --app-shadow-accent: 0 6px 20px color-mix(in srgb, #ef4449 35%, transparent);
 
-    --app-sidebar-bg: #0f1118;
-    --app-sidebar-text: #aab0c0;
-    --app-sidebar-text-active: var(--indigo-300);
-    --app-sidebar-active-bg: rgba(99, 102, 241, 0.16);
-    --app-sidebar-hover-bg: rgba(255, 255, 255, 0.04);
-    --app-sidebar-border: #1c1f2a;
+    --app-sidebar-bg: #121214;
+    --app-sidebar-text: #a5a5ae;
+    --app-sidebar-text-active: #ededf0;
+    --app-sidebar-active-bg: #1d1d20;
+    --app-sidebar-hover-bg: #27272b;
+    --app-sidebar-border: #26262a;
 
     /* ---------- Legacy aliases ---------- */
     --primary: var(--app-bg-elevated);
     --secondary: var(--app-bg);
     --primary-icon: var(--indigo-400);
-    --secondary-icon: #ff6b6b;
+    --secondary-icon: #f06363;
     --filter-icon: var(--app-text-muted);
     --primary-text: var(--app-text-muted);
     --secondary-text: var(--app-text);
@@ -335,10 +341,10 @@
     --field-outline-hover: var(--app-border-strong);
     --field-outline: var(--app-border);
     --arrow-color: var(--app-text-muted);
-    --search-confirm: var(--indigo-500);
-    --logo-background: var(--indigo-500);
+    --search-confirm: var(--app-accent);
+    --logo-background: var(--app-accent);
     --logo-color: #ffffff;
-    --gradient-logo: linear-gradient(135deg, var(--indigo-400), var(--violet-400));
+    --gradient-logo: linear-gradient(135deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)));
     --mat-sidenav-content-background-color: var(--app-bg);
     --mat-sidenav-container-background-color: var(--app-bg);
     --mat-sidenav-content-text-color: var(--app-text);

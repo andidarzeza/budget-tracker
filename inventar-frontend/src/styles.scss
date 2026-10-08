@@ -770,7 +770,7 @@ html.cdk-global-scrollblock {
 
 .dialog-btn--primary:hover {
     background: var(--app-accent-hover);
-    box-shadow: 0 12px 24px -6px rgba(99, 102, 241, 0.45);
+    box-shadow: 0 12px 24px -6px color-mix(in srgb, var(--app-accent) 45%, transparent);
 }
 
 .dialog-btn--primary:active {
@@ -1664,7 +1664,7 @@ button.toast-close-button {
 }
 
 .toast-info {
-    background-color: var(--indigo-600);
+    background-color: var(--slate-800);
 }
 
 .toast-warning {
@@ -2205,4 +2205,200 @@ table-body > div::-webkit-scrollbar-thumb:hover {
     padding: 16px;
     color: var(--app-text-muted);
     font-size: 0.88rem;
+}
+
+/* ============================================================================
+ * Workspace Manual look — global details
+ * Type scale, selection, modals, dialog buttons and toasts copied from the
+ * Workspace Manual app so both apps feel like one family.
+ * ========================================================================== */
+body {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+::selection {
+    background: var(--app-accent-soft);
+}
+
+/* Modals: 14px corners, hairline border, deep soft shadow, blurred scrim */
+.cdk-overlay-dark-backdrop {
+    background: rgb(10 10 14 / 0.45);
+    backdrop-filter: blur(2px);
+}
+
+.mat-mdc-dialog-container {
+    --mdc-dialog-container-shape: 14px;
+    --mat-dialog-container-shape: 14px;
+}
+
+.mat-mdc-dialog-surface {
+    border: 1px solid var(--app-border);
+    box-shadow: var(--app-shadow-lg) !important;
+}
+
+.delete-confirmation mat-dialog-container,
+.create-dialog mat-dialog-container {
+    border-radius: 14px;
+}
+
+/* Dialog buttons = Workspace Manual .btn */
+.dialog-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 14px;
+    border-radius: var(--app-radius-sm);
+    font-weight: 500;
+    letter-spacing: 0;
+    white-space: nowrap;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.dialog-btn:active,
+.dialog-btn--secondary:active,
+.dialog-btn--primary:active,
+.dialog-btn--danger:active {
+    transform: none;
+}
+
+.dialog-btn:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 22%, transparent);
+}
+
+.dialog-btn--secondary {
+    min-width: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--app-text-muted);
+}
+
+.dialog-btn--secondary:hover {
+    background: var(--app-surface-muted);
+    border-color: transparent;
+    color: var(--app-text);
+}
+
+.dialog-btn--primary {
+    min-width: 0;
+    background: var(--app-accent);
+    border: 1px solid var(--app-accent);
+    color: #fff;
+    box-shadow: var(--app-shadow-sm);
+}
+
+.dialog-btn--primary:hover {
+    background: var(--app-accent-hover);
+    border-color: var(--app-accent-hover);
+    box-shadow: var(--app-shadow-sm);
+}
+
+.dialog-btn--danger {
+    min-width: 0;
+    background: var(--app-danger);
+    border: 1px solid var(--app-danger);
+    color: #fff;
+    box-shadow: var(--app-shadow-sm);
+}
+
+.dialog-btn--danger:hover {
+    filter: none;
+    background: color-mix(in srgb, var(--app-danger) 88%, #000);
+    box-shadow: var(--app-shadow-sm);
+}
+
+.dialog-btn--danger:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-danger) 30%, transparent);
+}
+
+/* Toasts: one pill at the bottom center, inverted colors.
+   The configured position stays `toast-bottom-right`; it's re-centered here. */
+.toast-container.toast-bottom-right,
+.toast-container.toast-bottom-left,
+.toast-container.toast-top-right {
+    top: auto;
+    right: auto;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.toast-container .ngx-toastr,
+.toast-container .ngx-toastr.toast-success,
+.toast-container .ngx-toastr.toast-error,
+.toast-container .ngx-toastr.toast-info,
+.toast-container .ngx-toastr.toast-warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+    max-width: min(92vw, 520px);
+    margin: 6px 0 0;
+    padding: 9px 16px;
+    border-radius: 99px;
+    background-color: var(--app-text);
+    background-image: none;
+    color: var(--app-bg);
+    font-weight: 500;
+    box-shadow: var(--app-shadow-lg);
+    animation: wm-fade-in 0.2s ease;
+}
+
+.toast-container .ngx-toastr:hover {
+    transform: none;
+}
+
+.toast-container .ngx-toastr::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--app-text-subtle);
+}
+
+.toast-container .ngx-toastr.toast-success::before { background: var(--app-success); }
+.toast-container .ngx-toastr.toast-error::before { background: var(--app-danger); }
+.toast-container .ngx-toastr.toast-warning::before { background: var(--app-warning); }
+.toast-container .ngx-toastr.toast-info::before { background: var(--app-accent); }
+
+.toast-container .toast-title {
+    font-weight: 600;
+}
+
+.toast-container .toast-title + .toast-message::before {
+    content: "· ";
+}
+
+.toast-container .toast-close-button {
+    order: 9;
+    top: 0;
+    right: 0;
+    margin-left: 4px;
+    color: inherit;
+    text-shadow: none;
+    opacity: 0.6;
+}
+
+.toast-container .toast-progress {
+    display: none;
+}
+
+@keyframes wm-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* Pages fill the whole area to the right of the sidebar. */
+.application > .content-container:not(.content-container--public) > :not(router-outlet):not(app-welcome) {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    animation: wm-fade-in 0.2s ease;
 }

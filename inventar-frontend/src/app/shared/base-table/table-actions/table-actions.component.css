@@ -30,22 +30,29 @@
 .ta__title {
     display: flex;
     align-items: center;
-    padding: 14px 24px;
-    font-size: 1.1rem;
+    gap: 10px;
+    padding: 14px 16px;
+    font-size: 14px;
     font-weight: 600;
-    font-family: var(--app-font-display);
-    letter-spacing: -0.01em;
+    font-family: var(--app-font-sans);
     color: var(--app-text);
     min-width: 0;
 }
 
+/* Workspace Manual's .panel-icon: soft accent tile */
 .ta__title .primary-icon {
-    color: var(--app-accent);
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 16px !important;
+    line-height: 28px !important;
+    text-align: center;
+    border-radius: 7px;
+    background: var(--app-accent-soft);
+    color: var(--app-accent-text, var(--app-accent)) !important;
     flex-shrink: 0;
 }
 
 .ta__title-text {
-    margin-left: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -56,8 +63,8 @@
     align-items: center;
     justify-content: flex-end;
     flex-shrink: 0;
-    gap: 4px;
-    padding-right: 8px;
+    gap: 8px;
+    padding-right: 16px;
 }
 
 .ta--mobile .ta__actions {
@@ -75,8 +82,9 @@
 }
 
 .ta__icon-btn--active {
-    color: var(--app-accent) !important;
-    border-color: var(--app-accent) !important;
+    color: var(--app-accent-text, var(--app-accent)) !important;
+    background: var(--app-accent-soft) !important;
+    border-color: color-mix(in srgb, var(--app-accent) 35%, transparent) !important;
 }
 
 .ta__icon-badge {
@@ -101,23 +109,11 @@
 @media only screen and (max-width: 500px) {
     .ta__title {
         padding: 12px 12px;
-        font-size: 1rem;
-    }
-
-    .ta__title > mat-icon {
-        font-size: 19px !important;
-        width: 19px !important;
-        height: 19px !important;
-    }
-
-    .ta__title-text {
-        margin-left: 8px;
     }
 }
 
 @media only screen and (max-height: 600px) {
     .ta__title {
         padding: 14px 16px;
-        font-size: 1rem;
     }
 }

@@ -2,9 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -15,8 +13,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { AuthVisualComponent } from 'src/app/shared/auth-visual/auth-visual.component';
-import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
+import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -33,11 +30,8 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatButtonModule,
-    MatCardModule,
-    AuthVisualComponent,
-    LabeledFormInputComponent,
-    PillButtonComponent,
+    MatIconModule,
+    ThemeSwitchComponent,
   ],
 })
 export class LoginComponent {

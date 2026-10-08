@@ -38,7 +38,7 @@
     font-weight: 700;
     line-height: 1;
     color: #ffffff !important;
-    background: linear-gradient(135deg, var(--indigo-500) 0%, var(--violet-500) 100%) !important;
+    background: linear-gradient(135deg, var(--app-accent) 0%, color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)) 100%) !important;
     border-radius: 50%;
     box-shadow: var(--app-shadow-accent);
 }

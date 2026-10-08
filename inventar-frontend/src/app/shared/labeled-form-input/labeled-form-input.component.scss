@@ -1,19 +1,21 @@
 .form-field {
   display: flex;
   flex-direction: column;
+  gap: 5px;
 
   label {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 550;
+    color: var(--app-text-muted);
   }
 
   .input-wrapper {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 11px;
+    padding: 8px 11px;
     border: 1px solid;
-    border-radius: 6px;
+    border-radius: 7px;
     transition:
       border-color 0.15s ease,
       box-shadow 0.15s ease;
@@ -23,7 +25,7 @@
        Mirrors the focus animation on `cb-select-input`. */
     &:focus-within {
       border-color: var(--app-accent) !important;
-      box-shadow: 0 0 0 3px var(--app-accent-soft);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 22%, transparent);
     }
 
     .input-icon {
@@ -48,7 +50,7 @@
       }
 
       &::placeholder {
-        color: #9ca3af;
+        color: var(--app-text-subtle);
       }
     }
 

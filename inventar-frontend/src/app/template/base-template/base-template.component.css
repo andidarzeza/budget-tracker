@@ -32,7 +32,7 @@
     background: var(--app-bg);
 }
 
-.application:has(nav-bar) {
+.application:has(nav-bar mat-toolbar) {
     padding-top: calc(var(--app-toolbar-height, 68px) + env(safe-area-inset-top, 0px));
 }
 

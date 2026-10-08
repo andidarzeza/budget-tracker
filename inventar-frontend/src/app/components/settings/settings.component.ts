@@ -11,7 +11,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
 import { Router } from '@angular/router';
 import { Wallet } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
@@ -43,7 +43,7 @@ export const DEFAULT_INCOME_WALLET_KEY = 'defaultIncomeWalletId';
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,
-    MatSlideToggleModule,
+    ThemeSwitchComponent,
     SelectInputComponent,
   ],
 })
@@ -81,9 +81,6 @@ export class SettingsComponent implements OnInit {
 
   /** Routes the user can be dropped onto right after sign-in. */
   readonly landingPages: readonly string[] = ['/welcome', '/dashboard'];
-
-  /** Live signal so the toggle reflects external theme changes (nav-bar). */
-  readonly darkMode = signal(this.themeService.themeValue === 'dark-theme');
 
   /** Currency picker control — value persisted to localStorage on change. */
   readonly baseCurrencyControl = new FormControl<string | null>(
@@ -183,23 +180,6 @@ export class SettingsComponent implements OnInit {
       .list(accountId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((wallets) => this.sources.set((wallets ?? []).filter((w) => !w.archived)));
-  }
-
-  toggleDarkMode(checked: boolean): void {
-    const isDark = this.themeService.themeValue === 'dark-theme';
-    if (isDark === checked) return;
-
-    this.themeService.changeTheme();
-    this.sharedService.applyBodyTheme(this.themeService.themeValue);
-    this.darkMode.set(this.themeService.themeValue === 'dark-theme');
-
-    if (this.configurationService.configuration) {
-      this.configurationService.configuration.darkMode = checked;
-      this.configurationService
-        .updateConfiguration()
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ error: () => {} });
-    }
   }
 
   switchAccount(): void {

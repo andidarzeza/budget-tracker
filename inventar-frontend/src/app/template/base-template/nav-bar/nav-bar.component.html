@@ -1,4 +1,4 @@
-@if (authenticationService.currentUserValue) {
+@if (authenticationService.currentUserValue && isMobileLayout()) {
 <mat-toolbar class="toolbar" [style.left.px]="isMobileLayout() ? 0 : sidebarOffset()">
 
     @if (isMobileLayout()) {
@@ -35,14 +35,6 @@
         </nav>
     }
     <div class="nav-actions">
-
-        <button type="button" cb-icon-button
-            (click)="toggleDarkMode()"
-            [matTooltip]="themeService?.themeValue === 'dark-theme' ? 'Switch to light' : 'Switch to dark'"
-            matTooltipPosition="below"
-            aria-label="Toggle theme">
-            <mat-icon>{{ themeService?.themeValue === 'dark-theme' ? 'wb_sunny' : 'nights_stay' }}</mat-icon>
-        </button>
 
         <button type="button" class="nav-user"
             [matMenuTriggerFor]="userMenu"
