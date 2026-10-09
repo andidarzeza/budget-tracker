@@ -1,0 +1,51 @@
+<!-- Floating glass tab bar with a separate add button, like iOS 26 apps
+     (Music / Photos) that pair the tab capsule with a round action. -->
+@if (moreOpen()) {
+    <div class="more-backdrop" (click)="moreOpen.set(false)" aria-hidden="true"></div>
+
+    <div class="more-menu" role="menu" aria-label="More pages">
+        <div class="more-menu__list">
+            @for (item of moreItems; track item.link) {
+                <a class="more-menu__item" role="menuitem" [routerLink]="item.link"
+                    routerLinkActive="more-menu__item--active" (click)="moreOpen.set(false)">
+                    <span class="more-menu__icon" [style.background]="item.color" aria-hidden="true">
+                        <mat-icon fontSet="material-symbols-rounded">{{ item.icon }}</mat-icon>
+                    </span>
+                    <span class="more-menu__label">{{ item.label }}</span>
+                </a>
+            }
+        </div>
+        <div class="more-menu__theme">
+            <theme-switch></theme-switch>
+        </div>
+    </div>
+}
+
+<div class="dock">
+    <nav class="tabs" aria-label="Quick navigation">
+        <a class="tab" routerLink="/dashboard" routerLinkActive="tab--active" (click)="closeAll()">
+            <mat-icon fontSet="material-symbols-rounded">space_dashboard</mat-icon>
+            <span>Summary</span>
+        </a>
+        <a class="tab" routerLink="/expenses" routerLinkActive="tab--active"
+            [routerLinkActiveOptions]="{ exact: true }" (click)="closeAll()">
+            <mat-icon fontSet="material-symbols-rounded">trending_down</mat-icon>
+            <span>Expenses</span>
+        </a>
+        <a class="tab" routerLink="/incomes" routerLinkActive="tab--active"
+            [routerLinkActiveOptions]="{ exact: true }" (click)="closeAll()">
+            <mat-icon fontSet="material-symbols-rounded">trending_up</mat-icon>
+            <span>Incomes</span>
+        </a>
+        <button type="button" class="tab" [class.tab--active]="moreOpen() || onMorePage"
+            [attr.aria-expanded]="moreOpen()" aria-haspopup="menu"
+            aria-label="More pages" (click)="toggleMore()">
+            <mat-icon fontSet="material-symbols-rounded">{{ moreOpen() ? 'close' : 'more_horiz' }}</mat-icon>
+            <span>More</span>
+        </button>
+    </nav>
+
+    <button type="button" class="add" aria-label="Add expense" (click)="addExpense()">
+        <mat-icon>add</mat-icon>
+    </button>
+</div>

@@ -1,14 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, NgZone, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, interval, startWith } from 'rxjs';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { IConfiguration } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -18,29 +15,12 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { environment } from 'src/environments/environment';
-import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
-import { CurrencySymbolPipe } from '../../pipes/currency-symbol/currency-symbol.pipe';
-import { FlagPipe } from '../../pipes/flag-pipe/flag.pipe';
 
 @Component({
   selector: 'nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css'],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatDividerModule,
-    MatIconModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    RouterLink,
-    IconButtonComponent,
-    FlagPipe,
-    CurrencySymbolPipe,
-    ...TOOLTIP_IMPORTS,
-  ],
+  imports: [CommonModule, MatDividerModule, MatIconModule, MatMenuModule],
 })
 export class NavBarComponent implements OnInit {
   readonly sharedService = inject(SharedService);
@@ -52,17 +32,17 @@ export class NavBarComponent implements OnInit {
   readonly breakpointService = inject(BreakpointService);
   private readonly configurationService = inject(ConfigurationService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly zone = inject(NgZone);
 
   /** Same breakpoint as mobile table cards (≤767px). */
   readonly isMobileLayout = signal(false);
 
-  /** Pixels the toolbar's left edge needs to clear so it doesn't sit behind
-   *  the sidebar (which stacks above the navbar's parent stacking context). */
-  readonly sidebarOffset = signal(0);
 
-  /** Breadcrumb trail derived from the current router URL.
-   *  Shown only on desktop to fill the navbar's left side. */
-  readonly breadcrumbs = signal<Breadcrumb[]>([]);
+  /** Small centred title, shown once the page's large title scrolls away. */
+  readonly pageTitle = signal('');
+
+  /** True once the content has scrolled under the bar (switches it to glass). */
+  readonly scrolled = signal(false);
 
   /** Wall-clock time + browser-derived city for the navbar user chip. */
   readonly now = signal(new Date());
@@ -87,16 +67,17 @@ export class NavBarComponent implements OnInit {
     this.breakpointService.useTableCardLayout$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((mobile) => this.isMobileLayout.set(mobile));
-    this.sidebarService.currentWidth$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((width) => this.sidebarOffset.set(width));
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         startWith(null),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(() => this.breadcrumbs.set(this.buildBreadcrumbs(this.router.url)));
+      .subscribe(() => {
+        this.pageTitle.set(this.titleFor(this.router.url));
+        this.scrolled.set(false);
+      });
+    this.watchScroll();
     this.configurationService
       .getConfiguration()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -106,27 +87,34 @@ export class NavBarComponent implements OnInit {
       });
   }
 
-  /** Maps URL segments to a clickable breadcrumb trail. The first crumb is
-   *  always Home (→ /welcome) so users can jump out of any flow. Numeric / UUID
-   *  segments are labeled as "Detail" since we don't have entity names here. */
-  private buildBreadcrumbs(url: string): Breadcrumb[] {
-    const path = url.split('?')[0].split('#')[0];
-    const segments = path.split('/').filter(Boolean);
-    if (segments.length === 0) return [];
+  /** Title of the deepest known route segment ("/expenses/add" → "Add"). */
+  private titleFor(url: string): string {
+    const segments = url.split(/[?#]/)[0].split('/').filter(Boolean);
+    const last = segments[segments.length - 1];
+    return last ? this.labelForSegment(last) : '';
+  }
 
-    const crumbs: Breadcrumb[] = [{ label: 'Home', link: '/welcome' }];
-    let accumulated = '';
-    for (const segment of segments) {
-      accumulated += `/${segment}`;
-      crumbs.push({ label: this.labelForSegment(segment), link: accumulated });
-    }
-    return crumbs;
+  /**
+   * Phones scroll the window; slightly wider screens scroll the shell's
+   * `.content-container`. A capturing listener on the document sees both.
+   * Runs outside Angular so scrolling doesn't trigger change detection;
+   * only the (rare) flips of `scrolled` re-enter the zone.
+   */
+  private watchScroll(): void {
+    const onScroll = (e: Event) => {
+      const target = e.target as Element | Document;
+      const top = target instanceof Element ? target.scrollTop : window.scrollY;
+      const next = top > 44;
+      if (next !== this.scrolled()) this.zone.run(() => this.scrolled.set(next));
+    };
+    this.zone.runOutsideAngular(() => document.addEventListener('scroll', onScroll, { capture: true, passive: true }));
+    this.destroyRef.onDestroy(() => document.removeEventListener('scroll', onScroll, { capture: true }));
   }
 
   private labelForSegment(segment: string): string {
     const known: Record<string, string> = {
       welcome: 'Home',
-      dashboard: 'Dashboard',
+      dashboard: 'Summary',
       expenses: 'Expenses',
       incomes: 'Incomes',
       categories: 'Categories',
@@ -180,7 +168,3 @@ export class NavBarComponent implements OnInit {
   }
 }
 
-interface Breadcrumb {
-  label: string;
-  link: string;
-}

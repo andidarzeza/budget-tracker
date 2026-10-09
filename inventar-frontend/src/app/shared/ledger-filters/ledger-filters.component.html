@@ -1,0 +1,24 @@
+<button type="button" cb-icon-button class="lf-trigger" [class.lf-trigger--active]="count() > 0"
+    (click)="open.set(true)" [attr.aria-expanded]="open()" aria-label="Filters">
+    <mat-icon>filter_list</mat-icon>
+    @if (count() > 0) {
+        <span class="lf-trigger__badge" aria-hidden="true">{{ count() }}</span>
+    }
+</button>
+
+@if (open()) {
+    <!-- Moved to <body> while open so it covers the tab bar too. -->
+    <div #layer class="lf-layer">
+        <div class="lf-backdrop" (click)="close()" aria-hidden="true"></div>
+        <div class="lf-sheet" role="dialog" aria-label="Filters">
+            <span class="lf-sheet__grabber" aria-hidden="true"></span>
+            <filter
+                [filterOptions]="filterOptions"
+                [initialValues]="values()"
+                (applied)="onApplied($event)"
+                (reset)="onReset()"
+                (closed)="close()">
+            </filter>
+        </div>
+    </div>
+}

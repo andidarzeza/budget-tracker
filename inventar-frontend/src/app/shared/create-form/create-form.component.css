@@ -11,8 +11,8 @@
     position: relative;
     flex: 1 1 auto;
     min-height: 0;
-    padding: 24px 28px 8px;
-    background: var(--secondary);
+    padding: 20px 20px 28px;
+    background: var(--ios-sheet-bg);
     overflow-y: auto;
     overflow-x: hidden;
     box-sizing: border-box;

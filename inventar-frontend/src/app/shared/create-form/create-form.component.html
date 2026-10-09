@@ -1,4 +1,5 @@
-<create-header [icon]="icon" [entity]="entity" [editMode]="editMode" (close)="closeDialog($event)"></create-header>
+<create-header [icon]="icon" [entity]="entity" [editMode]="editMode" [showConfirm]="!hideDefaultFooter" [confirmLabel]="confirmLabel"
+    (close)="closeDialog($event)" (create)="add()"></create-header>
 <div class="content-container">
     <form-spinner [loadingData]="loadingData" [message]="loadingMessage"></form-spinner>
     <ng-content></ng-content>
@@ -10,8 +11,7 @@
   scrolls inside `.content-container`.
 
   Use this when you need custom action buttons (a wizard's Back/Next/Save,
-  for example) and pair it with `[hideDefaultFooter]="true"` so the
-  default Cancel/Save row doesn't render alongside.
+  for example) and pair it with `[hideDefaultFooter]="true"`, which also
+  hides the header's Add / Done button.
 -->
 <ng-content select=".dialog-footer-slot"></ng-content>
-<create-footer *ngIf="!hideDefaultFooter" [editMode]="editMode" (create)="add()" (cancel)="closeDialog(false)"></create-footer>

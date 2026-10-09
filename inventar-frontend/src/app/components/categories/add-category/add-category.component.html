@@ -49,29 +49,32 @@
 <create-form [loadingData]="loadingData" [loadingMessage]="loadingMessage" icon="list_alt" [entity]="entity" [editMode]="isEditMode" (close)="closeDialog($event)" (create)="add()">
 
     <form [formGroup]="categoryGroup" class="dialog-form">
-        <div class="dialog-form__row dialog-form__row--category">
-            <cb-labeled-form-input class="dialog-form__field"
-                label="Category"
-                type="text"
-                [control]="$any(categoryGroup.get('category'))">
-            </cb-labeled-form-input>
+        <!-- Apple grouped form: label-left rows, notes in their own group. -->
+        <div class="ios-form">
+            <div class="ios-group">
+                <cb-labeled-form-input
+                    label="Category"
+                    type="text"
+                    [control]="$any(categoryGroup.get('category'))">
+                </cb-labeled-form-input>
 
-            <cb-select-input class="dialog-form__field"
-                label="Category Type"
-                [control]="$any(categoryGroup.get('categoryType'))"
-                [options]="categoryTypes">
-            </cb-select-input>
+                <cb-select-input
+                    label="Category Type"
+                    [control]="$any(categoryGroup.get('categoryType'))"
+                    [options]="categoryTypes">
+                </cb-select-input>
 
-            <div class="dialog-form__icon-slot">
                 <select-icon formControlName="icon"></select-icon>
             </div>
-        </div>
 
-        <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
-            label="Description"
-            placeholder="Write a note…"
-            [control]="$any(categoryGroup.get('description'))">
-        </cb-labeled-textarea>
+            <div class="ios-group">
+                <cb-labeled-textarea
+                    label="Description"
+                    placeholder="Write a note…"
+                    [control]="$any(categoryGroup.get('description'))">
+                </cb-labeled-textarea>
+            </div>
+        </div>
     </form>
 </create-form>
 </ng-template>

@@ -14,6 +14,8 @@
                         (click)="openAddEditForm()">
                         New
                     </button>
+                    <ledger-filters [filterOptions]="filterOptions"
+                        (search)="onSearch($event)" (reset)="resetAndQuery()"></ledger-filters>
                     <button type="button" cb-icon-button [matMenuTriggerFor]="ledgerMenu"
                         matTooltip="More" matTooltipPosition="below" aria-label="More options">
                         <mat-icon>more_horiz</mat-icon>
@@ -55,7 +57,8 @@
                     <h2 class="ledger-section__label">{{ group.label }}</h2>
                     <article class="ledger-section__card">
                         @for (item of group.items; track item.id; let last = $last) {
-                            <div class="ledger-item" [class.ledger-item--last]="last">
+                            <div class="ledger-item" [class.ledger-item--last]="last"
+                                longPressDelete (deleteRequested)="delete(item.id)">
                                 <button type="button" class="ledger-item__main"
                                     (click)="openAddEditForm(item)"
                                     [attr.aria-label]="'Edit ' + (item.category || 'category')">
@@ -72,22 +75,6 @@
                                         }
                                     </span>
                                 </button>
-                                <button type="button" cb-icon-button size="sm" class="ledger-item__menu-trigger"
-                                    [matMenuTriggerFor]="itemMenu"
-                                    matTooltip="More" matTooltipPosition="left"
-                                    aria-label="More actions">
-                                    <mat-icon>more_vert</mat-icon>
-                                </button>
-                                <mat-menu #itemMenu="matMenu" xPosition="before">
-                                    <button mat-menu-item (click)="openAddEditForm(item)">
-                                        <mat-icon>edit</mat-icon>
-                                        <span>Edit</span>
-                                    </button>
-                                    <button mat-menu-item (click)="openDeleteConfirmDialog(item.id)">
-                                        <mat-icon>delete</mat-icon>
-                                        <span>Delete</span>
-                                    </button>
-                                </mat-menu>
                             </div>
                         }
                     </article>

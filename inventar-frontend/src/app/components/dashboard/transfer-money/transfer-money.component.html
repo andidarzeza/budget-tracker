@@ -3,66 +3,62 @@
     loadingMessage="Working…"
     icon="swap_horiz"
     [entity]="entity"
-    [editMode]="true"
-    [hideDefaultFooter]="true"
-    (close)="close()">
+    [editMode]="false"
+    confirmLabel="Move"
+    (close)="close()"
+    (create)="save()">
 
-    <form [formGroup]="formGroup" class="dialog-form transfer-form">
-        <p class="transfer-form__intro">
-            Move money between your sources — for example, cash you withdrew from a bank account.
-        </p>
+    <!-- Apple grouped form: where from / to, how much, then a note. -->
+    <form [formGroup]="formGroup" class="dialog-form ios-form">
+        <section>
+            <p class="ios-group-label">Move money between your sources</p>
+            <div class="ios-group">
+                <cb-select-input
+                    label="From"
+                    emptyText="No sources yet"
+                    [control]="$any(formGroup.get('fromWalletId'))"
+                    [options]="sources()"
+                    [displayWith]="displaySource"
+                    [valueWith]="$any(sourceIdValue)">
+                </cb-select-input>
 
-        <cb-select-input class="dialog-form__field"
-            label="From"
-            emptyText="No sources yet"
-            [control]="$any(formGroup.get('fromWalletId'))"
-            [options]="sources()"
-            [displayWith]="displaySource"
-            [valueWith]="$any(sourceIdValue)">
-        </cb-select-input>
+                <cb-select-input
+                    label="To"
+                    emptyText="No sources yet"
+                    [control]="$any(formGroup.get('toWalletId'))"
+                    [options]="sources()"
+                    [displayWith]="displaySource"
+                    [valueWith]="$any(sourceIdValue)">
+                </cb-select-input>
+            </div>
+        </section>
 
-        <div class="transfer-form__arrow" aria-hidden="true">
-            <mat-icon>south</mat-icon>
+        <section>
+            <div class="ios-group">
+                <cb-labeled-form-input
+                    [label]="crossCurrency() ? ('Amount sent' + (fromWallet() ? ' (' + fromWallet()!.currency + ')' : '')) : 'Amount'"
+                    type="number"
+                    [minErrorKey]="'Enter a positive amount.'"
+                    [control]="$any(formGroup.get('amountFrom'))">
+                </cb-labeled-form-input>
+
+                <cb-labeled-form-input *ngIf="crossCurrency()"
+                    [label]="'Amount received' + (toWallet() ? ' (' + toWallet()!.currency + ')' : '')"
+                    type="number"
+                    [control]="$any(formGroup.get('amountTo'))">
+                </cb-labeled-form-input>
+            </div>
+            <p *ngIf="crossCurrency()" class="ios-group-footer">
+                The two sources use different currencies, so enter how much actually lands in the destination.
+            </p>
+        </section>
+
+        <div class="ios-group">
+            <cb-labeled-textarea
+                label="Note"
+                placeholder="Optional note about this transfer…"
+                [control]="$any(formGroup.get('description'))">
+            </cb-labeled-textarea>
         </div>
-
-        <cb-select-input class="dialog-form__field"
-            label="To"
-            emptyText="No sources yet"
-            [control]="$any(formGroup.get('toWalletId'))"
-            [options]="sources()"
-            [displayWith]="displaySource"
-            [valueWith]="$any(sourceIdValue)">
-        </cb-select-input>
-
-        <cb-labeled-form-input class="dialog-form__field"
-            [label]="crossCurrency() ? ('Amount sent' + (fromWallet() ? ' (' + fromWallet()!.currency + ')' : '')) : 'Amount'"
-            type="number"
-            [minErrorKey]="'Enter a positive amount.'"
-            [control]="$any(formGroup.get('amountFrom'))">
-        </cb-labeled-form-input>
-
-        <cb-labeled-form-input *ngIf="crossCurrency()" class="dialog-form__field"
-            [label]="'Amount received' + (toWallet() ? ' (' + toWallet()!.currency + ')' : '')"
-            type="number"
-            [control]="$any(formGroup.get('amountTo'))">
-        </cb-labeled-form-input>
-
-        <p *ngIf="crossCurrency()" class="transfer-form__hint">
-            <mat-icon class="transfer-form__hint-icon" aria-hidden="true">info</mat-icon>
-            <span>The two sources use different currencies, so enter how much actually lands in the destination.</span>
-        </p>
-
-        <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
-            label="Note"
-            placeholder="Optional note about this transfer…"
-            [control]="$any(formGroup.get('description'))">
-        </cb-labeled-textarea>
     </form>
-
-    <footer class="dialog-footer dialog-footer-slot transfer-form__footer">
-        <button type="button" cb-pill-button icon="close" (click)="close()">Cancel</button>
-        <button type="button" cb-pill-button variant="primary" icon="swap_horiz" (click)="save()">
-            Move money
-        </button>
-    </footer>
 </create-form>

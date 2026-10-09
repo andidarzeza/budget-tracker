@@ -1,0 +1,217 @@
+:host {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Above the mobile-nav backdrop (11), below the drawer itself (19/20). */
+    z-index: 15;
+    pointer-events: none;
+}
+
+/* Floats above the content with a margin, clear of the home indicator. */
+.dock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px max(10px, env(safe-area-inset-bottom, 0px));
+    pointer-events: none;
+}
+
+/* Glass capsule: translucent, blurred, hairline rim and a soft shadow. */
+.tabs {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    height: var(--app-tab-bar-height);
+    padding: 4px;
+    box-sizing: border-box;
+    border-radius: 999px;
+    background: var(--ios-glass);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    backdrop-filter: saturate(180%) blur(24px);
+    box-shadow: var(--ios-glass-shadow);
+    pointer-events: auto;
+}
+
+.tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--app-text);
+    font-family: var(--app-font-sans);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.25s var(--app-easing-standard), color 0.2s ease, transform 0.15s ease;
+}
+
+.tab mat-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    line-height: 24px;
+    font-variation-settings: 'FILL' 0, 'wght' 450, 'opsz' 24;
+}
+
+.tab:active {
+    transform: scale(0.94);
+}
+
+/* Selected tab: tinted glyph and label on a soft pill. */
+.tab--active {
+    color: var(--app-accent);
+    background: var(--ios-fill-3);
+}
+
+.tab--active mat-icon {
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 24;
+}
+
+/* Round add button beside the capsule. */
+.add {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: var(--app-tab-bar-height);
+    height: var(--app-tab-bar-height);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--app-accent);
+    color: #ffffff;
+    box-shadow: var(--ios-glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+    transition: transform 0.15s ease;
+}
+
+.add:active {
+    transform: scale(0.92);
+}
+
+.add mat-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    line-height: 30px;
+}
+
+/* ── "More" popup ────────────────────────────────────────────────────────
+   Floats just above the tab bar, right edge aligned with the capsule's
+   (where the More tab sits), and grows out of that corner like an iOS
+   context menu. A clear full-screen layer behind it closes it on tap. */
+.more-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.12);
+    pointer-events: auto;
+    animation: more-fade 0.2s ease both;
+}
+
+.more-menu {
+    position: fixed;
+    right: calc(16px + var(--app-tab-bar-height) + 10px);
+    bottom: calc(var(--app-tab-bar-height) + max(10px, env(safe-area-inset-bottom, 0px)) + 10px);
+    width: min(260px, calc(100vw - 32px));
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: auto;
+    transform-origin: bottom right;
+    animation: more-pop 0.28s var(--app-easing-emphasized) both;
+}
+
+.more-menu__list,
+.more-menu__theme {
+    border-radius: 18px;
+    background: var(--ios-menu);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    backdrop-filter: saturate(180%) blur(30px);
+    box-shadow: var(--ios-glass-shadow);
+    overflow: hidden;
+}
+
+.more-menu__theme {
+    padding: 6px;
+}
+
+.more-menu__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 46px;
+    padding: 0 16px;
+    color: var(--app-text);
+    font-family: var(--app-font-sans);
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.more-menu__item + .more-menu__item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 56px;
+    right: 0;
+    border-top: 0.5px solid var(--ios-separator);
+}
+
+.more-menu__item:active {
+    background: var(--ios-fill);
+}
+
+.more-menu__item--active .more-menu__label {
+    color: var(--app-accent);
+    font-weight: 600;
+}
+
+.more-menu__icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    color: #ffffff;
+}
+
+.more-menu__icon mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 20;
+}
+
+@keyframes more-pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes more-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .more-menu,
+    .more-backdrop {
+        animation: none;
+    }
+}

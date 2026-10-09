@@ -32,7 +32,7 @@
     background: var(--app-bg);
 }
 
-.application:has(nav-bar mat-toolbar) {
+.application:has(nav-bar .toolbar) {
     padding-top: calc(var(--app-toolbar-height, 68px) + env(safe-area-inset-top, 0px));
 }
 
@@ -58,6 +58,11 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     background: var(--app-bg);
+}
+
+/* Room for the fixed mobile tab bar so the last rows can scroll into view. */
+.content-container--tab-bar {
+    padding-bottom: calc(var(--app-tab-bar-height) + max(10px, env(safe-area-inset-bottom, 0px)) + 24px);
 }
 
 .content-container--public {

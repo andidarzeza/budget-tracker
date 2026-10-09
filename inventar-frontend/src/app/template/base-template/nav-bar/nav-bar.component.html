@@ -1,94 +1,38 @@
 @if (authenticationService.currentUserValue && isMobileLayout()) {
-<mat-toolbar class="toolbar" [style.left.px]="isMobileLayout() ? 0 : sidebarOffset()">
+<!-- iOS-style navigation bar: transparent over the page's large title, then
+     frosted glass with a small centred title once the content scrolls. -->
+<header class="toolbar" [class.toolbar--scrolled]="scrolled()">
+    <span class="toolbar__side" aria-hidden="true"></span>
 
-    @if (isMobileLayout()) {
-        <button type="button" cb-icon-button
-            (click)="sidebarService.toggleMobileMenu()"
-            matTooltip="Open navigation menu" matTooltipPosition="below"
-            aria-label="Open navigation menu">
-            <mat-icon>menu</mat-icon>
-        </button>
-    } @else {
-        <nav class="nav-breadcrumbs" aria-label="Breadcrumb">
-            <ol class="nav-breadcrumbs-list">
-                @for (crumb of breadcrumbs(); track crumb.link; let last = $last; let first = $first) {
-                    <li class="nav-breadcrumbs-item">
-                        @if (last) {
-                            <span class="nav-breadcrumbs-current" aria-current="page">
-                                @if (first) {
-                                    <mat-icon class="nav-breadcrumbs-home-icon" aria-hidden="true">home</mat-icon>
-                                }
-                                {{ crumb.label }}
-                            </span>
-                        } @else {
-                            <a class="nav-breadcrumbs-link" [routerLink]="crumb.link">
-                                @if (first) {
-                                    <mat-icon class="nav-breadcrumbs-home-icon" aria-hidden="true">home</mat-icon>
-                                }
-                                {{ crumb.label }}
-                            </a>
-                            <mat-icon class="nav-breadcrumbs-sep" aria-hidden="true">chevron_right</mat-icon>
-                        }
-                    </li>
-                }
-            </ol>
-        </nav>
-    }
-    <div class="nav-actions">
+    <h1 class="toolbar__title" [attr.aria-hidden]="!scrolled()">{{ pageTitle() }}</h1>
 
-        <button type="button" class="nav-user"
+    <div class="toolbar__side toolbar__side--end">
+        <button type="button" class="nav-avatar-btn"
             [matMenuTriggerFor]="userMenu"
             aria-label="Account menu">
-            <span class="nav-user-meta">
-                <span class="nav-user-time">{{ now() | date:'HH:mm' }}</span>
-                <span class="nav-user-sep" aria-hidden="true">·</span>
-                <span class="nav-user-loc">{{ location() }}</span>
-            </span>
             <span class="nav-avatar" aria-hidden="true">
                 {{ firstName?.charAt(0) | uppercase }}{{ lastName?.charAt(0) | uppercase }}
             </span>
-            <span class="nav-user-name">{{ firstName | titlecase }} {{ lastName | titlecase }}</span>
-            <mat-icon class="nav-user-caret" aria-hidden="true">expand_more</mat-icon>
         </button>
-
-        <mat-menu xPosition="before" class="user-menu" #userMenu="matMenu">
-            <button (click)="switchAccount()" mat-menu-item>
-                <mat-icon>swap_horiz</mat-icon>Switch Account
-            </button>
-            <button (click)="logout()" mat-menu-item>
-                <mat-icon>logout</mat-icon>Logout
-            </button>
-        </mat-menu>
-
-            <mat-menu #balance="matMenu">
-               <div (click)="$event.stopPropagation()" class="balance-info">
-                    <div style="padding: 16px;font-size: 16px;display: flex;align-items: center;">
-                        <mat-icon class="primary-icon">
-                            account_balance_wallet
-                        </mat-icon>
-                        <span class="title" style="margin-left: 16px;">
-                            Balance
-                        </span>
-                    </div>
-
-                    <mat-divider></mat-divider>
-
-                    <div style="max-height: 156px;overflow: auto;">
-                        @for (bal of accountService?.account?.balance | keyvalue; track bal.key) {
-                            <div class="title" style="padding: 16px;display: flex;justify-content: space-between;align-items: center;">
-                                <div>
-                                    {{ bal?.key | flag }} {{ bal?.key }}
-                                </div>
-                                <div>
-                                    {{ bal?.value | number:'1.0':'en-US' }} {{ bal?.key | currencySymbol }}
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-               </div>
-            </mat-menu>
-
     </div>
-</mat-toolbar>
+
+    <mat-menu xPosition="before" class="user-menu" #userMenu="matMenu">
+        <div class="user-menu__head" (click)="$event.stopPropagation()">
+            <span class="nav-avatar nav-avatar--lg" aria-hidden="true">
+                {{ firstName?.charAt(0) | uppercase }}{{ lastName?.charAt(0) | uppercase }}
+            </span>
+            <span class="user-menu__who">
+                <span class="user-menu__name">{{ firstName | titlecase }} {{ lastName | titlecase }}</span>
+                <span class="user-menu__meta">{{ now() | date:'HH:mm' }} · {{ location() }}</span>
+            </span>
+        </div>
+        <mat-divider></mat-divider>
+        <button (click)="switchAccount()" mat-menu-item>
+            <mat-icon>swap_horiz</mat-icon>Switch Account
+        </button>
+        <button (click)="logout()" mat-menu-item>
+            <mat-icon>logout</mat-icon>Logout
+        </button>
+    </mat-menu>
+</header>
 }

@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signa
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { ToastrService } from 'ngx-toastr';
 import { EntityType, Transfer, Wallet } from 'src/app/models/models';
 import { TransferService } from 'src/app/services/pages/transfer.service';
@@ -11,7 +10,6 @@ import { WalletService } from 'src/app/services/pages/wallet.service';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
-import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -28,18 +26,15 @@ interface TransferMoneyData {
 @Component({
   selector: 'app-transfer-money',
   templateUrl: './transfer-money.component.html',
-  styleUrls: ['./transfer-money.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatIconModule,
     CreateFormComponent,
     LabeledFormInputComponent,
     LabeledTextareaComponent,
     SelectInputComponent,
-    PillButtonComponent,
   ],
 })
 export class TransferMoneyComponent {

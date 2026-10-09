@@ -1,3 +1,4 @@
+import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -76,6 +77,12 @@ const routes: Routes = [
       import('./components/history/history.component').then((m) => m.HistoryComponent),
     canActivate: [AuthGuardService],
   },
+  {
+    path: 'exchange',
+    loadComponent: () =>
+      import('./components/exchange/exchange.component').then((m) => m.ExchangeComponent),
+    canActivate: [AuthGuardService],
+  },
   { path: '**', pathMatch: 'full', component: NotFoundComponent },
 ];
 
@@ -90,6 +97,10 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
     provideToastr(),
+    // CDK 21 puts dialogs/menus in the browser's top layer (popover API),
+    // which sits above any z-index — toasts would end up hidden behind an
+    // open dialog. Keep overlays in the normal stacking order instead.
+    { provide: OVERLAY_DEFAULT_CONFIG, useValue: { usePopover: false } },
     // Material datepickers (dashboard pickers, expense/income date input) need
     // a DateAdapter from the environment injector — providing it once here
     // avoids per-component MatNativeDateModule plumbing.

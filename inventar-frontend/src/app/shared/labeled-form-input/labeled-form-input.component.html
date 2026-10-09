@@ -1,4 +1,4 @@
-<div class="form-field" [style.gap]="label ? '.25rem' : ''">
+<div class="form-field" [style.gap]="label ? '.25rem' : ''" (click)="focusInput($event, input)">
   <label [for]="inputId || null">
     {{ label }}
     @if (required) {
@@ -13,6 +13,7 @@
       <span class="phone-prefix" [class.required-text]="displayError">+355</span>
     }
     <input
+      #input
       [id]="inputId || null"
       [type]="type"
       [placeholder]="placeholder"

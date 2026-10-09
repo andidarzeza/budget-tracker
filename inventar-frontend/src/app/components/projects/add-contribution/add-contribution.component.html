@@ -1,34 +1,37 @@
 <create-form [loadingData]="loadingData()" [loadingMessage]="loadingMessage()" icon="savings" [entity]="entity"
     [editMode]="isEditMode" (close)="closeDialog($event)" (create)="add()">
 
-    <form [formGroup]="formGroup" class="dialog-form">
-        <div class="dialog-form__row">
-            <cb-labeled-form-input class="dialog-form__field"
-                label="Amount"
-                type="number"
-                [minErrorKey]="'Enter a positive amount.'"
-                [control]="$any(formGroup.get('amount'))">
-            </cb-labeled-form-input>
+    <!-- Apple grouped form: amount and source, then a note. -->
+    <form [formGroup]="formGroup" class="dialog-form ios-form">
+        <section>
+            <div class="ios-group">
+                <cb-labeled-form-input
+                    label="Amount"
+                    type="number"
+                    [minErrorKey]="'Enter a positive amount.'"
+                    [control]="$any(formGroup.get('amount'))">
+                </cb-labeled-form-input>
 
-            <cb-select-input class="dialog-form__field"
-                label="Funded from"
-                emptyText="No sources yet"
-                [control]="$any(formGroup.get('walletId'))"
-                [options]="sources()"
-                [displayWith]="displaySource"
-                [valueWith]="$any(sourceIdValue)">
-            </cb-select-input>
+                <cb-select-input
+                    label="Funded from"
+                    emptyText="No sources yet"
+                    [control]="$any(formGroup.get('walletId'))"
+                    [options]="sources()"
+                    [displayWith]="displaySource"
+                    [valueWith]="$any(sourceIdValue)">
+                </cb-select-input>
+            </div>
+            <p class="ios-group-footer">
+                This contribution is also recorded as an expense under <strong>Savings</strong>, reducing the selected source's balance.
+            </p>
+        </section>
+
+        <div class="ios-group">
+            <cb-labeled-textarea
+                label="Note"
+                placeholder="Optional note about this deposit…"
+                [control]="$any(formGroup.get('description'))">
+            </cb-labeled-textarea>
         </div>
-
-        <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
-            label="Note"
-            placeholder="Optional note about this deposit…"
-            [control]="$any(formGroup.get('description'))">
-        </cb-labeled-textarea>
-
-        <p class="contribution-hint">
-            <mat-icon class="contribution-hint__icon" aria-hidden="true">info</mat-icon>
-            <span>This contribution will also be recorded as an expense under <strong>Savings</strong>, reducing the selected source's balance.</span>
-        </p>
     </form>
 </create-form>

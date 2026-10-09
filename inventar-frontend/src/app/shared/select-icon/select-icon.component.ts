@@ -199,6 +199,11 @@ export class SelectIconComponent implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 
+  /** Clicking the label or row padding opens the picker (the button itself already does). */
+  openFromRow(event: MouseEvent): void {
+    if (!(event.target as Element).closest('.input-wrapper')) this.open();
+  }
+
   open(): void {
     if (this.disabled) return;
     this.showIconSelect.set(true);

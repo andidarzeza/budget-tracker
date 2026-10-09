@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { inOutAnimation } from 'src/app/animations';
 import { EntityType } from 'src/app/models/models';
-import { CreateFooterComponent } from './create-footer/create-footer.component';
 import { CreateHeaderComponent } from './create-header/create-header.component';
 import { FormSpinnerComponent } from './form-spinner/form-spinner.component';
 
@@ -10,7 +9,7 @@ import { FormSpinnerComponent } from './form-spinner/form-spinner.component';
   selector: 'create-form',
   templateUrl: './create-form.component.html',
   styleUrls: ['./create-form.component.css'],
-  imports: [CommonModule, CreateHeaderComponent, CreateFooterComponent, FormSpinnerComponent],
+  imports: [CommonModule, CreateHeaderComponent, FormSpinnerComponent],
   animations: [inOutAnimation],
 })
 export class CreateFormComponent {
@@ -20,8 +19,10 @@ export class CreateFormComponent {
   @Input() loadingData: boolean;
   /** Optional text under the spinner (defaults in form-spinner if omitted). */
   @Input() loadingMessage: string;
-  /** When true, the default Cancel / Save footer is hidden so the projected content can supply its own actions. */
+  /** When true, the header's Add / Done is hidden so the projected content can supply its own actions. */
   @Input() hideDefaultFooter = false;
+  /** Overrides the header's "Add" / "Done" label. */
+  @Input() confirmLabel?: string;
 
   @Output() close = new EventEmitter<boolean>();
   @Output() create = new EventEmitter<void>();

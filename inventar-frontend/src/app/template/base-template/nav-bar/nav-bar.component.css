@@ -1,242 +1,135 @@
-/* App-wide top bar */
+/* iOS navigation bar (mobile only — the template renders nothing on desktop).
+   At rest it is invisible and the page's own large title is the header; once
+   the content scrolls under it, it turns into frosted glass with a hairline
+   and a small centred title fades in, like UINavigationBar's large-title mode. */
 
 .toolbar {
-    position: fixed !important;
-    top: 0 !important;
+    position: fixed;
+    top: 0;
     left: 0;
-    right: 0 !important;
-    width: auto !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    z-index: 14 !important;
-    /* In standalone PWA mode with black-translucent status bar the toolbar starts
-       at the very top of the screen. Add the safe-area inset to the height and
-       to padding-top so icons clear the clock / battery row. */
-    min-height: calc(var(--app-toolbar-height, 68px) + env(safe-area-inset-top, 0px)) !important;
-    height: calc(var(--app-toolbar-height, 68px) + env(safe-area-inset-top, 0px)) !important;
-    padding: max(8px, env(safe-area-inset-top, 8px)) 20px 8px !important;
-    box-sizing: border-box !important;
-    background: var(--app-bg-elevated) !important;
-    color: var(--app-text) !important;
-    border-bottom: 1px solid var(--app-border);
-    box-shadow: none;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-}
-
-.nav-actions {
-    display: inline-flex;
+    right: 0;
+    z-index: 14;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    height: calc(var(--app-toolbar-height, 52px) + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) 16px 0;
+    box-sizing: border-box;
+    color: var(--app-text);
+    background: transparent;
+    border-bottom: 0.5px solid transparent;
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        -webkit-backdrop-filter 0.25s ease,
+        backdrop-filter 0.25s ease;
 }
 
-/* Desktop-only breadcrumbs filling the navbar's left side */
-.nav-breadcrumbs {
-    display: inline-flex;
+.toolbar--scrolled {
+    background: var(--ios-bar);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-bottom-color: var(--ios-separator);
+}
+
+.toolbar__side {
+    display: flex;
     align-items: center;
     min-width: 0;
-    overflow: hidden;
 }
 
-.nav-breadcrumbs-list {
-    display: inline-flex;
-    align-items: center;
-    list-style: none;
+.toolbar__side--end {
+    justify-content: flex-end;
+}
+
+.toolbar__title {
     margin: 0;
-    padding: 0;
-    gap: 2px;
-    min-width: 0;
-    overflow: hidden;
-}
-
-.nav-breadcrumbs-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    min-width: 0;
-}
-
-.nav-breadcrumbs-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--app-text-muted);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
-}
-
-.nav-breadcrumbs-link:hover {
-    color: var(--app-accent);
-    background: color-mix(in srgb, var(--app-accent) 10%, transparent);
-}
-
-.nav-breadcrumbs-current {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
-    font-size: 0.88rem;
+    font-family: var(--app-font-display);
+    font-size: 17px;
     font-weight: 600;
-    color: var(--app-text);
+    letter-spacing: -0.02em;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.25s var(--app-easing-standard);
 }
 
-.nav-breadcrumbs-sep {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: var(--app-text-subtle);
-    flex-shrink: 0;
+.toolbar--scrolled .toolbar__title {
+    opacity: 1;
+    transform: none;
 }
 
-.nav-breadcrumbs-home-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-}
-
-.balance-info {
-    width: 400px;
-    cursor: default;
-    background: var(--app-bg-elevated);
-}
-
-.nav-menu-button {
-    margin-left: 0;
-    margin-right: 4px;
-    color: var(--app-text);
-}
-
-.nav-menu-button .mat-icon {
-    color: var(--app-text-muted);
-}
-
-/* Theme toggle — same glass pill as the welcome page */
-.nav-icon-btn {
+/* Round glass button holding the monogram, like the account button in
+   the App Store / Health. */
+.nav-avatar-btn {
     appearance: none;
     -webkit-tap-highlight-color: transparent;
-    width: 40px;
-    height: 40px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--app-bg-elevated) 86%, transparent);
-    border: 1px solid var(--app-border);
-    color: var(--app-text-muted);
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
+    transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.nav-icon-btn:hover {
-    color: var(--app-accent);
-    border-color: var(--app-accent);
-}
-
-.nav-icon-btn mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-}
-
-/* User chip — avatar + name + caret in a single rounded pill */
-.nav-user {
-    appearance: none;
-    -webkit-tap-highlight-color: transparent;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 4px 10px 4px 4px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--app-bg-elevated) 86%, transparent);
-    border: 1px solid var(--app-border);
-    color: var(--app-text);
-    font-family: var(--app-font-sans);
-    cursor: pointer;
-    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease),
-                border-color var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
-}
-
-.nav-user:hover {
-    border-color: var(--app-accent);
-}
-
-.nav-user-meta {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding-left: 8px;
-    font-size: 0.78rem;
-    color: var(--app-text-muted);
-    font-variant-numeric: tabular-nums;
-}
-
-.nav-user-sep {
-    color: var(--app-text-subtle);
+.nav-avatar-btn:active {
+    transform: scale(0.92);
+    opacity: 0.7;
 }
 
 .nav-avatar {
-    width: 32px;
-    height: 32px;
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    background: var(--app-accent);
+    /* iOS contact monogram: gray gradient disc. */
+    background: linear-gradient(180deg, #a5abb8, #858994);
     color: #ffffff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    box-shadow: var(--app-shadow-accent);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
     -webkit-font-smoothing: antialiased;
 }
 
-.nav-user-name {
-    font-size: 0.92rem;
+.nav-avatar--lg {
+    width: 44px;
+    height: 44px;
+    font-size: 17px;
+}
+
+/* Account menu header. The menu renders in the CDK overlay, but its content
+   comes from this template, so these encapsulated styles still apply. */
+.user-menu__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px 14px;
+    cursor: default;
+}
+
+.user-menu__who {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.user-menu__name {
+    font-size: 17px;
     font-weight: 600;
     color: var(--app-text);
 }
 
-.nav-user-caret {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    color: var(--app-text-subtle);
-}
-
-@media only screen and (max-width: 599px) {
-    .toolbar {
-        left: 0;
-        padding: max(6px, env(safe-area-inset-top, 6px)) 12px 6px !important;
-    }
-
-    .nav-actions {
-        gap: 6px;
-    }
-
-    /* Mirror the welcome page chip on mobile: hide the time/location meta
-       but keep the user's name and dropdown caret visible. */
-    .nav-user-meta {
-        display: none;
-    }
-
-    .nav-user {
-        padding: 6px 12px 6px 6px;
-    }
-
-    .nav-avatar {
-        width: 28px;
-        height: 28px;
-        font-size: 0.7rem;
-    }
+.user-menu__meta {
+    font-size: 13px;
+    color: var(--app-text-muted);
+    font-variant-numeric: tabular-nums;
 }

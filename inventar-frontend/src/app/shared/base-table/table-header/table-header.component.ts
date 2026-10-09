@@ -15,4 +15,9 @@ export class TableHeaderComponent {
   readonly breakpointService = inject(BreakpointService);
 
   @Input() columnDefinitions: ColumnDefinition[];
+
+  /** Row actions live in the context menu / keyboard, not in a column. */
+  get visibleColumns(): ColumnDefinition[] {
+    return (this.columnDefinitions || []).filter((c) => c.type !== 'actions');
+  }
 }

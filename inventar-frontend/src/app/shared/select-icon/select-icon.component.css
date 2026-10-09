@@ -349,3 +349,54 @@
         font-size: 10px;
     }
 }
+
+/* Apple form row (inside an `.ios-group`): label left, the chosen icon and
+   its name on the right in grey, like a pop-up button row. */
+:host-context(.ios-group) .form-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    min-height: 46px;
+    padding: 0 10px 0 16px;
+}
+
+:host-context(.ios-group) .form-field label {
+    flex: 0 0 auto;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--app-text);
+}
+
+:host-context(.ios-group) .input-wrapper,
+:host-context(.ios-group) .input-wrapper:focus-visible {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-end;
+    gap: 6px;
+    padding: 0 4px;
+    min-height: 44px;
+    border-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none;
+    color: var(--app-text-muted);
+}
+
+:host-context(.ios-group) .input-value {
+    flex: 0 1 auto;
+    font-size: 15px;
+    transform: none;
+}
+
+:host-context(.ios-group) .input-icon {
+    color: var(--app-accent);
+}
+
+:host-context(.ios-group) .input-chevron {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+:host-context(.ios-group) .form-field {
+    cursor: pointer;
+}

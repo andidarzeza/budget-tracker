@@ -1,77 +1,68 @@
 /* Single source of truth for the text action button.
-   Matches Workspace Manual's `.btn` / `.btn.primary` / `.btn.danger`. */
+   iOS button styles: secondary = "gray" (tinted text on a fill),
+   primary = "filled" (tint background), danger = destructive filled. */
 :host {
     appearance: none;
     -webkit-tap-highlight-color: transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 5px;
     height: 34px;
     padding: 0 14px;
-    border-radius: var(--app-radius-sm, 7px);
-    background: var(--app-surface);
-    border: 1px solid var(--app-border-strong);
-    box-shadow: var(--app-shadow-sm);
-    color: var(--app-text);
+    border-radius: var(--app-radius-full, 999px);
+    background: var(--ios-fill-3);
+    border: 0;
+    color: var(--app-accent);
     font-family: var(--app-font-sans);
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     line-height: 1;
     white-space: nowrap;
     cursor: pointer;
     box-sizing: border-box;
-    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    transition: opacity 0.2s ease, background 0.2s ease;
 }
 
-:host:hover:not(:disabled) {
-    background: var(--app-surface-muted);
+:host:active:not(:disabled) {
+    opacity: 0.55;
+    transition: none;
 }
 
 :host:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 22%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 30%, transparent);
 }
 
 :host:disabled {
-    opacity: 0.55;
+    opacity: 0.4;
     cursor: default;
 }
 
 :host(.cb-pill-button--primary) {
     background: var(--app-accent);
-    border-color: var(--app-accent);
-    color: #ffffff;
-}
-
-:host(.cb-pill-button--primary):hover:not(:disabled) {
-    background: var(--app-accent-hover);
-    border-color: var(--app-accent-hover);
     color: #ffffff;
 }
 
 :host(.cb-pill-button--danger) {
     background: var(--app-danger);
-    border-color: var(--app-danger);
     color: #ffffff;
 }
 
-:host(.cb-pill-button--danger):hover:not(:disabled) {
-    background: color-mix(in srgb, var(--app-danger) 88%, #000);
-    border-color: color-mix(in srgb, var(--app-danger) 88%, #000);
-    color: #ffffff;
-}
-
-/* Stretches the pill to fill its parent — used on auth forms where the
-   actions stack full-width. Doesn't change padding/font, so the pill stays
-   visually identical to the auto-width version. */
+/* Stretches the pill to fill its parent — used on auth forms and the
+   create-form footer where actions stack full-width. Full-width actions
+   use the larger iOS height. */
 :host(.cb-pill-button--block) {
     width: 100%;
+    height: 50px;
+    border-radius: var(--app-radius-lg, 12px);
+    font-size: 17px;
 }
 
 .cb-pill-button__icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
     flex-shrink: 0;
 }

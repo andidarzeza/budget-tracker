@@ -1,3 +1,6 @@
+import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
+import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
+import { LongPressDeleteDirective } from 'src/app/shared/long-press-delete/long-press-delete.directive';
 import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnInit, viewChild } from '@angular/core';
@@ -39,6 +42,8 @@ interface CategorySummary {
   styleUrls: ['./categories.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    LedgerFiltersComponent,
+    LongPressDeleteDirective,
     CommonModule,
     MatIconModule,
     MatMenuModule,
@@ -120,11 +125,11 @@ export class CategoriesComponent extends BaseTable<Category> implements OnInit {
   }
 
   iconBg(name: string | null | undefined): string {
-    return `color-mix(in srgb, hsl(${this.hueFor(name ?? '')}, 65%, 55%) 18%, transparent)`;
+    return iosTileColor(this.hueFor(name ?? ''));
   }
 
   iconFg(name: string | null | undefined): string {
-    return `hsl(${this.hueFor(name ?? '')}, 55%, 45%)`;
+    return IOS_TILE_GLYPH;
   }
 
   private hueFor(name: string): number {

@@ -1,4 +1,4 @@
-<div class="form-field" [style.gap]="label ? '.25rem' : ''">
+<div class="form-field" [style.gap]="label ? '.25rem' : ''" (click)="openFromRow($event, picker)">
   <label [for]="inputId || null">
     {{ label }}
     @if (required) {

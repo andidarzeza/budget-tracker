@@ -20,27 +20,27 @@ import { ThemeMode, ThemeService } from 'src/app/services/theme.service';
   `,
   styles: [`
     :host { display: block; }
-    .theme-switch { display: flex; gap: 2px; padding: 3px; border-radius: 9px; background: var(--mat-sys-surface-container-high, #eeeef0); }
-    :host-context(.light-theme) .theme-switch { background: #eeeef0; }
-    :host-context(.dark-theme) .theme-switch { background: #27272b; }
+    /* iOS UISegmentedControl. */
+    .theme-switch { display: flex; gap: 0; padding: 2px; border-radius: 9px; background: var(--ios-fill-3); }
     button {
       flex: 1;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 5px;
-      height: 26px;
+      height: 28px;
       border: none;
-      border-radius: 6px;
+      border-radius: 7px;
       background: none;
-      color: var(--app-text-subtle);
+      color: var(--app-text);
       font: inherit;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
+      transition: background 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
     }
-    button:hover { color: var(--app-text); }
-    button.active { background: var(--app-surface); color: var(--app-text); box-shadow: var(--app-shadow-sm); }
+    button:not(.active):active { opacity: 0.5; }
+    button.active { background: var(--ios-seg-thumb); font-weight: 600; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04); }
     mat-icon { width: 13px; height: 13px; font-size: 13px; line-height: 13px; }
   `],
 })

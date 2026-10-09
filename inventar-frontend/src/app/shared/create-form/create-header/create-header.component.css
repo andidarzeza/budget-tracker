@@ -1,69 +1,72 @@
+/* Apple form-sheet navigation bar: plain tinted text buttons either side of
+   a centred title, on the sheet's grey background with a hairline. */
 .dialog-header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: max(16px, env(safe-area-inset-top, 16px)) 16px 14px 20px;
-    background: var(--app-bg-elevated);
-    border-bottom: 1px solid var(--app-border);
+    gap: 8px;
+    min-height: 56px;
+    padding: max(8px, env(safe-area-inset-top, 8px)) 8px 8px;
+    background: var(--ios-sheet-bg);
+    border-bottom: 0.5px solid var(--ios-separator);
     box-sizing: border-box;
 }
 
-.dialog-header-leading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
+.dialog-header > :first-child {
+    justify-self: start;
 }
 
-.dialog-header-icon {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border-radius: 7px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--app-accent-soft);
-}
-
-.dialog-header-icon mat-icon {
-    color: var(--app-accent-text, var(--app-accent));
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-}
-
-.dialog-header-text {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    min-width: 0;
-}
-
-.dialog-header-eyebrow {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--app-text-subtle);
+.dialog-header > :last-child {
+    justify-self: end;
 }
 
 .dialog-header-title {
     margin: 0;
+    font-family: var(--app-font-display);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--app-text);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.sheet-btn {
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 36px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--app-accent);
     font-family: var(--app-font-sans);
-    font-size: 16px;
-    font-weight: 650;
-    letter-spacing: -0.01em;
-    color: var(--app-text);
-    line-height: 1.25;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    transition: opacity 0.15s ease, background 0.15s ease;
 }
 
-.dialog-header-close mat-icon {
-    color: var(--app-text-muted);
+@media (hover: hover) {
+    .sheet-btn:hover {
+        background: var(--app-surface-hover);
+    }
 }
 
-.dialog-header-close:hover mat-icon {
-    color: var(--app-text);
+.sheet-btn:active {
+    opacity: 0.4;
+}
+
+.sheet-btn--confirm {
+    font-weight: 600;
+}
+
+/* Dialogs focus their first button on open; show that as a soft fill
+   rather than the browser's blue ring. */
+.sheet-btn:focus {
+    outline: none;
+}
+
+.sheet-btn:focus-visible {
+    background: var(--app-surface-hover);
 }

@@ -1,19 +1,24 @@
-/* Side navigation — mirrors Workspace Manual's sidebar: brand row with a
-   "more" menu, ⌘K search, section label, avatar-tiled list, and the theme
-   switch + log out pinned to the bottom. */
+/* Side navigation in the current macOS / iPadOS sidebar style: a floating
+   frosted-glass panel inset from the window edges, an app title, an iOS
+   search field, rows with tinted line icons and a soft grey selection,
+   and the theme switch + log out pinned to the bottom. */
 
 .sidebar {
     position: relative;
     width: 272px;
-    height: 100%;
+    height: calc(100% - 20px);
+    margin: 10px 0 10px 10px;
     flex-shrink: 0;
     box-sizing: border-box;
-    background: var(--app-sidebar-bg);
-    border-right: 1px solid var(--app-sidebar-border);
+    border-radius: 22px;
+    background: var(--ios-sidebar-glass);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    backdrop-filter: saturate(180%) blur(30px);
+    box-shadow: var(--ios-glass-shadow);
     display: flex;
     flex-direction: column;
-    padding: calc(12px + env(safe-area-inset-top, 0px)) 10px calc(12px + env(safe-area-inset-bottom, 0px));
-    gap: 8px;
+    padding: calc(14px + env(safe-area-inset-top, 0px)) 10px calc(10px + env(safe-area-inset-bottom, 0px));
+    gap: 10px;
 }
 
 /* Mobile drawer (slides in over content) */
@@ -21,6 +26,11 @@
     position: fixed !important;
     left: 0;
     top: 0;
+    /* Opaque enough to read over the page it slides across. */
+    background: var(--ios-menu);
+    height: 100%;
+    margin: 0;
+    border-radius: 0 22px 22px 0;
     width: min(82vw, 300px);
     transform: translate3d(-100%, 0, 0);
     transition: transform 280ms var(--app-easing-emphasized, cubic-bezier(0.3, 0, 0, 1));
@@ -40,7 +50,7 @@ mat-icon {
     display: flex;
     align-items: center;
     gap: 9px;
-    padding: 4px 6px 8px;
+    padding: 2px 4px 4px 8px;
 }
 
 .brand-link {
@@ -60,11 +70,11 @@ mat-icon {
 }
 
 .brand-mark {
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
     display: grid;
     place-items: center;
-    border-radius: 7px;
+    border-radius: 8px;
     background: linear-gradient(135deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)));
     color: #fff;
 }
@@ -77,8 +87,10 @@ mat-icon {
 }
 
 .brand-name {
-    font-weight: 650;
-    letter-spacing: -0.01em;
+    font-family: var(--app-font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 /* ---------- Icon buttons ---------- */
@@ -86,13 +98,13 @@ mat-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
     padding: 0;
     border: none;
-    background: transparent;
-    color: var(--app-text-subtle);
-    border-radius: 6px;
+    background: var(--ios-fill-3);
+    color: var(--app-accent);
+    border-radius: 50%;
     cursor: pointer;
     flex-shrink: 0;
     transition: background 0.12s, color 0.12s;
@@ -104,10 +116,10 @@ mat-icon {
 }
 
 .icon-btn mat-icon {
-    width: 16px;
-    height: 16px;
-    font-size: 16px;
-    line-height: 16px;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
 }
 
 /* ---------- "More" menu ---------- */
@@ -128,9 +140,11 @@ mat-icon {
     z-index: 20;
     min-width: 220px;
     padding: 5px;
-    background: var(--app-surface);
-    border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-md);
+    background: var(--ios-menu);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    backdrop-filter: saturate(180%) blur(30px);
+    border: 0;
+    border-radius: var(--app-radius-lg);
     box-shadow: var(--app-shadow-md);
     animation: fade-in 0.12s ease;
 }
@@ -200,29 +214,26 @@ mat-icon {
 }
 
 /* ---------- Search ---------- */
+/* iOS search field: grey fill, no outline. */
 .search {
     display: flex;
     align-items: center;
-    gap: 8px;
-    height: 34px;
-    padding: 0 8px 0 10px;
-    border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-sm);
-    background: var(--app-surface);
+    gap: 6px;
+    height: 36px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: var(--app-radius-md);
+    background: var(--ios-fill-3);
     color: var(--app-text-subtle);
+    font-size: 17px;
     cursor: text;
 }
 
-.search:focus-within {
-    border-color: var(--app-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 18%, transparent);
-}
-
 .search mat-icon {
-    width: 14px;
-    height: 14px;
-    font-size: 14px;
-    line-height: 14px;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
 }
 
 .search input {
@@ -243,10 +254,11 @@ mat-icon {
 
 kbd {
     font-family: inherit;
-    font-size: 11px;
-    padding: 1px 5px;
-    border: 1px solid var(--app-border-strong);
-    border-radius: 4px;
+    font-size: 12px;
+    padding: 1px 6px;
+    border: 0;
+    border-radius: 5px;
+    background: var(--ios-fill-3);
     color: var(--app-text-subtle);
 }
 
@@ -255,12 +267,11 @@ kbd {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 26px;
-    padding: 10px 6px 0 8px;
-    font-size: 11px;
+    min-height: 20px;
+    padding: 8px 10px 0;
+    font-size: 12px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0;
     color: var(--app-text-subtle);
 }
 
@@ -276,9 +287,11 @@ kbd {
 .ws-item {
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 7px 8px;
-    border-radius: 9px;
+    gap: 10px;
+    min-height: 38px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    border-radius: 10px;
     color: var(--app-text);
     text-decoration: none;
     cursor: pointer;
@@ -294,45 +307,36 @@ kbd {
     box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--app-accent) 40%, transparent);
 }
 
+/* Selected row: soft grey fill, semibold label, filled icon. */
 .ws-item.active {
-    background: var(--app-surface);
-    box-shadow: var(--app-shadow-sm), inset 0 0 0 1px var(--app-border);
+    background: var(--ios-fill);
+    box-shadow: none;
 }
 
-/* Icon tile: quiet outline at rest, accent fill when active. */
-.nav-icon {
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    width: 32px;
-    height: 32px;
-    border-radius: 9px;
-    background: var(--app-surface);
-    box-shadow: inset 0 0 0 1px var(--app-border);
-    color: var(--app-text-muted);
-    transition: background 0.12s, color 0.12s, box-shadow 0.12s;
-}
-
-.nav-icon mat-icon {
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
-    line-height: 18px;
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'opsz' 20;
-}
-
-.ws-item:hover .nav-icon {
-    color: var(--app-text);
-}
-
-.ws-item.active .nav-icon {
-    background: var(--app-accent-soft);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--app-accent) 22%, transparent);
-    color: var(--app-accent-text, var(--app-accent));
+.ws-item.active .ws-name {
+    font-weight: 600;
 }
 
 .ws-item.active .nav-icon mat-icon {
     font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 20;
+}
+
+/* Tinted line icon, filled when the row is selected. */
+.nav-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    color: var(--app-accent);
+}
+
+.nav-icon mat-icon {
+    width: 21px;
+    height: 21px;
+    font-size: 21px;
+    line-height: 21px;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'opsz' 20;
 }
 
 .ws-item-text {
@@ -344,13 +348,17 @@ kbd {
 }
 
 .ws-name {
-    font-weight: 550;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* iOS sidebars have no subtitles. */
 .ws-sub {
+    display: none;
     font-size: 12px;
     color: var(--app-text-subtle);
     white-space: nowrap;
@@ -402,25 +410,26 @@ kbd {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px;
+    min-height: 36px;
+    padding: 0 10px;
     border: none;
     background: none;
-    border-radius: var(--app-radius-sm);
-    color: var(--app-text-muted);
+    border-radius: 10px;
+    color: var(--app-danger);
+    font-size: 15px;
     font: inherit;
     cursor: pointer;
 }
 
 .lock-btn:hover {
     background: var(--app-surface-hover);
-    color: var(--app-text);
 }
 
 .lock-btn mat-icon {
-    width: 14px;
-    height: 14px;
-    font-size: 14px;
-    line-height: 14px;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
 }
 
 @keyframes fade-in {

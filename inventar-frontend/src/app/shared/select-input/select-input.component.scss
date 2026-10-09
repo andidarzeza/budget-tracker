@@ -27,7 +27,7 @@
     font-size: 0.875rem;
     line-height: 1.5;
     border: 1px solid;
-    border-radius: 6px;
+    border-radius: 10px;
     outline: none;
     cursor: pointer;
     user-select: none;
@@ -138,7 +138,8 @@
   }
 
   .select-trigger {
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: var(--ios-sheet-cell);
+    border-color: transparent !important;
     color: rgba(255, 255, 255, 0.9);
   }
 
@@ -154,8 +155,8 @@
   }
 
   .select-trigger {
-    background-color: #f9fafb;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--ios-sheet-cell);
+    border-color: transparent !important;
     color: rgba(0, 0, 0, 0.9);
   }
 
@@ -163,4 +164,95 @@
   .chevron-icon {
     color: rgba(0, 0, 0, 0.6);
   }
+}
+
+/* Apple form row (inside an `.ios-group`): label left, the chosen value in
+   grey on the right with an up/down chevron, like a pop-up button row. */
+:host-context(.ios-group) .select-input {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  min-height: 46px;
+  padding: 0 10px 0 16px;
+
+  label {
+    flex: 0 0 auto;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--app-text);
+  }
+
+  .input-wrap {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .select-trigger,
+  .select-trigger:focus,
+  .select-trigger:focus-visible,
+  .select-trigger.is-open {
+    min-height: 44px;
+    padding: 0 4px;
+    gap: 4px;
+    font-size: 15px;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .value {
+    text-align: right;
+    color: var(--app-text-muted);
+  }
+
+  .select-trigger.is-open .value {
+    color: var(--app-accent);
+  }
+
+  .placeholder {
+    color: var(--app-text-subtle);
+  }
+
+  .chevron-icon {
+    margin-left: 0;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--app-text-subtle);
+  }
+}
+
+/* Row-mode validation: red label, message in small red text under the
+   value instead of floating over the row. */
+:host-context(.ios-group) .select-input {
+  &:has(.required-field) label {
+    color: var(--app-danger);
+  }
+
+  .error-message {
+    position: static;
+    margin: -8px 4px 8px 0;
+    padding: 0;
+    text-align: right;
+    transform: none;
+    opacity: 1;
+    animation: none;
+  }
+
+  .error-text {
+    color: var(--app-text-subtle) !important;
+  }
+}
+
+/* Keep the label on the value's line when a message wraps underneath. */
+:host-context(.ios-group) .select-input {
+  align-items: flex-start;
+
+  label {
+    line-height: 46px;
+  }
+}
+
+:host-context(.ios-group) .select-input {
+  cursor: pointer;
 }

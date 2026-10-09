@@ -30,6 +30,12 @@
         "link": "/projects"
     },
     {
+        "icon": "currency_exchange",
+        "text": "Exchange",
+        "description": "Euro ↔ Lek rate & converter",
+        "link": "/exchange"
+    },
+    {
         "icon": "history",
         "text": "History",
         "description": "Recent changes",

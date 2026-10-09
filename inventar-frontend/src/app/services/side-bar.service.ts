@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { SharedService } from './shared.service';
 
@@ -12,6 +12,8 @@ export class SideBarService {
   public isOpened = false;
   public sidebarWidth = 272;
   public displaySidebar = false;
+  /** Set from the `?hideSidebar` URL key — hides the sidebar (and the mobile menu bar) on any page. */
+  readonly hiddenByUrl = signal(false);
   /** When false, width expand/collapse is handled by mobile drawer CSS only. */
   public desktopSidebarLayout = true;
 

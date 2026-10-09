@@ -1,12 +1,22 @@
+/* Apple list header: small grey semibold labels over a hairline, aligned
+   with the cells below (text left, amounts right). */
 .header-column {
     transition: width 380ms var(--app-easing-emphasized, cubic-bezier(0.3, 0, 0, 1));
-    color: var(--app-text-subtle);
-    font-size: 11px;
-    text-align: center;
+    box-sizing: border-box;
+    padding: 0 12px;
+    color: var(--app-text-muted);
+    font-size: 12px;
+    text-align: left;
     font-family: var(--app-font-sans);
     font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-column[data-type="currency"] {
+    text-align: right;
 }
 
 .table-header {
@@ -14,7 +24,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--app-border);
-    background: var(--app-surface);
+    padding: 10px 8px 7px;
+    border-bottom: 0.5px solid var(--ios-separator);
+    background: transparent;
 }

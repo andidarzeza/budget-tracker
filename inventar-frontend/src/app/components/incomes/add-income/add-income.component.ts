@@ -253,6 +253,10 @@ export class AddIncomeComponent implements OnInit {
   selectWizardCategory(categoryId: string | number): void {
     this.formGroup.get('categoryID')?.setValue(categoryId);
     this.formGroup.get('categoryID')?.markAsTouched();
+    // Move on by itself, after a beat so the checkmark is seen (iOS pickers do the same).
+    setTimeout(() => {
+      if (this.wizardStep() === 0) this.wizardNext();
+    }, 180);
   }
 
   add(): void {
@@ -283,6 +287,7 @@ export class AddIncomeComponent implements OnInit {
           });
       }
     } else if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
       this.toaster.error('Please, fill in all required fields.', 'Error', TOASTER_CONFIGURATION);
     }
   }

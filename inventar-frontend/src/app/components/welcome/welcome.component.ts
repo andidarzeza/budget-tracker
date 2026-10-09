@@ -14,11 +14,10 @@ import { Router, RouterModule } from '@angular/router';
 import { forkJoin, interval, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 
 interface NewsItem {
   badge: string;
@@ -27,6 +26,22 @@ interface NewsItem {
   title: string;
   url?: string;
 }
+
+interface Shortcut {
+  label: string;
+  icon: string;
+  color: string;
+  /** Route on phones (full-screen create page) and on larger screens. */
+  mobile: string;
+  desktop: string;
+}
+
+/** Clock-face numerals, placed on a circle of radius 36 around (50, 50). */
+const NUMERALS = Array.from({ length: 12 }, (_, i) => {
+  const n = i + 1;
+  const a = (n * 30 * Math.PI) / 180;
+  return { label: String(n), x: +(50 + 36 * Math.sin(a)).toFixed(2), y: +(50 - 36 * Math.cos(a)).toFixed(2) };
+});
 
 interface HnStory {
   id: number;
@@ -61,7 +76,7 @@ const FALLBACK_NEWS: readonly NewsItem[] = [
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, MatIconModule, MatTooltipModule, ...TOOLTIP_IMPORTS],
+  imports: [CommonModule, RouterModule, MatIconModule],
 })
 export class WelcomeComponent implements OnInit {
   private readonly auth = inject(AuthenticationService);
@@ -69,6 +84,7 @@ export class WelcomeComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly navBarService = inject(NavBarService);
   private readonly sideBarService = inject(SideBarService);
+  private readonly breakpointService = inject(BreakpointService);
   /**
    * Plain HttpClient built on the raw backend so the auth interceptor does
    * NOT run for external calls (Hacker News). Otherwise our JWT gets sent to
@@ -92,12 +108,25 @@ export class WelcomeComponent implements OnInit {
     }
   });
 
-  readonly tzAbbrev = computed(() => {
-    const parts = new Intl.DateTimeFormat(undefined, {
-      timeZoneName: 'short',
-    }).formatToParts(this.now());
-    return parts.find((p) => p.type === 'timeZoneName')?.value ?? '';
+  /** Hand angles in degrees for the analog clock widget. */
+  readonly hands = computed(() => {
+    const d = this.now();
+    const s = d.getSeconds();
+    const m = d.getMinutes() + s / 60;
+    const h = (d.getHours() % 12) + m / 60;
+    return { hour: h * 30, minute: m * 6, second: s * 6 };
   });
+
+  readonly ticks = Array.from({ length: 60 }, (_, i) => i);
+  readonly numerals = NUMERALS;
+
+  /** Shortcuts widget tiles, in iOS system colours. */
+  readonly shortcuts: readonly Shortcut[] = [
+    { label: 'Add expense', icon: 'remove_circle', color: '#ff3b30', mobile: '/expenses/add', desktop: '/expenses' },
+    { label: 'Add income', icon: 'add_circle', color: '#34c759', mobile: '/incomes/add', desktop: '/incomes' },
+    { label: 'Summary', icon: 'space_dashboard', color: '#007aff', mobile: '/dashboard', desktop: '/dashboard' },
+    { label: 'Projects', icon: 'savings', color: '#af52de', mobile: '/projects', desktop: '/projects' },
+  ];
 
   /** Headlines from Hacker News, refreshed at most once per calendar day. */
   readonly news = signal<readonly NewsItem[]>([]);
@@ -135,8 +164,9 @@ export class WelcomeComponent implements OnInit {
     this.loadNews();
   }
 
-  go(path: string): void {
-    this.router.navigate([path]);
+  open(shortcut: Shortcut): void {
+    const mobile = this.breakpointService.matchesMobileCreateLayout();
+    this.router.navigate([mobile ? shortcut.mobile : shortcut.desktop]);
   }
 
   /**

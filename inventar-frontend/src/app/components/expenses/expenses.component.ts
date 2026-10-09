@@ -1,3 +1,6 @@
+import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
+import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
+import { LongPressDeleteDirective } from 'src/app/shared/long-press-delete/long-press-delete.directive';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -37,6 +40,8 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css'],
   imports: [
+    LedgerFiltersComponent,
+    LongPressDeleteDirective,
     CommonModule,
     MatButtonModule,
     MatIconModule,
@@ -169,12 +174,12 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
   /** Pastel tile background for a category's icon, keyed by category name so
    *  every row of the same category renders in the same color. */
   iconBg(name: string | null | undefined): string {
-    return `color-mix(in srgb, hsl(${this.hueFor(name ?? '')}, 65%, 55%) 18%, transparent)`;
+    return iosTileColor(this.hueFor(name ?? ''));
   }
 
   /** Solid icon color on the tile — same hue as the background, fully opaque. */
   iconFg(name: string | null | undefined): string {
-    return `hsl(${this.hueFor(name ?? '')}, 55%, 45%)`;
+    return IOS_TILE_GLYPH;
   }
 
   /** Day-section header ("TODAY" / "YESTERDAY" / "MON, MAR 3" — all caps). */

@@ -1,14 +1,6 @@
 <ng-container *ngIf="{ mobile: (breakpointService.useTableCardLayout$ | async) === true } as layout">
-    <!-- Desktop: bordered table shell + paginator -->
+    <!-- Desktop: large title + toolbar, then the table card + paginator -->
     <div *ngIf="!layout.mobile" class="base-table-container">
-        <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading" role="status" aria-live="polite">
-            <span class="app-spinner" aria-hidden="true">
-                <span class="app-spinner__track"></span>
-                <span class="app-spinner__arc"></span>
-            </span>
-            <p class="app-loading-label">Loading data…</p>
-        </div>
-
         <table-actions [filterOptions]="filterOptions" [tableActionInput]="tableActionInput"
             [hideEmbeddedTitle]="false"
             (onOpenDialog)="onOpenDialog.emit()" (onRefresh)="onRefresh.emit()" (onSearch)="onSearch.emit($event)"
@@ -16,6 +8,15 @@
         </table-actions>
 
         <div class="base-table-scroll-area">
+            <!-- Covers just the table card, not the page title above it. -->
+            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading" role="status" aria-live="polite">
+                <span class="app-spinner" aria-hidden="true">
+                    <span class="app-spinner__track"></span>
+                    <span class="app-spinner__arc"></span>
+                </span>
+                <p class="app-loading-label">Loading data…</p>
+            </div>
+
             <div class="table-closed">
                 <table-header [columnDefinitions]="columnDefinition"></table-header>
                 <table-body [displayEditAction]="displayEditAction"

@@ -18,7 +18,7 @@
     align-items: stretch;
     padding: 8px 11px;
     border: 1px solid;
-    border-radius: 7px;
+    border-radius: 10px;
     box-sizing: border-box;
     transition:
       border-color 0.15s ease,
@@ -75,7 +75,8 @@
   }
 
   .input-wrapper {
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: var(--ios-sheet-cell);
+    border-color: transparent !important;
 
     textarea {
       color: rgba(255, 255, 255, 0.9);
@@ -89,11 +90,46 @@
   }
 
   .input-wrapper {
-    background-color: #f9fafb;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--ios-sheet-cell);
+    border-color: transparent !important;
 
     textarea {
       color: rgba(0, 0, 0, 0.9);
     }
   }
+}
+
+/* Apple form row (inside an `.ios-group`): a borderless notes area that
+   fills the row; the label stays for screen readers only. */
+:host-context(.ios-group) .form-field {
+  label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .input-wrapper,
+  .input-wrapper:focus-within {
+    padding: 11px 16px;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+
+    textarea {
+      width: 100%;
+      min-height: 88px;
+      font-size: 15px;
+      transform: none;
+      resize: none;
+      color: var(--app-text);
+    }
+  }
+}
+
+/* Row-mode validation: the empty notes area shows its placeholder in red. */
+:host-context(.ios-group) .input-wrapper.required-field textarea::placeholder {
+  color: var(--app-danger);
 }

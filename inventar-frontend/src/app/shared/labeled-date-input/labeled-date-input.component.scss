@@ -15,9 +15,12 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    /* Same 48px height as `cb-select-input`'s trigger. */
+    min-height: 48px;
+    box-sizing: border-box;
     padding: 8px 11px;
     border: 1px solid;
-    border-radius: 7px;
+    border-radius: 10px;
     cursor: pointer;
     transition:
       border-color 0.15s ease,
@@ -100,7 +103,8 @@
   }
 
   .input-wrapper {
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: var(--ios-sheet-cell);
+    border-color: transparent !important;
 
     input {
       color: rgba(255, 255, 255, 0.9);
@@ -118,8 +122,8 @@
   }
 
   .input-wrapper {
-    background-color: #f9fafb;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--ios-sheet-cell);
+    border-color: transparent !important;
 
     input {
       color: rgba(0, 0, 0, 0.9);
@@ -129,4 +133,98 @@
   .mat-icon {
     color: rgba(0, 0, 0, 0.6);
   }
+}
+
+/* Apple form row (inside an `.ios-group`): label left, the date as a grey
+   pill on the right, like Calendar's Starts / Ends rows. */
+:host-context(.ios-group) .form-field {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px !important;
+  min-height: 46px;
+  padding: 0 16px;
+
+  label {
+    flex: 0 0 auto;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--app-text);
+  }
+
+  .input-wrapper,
+  .input-wrapper:focus-within {
+    min-height: 0;
+    flex: 0 0 auto;
+    padding: 0;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+
+    .input-icon {
+      display: none;
+    }
+
+    input {
+      width: 8.5em;
+      padding: 6px 10px;
+      border-radius: 7px;
+      background: var(--ios-fill-3);
+      font-size: 15px;
+      text-align: center;
+      transform: none;
+      color: var(--app-text);
+    }
+  }
+
+  .input-wrapper:focus-within input {
+    color: var(--app-accent);
+  }
+}
+
+/* Row-mode validation: red label, message in small red text under the
+   value instead of floating over the row. */
+:host-context(.ios-group) .form-field {
+  flex-wrap: wrap;
+  row-gap: 0 !important;
+
+  &:has(.required-field) label {
+    color: var(--app-danger);
+  }
+
+  .input-wrapper {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    .error-message {
+      position: static;
+      flex: 1 0 100%;
+      margin: -6px 0 8px;
+      text-align: right;
+      font-size: 12px;
+      color: var(--app-danger);
+      transform: none;
+      opacity: 1;
+      animation: none;
+    }
+  }
+}
+
+/* Keep the label on the value's line when a message wraps underneath. */
+:host-context(.ios-group) .form-field {
+  align-items: flex-start;
+
+  label {
+    line-height: 46px;
+  }
+
+  .input-wrapper,
+  .input-wrapper:focus-within {
+    min-height: 46px;
+    align-content: center;
+  }
+}
+
+:host-context(.ios-group) .form-field {
+  cursor: pointer;
 }

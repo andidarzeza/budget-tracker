@@ -121,6 +121,7 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
           .subscribe(() => this.onSaveSuccess('A new Category has been inserted'));
       }
     } else if (this.categoryGroup.invalid) {
+      this.categoryGroup.markAllAsTouched();
       this.toaster.error('Please, fill in all required fields.', 'Error', TOASTER_CONFIGURATION);
     }
   }

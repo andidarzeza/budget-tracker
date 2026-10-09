@@ -142,10 +142,15 @@ app-date-picker {
  * Content/layout (legacy class names used by base-template)
  * ========================================================================== */
 .mat-toolbar,
-#application-body,
 .sidebar,
 .balance-info {
     background: var(--mat-toolbar-container-background-color, var(--app-bg-elevated));
+}
+
+/* The shell shows through the transparent iOS navigation bar, so it uses
+   the page background rather than the elevated surface. */
+#application-body {
+    background: var(--app-bg);
 }
 
 .content-container,
@@ -333,12 +338,15 @@ app-date-picker {
     --mat-icon-button-pressed-state-layer-opacity: 0.22;
 }
 
+/* Apple menus: frosted glass, rounded, no outline. */
 .mat-mdc-menu-panel,
 .mat-menu-panel {
-    background: var(--app-bg-elevated) !important;
-    border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-md) !important;
-    box-shadow: var(--app-shadow-lg) !important;
+    background: var(--ios-menu) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    backdrop-filter: saturate(180%) blur(30px);
+    border: 0;
+    border-radius: var(--app-radius-lg) !important;
+    box-shadow: var(--app-shadow-md) !important;
     min-width: 64px !important;
     max-width: unset !important;
     max-height: unset !important;
@@ -350,6 +358,14 @@ app-date-picker {
 .mat-menu-item {
     color: var(--app-text) !important;
     font-family: var(--app-font-sans) !important;
+    min-height: 36px !important;
+    font-size: 14px !important;
+}
+
+/* Destructive menu item (e.g. Delete in the table's right-click menu). */
+.mat-mdc-menu-item.row-context-menu__danger,
+.mat-mdc-menu-item.row-context-menu__danger .mat-icon {
+    color: var(--app-danger) !important;
 }
 
 .mat-mdc-menu-item:hover,
@@ -506,7 +522,7 @@ mat-dialog-container {
     display: flex;
     flex-direction: column;
     box-shadow: var(--app-shadow-lg);
-    background: var(--app-bg-elevated);
+    background: var(--ios-sheet-bg);
 }
 
 /* Pin the fullscreen dialog to all four edges via `position: fixed; inset: 0`
@@ -603,8 +619,8 @@ mat-dialog-container {
     flex-wrap: wrap;
     gap: 10px;
     padding: 18px 22px max(22px, env(safe-area-inset-bottom));
-    background: var(--app-bg-elevated);
-    border-top: 1px solid var(--app-border);
+    background: var(--ios-sheet-bg);
+    border-top: 0.5px solid var(--ios-separator);
     box-sizing: border-box;
 }
 
@@ -1923,82 +1939,78 @@ table-body > div::-webkit-scrollbar-thumb:hover {
 .ledger {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 16px 16px 96px; /* bottom clearance for the QR FAB */
+    gap: 22px;
+    padding: 8px 16px 32px;
     background: var(--app-bg);
     min-height: 100%;
     box-sizing: border-box;
 }
 
+/* iOS large title with plain tinted bar buttons on the right. */
 .ledger__head {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 12px;
-    margin-top: 4px;
+    padding: 4px 4px 0;
 }
 
 .ledger__page-title {
     margin: 0;
     font-family: var(--app-font-display);
-    font-size: 2.1rem;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.025em;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
     color: var(--app-text);
 }
 
 .ledger__head-actions {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
+    padding-bottom: 4px;
 }
 
-/* ── This-week summary card ──────────────────────────────────────────── */
+/* ── This-week summary (iOS widget-style card) ───────────────────────── */
 .ledger-summary {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 12px;
-    padding: 16px 18px;
-    border-radius: 16px;
+    padding: 14px 16px;
+    border-radius: var(--app-radius-md);
     background: var(--app-bg-elevated);
-    border: 1px solid var(--app-border);
-    box-shadow: var(--app-shadow-xs);
 }
 
 .ledger-summary__main {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 2px;
     min-width: 0;
 }
 
 .ledger-summary__label {
-    font-family: var(--app-font-display);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--app-text-subtle);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--app-text-muted);
 }
 
 .ledger-summary__total {
     display: inline-flex;
     align-items: baseline;
-    gap: 6px;
+    gap: 5px;
     font-family: var(--app-font-display);
-    font-size: 1.6rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
     color: var(--app-text);
     font-variant-numeric: tabular-nums;
 }
 
 .ledger-summary__currency {
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-size: 15px;
+    font-weight: 600;
     color: var(--app-text-subtle);
 }
 
@@ -2007,7 +2019,7 @@ table-body > div::-webkit-scrollbar-thumb:hover {
 }
 
 .ledger-summary__count {
-    font-size: 0.82rem;
+    font-size: 15px;
     color: var(--app-text-muted);
     font-variant-numeric: tabular-nums;
 }
@@ -2017,72 +2029,75 @@ table-body > div::-webkit-scrollbar-thumb:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 32px 16px;
+    gap: 6px;
+    padding: 48px 16px;
     text-align: center;
-    border: 1px dashed var(--app-border);
-    border-radius: 16px;
-    background: var(--app-bg-elevated);
 }
 
 .ledger__empty-icon {
-    font-size: 36px;
-    width: 36px;
-    height: 36px;
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
     color: var(--app-text-subtle);
+    opacity: 0.6;
 }
 
 .ledger__empty-title {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 700;
+    margin: 4px 0 0;
+    font-size: 20px;
+    font-weight: 600;
     color: var(--app-text);
 }
 
 .ledger__empty-hint {
     margin: 0;
-    font-size: 0.88rem;
+    font-size: 15px;
     color: var(--app-text-muted);
 }
 
-/* ── Day section ──────────────────────────────────────────────────────── */
+/* ── Day section: iOS inset-grouped list ─────────────────────────────── */
 .ledger-section {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 7px;
 }
 
 .ledger-section__label {
-    margin: 0 4px;
-    font-family: var(--app-font-display);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
+    margin: 0 16px;
+    font-size: 13px;
+    font-weight: 400;
     text-transform: uppercase;
-    color: var(--app-text-subtle);
+    color: var(--app-text-muted);
 }
 
 .ledger-section__card {
     display: flex;
     flex-direction: column;
-    border-radius: 16px;
+    border-radius: var(--app-radius-md);
     background: var(--app-bg-elevated);
-    border: 1px solid var(--app-border);
     overflow: hidden;
-    box-shadow: var(--app-shadow-xs);
 }
 
 /* ── Row ──────────────────────────────────────────────────────────────── */
 .ledger-item {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding-right: 8px;
-    border-bottom: 1px solid var(--app-border);
+    /* Long-press opens the delete menu: keep iOS from selecting text / showing its callout. */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-.ledger-item--last {
-    border-bottom: 0;
+/* Hairline separator that starts after the icon, like UITableView. */
+.ledger-item + .ledger-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 64px;
+    border-top: 0.5px solid var(--ios-separator);
+    z-index: 1;
 }
 
 .ledger-item__main {
@@ -2090,7 +2105,8 @@ table-body > div::-webkit-scrollbar-thumb:hover {
     -webkit-tap-highlight-color: transparent;
     background: transparent;
     border: 0;
-    padding: 12px 0 12px 14px;
+    padding: 10px 16px;
+    min-height: 60px;
     flex: 1 1 auto;
     min-width: 0;
     display: grid;
@@ -2101,56 +2117,54 @@ table-body > div::-webkit-scrollbar-thumb:hover {
     cursor: pointer;
     color: inherit;
     font: inherit;
-    transition: background var(--app-motion-fast, 120ms) var(--app-easing-standard, ease);
+    transition: background 0.2s ease;
 }
 
 .ledger-item__main:active {
-    background: color-mix(in srgb, var(--app-accent) 7%, transparent);
+    background: var(--ios-fill);
+    transition: none;
 }
 
-.ledger-item__menu-trigger {
-    flex-shrink: 0;
-}
-
+/* Rounded-square icon, like Settings / Wallet rows. */
 .ledger-item__tile {
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
 .ledger-item__tile mat-icon {
-    font-size: 22px;
-    width: 22px;
-    height: 22px;
-    line-height: 22px;
+    font-size: 21px;
+    width: 21px;
+    height: 21px;
+    line-height: 21px;
 }
 
 .ledger-item__body {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
 }
 
 .ledger-item__title {
-    font-family: var(--app-font-display);
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 400;
     color: var(--app-text);
-    line-height: 1.25;
-    letter-spacing: -0.01em;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .ledger-item__subtitle {
-    font-size: 0.84rem;
+    font-size: 15px;
     color: var(--app-text-muted);
+    letter-spacing: -0.01em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -2160,31 +2174,29 @@ table-body > div::-webkit-scrollbar-thumb:hover {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 2px;
+    gap: 1px;
     flex-shrink: 0;
 }
 
 .ledger-item__value {
-    font-family: var(--app-font-display);
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 600;
     color: var(--app-text);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.02em;
 }
 
 .ledger-item__currency {
-    font-size: 0.74rem;
-    font-weight: 600;
-    color: var(--app-text-subtle);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--app-text-muted);
     margin-left: 2px;
-    letter-spacing: 0.04em;
 }
 
 .ledger-item__time {
-    font-size: 0.78rem;
-    color: var(--app-text-subtle);
+    font-size: 13px;
+    color: var(--app-text-muted);
     font-variant-numeric: tabular-nums;
 }
 
@@ -2400,5 +2412,271 @@ body {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    animation: wm-fade-in 0.2s ease;
+    /* Opacity only: a transform here would make every `position: fixed`
+       child (e.g. the create/edit form's header and footer) lay out against
+       the page instead of the viewport until the animation ends. */
+    animation: page-fade-in 0.2s ease;
+}
+
+@keyframes page-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+/* ── Long-press delete menu (LongPressDeleteDirective) ───────────────── */
+/* Appended to <body>: a lifted copy of the held row and a floating Delete pill. */
+.press-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    user-select: none;
+}
+
+.press-menu__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.32);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity var(--app-motion-base, 200ms) var(--app-easing-standard, ease);
+}
+
+.press-menu__row.ledger-item {
+    position: fixed;
+    margin: 0;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 16px;
+    background: var(--app-bg-elevated);
+    box-shadow: var(--app-shadow-lg, 0 18px 40px -12px rgba(15, 23, 42, 0.35));
+    pointer-events: none;
+    transition: transform var(--app-motion-base, 200ms) var(--app-easing-emphasized, ease);
+}
+
+.press-menu__delete {
+    position: fixed;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px 10px 12px;
+    border: 0;
+    border-radius: var(--app-radius-full, 999px);
+    background: var(--app-bg-elevated);
+    color: var(--app-danger);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1;
+    box-shadow: var(--app-shadow-lg, 0 18px 40px -12px rgba(15, 23, 42, 0.35));
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    opacity: 0;
+    transform: scale(0.85);
+    transition:
+        opacity var(--app-motion-base, 200ms) var(--app-easing-standard, ease),
+        transform var(--app-motion-base, 200ms) var(--app-easing-emphasized, ease);
+}
+
+.press-menu__delete--above { transform-origin: bottom right; }
+.press-menu__delete--below { transform-origin: top right; }
+
+.press-menu__delete .material-icons {
+    font-size: 20px;
+}
+
+.press-menu__delete:active {
+    background: color-mix(in srgb, var(--app-danger) 12%, var(--app-bg-elevated));
+}
+
+.press-menu--open .press-menu__backdrop { opacity: 1; }
+.press-menu--open .press-menu__row { transform: scale(1.03); }
+.press-menu--open .press-menu__delete { opacity: 1; transform: scale(1); }
+
+/* ============================================================================
+ * iOS look for the create / edit wizard (same language as the Calendar app).
+ * ========================================================================== */
+
+/* Category picker: one inset-grouped list, hairlines inset past the icon,
+   a tinted checkmark on the chosen row instead of a highlighted card. */
+.category-pick-grid {
+    gap: 0;
+    padding: 0;
+    border-radius: var(--app-radius-md);
+    background: var(--app-bg-elevated);
+    overflow: hidden;
+}
+
+.category-tile {
+    position: relative;
+    gap: 12px;
+    min-height: 52px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    transition: background 0.2s ease;
+}
+
+.category-tile + .category-tile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 60px;
+    border-top: 0.5px solid var(--ios-separator);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .category-tile:hover {
+        border-color: transparent;
+        background: var(--app-surface-hover);
+        box-shadow: none;
+    }
+}
+
+.category-tile:active {
+    transform: none;
+    background: var(--ios-fill);
+    transition: none;
+}
+
+.category-tile--selected {
+    background: transparent;
+    box-shadow: none;
+}
+
+.category-tile__icon-wrap,
+.category-tile--selected .category-tile__icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--app-accent);
+}
+
+.category-tile__icon-wrap--income,
+.category-tile--selected.category-tile .category-tile__icon-wrap--income {
+    background: var(--app-success);
+}
+
+.category-tile__icon,
+.category-tile--selected .category-tile__icon,
+.category-tile__icon-wrap--income .category-tile__icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.category-tile__body {
+    gap: 1px;
+}
+
+.category-tile__label {
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+}
+
+.category-tile__desc,
+.category-tile--selected .category-tile__desc {
+    font-size: 15px;
+    color: var(--app-text-muted);
+    opacity: 1;
+}
+
+.category-tile__check mat-icon,
+.category-tile__check .mat-icon {
+    font-weight: 700;
+}
+
+/* Step indicator: small, flat, no glow. */
+.create-wizard__rail::before {
+    height: 1px;
+    top: 13px;
+    background: var(--ios-separator);
+}
+
+.create-wizard__bubble {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--ios-fill-3);
+    border: 0;
+    box-shadow: 0 0 0 4px var(--app-bg);
+}
+
+.create-wizard__stop--complete .create-wizard__bubble,
+.create-wizard__stop--active .create-wizard__bubble {
+    box-shadow: 0 0 0 4px var(--app-bg);
+}
+
+.create-wizard__stop-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* Create-page footer: large iOS buttons, text only. */
+.form-page__footer .cb-pill-button {
+    height: 46px;
+    border-radius: var(--app-radius-lg);
+    font-size: 17px;
+}
+
+.form-page__footer .cb-pill-button__icon {
+    display: none;
+}
+
+/* ============================================================================
+ * Apple grouped forms: `.ios-form` stacks `.ios-group` cards; each field
+ * component inside a group renders as a row (see the components' own
+ * `:host-context(.ios-group)` rules). Hairlines start at the text inset.
+ * ========================================================================== */
+.ios-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.ios-group {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--app-radius-md);
+    background: var(--ios-sheet-cell);
+}
+
+.ios-group > * {
+    position: relative;
+    display: block;
+}
+
+.ios-group > * + *::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 16px;
+    right: 0;
+    border-top: 0.5px solid var(--ios-separator);
+    pointer-events: none;
+}
+
+.ios-group-label {
+    margin: 0 16px 6px;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--app-text-muted);
+}
+
+.ios-group-footer {
+    margin: 6px 16px 0;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--app-text-muted);
 }

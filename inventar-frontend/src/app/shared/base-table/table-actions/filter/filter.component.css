@@ -5,9 +5,13 @@
     overflow: hidden;
 }
 
+/* Opens between the title and the table as its own rounded card. */
 .filter-panel {
-    background: var(--app-surface);
-    border-bottom: 1px solid var(--app-border);
+    /* Fields on a white card use the grey iOS fill rather than white cells. */
+    --ios-sheet-cell: var(--ios-fill-3);
+    background: var(--app-bg-elevated);
+    border-radius: var(--app-radius-lg);
+    margin-bottom: 16px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -20,7 +24,7 @@
     justify-content: space-between;
     gap: 12px;
     padding: 12px 16px;
-    border-bottom: 1px solid var(--app-border);
+    border-bottom: 0.5px solid var(--ios-separator);
 }
 
 .filter-panel__title {
@@ -100,27 +104,27 @@
     justify-content: flex-end;
     gap: 8px;
     padding: 12px 16px 16px;
-    border-top: 1px solid var(--app-border);
+    border-top: 0.5px solid var(--ios-separator);
 }
 
 .filter-panel__btn {
     appearance: none;
     cursor: pointer;
-    height: 38px;
-    padding: 0 14px;
-    border-radius: 8px;
-    border: 1px solid transparent;
+    height: 34px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 0;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     font: inherit;
     font-weight: 600;
-    font-size: 0.875rem;
+    font-size: 15px;
     transition: background 140ms ease, border-color 140ms ease, color 140ms ease, opacity 140ms ease;
 }
 
 .filter-panel__btn:disabled {
-    opacity: 0.55;
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
@@ -131,22 +135,21 @@
     line-height: 18px;
 }
 
+/* iOS "gray" button: tinted text on a fill. */
 .filter-panel__btn--ghost {
-    background: transparent;
-    color: var(--app-text);
-    border-color: var(--app-border);
+    background: var(--ios-fill-3);
+    color: var(--app-accent);
 }
 
 .filter-panel__btn--ghost:hover:not(:disabled),
 .filter-panel__btn--ghost:focus-visible:not(:disabled) {
-    background: var(--app-bg-elevated);
+    background: var(--ios-fill);
     outline: none;
 }
 
 .filter-panel__btn--primary {
     background: var(--app-accent);
     color: white;
-    border-color: var(--app-accent);
 }
 
 .filter-panel__btn--primary:hover:not(:disabled),

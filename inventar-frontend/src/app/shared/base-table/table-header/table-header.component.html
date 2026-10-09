@@ -1,6 +1,6 @@
 <div class="table-header" *ngIf="(breakpointService.useTableCardLayout$ | async) !== true">
-    <div class="header-column" *ngFor="let c of columnDefinitions"
-        [style.width.%]="c?.type | columnWidth: columnDefinitions?.length">
+    <div class="header-column" *ngFor="let c of visibleColumns" [attr.data-type]="c.type"
+        [style.width.%]="c?.type | columnWidth: visibleColumns.length">
         {{c.label}}
     </div>
 </div>

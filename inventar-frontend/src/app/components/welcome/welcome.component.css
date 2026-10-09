@@ -1,542 +1,361 @@
-/* ============================================================================
- * Welcome page — Workspace Manual look: Inter throughout, a soft red glow
- * at the top, bordered panels with small uppercase headers, compact buttons.
- * All colors pulled from the app theme tokens.
- * ========================================================================== */
+/* iOS "Today"-style landing page (same language as the Calendar app):
+   large title over the grouped background, then a grid of widgets with
+   22px corners. Two columns on phones, four on wider screens. */
+
 :host {
     display: block;
-    width: 100%;
-    height: 100dvh;
-    overflow: hidden;
-    --tone-new: var(--app-success, #16a34a);
-    --tone-faster: var(--app-accent, #2563eb);
-    --tone-beta: var(--app-warning, #ea580c);
-}
-
-.welcome {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    min-height: 100%;
     background: var(--app-bg);
-    color: var(--app-text);
-    padding: clamp(20px, 3vw, 36px) clamp(24px, 5vw, 64px) clamp(40px, 5vh, 72px);
+}
+
+.today {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 8px 20px 32px;
     box-sizing: border-box;
-    overflow: hidden;
-    isolation: isolate;
+}
+
+/* ── Large title ─────────────────────────────────────────────────────── */
+.today__head {
     display: flex;
     flex-direction: column;
-    gap: clamp(24px, 4vh, 64px);
+    gap: 2px;
+    padding: 4px 0 18px;
 }
 
-/* Soft accent glow behind the top of the page (Workspace Manual lock screen) */
-.welcome__glow {
-    position: absolute;
-    width: 700px;
-    height: 700px;
-    top: -320px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: radial-gradient(closest-side, color-mix(in srgb, var(--app-accent) 22%, transparent), transparent);
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* ----- Top bar (status pill + user chip) ----- */
-.welcome__topbar {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    width: 100%;
-}
-
-.welcome__status {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--app-font-sans);
-    font-size: 11px;
+.today__date {
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: var(--app-text-muted);
-}
-
-.welcome__status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--app-success, #16a34a);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--app-success, #16a34a) 20%, transparent);
-    animation: pulse-dot 2.8s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-    0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--app-success, #16a34a) 20%, transparent); }
-    50%      { box-shadow: 0 0 0 8px color-mix(in srgb, var(--app-success, #16a34a) 8%, transparent); }
-}
-
-/* Buttons — Workspace Manual `.btn` */
-.wbtn {
-    appearance: none;
-    -webkit-tap-highlight-color: transparent;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 34px;
-    padding: 0 14px;
-    border: 1px solid var(--app-border-strong);
-    background: var(--app-surface);
-    color: var(--app-text);
-    border-radius: 7px;
-    font: inherit;
-    font-family: var(--app-font-sans);
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: var(--app-shadow-sm);
-    transition: background 0.12s, border-color 0.12s, color 0.12s;
-    white-space: nowrap;
-}
-
-.wbtn:hover {
-    background: var(--app-surface-muted);
-}
-
-.wbtn mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-}
-
-.wbtn--primary {
-    background: var(--app-accent);
-    border-color: var(--app-accent);
-    color: #fff;
-}
-
-.wbtn--primary:hover {
-    background: var(--app-accent-hover);
-}
-
-.wbtn--lg {
-    height: 42px;
-    font-size: 15px;
-}
-
-/* ----- Grid: hero (left) + side cards (right) ----- */
-.welcome__grid {
-    position: relative;
-    z-index: 2;
-    display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-    gap: clamp(32px, 6vw, 96px);
-    align-items: start;
-    width: 100%;
-    margin-block: auto;
-}
-
-/* ----- Hero (left column) ----- */
-.welcome__hero {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(16px, 2.4vw, 24px);
-    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes rise {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.hero-date {
-    display: flex;
-    align-items: flex-start;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--app-font-sans);
-}
-
-/* Date tile — same treatment as Workspace Manual's lock badge */
-.hero-date__day {
-    width: 46px;
-    height: 46px;
-    display: grid;
-    place-items: center;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)));
-    color: #fff;
-    box-shadow: 0 6px 20px color-mix(in srgb, var(--app-accent) 40%, transparent);
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-}
-
-.hero-date__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-}
-
-.hero-date__month {
-    font-family: var(--app-font-sans);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--app-text);
-    letter-spacing: -0.01em;
-}
-
-.hero-date__weekday {
-    font-family: var(--app-font-sans);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--app-text-subtle);
-}
-
-.hero-greeting {
-    margin: 0;
-    font-family: var(--app-font-sans);
-    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.025em;
-    color: var(--app-text);
-}
-
-.hero-greeting__name {
     color: var(--app-accent);
 }
 
-.hero-subtitle {
+.today__title {
     margin: 0;
-    max-width: 52ch;
-    font-family: var(--app-font-sans);
-    font-size: 15px;
-    line-height: 1.6;
+    font-family: var(--app-font-display);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    color: var(--app-text);
+}
+
+/* ── Widget grid ─────────────────────────────────────────────────────── */
+.widgets {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.widget {
+    position: relative;
+    border-radius: 22px;
+    background: var(--app-bg-elevated);
+    box-shadow: var(--ios-widget-shadow, none);
+    overflow: hidden;
+    box-sizing: border-box;
+    animation: widget-in 0.4s var(--app-easing-standard) both;
+}
+
+.widget:nth-child(2) { animation-delay: 0.04s; }
+.widget:nth-child(3) { animation-delay: 0.08s; }
+.widget:nth-child(4) { animation-delay: 0.12s; }
+
+@keyframes widget-in {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: none; }
+}
+
+.widget--small {
+    aspect-ratio: 1 / 1;
+}
+
+.widget--wide {
+    grid-column: 1 / -1;
+}
+
+.widget__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
     color: var(--app-text-muted);
 }
 
-.hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 4px;
+/* ── Clock widget ────────────────────────────────────────────────────── */
+.widget--clock {
+    display: grid;
+    place-items: center;
+    padding: 12px 12px 26px;
 }
 
-/* ----- Side cards (right column) ----- */
-.welcome__aside {
+.clock {
+    width: 100%;
+    height: 100%;
+    max-width: 150px;
+    max-height: 150px;
+}
+
+.clock__dial {
+    fill: var(--ios-dial);
+    stroke: var(--ios-separator);
+    stroke-width: 0.5;
+}
+
+.clock__tick {
+    stroke: var(--app-text-subtle);
+    stroke-width: 0.6;
+}
+
+.clock__tick--major {
+    stroke: var(--app-text);
+    stroke-width: 1.1;
+}
+
+.clock__num {
+    font-family: var(--app-font-sans);
+    font-size: 10.5px;
+    font-weight: 500;
+    fill: var(--app-text);
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+.clock__hand line {
+    stroke-linecap: round;
+}
+
+.clock__stem {
+    stroke: var(--app-text);
+    stroke-width: 1.4;
+}
+
+.clock__bar {
+    stroke: var(--app-text);
+    stroke-width: 3.6;
+}
+
+.clock__hand--second line {
+    stroke: #ff9500;
+    stroke-width: 0.9;
+}
+
+.clock__hub { fill: var(--app-text); }
+.clock__hub-second { fill: #ff9500; }
+.clock__hub-dot { fill: var(--ios-dial); }
+
+/* ── Date widget (iOS Calendar small widget) ─────────────────────────── */
+.widget--date {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    animation: rise 700ms 80ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    padding: 16px;
 }
 
-/* Panels — Workspace Manual `.panel` with a hairline-separated header */
-.card {
-    background: var(--app-surface);
-    border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-md, 10px);
-    box-shadow: var(--app-shadow-sm);
-    box-sizing: border-box;
-    overflow: hidden;
+.date-widget__weekday {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--app-accent);
 }
 
-.card__head {
+.date-widget__day {
+    font-family: var(--app-font-display);
+    font-size: clamp(48px, 16vw, 64px);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--app-text);
+    margin-top: 2px;
+}
+
+.date-widget__meta {
+    margin-top: auto;
+    font-size: 13px;
+    color: var(--app-text-muted);
+}
+
+/* ── Shortcuts widget ────────────────────────────────────────────────── */
+.widget--shortcuts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px;
+}
+
+.shortcut {
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 74px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 14px;
+    color: #ffffff;
+    font-family: var(--app-font-sans);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-align: left;
+    cursor: pointer;
+    /* Soft top highlight, like the Shortcuts widget tiles. */
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0)) !important;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.shortcut:active {
+    transform: scale(0.96);
+    filter: brightness(0.92);
+}
+
+.shortcut mat-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    line-height: 24px;
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 24;
+}
+
+/* ── Headlines (iOS News style) ──────────────────────────────────────── */
+.widget--news {
+    padding: 14px 0 6px;
+}
+
+.news__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--app-border);
+    padding: 0 16px 6px;
 }
 
-.card__body,
-.news-list,
-.news-loading {
-    padding: 14px 16px;
-}
-
-.card__eyebrow {
-    font-family: var(--app-font-sans);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--app-text-subtle);
-}
-
-.card__live {
+.news__brand {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: var(--app-font-sans);
-    height: 22px;
-    padding: 0 8px;
-    border-radius: 99px;
-    background: color-mix(in srgb, var(--app-success, #16a34a) 14%, transparent);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--app-success, #16a34a);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--app-accent);
 }
 
-.card__live-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--app-success, #16a34a);
-    animation: pulse-dot 2.8s ease-in-out infinite;
+.news__brand mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 20;
 }
 
-.card__link {
-    font-family: var(--app-font-sans);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--app-accent-text, var(--app-accent));
+.news__more {
+    font-size: 15px;
+    color: var(--app-accent);
     text-decoration: none;
 }
 
-.card__link:hover {
-    text-decoration: underline;
+.news__more:active {
+    opacity: 0.4;
 }
 
-/* --- Time card --- */
-.card__body--time {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 18px;
-}
-
-.time-display {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-}
-
-.time-display__icon {
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.time-display__icon svg {
-    display: block;
-    overflow: visible;
-}
-
-.time-display__main {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-}
-
-.time-display__value {
-    font-family: var(--app-font-sans);
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.025em;
-    color: var(--app-text);
-    font-variant-numeric: tabular-nums;
-}
-
-.time-display__label {
-    font-family: var(--app-font-sans);
-    font-size: 12px;
-    color: var(--app-text-muted);
-}
-
-.time-stats {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    text-align: right;
-}
-
-.time-stats li {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-end;
-    gap: 6px;
-    font-family: var(--app-font-sans);
-    font-size: 12px;
-    color: var(--app-text-muted);
-}
-
-.time-stats__label {
-    color: var(--app-text-subtle);
-}
-
-.time-stats__value {
-    color: var(--app-text);
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-}
-
-/* --- News card --- */
 .news-list {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    padding-top: 4px;
-    padding-bottom: 4px;
 }
 
 .news-item {
-    padding: 9px 0;
-    border-bottom: 1px dashed var(--app-border);
+    position: relative;
 }
 
-.news-item:last-child {
-    border-bottom: none;
+.news-item + .news-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 16px;
+    right: 0;
+    border-top: 0.5px solid var(--ios-separator);
+}
+
+.news-item__link {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 16px;
+    color: inherit;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a.news-item__link:active {
+    background: var(--ios-fill);
 }
 
 .news-item__meta {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-bottom: 2px;
-    font-family: var(--app-font-sans);
+    font-size: 12px;
+    color: var(--app-text-muted);
 }
 
 .news-item__badge {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
-.news-item__badge[data-tone="new"]    { color: var(--tone-new); }
-.news-item__badge[data-tone="faster"] { color: var(--tone-faster); }
-.news-item__badge[data-tone="beta"]   { color: var(--tone-beta); }
-
-.news-item__date {
-    font-size: 12px;
-    color: var(--app-text-subtle);
-}
+.news-item__badge[data-tone="faster"] { color: var(--app-accent); }
+.news-item__badge[data-tone="beta"] { color: #ff9500; }
+.news-item__badge[data-tone="new"] { color: #007aff; }
 
 .news-item__title {
-    margin: 0;
-    font-family: var(--app-font-sans);
-    font-size: 14px;
-    line-height: 1.45;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
     color: var(--app-text);
-    font-weight: 550;
-}
-
-.news-item__link {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-    transition: color 160ms ease;
-}
-
-.news-item__link:hover .news-item__title {
-    color: var(--app-accent-text, var(--app-accent));
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .news-loading {
     margin: 0;
-    font-family: var(--app-font-sans);
-    font-size: 13px;
-    color: var(--app-text-subtle);
+    padding: 12px 16px 14px;
+    font-size: 15px;
+    color: var(--app-text-muted);
 }
 
-/* ----- Responsive ----- */
-@media (max-width: 900px) {
-    .welcome__grid {
-        grid-template-columns: 1fr;
-        gap: 36px;
+/* ── Wider screens: four columns, shortcuts beside the small widgets ── */
+@media (min-width: 768px) {
+    .today {
+        padding: 32px 32px 48px;
     }
 
-    .welcome__aside {
-        max-width: 560px;
-    }
-}
-
-@media (max-width: 599px) {
-    .welcome {
-        /* Standalone PWA on notched iPhones: env(safe-area-inset-top) ≈ 47–59px
-           so the topbar clears the Dynamic Island / status bar. In Safari
-           browser the inset is ~0 and the 14px baseline takes over. */
-        padding: max(14px, env(safe-area-inset-top, 14px)) 18px 18px;
+    .widgets {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 20px;
     }
 
-    /* The status pill is the only thing in the topbar; drop the row. */
-    .welcome__topbar {
-        display: none;
+    .widget--shortcuts {
+        grid-column: span 2;
+        aspect-ratio: auto;
     }
 
-    .hero-greeting {
-        font-size: 1.6rem;
-    }
-
-    .hero-subtitle {
-        font-size: 14px;
-    }
-
-    /* Mobile quick actions: two equal-width buttons sharing the row. */
-    .hero-actions > .wbtn {
-        flex: 1 1 0;
-        min-width: 0;
-        padding: 0 12px;
-    }
-
-    /* On phones the news card is generous; trim to one item so the page
-       still fits in a single viewport without scrolling. */
-    .card--news .news-item:nth-child(n+2) {
-        display: none;
-    }
-
-    .card__head,
-    .card__body,
-    .news-list {
-        padding-left: 14px;
-        padding-right: 14px;
-    }
-
-    .card__body--time {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-
-    .time-stats {
-        flex-direction: row;
-        justify-content: space-between;
-        text-align: left;
-    }
-
-    .time-stats li {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 2px;
+    .widget--news {
+        grid-column: 1 / -1;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .welcome__status-dot,
-    .card__live-dot,
-    .welcome__hero,
-    .welcome__aside {
+    .widget {
         animation: none;
     }
 }

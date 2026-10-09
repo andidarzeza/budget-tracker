@@ -1,3 +1,4 @@
+import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -73,11 +74,11 @@ export class ProjectsComponent implements OnInit {
   });
 
   iconBg(name: string | null | undefined): string {
-    return `color-mix(in srgb, hsl(${this.hueFor(name ?? '')}, 65%, 55%) 18%, transparent)`;
+    return iosTileColor(this.hueFor(name ?? ''));
   }
 
   iconFg(name: string | null | undefined): string {
-    return `hsl(${this.hueFor(name ?? '')}, 55%, 45%)`;
+    return IOS_TILE_GLYPH;
   }
 
   private hueFor(name: string): number {

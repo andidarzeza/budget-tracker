@@ -95,7 +95,7 @@ interface ProjectCard {
 }
 
 const BALANCE_HIDDEN_KEY = 'dashboard.balanceHidden';
-const OVERVIEW_COLLAPSED_KEY = 'dashboard.overviewCollapsed';
+const DASHBOARD_TAB_KEY = 'dashboard.tab';
 const SELECTED_RANGE_KEY = 'dashboard.selectedRange';
 /** Valid `RangeType` values, used to validate a stored range before trusting it. */
 const RANGE_VALUES: ReadonlySet<RangeType> = new Set<RangeType>([
@@ -127,7 +127,7 @@ const INCOME_LINE = 'income-line';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'],
+  styleUrls: ['./dashboard.component.css', './dashboard-ios.component.css'],
   animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -147,6 +147,9 @@ const INCOME_LINE = 'income-line';
   ],
 })
 export class DashboardComponent implements AfterViewInit {
+  /** Shown above the large title. */
+  readonly today = new Date();
+
   readonly dashboardService = inject(DashboardService);
   readonly chartUtil = inject(ChartUtils);
   readonly sideBarService = inject(SideBarService);
@@ -179,7 +182,13 @@ export class DashboardComponent implements AfterViewInit {
   /** Privacy toggle — value persisted in localStorage so it sticks across reloads. */
   balanceHidden = signal<boolean>(localStorage.getItem(BALANCE_HIDDEN_KEY) === '1');
   /** Balance + projects overview collapsed state — persisted so it sticks across reloads. */
-  overviewCollapsed = signal<boolean>(localStorage.getItem(OVERVIEW_COLLAPSED_KEY) === '1');
+  /** Statistics (default) or the balances of each source. */
+  activeTab = signal<'stats' | 'balances'>(localStorage.getItem(DASHBOARD_TAB_KEY) === 'balances' ? 'balances' : 'stats');
+
+  /** Income / expense / net for the previous calendar month ("Saved in …"). */
+  lastMonthBalances = signal<CurrencyBalance[]>([]);
+  readonly lastMonthName = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
+    .toLocaleDateString('en-US', { month: 'long' });
 
   /** Active bank accounts, sorted by name. */
   bankWallets = computed<Wallet[]>(() => this.activeWalletsOfType('BANK'));
@@ -348,10 +357,9 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  toggleOverview(): void {
-    const next = !this.overviewCollapsed();
-    this.overviewCollapsed.set(next);
-    localStorage.setItem(OVERVIEW_COLLAPSED_KEY, next ? '1' : '0');
+  selectTab(tab: 'stats' | 'balances'): void {
+    this.activeTab.set(tab);
+    localStorage.setItem(DASHBOARD_TAB_KEY, tab);
   }
 
   openWalletDetail(wallet: Wallet): void {
@@ -577,7 +585,23 @@ export class DashboardComponent implements AfterViewInit {
         // contributions; refresh them whenever fresh dashboard data arrives.
         this.fetchWallets();
         this.fetchProjects();
+        this.fetchLastMonth();
       });
+  }
+
+  /** Previous calendar month's totals, for the "Saved in …" glance card. */
+  private fetchLastMonth(): void {
+    const now = new Date();
+    const from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const to = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+    this.dashboardService
+      .getDashboardData(from, to, 'MONTH')
+      .pipe(takeUntilDestroyed(this.destroyRef), catchError(this.catchError))
+      .subscribe((data: DashboardDTO | null) =>
+        this.lastMonthBalances.set(
+          data ? DashboardComponent.mergeBalances(data.incomeTotalsByCurrency, data.expenseTotalsByCurrency) : [],
+        ),
+      );
   }
 
   private fetchExpenseTimeline(): void {

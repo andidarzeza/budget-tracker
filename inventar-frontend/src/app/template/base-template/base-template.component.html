@@ -1,6 +1,6 @@
 <div [@routeAnimations]="prepareRoute()" class="application-container">
 
-    @if (authenticationService.currentUserValue && sideBarService.displaySidebar) {
+    @if (authenticationService.currentUserValue && sideBarService.displaySidebar && !sideBarService.hiddenByUrl()) {
         <side-bar [navigation]="navigation"
             [sideBarMode]="sideBarMode"
             [mobileDrawer]="(breakpointService.useTableCardLayout$ | async) === true"></side-bar>
@@ -15,19 +15,24 @@
             <div class="shadow" id="shadow" (click)="toggleSidebar()"></div>
         }
 
-        @if (navBarService.displayNavBar) {
+        @if (navBarService.displayNavBar && !sideBarService.hiddenByUrl()) {
             <nav-bar></nav-bar>
         }
 
-        @if ((breakpointService.useTableCardLayout$ | async) && authenticationService.currentUserValue && sideBarService.displaySidebar) {
+        @if ((breakpointService.useTableCardLayout$ | async) && authenticationService.currentUserValue && sideBarService.displaySidebar && !sideBarService.hiddenByUrl()) {
             <div class="mobile-nav-backdrop"
                 [class.mobile-nav-backdrop--open]="(sideBarService.mobileMenuOpen$ | async) === true"
                 (click)="sideBarService.closeMobileMenu()"
                 aria-hidden="true"></div>
         }
 
-        <div class="content-container" [class.content-container--public]="!authenticationService.currentUserValue">
+        <div class="content-container" [class.content-container--public]="!authenticationService.currentUserValue"
+            [class.content-container--tab-bar]="showMobileTabBar">
             <ng-content></ng-content>
         </div>
     </div>
+
+    @if (showMobileTabBar) {
+        <mobile-tab-bar></mobile-tab-bar>
+    }
 </div>

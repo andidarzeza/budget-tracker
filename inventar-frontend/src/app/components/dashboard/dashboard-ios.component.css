@@ -1,0 +1,495 @@
+/* iOS layer for the dashboard (kept apart from dashboard.component.css so
+   neither file outgrows the per-stylesheet build budget). Loaded after it. */
+
+/* ============================================================================
+ * iOS look (same language as the Calendar app): borderless inset-grouped
+ * cards on the gray grouped background, plain tinted bar buttons, and a
+ * UISegmentedControl for the range tabs.
+ * ========================================================================== */
+.balance-card,
+.control-bar,
+.kpi-card,
+.panel {
+    border: 0;
+    border-radius: var(--app-radius-md);
+    box-shadow: none !important;
+}
+
+.balance-card__btn {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 0;
+    color: var(--app-accent);
+    transition: opacity 0.2s ease;
+}
+
+.balance-card__btn:hover {
+    border: 0;
+    background: var(--app-surface-hover);
+}
+
+.balance-card__btn:active {
+    opacity: 0.4;
+    transition: none;
+}
+
+.balance-card__btn mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+}
+
+/* —— Source cards: Apple Wallet style ——
+   Card-shaped, filled with the bank's colours (graphite for unbranded
+   banks, gold for cash, purple for projects), a soft light sheen and two
+   faint circles for depth, white type, and the logo on a small white plate
+   in the top-left corner. */
+.balance-card__rows {
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+}
+
+.balance-row,
+.balance-row:hover,
+.balance-row--brand,
+.balance-row--brand:hover {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    aspect-ratio: 1.586;
+    justify-content: flex-end;
+    gap: 0;
+    padding: 16px 18px;
+    border: 0;
+    border-radius: 18px;
+    background: var(--card-bg, linear-gradient(135deg, #636366 0%, #2c2c2e 55%, #1c1c1e 100%));
+    color: #ffffff;
+    box-shadow: 0 10px 24px -12px var(--card-glow, rgba(0, 0, 0, 0.55)), inset 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+    transition: transform 0.2s var(--app-easing-standard), box-shadow 0.2s ease;
+}
+
+.balance-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(120% 90% at 0% 0%, rgba(255, 255, 255, 0.24), transparent 55%),
+        radial-gradient(circle at 112% 118%, rgba(255, 255, 255, 0.16) 0 34%, transparent 35%),
+        radial-gradient(circle at 88% 138%, rgba(255, 255, 255, 0.10) 0 32%, transparent 33%);
+    pointer-events: none;
+}
+
+.balance-row:active {
+    transform: scale(0.98);
+}
+
+@media (hover: hover) and (min-width: 768px) {
+    .balance-row:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 30px -14px var(--card-glow, rgba(0, 0, 0, 0.55)), inset 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+    }
+}
+
+.balance-row--isp {
+    --card-bg: linear-gradient(135deg, #2bc184 0%, #008551 50%, #005c38 100%);
+    --card-glow: rgba(0, 133, 81, 0.6);
+}
+
+.balance-row--tirana {
+    --card-bg: linear-gradient(135deg, #3d6fe0 0%, #113681 52%, #0a2257 100%);
+    --card-glow: rgba(17, 54, 129, 0.6);
+}
+
+.balance-row--cash {
+    --card-bg: linear-gradient(135deg, #f7c95c 0%, #d99a1e 52%, #a66a0a 100%);
+    --card-glow: rgba(217, 154, 30, 0.55);
+}
+
+.balance-row--project {
+    --card-bg: linear-gradient(135deg, #c77dff 0%, #8e44c8 52%, #5e2a8c 100%);
+    --card-glow: rgba(142, 68, 200, 0.55);
+}
+
+/* Logo on a white plate, top-left. Same plate in light and dark mode. */
+.balance-row__brand,
+:host-context(.dark-theme) .balance-row__brand {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    margin: 0;
+    padding: 6px 10px;
+    border-radius: 9px;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.balance-row__brand::after {
+    display: none;
+}
+
+:host-context(.dark-theme) .balance-row__brand .brand-logo--has-dark {
+    display: block;
+}
+
+:host-context(.dark-theme) .balance-row__brand .brand-logo--dark {
+    display: none;
+}
+
+:host-context(.dark-theme) .balance-row--isp .balance-row__brand img {
+    filter: none;
+}
+
+/* Cash has no logo: a frosted chip instead. */
+.balance-row__brand--cash,
+:host-context(.dark-theme) .balance-row__brand--cash {
+    gap: 6px;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.24);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow: none;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.balance-row__top {
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.balance-row__name {
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.balance-row__badge {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: none;
+    color: #ffffff;
+}
+
+.balance-row__label {
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.balance-row__amount,
+.balance-row--brand .balance-row__amount {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.balance-row__code {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.control-bar__ranges {
+    background: var(--ios-fill-3);
+    border: 0;
+    border-radius: 9px;
+    padding: 2px;
+    gap: 0;
+}
+
+.range-option {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--app-text);
+    border-radius: 7px;
+}
+
+.range-option--active,
+.range-option--active:hover {
+    background: var(--ios-seg-thumb);
+    font-weight: 600;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-section__title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+/* Large title, matching the other pages. */
+.page-head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px 4px 0;
+}
+
+.page-head__eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--app-accent);
+}
+
+.page-head__title {
+    margin: 0;
+    font-family: var(--app-font-display);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    color: var(--app-text);
+}
+
+/* Balance card header: a plain section title with tinted bar buttons. */
+.balance-card__head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-bottom: 8px;
+    border-bottom: 0;
+}
+
+.balance-card__icon-wrap {
+    display: none;
+}
+
+.balance-card__title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+/* Group headings ("Bank accounts", "Cash") as iOS section headers. */
+.balance-group__title {
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--app-text-muted);
+}
+
+.balance-group__icon {
+    display: none;
+}
+
+.balance-group__count {
+    box-shadow: none;
+    background: var(--ios-fill-3);
+}
+
+/* Totals: one grouped list per block, hairlines between currencies. */
+.balance-card__recap {
+    border-left-width: 0.5px;
+    border-left-color: var(--ios-separator);
+}
+
+.recap__heading,
+.recap-block__title,
+.recap-block--grand .recap-block__title {
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--app-text-muted);
+}
+
+.recap-block__hint {
+    text-transform: none;
+}
+
+.recap-list {
+    gap: 0;
+    border-radius: var(--app-radius-md);
+    background: var(--ios-fill-3);
+    overflow: hidden;
+}
+
+.recap-row,
+.recap-row--grand {
+    position: relative;
+    padding: 12px 14px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.recap-row + .recap-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 14px;
+    right: 0;
+    border-top: 0.5px solid var(--ios-separator);
+}
+
+.recap-row__currency {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--app-text);
+}
+
+.recap-row__amount {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.recap-block--grand {
+    border-top: 0;
+}
+
+.recap-row--grand .recap-row__amount {
+    font-size: 22px;
+}
+
+/* Period totals: grouped rows instead of a dashed ledger. */
+.kpi-card__head {
+    border-bottom-width: 0.5px;
+    border-bottom-color: var(--ios-separator);
+}
+
+.kpi-card__currency {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.kpi-card__row {
+    font-size: 17px;
+}
+
+.kpi-card__row--net {
+    border-top: 0.5px solid var(--ios-separator);
+}
+
+.kpi-card__value {
+    font-weight: 600;
+}
+
+@media (max-width: 860px) {
+    .balance-card__recap {
+        border-top-width: 0.5px;
+        border-top-color: var(--ios-separator);
+    }
+}
+
+@media (max-width: 767px) {
+    .dashboard-container {
+        padding: 8px 16px 24px;
+        gap: 22px;
+    }
+
+    .balance-card,
+    .control-bar,
+    .kpi-card,
+    .panel {
+        padding: 16px;
+    }
+}
+
+/* Statistics / Balances: an iOS segmented control under the large title. */
+.dash-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 360px;
+    padding: 2px;
+    border-radius: 9px;
+    background: var(--ios-fill-3);
+}
+
+.dash-tabs__option {
+    height: 30px;
+    border: 0;
+    border-radius: 7px;
+    background: none;
+    color: var(--app-text);
+    font: 500 13px var(--app-font-sans);
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dash-tabs__option--active {
+    background: var(--ios-seg-thumb);
+    font-weight: 600;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+}
+
+.dash-tab {
+    display: flex;
+    flex-direction: column;
+    gap: inherit;
+    animation: page-fade-in 0.2s ease;
+}
+
+.dash-tab--hidden {
+    display: none;
+}
+
+/* At a glance: two widget-style cards. */
+.glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.glance-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 16px;
+    border-radius: var(--app-radius-lg);
+    background: var(--app-bg-elevated);
+}
+
+.glance-card__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--app-text-muted);
+}
+
+.glance-card__label mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: var(--app-accent);
+    font-variation-settings: 'FILL' 1;
+}
+
+.glance-card__value {
+    white-space: nowrap;
+    font-size: clamp(19px, 5vw, 26px);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+}
+
+.glance-card__value--empty {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--app-text-muted);
+}
+
+.glance-card__value--positive { color: var(--app-success); }
+.glance-card__value--negative { color: var(--app-danger); }
+
+.glance-card__currency {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--app-text-subtle);
+}
+
+.glance-card__hint {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--app-text-subtle);
+}

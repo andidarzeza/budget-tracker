@@ -1,110 +1,96 @@
-<section class="welcome">
+<!-- iOS "Today"-style landing: large title, then a grid of widgets. -->
+<section class="today">
 
-    <div class="welcome__glow" aria-hidden="true"></div>
+    <header class="today__head">
+        <span class="today__date">{{ now() | date:'EEEE, d MMMM' }}</span>
+        <h1 class="today__title">
+            {{ greeting }}<ng-container *ngIf="firstName">, {{ firstName | titlecase }}</ng-container>
+        </h1>
+    </header>
 
-    <div class="welcome__topbar">
-        <div class="welcome__status" aria-live="polite">
-            <span class="welcome__status-dot" aria-hidden="true"></span>
-            <span class="welcome__status-text">All systems calm</span>
-        </div>
+    <div class="widgets">
 
-    </div>
+        <!-- Small: analog clock (iOS Clock widget) -->
+        <article class="widget widget--small widget--clock" [attr.aria-label]="'Time in ' + location()">
+            <svg class="clock" viewBox="0 0 100 100" aria-hidden="true">
+                <circle class="clock__dial" cx="50" cy="50" r="48"></circle>
+                @for (t of ticks; track t) {
+                    <line class="clock__tick" [class.clock__tick--major]="t % 5 === 0"
+                        x1="50" [attr.y1]="t % 5 === 0 ? 6 : 5" x2="50" [attr.y2]="t % 5 === 0 ? 12 : 9"
+                        [attr.transform]="'rotate(' + t * 6 + ' 50 50)'"></line>
+                }
+                @for (n of numerals; track n.label) {
+                    <text class="clock__num" [attr.x]="n.x" [attr.y]="n.y">{{ n.label }}</text>
+                }
+                <g class="clock__hand" [attr.transform]="'rotate(' + hands().hour + ' 50 50)'">
+                    <line class="clock__stem" x1="50" y1="50" x2="50" y2="44"></line>
+                    <line class="clock__bar" x1="50" y1="44" x2="50" y2="27"></line>
+                </g>
+                <g class="clock__hand" [attr.transform]="'rotate(' + hands().minute + ' 50 50)'">
+                    <line class="clock__stem" x1="50" y1="50" x2="50" y2="44"></line>
+                    <line class="clock__bar" x1="50" y1="44" x2="50" y2="11"></line>
+                </g>
+                <circle class="clock__hub" cx="50" cy="50" r="2.6"></circle>
+                <g class="clock__hand clock__hand--second" [attr.transform]="'rotate(' + hands().second + ' 50 50)'">
+                    <line x1="50" y1="60" x2="50" y2="8"></line>
+                </g>
+                <circle class="clock__hub-second" cx="50" cy="50" r="1.6"></circle>
+                <circle class="clock__hub-dot" cx="50" cy="50" r="0.7"></circle>
+            </svg>
+            <span class="widget__caption">{{ location() }}</span>
+        </article>
 
-    <div class="welcome__grid">
+        <!-- Small: date (iOS Calendar widget) -->
+        <article class="widget widget--small widget--date" aria-label="Today">
+            <span class="date-widget__weekday">{{ now() | date:'EEEE' }}</span>
+            <span class="date-widget__day">{{ now() | date:'d' }}</span>
+            <span class="date-widget__meta">{{ now() | date:'MMMM' }} · Week {{ now() | date:'w' }}</span>
+        </article>
 
-        <div class="welcome__hero">
-            <div class="hero-date">
-                <span class="hero-date__day">{{ now() | date:'d' }}</span>
-                <div class="hero-date__meta">
-                    <span class="hero-date__month">{{ now() | date:'MMMM yyyy' }}</span>
-                    <span class="hero-date__weekday">{{ now() | date:'EEEE' }}</span>
-                </div>
-            </div>
-
-            <h1 class="hero-greeting">
-                {{ greeting }}<ng-container *ngIf="fullName">, <span class="hero-greeting__name">{{ fullName | titlecase }}</span></ng-container>.
-            </h1>
-
-            <p class="hero-subtitle">
-                A quiet place to begin. Everything you need is one click away —
-                your books are tucked off-stage for now.
-            </p>
-
-            <div class="hero-actions">
-                <button type="button" class="wbtn wbtn--primary wbtn--lg"
-                    (click)="go('/expenses')">
-                    <mat-icon aria-hidden="true">add</mat-icon>
-                    Add expense
+        <!-- Medium: shortcuts -->
+        <article class="widget widget--wide widget--shortcuts" aria-label="Shortcuts">
+            @for (s of shortcuts; track s.label) {
+                <button type="button" class="shortcut" [style.background]="s.color" (click)="open(s)">
+                    <mat-icon fontSet="material-symbols-rounded" aria-hidden="true">{{ s.icon }}</mat-icon>
+                    <span>{{ s.label }}</span>
                 </button>
-                <button type="button" class="wbtn wbtn--lg"
-                    (click)="go('/dashboard')">
-                    <mat-icon aria-hidden="true">insights</mat-icon>
-                    Open dashboard
-                </button>
-            </div>
-        </div>
+            }
+        </article>
 
-        <aside class="welcome__aside">
-            <article class="card card--time">
-                <header class="card__head">
-                    <span class="card__eyebrow">Now · {{ location() }}</span>
-                    <span class="card__live">
-                        <span class="card__live-dot" aria-hidden="true"></span>
-                        Live
-                    </span>
-                </header>
-                <div class="card__body card__body--time">
-                    <div class="time-display">
-                        <span class="time-display__icon" aria-hidden="true">
-                            <svg viewBox="0 0 48 48" width="44" height="44">
-                                <circle cx="34" cy="18" r="9" fill="#fbbf24"/>
-                                <ellipse cx="22" cy="26" rx="14" ry="8" fill="#cbd5e1"/>
-                                <ellipse cx="26" cy="28" rx="16" ry="9" fill="#e2e8f0"/>
-                            </svg>
+        <!-- Large: headlines (iOS News style) -->
+        <article class="widget widget--wide widget--news" aria-label="Top headlines">
+            <header class="news__head">
+                <span class="news__brand">
+                    <mat-icon fontSet="material-symbols-rounded" aria-hidden="true">newspaper</mat-icon>
+                    Top Stories
+                </span>
+                <a class="news__more" href="https://news.ycombinator.com" target="_blank" rel="noopener">More</a>
+            </header>
+            <ul class="news-list" *ngIf="news().length > 0; else newsLoading">
+                <li class="news-item" *ngFor="let item of news()">
+                    <a class="news-item__link" *ngIf="item.url; else newsItemPlain"
+                        [href]="item.url" target="_blank" rel="noopener">
+                        <span class="news-item__meta">
+                            <span class="news-item__badge" [attr.data-tone]="item.badgeTone">{{ item.badge }}</span>
+                            <span class="news-item__date" *ngIf="item.date">{{ item.date }}</span>
                         </span>
-                        <div class="time-display__main">
-                            <span class="time-display__value">{{ now() | date:'HH:mm' }}</span>
-                            <span class="time-display__label">{{ now() | date:'EEEE, MMM d' }}</span>
-                        </div>
-                    </div>
-                    <ul class="time-stats" aria-label="Time details">
-                        <li><span class="time-stats__label">Seconds</span><span class="time-stats__value">{{ now() | date:'ss' }}</span></li>
-                        <li><span class="time-stats__label">Week</span><span class="time-stats__value">W{{ (now() | date:'w') || '–' }}</span></li>
-                        <li><span class="time-stats__label">Zone</span><span class="time-stats__value">{{ tzAbbrev() }}</span></li>
-                    </ul>
-                </div>
-            </article>
-
-            <article class="card card--news">
-                <header class="card__head">
-                    <span class="card__eyebrow">Top headlines</span>
-                    <a class="card__link" href="https://news.ycombinator.com" target="_blank" rel="noopener">More →</a>
-                </header>
-                <ul class="news-list" *ngIf="news().length > 0; else newsLoading">
-                    <li class="news-item" *ngFor="let item of news()">
-                        <a class="news-item__link" *ngIf="item.url; else newsItemPlain"
-                            [href]="item.url" target="_blank" rel="noopener">
-                            <div class="news-item__meta">
+                        <span class="news-item__title">{{ item.title }}</span>
+                    </a>
+                    <ng-template #newsItemPlain>
+                        <span class="news-item__link">
+                            <span class="news-item__meta">
                                 <span class="news-item__badge" [attr.data-tone]="item.badgeTone">{{ item.badge }}</span>
-                                <span class="news-item__date" *ngIf="item.date">· {{ item.date }}</span>
-                            </div>
-                            <p class="news-item__title">{{ item.title }}</p>
-                        </a>
-                        <ng-template #newsItemPlain>
-                            <div class="news-item__meta">
-                                <span class="news-item__badge" [attr.data-tone]="item.badgeTone">{{ item.badge }}</span>
-                                <span class="news-item__date" *ngIf="item.date">· {{ item.date }}</span>
-                            </div>
-                            <p class="news-item__title">{{ item.title }}</p>
-                        </ng-template>
-                    </li>
-                </ul>
-                <ng-template #newsLoading>
-                    <p class="news-loading">Loading headlines…</p>
-                </ng-template>
-            </article>
-        </aside>
+                                <span class="news-item__date" *ngIf="item.date">{{ item.date }}</span>
+                            </span>
+                            <span class="news-item__title">{{ item.title }}</span>
+                        </span>
+                    </ng-template>
+                </li>
+            </ul>
+            <ng-template #newsLoading>
+                <p class="news-loading">Loading headlines…</p>
+            </ng-template>
+        </article>
 
     </div>
-
 </section>

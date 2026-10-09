@@ -1,3 +1,6 @@
+import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
+import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
+import { LongPressDeleteDirective } from 'src/app/shared/long-press-delete/long-press-delete.directive';
 import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnInit, viewChild } from '@angular/core';
@@ -31,6 +34,8 @@ import { HistoryDetailsComponent } from './history-details/history-details.compo
   styleUrls: ['./history.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    LedgerFiltersComponent,
+    LongPressDeleteDirective,
     CommonModule,
     MatIconModule,
     MatMenuModule,
@@ -124,11 +129,11 @@ export class HistoryComponent extends BaseTable<History> implements OnInit {
    *  off the action so the colors carry semantic weight (create = green,
    *  delete = red, …) instead of being incidental. */
   iconBg(row: History): string {
-    return `color-mix(in srgb, hsl(${this.hueFor(row)}, 65%, 55%) 18%, transparent)`;
+    return iosTileColor(this.hueFor(row));
   }
 
   iconFg(row: History): string {
-    return `hsl(${this.hueFor(row)}, 55%, 45%)`;
+    return IOS_TILE_GLYPH;
   }
 
   /** Human-readable row title: "Created Expense", "Logged in", etc. */

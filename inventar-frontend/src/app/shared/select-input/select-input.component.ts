@@ -164,6 +164,14 @@ export class SelectInputComponent<T, OptT = T> {
     return this.compareWith()(this.selectedValue, this.valueWith()(opt));
   }
 
+  /** Clicking the label or row padding opens the list too (Apple form rows). */
+  onRowClick(event: MouseEvent): void {
+    const target = event.target as Element;
+    if (target.closest('.select-trigger') || target.closest('.error-message')) return;
+    this.toggleDropdown();
+    this.trigger()?.nativeElement.focus();
+  }
+
   toggleDropdown(): void {
     if (!this.dropdownOpen()) {
       // Measure right before opening so the panel always matches the trigger,
@@ -194,8 +202,10 @@ export class SelectInputComponent<T, OptT = T> {
    * handler can flip the dropdown without us closing it first.
    */
   onOverlayOutsideClick(event: MouseEvent): void {
-    const trigger = this.trigger()?.nativeElement;
-    if (trigger && trigger.contains(event.target as Node)) {
+    // The whole row (label included) is this control: its own click
+    // handlers toggle the list, so don't also close it here.
+    const row = this.trigger()?.nativeElement.closest('.select-input');
+    if (row && row.contains(event.target as Node)) {
       return;
     }
     this.dropdownOpen.set(false);

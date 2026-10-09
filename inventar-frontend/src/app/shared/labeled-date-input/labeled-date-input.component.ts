@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 
@@ -30,6 +30,11 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabeledDateInputComponent {
+  /** Clicking the label or row padding opens the calendar (the field itself already does). */
+  openFromRow(event: MouseEvent, picker: MatDatepicker<Date>): void {
+    if (!(event.target as Element).closest('.input-wrapper')) picker.open();
+  }
+
   private readonly breakpointService = inject(BreakpointService);
 
   @Input({ required: true }) control!: FormControl<Date | null>;

@@ -6,8 +6,8 @@
     justify-content: space-between;
     gap: 4px;
     padding: 6px 8px;
-    background: var(--app-surface-muted);
-    border: 1px solid var(--app-border);
+    background: var(--ios-fill-3);
+    border: 1px solid transparent;
     border-radius: var(--app-radius-sm);
     min-height: 48px;
     position: relative;

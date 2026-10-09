@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   inject,
   Input,
   OnChanges,
@@ -17,13 +19,14 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { inOutAnimation } from 'src/app/animations';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinition } from 'src/app/models/models';
 import { CustomDatePipe } from 'src/app/pipes/custom-date.pipe';
 import { ColumnWidthPipe } from '../column-width/column-width.pipe';
+import { iosTileColorForName } from '../../ios/ios-colors';
 import { RecordActionsComponent } from '../../record-actions/record-actions.component';
 import { TOOLTIP_IMPORTS } from '../../tooltip-mobile-guard/tooltip-imports';
 
@@ -49,6 +52,7 @@ import { TOOLTIP_IMPORTS } from '../../tooltip-mobile-guard/tooltip-imports';
 })
 export class TableBodyComponent implements AfterViewInit, OnChanges, OnDestroy {
   readonly breakpointService = inject(BreakpointService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() columnDefinitions: ColumnDefinition[];
   @Input() data: any[];
@@ -66,8 +70,14 @@ export class TableBodyComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Output() loadMore = new EventEmitter<void>();
 
   @ViewChild('loadSentinel', { static: false }) loadSentinel: ElementRef<HTMLElement>;
+  @ViewChild('contextTrigger') contextTrigger?: MatMenuTrigger;
 
-  selectedId: string;
+  /** Where the right-click menu opens, and the row it acts on. */
+  menuX = 0;
+  menuY = 0;
+  menuElement: any = null;
+
+  selectedId: string | null = null;
 
   private intersectionObserver: IntersectionObserver | null = null;
   private observeTimer: any;
@@ -151,6 +161,90 @@ export class TableBodyComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     const v = element?.description;
     return v == null || String(v).trim() === '';
+  }
+
+  /** Row actions live in the context menu / keyboard, not in a column. */
+  get visibleColumns(): ColumnDefinition[] {
+    return (this.columnDefinitions || []).filter((c) => c.type !== 'actions');
+  }
+
+  /** Click selects; a single click on the selected row deselects it. */
+  select(element: any, event?: MouseEvent): void {
+    const id = element?.id;
+    if (event && event.detail === 1 && this.selectedId === id) {
+      this.selectedId = null;
+      return;
+    }
+    this.selectedId = id;
+  }
+
+  /** Clicking anywhere outside the rows (or pressing Esc) clears the selection. */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.selectedId) return;
+    const target = event.target as Element | null;
+    if (!target?.closest('.data-row') && !target?.closest('.row-context-menu')) {
+      this.selectedId = null;
+      this.cdr.markForCheck();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.selectedId) {
+      this.selectedId = null;
+      this.cdr.markForCheck();
+    }
+  }
+
+  /** Double-click / Return: edit when editing is allowed, otherwise view. */
+  openPrimary(element: any): void {
+    this.select(element);
+    if (this.displayEditAction) this.openAddEditForm(element);
+    else if (this.displayViewAction) this.viewDetails(element?.id);
+  }
+
+  openContextMenu(event: MouseEvent, element: any): void {
+    if (!this.displayEditAction && !this.displayViewAction && !this.displayDeleteAction) return;
+    event.preventDefault();
+    this.select(element);
+    this.menuElement = element;
+    this.menuX = event.clientX;
+    this.menuY = event.clientY;
+    // Let the trigger move to the pointer before the menu measures it.
+    setTimeout(() => this.contextTrigger?.openMenu());
+  }
+
+  onRowKeydown(event: KeyboardEvent, element: any): void {
+    const row = event.currentTarget as HTMLElement;
+    switch (event.key) {
+      case 'Enter':
+        event.preventDefault();
+        this.openPrimary(element);
+        break;
+      case 'Delete':
+      case 'Backspace':
+        if (this.displayDeleteAction) {
+          event.preventDefault();
+          this.openDeleteConfirmDialog(element?.id);
+        }
+        break;
+      case 'ArrowDown':
+      case 'ArrowUp': {
+        event.preventDefault();
+        const next = (event.key === 'ArrowDown' ? row.nextElementSibling : row.previousElementSibling) as HTMLElement | null;
+        if (next?.classList.contains('data-row')) {
+          next.focus();
+          next.click();
+        }
+        break;
+      }
+    }
+  }
+
+  /** Solid iOS tile colour for a row's icon, keyed by its category name. */
+  iconTileColor(element: any): string {
+    return iosTileColorForName(element?.category);
   }
 
   displayString(element: any, column: string): string {

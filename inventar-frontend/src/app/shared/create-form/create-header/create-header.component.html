@@ -1,16 +1,12 @@
+<!-- Apple form-sheet bar: Cancel · title · Add / Done -->
 <header class="dialog-header">
-    <div class="dialog-header-leading">
-        <div class="dialog-header-icon" aria-hidden="true">
-            <mat-icon>{{ icon }}</mat-icon>
-        </div>
-        <div class="dialog-header-text">
-            <span class="dialog-header-eyebrow">{{ editMode ? 'Edit' : 'Create new' }}</span>
-            <h2 class="dialog-header-title">{{ entity | titlecase }}</h2>
-        </div>
-    </div>
-    <button type="button" cb-icon-button size="sm" (click)="closeDialog(false)"
-        matTooltip="Close" matTooltipPosition="below"
-        aria-label="Close dialog">
-        <mat-icon>close</mat-icon>
-    </button>
+    <button type="button" class="sheet-btn" (click)="closeDialog(false)">Cancel</button>
+    <h2 class="dialog-header-title">{{ editMode ? 'Edit' : 'New' }} {{ entity | titlecase }}</h2>
+    @if (showConfirm) {
+        <button type="button" class="sheet-btn sheet-btn--confirm" (click)="create.emit()">
+            {{ confirmLabel || (editMode ? 'Done' : 'Add') }}
+        </button>
+    } @else {
+        <span aria-hidden="true"></span>
+    }
 </header>

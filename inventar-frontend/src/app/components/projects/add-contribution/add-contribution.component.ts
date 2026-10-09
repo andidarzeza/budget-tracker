@@ -10,7 +10,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { ToastrService } from 'ngx-toastr';
 import { Contribution, EntityType, Wallet } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
@@ -31,13 +30,11 @@ interface AddContributionData {
 @Component({
   selector: 'app-add-contribution',
   templateUrl: './add-contribution.component.html',
-  styleUrls: ['./add-contribution.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatIconModule,
     CreateFormComponent,
     LabeledFormInputComponent,
     LabeledTextareaComponent,

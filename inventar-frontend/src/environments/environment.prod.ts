@@ -31,7 +31,7 @@ export const TOASTER_CONFIGURATION = {
 }
 
 export const CREATE_DIALOG_DESKTOP_CONFIGURATION = {
-  width: '880px',
+  width: '560px', // Apple form-sheet width
   maxWidth: '96vw',
   maxHeight: '92vh',
   disableClose: true,

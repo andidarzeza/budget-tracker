@@ -2,37 +2,40 @@
     [editMode]="isEditMode" (close)="closeDialog($event)" (create)="add()">
 
     <form [formGroup]="formGroup" class="dialog-form">
-        <div class="dialog-form__row dialog-form__row--category">
-            <cb-labeled-form-input class="dialog-form__field"
-                label="Project name"
-                type="text"
-                placeholder="e.g. Trip to Paris"
-                [control]="$any(formGroup.get('name'))">
-            </cb-labeled-form-input>
+        <!-- Apple grouped form: label-left rows, notes in their own group. -->
+        <div class="ios-form">
+            <div class="ios-group">
+                <cb-labeled-form-input
+                    label="Project name"
+                    type="text"
+                    placeholder="e.g. Trip to Paris"
+                    [control]="$any(formGroup.get('name'))">
+                </cb-labeled-form-input>
 
-            <cb-labeled-form-input class="dialog-form__field"
-                label="Target amount"
-                type="number"
-                [minErrorKey]="'Enter a positive amount.'"
-                [control]="$any(formGroup.get('targetAmount'))">
-            </cb-labeled-form-input>
+                <cb-labeled-form-input
+                    label="Target amount"
+                    type="number"
+                    [minErrorKey]="'Enter a positive amount.'"
+                    [control]="$any(formGroup.get('targetAmount'))">
+                </cb-labeled-form-input>
 
-            <cb-select-input class="dialog-form__field"
-                label="Currency"
-                [control]="$any(formGroup.get('targetCurrency'))"
-                [options]="currencies"
-                [displayWith]="displayCurrency">
-            </cb-select-input>
+                <cb-select-input
+                    label="Currency"
+                    [control]="$any(formGroup.get('targetCurrency'))"
+                    [options]="currencies"
+                    [displayWith]="displayCurrency">
+                </cb-select-input>
+
+                <select-icon formControlName="icon"></select-icon>
+            </div>
+
+            <div class="ios-group">
+                <cb-labeled-textarea
+                    label="Description"
+                    placeholder="What is this goal about?"
+                    [control]="$any(formGroup.get('description'))">
+                </cb-labeled-textarea>
+            </div>
         </div>
-
-        <div class="dialog-form__icon-slot">
-            <select-icon formControlName="icon"></select-icon>
-        </div>
-
-        <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
-            label="Description"
-            placeholder="What is this goal about?"
-            [control]="$any(formGroup.get('description'))">
-        </cb-labeled-textarea>
     </form>
 </create-form>

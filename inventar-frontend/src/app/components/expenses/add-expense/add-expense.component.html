@@ -7,7 +7,7 @@
         <header class="form-page__header">
             <button type="button" cb-icon-button (click)="closeDialog(false)"
                 matTooltip="Back" matTooltipPosition="below" aria-label="Back">
-                <mat-icon>arrow_back</mat-icon>
+                <mat-icon>arrow_back_ios_new</mat-icon>
             </button>
             <h1 class="form-page__title">{{ isEditMode ? 'Edit expense' : 'New expense' }}</h1>
         </header>
@@ -131,44 +131,47 @@
         <!-- Single-screen form: edit (any size) OR desktop create. The wizard
              below handles mobile create only. -->
         <ng-container *ngIf="isEditMode || !isWizardMobile()">
-            <div class="dialog-form__row dialog-form__row--equal">
-                <cb-select-input class="dialog-form__field"
-                    label="Expense Category"
-                    emptyText="No categories yet"
-                    [control]="$any(formGroup.get('categoryID'))"
-                    [options]="categories()"
-                    [displayWith]="displayCategory"
-                    [valueWith]="$any(categoryIdValue)">
-                </cb-select-input>
+            <!-- Apple grouped form: label-left rows, notes in their own group. -->
+            <div class="ios-form">
+                <div class="ios-group">
+                    <cb-select-input
+                        label="Category"
+                        emptyText="No categories yet"
+                        [control]="$any(formGroup.get('categoryID'))"
+                        [options]="categories()"
+                        [displayWith]="displayCategory"
+                        [valueWith]="$any(categoryIdValue)">
+                    </cb-select-input>
 
-                <cb-labeled-form-input class="dialog-form__field"
-                    label="Money Spent"
-                    type="number"
-                    [control]="$any(formGroup.get('moneySpent'))">
-                </cb-labeled-form-input>
+                    <cb-labeled-form-input
+                        label="Amount"
+                        type="number"
+                        [control]="$any(formGroup.get('moneySpent'))">
+                    </cb-labeled-form-input>
 
-                <cb-select-input class="dialog-form__field"
-                    label="Paid from"
-                    emptyText="No sources yet"
-                    [control]="$any(formGroup.get('walletId'))"
-                    [options]="sources()"
-                    [displayWith]="displaySource"
-                    [valueWith]="$any(sourceIdValue)">
-                </cb-select-input>
+                    <cb-select-input
+                        label="Paid from"
+                        emptyText="No sources yet"
+                        [control]="$any(formGroup.get('walletId'))"
+                        [options]="sources()"
+                        [displayWith]="displaySource"
+                        [valueWith]="$any(sourceIdValue)">
+                    </cb-select-input>
+
+                    <cb-labeled-date-input
+                        label="Date"
+                        [control]="$any(formGroup.get('createdTime'))">
+                    </cb-labeled-date-input>
+                </div>
+
+                <div class="ios-group">
+                    <cb-labeled-textarea
+                        label="Description"
+                        placeholder="Write a note…"
+                        [control]="$any(formGroup.get('description'))">
+                    </cb-labeled-textarea>
+                </div>
             </div>
-
-            <div class="dialog-form__row">
-                <cb-labeled-date-input class="dialog-form__field dialog-form__date"
-                    label="Date"
-                    [control]="$any(formGroup.get('createdTime'))">
-                </cb-labeled-date-input>
-            </div>
-
-            <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
-                label="Description"
-                placeholder="Write a note…"
-                [control]="$any(formGroup.get('description'))">
-            </cb-labeled-textarea>
         </ng-container>
 
         <!-- Mobile create: stepped flow + custom footer -->

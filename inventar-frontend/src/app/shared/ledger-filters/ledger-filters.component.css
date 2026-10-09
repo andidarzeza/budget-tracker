@@ -1,0 +1,80 @@
+:host {
+    display: contents;
+}
+
+.lf-trigger {
+    position: relative;
+}
+
+.lf-trigger--active {
+    background: var(--app-accent-soft);
+}
+
+.lf-trigger__badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    border-radius: 999px;
+    background: var(--app-accent);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+}
+
+/* iOS bottom sheet: dimmed backdrop, rounded top corners, grabber. Sits
+   above the navigation bar (14) and the floating tab bar (15). */
+.lf-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: rgba(0, 0, 0, 0.32);
+    animation: lf-fade 0.2s ease both;
+}
+
+.lf-sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 31;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 6px 0 max(12px, env(safe-area-inset-bottom, 0px));
+    border-radius: 14px 14px 0 0;
+    background: var(--app-bg-elevated);
+    box-shadow: var(--app-shadow-lg);
+    animation: lf-up 0.32s var(--app-easing-standard) both;
+}
+
+.lf-sheet__grabber {
+    display: block;
+    width: 36px;
+    height: 5px;
+    margin: 0 auto 4px;
+    border-radius: 3px;
+    background: var(--ios-fill);
+}
+
+/* The filter form brings its own card styling; inside the sheet it is the
+   sheet, so drop the card's margin and corners. */
+.lf-sheet ::ng-deep .filter-panel {
+    margin: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+@keyframes lf-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes lf-up {
+    from { transform: translateY(100%); }
+    to { transform: none; }
+}

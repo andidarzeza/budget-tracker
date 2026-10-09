@@ -28,6 +28,11 @@ export class LabeledFormInputComponent {
     return this.control?.hasValidator(Validators.required) ?? false;
   }
 
+  /** Clicking the label or row padding puts the caret in the field. */
+  focusInput(event: MouseEvent, input: HTMLInputElement): void {
+    if (event.target !== input) input.focus();
+  }
+
   get displayError(): boolean {
     return this.control?.invalid && (this.control?.touched || this.control?.dirty);
   }

@@ -1,0 +1,113 @@
+<div class="exchange">
+    <header class="page-head">
+        <div>
+            <h1 class="page-title">Exchange</h1>
+            <p class="page-sub">Euro ↔ Lek at the Iliria98 sell rate, saved every day</p>
+        </div>
+        <button type="button" class="btn" (click)="refresh()" [disabled]="refreshing()">
+            <mat-icon [class.spin]="refreshing()">refresh</mat-icon>
+            {{ refreshing() ? 'Updating…' : 'Update now' }}
+        </button>
+    </header>
+
+    <div class="top-grid">
+        <!-- Current rate -->
+        <section class="card rate-card">
+            <div class="card-label">
+                <span class="flag">🇪🇺</span> EUR → ALL <span class="pill">Sell</span>
+            </div>
+            @if (latest(); as r) {
+                <div class="rate-value">
+                    <span class="rate-num">{{ r.sell | number: '1.2-2' }}</span>
+                    <span class="rate-unit">ALL</span>
+                </div>
+                <div class="rate-meta">
+                    @if (change() !== null) {
+                        <span class="delta" [class.delta--up]="change()! > 0" [class.delta--down]="change()! < 0">
+                            <mat-icon>{{ change()! > 0 ? 'arrow_upward' : change()! < 0 ? 'arrow_downward' : 'remove' }}</mat-icon>
+                            {{ change()! > 0 ? '+' : '' }}{{ change() | number: '1.2-2' }} vs previous day
+                        </span>
+                    }
+                    <span>Buy {{ r.buy | number: '1.2-2' }}</span>
+                </div>
+                <div class="rate-foot">
+                    Updated {{ r.fetchedAt | date: 'd MMM y, HH:mm' }} · iliria98.com
+                </div>
+            } @else if (loading()) {
+                <div class="rate-value rate-value--muted">—</div>
+            } @else {
+                <p class="empty">No rate stored yet. Press <b>Update now</b> to fetch today's rate.</p>
+            }
+        </section>
+
+        <!-- Converter -->
+        <section class="card converter">
+            <div class="card-label">Converter</div>
+            <label class="field">
+                <span class="field-cur"><span class="flag">🇦🇱</span> ALL</span>
+                <input #lekInput type="text" inputmode="decimal" placeholder="0"
+                    [value]="lek() ?? ''" (input)="onLekInput(lekInput.value)" [disabled]="!rate()" />
+                <span class="field-name">Lek</span>
+            </label>
+            <div class="swap" aria-hidden="true"><mat-icon>swap_vert</mat-icon></div>
+            <label class="field">
+                <span class="field-cur"><span class="flag">🇪🇺</span> EUR</span>
+                <input #euroInput type="text" inputmode="decimal" placeholder="0"
+                    [value]="euro() ?? ''" (input)="onEuroInput(euroInput.value)" [disabled]="!rate()" />
+                <span class="field-name">Euro</span>
+            </label>
+            <div class="quick">
+                @for (amount of [10, 50, 100, 500, 1000]; track amount) {
+                    <button type="button" (click)="setEuro(amount)" [disabled]="!rate()">€{{ amount }}</button>
+                }
+            </div>
+            @if (rate()) {
+                <p class="converter-hint">1 EUR = {{ rate() | number: '1.2-2' }} ALL · 1,000 ALL = {{ 1000 / rate() | number: '1.2-2' }} EUR</p>
+            }
+        </section>
+    </div>
+
+    <!-- Chart -->
+    <section class="card chart-card">
+        <div class="chart-head">
+            <div>
+                <div class="card-title">EUR / ALL</div>
+                <div class="card-hint">
+                    @switch (range()) {
+                        @case ('daily') { Sell rate for each of the last 30 saved days }
+                        @case ('monthly') { Average sell rate per month, last 12 months }
+                        @case ('yearly') { Average sell rate per year }
+                    }
+                </div>
+            </div>
+            <div class="seg" role="tablist">
+                @for (r of ranges; track r.value) {
+                    <button type="button" role="tab" [class.active]="range() === r.value"
+                        [attr.aria-selected]="range() === r.value" (click)="range.set(r.value)">{{ r.label }}</button>
+                }
+            </div>
+        </div>
+
+        @if (stats(); as s) {
+            <div class="stats">
+                <div><span>Low</span><b>{{ s.min | number: '1.2-2' }}</b></div>
+                <div><span>High</span><b>{{ s.max | number: '1.2-2' }}</b></div>
+                <div><span>{{ range() === 'daily' ? 'Days' : range() === 'monthly' ? 'Months' : 'Years' }}</span><b>{{ s.count }}</b></div>
+            </div>
+        }
+
+        <div class="chart-box">
+            <canvas #rateChart></canvas>
+            @if (!loading() && points().length < 2) {
+                <div class="chart-note">
+                    <mat-icon>timeline</mat-icon>
+                    <span>
+                        @if (points().length === 0) { No data yet. }
+                        @else { Only one {{ range() === 'daily' ? 'day' : range() === 'monthly' ? 'month' : 'year' }} saved so far. }
+                        The line fills in as a new rate is saved every day.
+                    </span>
+                </div>
+            }
+        </div>
+    </section>
+</div>

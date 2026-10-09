@@ -1,36 +1,58 @@
-<div class="body-container" *ngIf="(breakpointService.useTableCardLayout$ | async) !== true; else cardLayout">
-    <div *ngFor="let element of (data || [])" class="data-row">
-        <div *ngFor="let columnDef of columnDefinitions" class="data-cell text-center row-entry"
-            [style.width.%]="columnDef?.type | columnWidth: columnDefinitions?.length">
+<!-- Desktop: Apple-style list. Click selects, double-click / Return opens,
+     right-click shows Edit · Delete, Delete key removes. -->
+<div class="body-container" role="grid" aria-label="Records"
+    *ngIf="(breakpointService.useTableCardLayout$ | async) !== true; else cardLayout">
+    <div *ngFor="let element of (data || [])" class="data-row" role="row" tabindex="0"
+        [class.data-row--selected]="selectedId === element?.id"
+        (click)="select(element, $event)"
+        (dblclick)="openPrimary(element)"
+        (contextmenu)="openContextMenu($event, element)"
+        (keydown)="onRowKeydown($event, element)">
+        <div *ngFor="let columnDef of visibleColumns" class="data-cell row-entry" role="gridcell"
+            [attr.data-type]="columnDef.type"
+            [style.width.%]="columnDef?.type | columnWidth: visibleColumns.length">
             <ng-container [ngSwitch]="columnDef.type">
                 <ng-container *ngSwitchCase="'date'">
-                    <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{element[columnDef.column] | customDate}}">
-                        {{element[columnDef.column] | customDate}}
-                    </span>
+                    <span class="table-data">{{ element[columnDef.column] | customDate }}</span>
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'string'">
-                    <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{ displayString(element, columnDef.column) }}">
-                        {{ displayString(element, columnDef.column) }}
+                    <span *ngIf="columnDef.column === 'icon' && element?.icon; else plainString"
+                        class="table-icon-tile" [style.background]="iconTileColor(element)" aria-hidden="true">
+                        <mat-icon fontSet="material-symbols-rounded">{{ element.icon }}</mat-icon>
                     </span>
+                    <ng-template #plainString>
+                        <span class="table-data" [attr.title]="displayString(element, columnDef.column)">
+                            {{ displayString(element, columnDef.column) }}
+                        </span>
+                    </ng-template>
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'currency'">
-                    <span class="table-data" matTooltipClass="sidebar-tooltip" matTooltip="{{element[columnDef.column] | number:'1.0':'en-US' }} {{element?.currency}}">
-                        {{element[columnDef.column] | number:'1.0':'en-US' }} {{element?.currency}}
+                    <span class="table-data">
+                        {{ element[columnDef.column] | number:'1.2-2':'en-US' }}
+                        <span class="table-currency">{{ element?.currency }}</span>
                     </span>
-                </ng-container>
-
-                <ng-container *ngSwitchCase="'actions'">
-                    <record-actions (openViewDrawer)="viewDetails(element?.id)"
-                        [displayDeleteAction]="displayDeleteAction" [displayEditAction]="displayEditAction"
-                        [displayViewAction]="displayViewAction"
-                        (openEditForm)="openAddEditForm(element)"
-                        (openDeleteDialog)="openDeleteConfirmDialog(element.id)"></record-actions>
                 </ng-container>
             </ng-container>
         </div>
     </div>
+
+    <!-- Context menu, opened at the pointer by an invisible trigger. -->
+    <span class="context-trigger" [style.left.px]="menuX" [style.top.px]="menuY"
+        [matMenuTriggerFor]="rowMenu" #contextTrigger="matMenuTrigger" aria-hidden="true"></span>
+    <mat-menu #rowMenu="matMenu" class="row-context-menu">
+        <button mat-menu-item *ngIf="displayEditAction" (click)="openAddEditForm(menuElement)">
+            <mat-icon>edit</mat-icon><span>Edit</span>
+        </button>
+        <button mat-menu-item *ngIf="displayViewAction" (click)="viewDetails(menuElement?.id)">
+            <mat-icon>open_in_new</mat-icon><span>View details</span>
+        </button>
+        <button mat-menu-item *ngIf="displayDeleteAction" class="row-context-menu__danger"
+            (click)="openDeleteConfirmDialog(menuElement?.id)">
+            <mat-icon>delete</mat-icon><span>Delete</span>
+        </button>
+    </mat-menu>
 </div>
 
 <ng-template #cardLayout>
