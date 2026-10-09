@@ -493,3 +493,9 @@
     font-size: 13px;
     color: var(--app-text-subtle);
 }
+
+/* Pink theme: unbranded bank cards turn rose gold instead of graphite. */
+:host-context(.pink-theme) .balance-row:not(.balance-row--brand):not(.balance-row--project) {
+    --card-bg: linear-gradient(135deg, #f7c6c7 0%, #e8a0a6 45%, #c97b84 100%);
+    --card-glow: rgba(201, 123, 132, 0.55);
+}

@@ -1,3 +1,4 @@
+import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
 import { Component, HostListener, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -17,7 +18,7 @@ interface MoreItem {
   selector: 'mobile-tab-bar',
   templateUrl: './mobile-tab-bar.component.html',
   styleUrls: ['./mobile-tab-bar.component.css'],
-  imports: [MatIconModule, RouterLink, RouterLinkActive, ThemeSwitchComponent],
+  imports: [PinkToggleComponent, MatIconModule, RouterLink, RouterLinkActive, ThemeSwitchComponent],
 })
 export class MobileTabBarComponent {
   private readonly sideBarService = inject(SideBarService);

@@ -392,6 +392,75 @@
 }
 
 
+/* ============================================================================
+ * Pink theme — an optional accent layer on top of light / dark
+ * (<body class="… pink-theme">, toggled in Settings). Hot-pink tint, blush
+ * backgrounds and pink-tinted glass in light mode; deep plum in dark mode.
+ * ========================================================================== */
+.light-theme.pink-theme {
+    --mat-sys-primary: #ff4f9a;
+    --mat-sys-primary-container: #ffd9e9;
+    --mat-sys-on-primary-container: #5c0a30;
+
+    --app-bg: #fff0f6;
+    --app-accent: #ff4f9a;
+    --app-accent-hover: #e83e87;
+    --app-accent-soft: rgba(255, 79, 154, 0.12);
+    --app-accent-soft-strong: rgba(255, 79, 154, 0.2);
+    --app-accent-text: #d6337a;
+    --app-danger: #ff3b6b;
+    --app-surface-hover: rgba(255, 79, 154, 0.07);
+    --app-shadow-accent: 0 4px 14px rgba(255, 79, 154, 0.35);
+    --gradient-logo: linear-gradient(135deg, #ff6fb0, #b48cff);
+
+    --ios-bar: rgba(255, 244, 249, 0.8);
+    --ios-glass: rgba(255, 250, 252, 0.74);
+    --ios-menu: rgba(255, 247, 251, 0.94);
+    --ios-sidebar: #ffe8f2;
+    --ios-sidebar-glass: rgba(255, 255, 255, 0.76);
+    --ios-sheet-bg: #fff0f6;
+    --ios-zebra: rgba(255, 79, 154, 0.05);
+    --ios-fill: rgba(214, 51, 122, 0.13);
+    --ios-fill-3: rgba(214, 51, 122, 0.07);
+    --app-surface-muted: rgba(214, 51, 122, 0.07);
+    --ios-glass-shadow: 0 8px 28px rgba(214, 51, 122, 0.16), 0 0 0 0.5px rgba(214, 51, 122, 0.12);
+}
+
+.dark-theme.pink-theme {
+    --mat-sys-primary: #ff6aa9;
+    --mat-sys-primary-container: #5c1a3a;
+    --mat-sys-on-primary-container: #ffd9e9;
+    --mat-sys-background: #170d12;
+    --mat-sys-surface: #2a1820;
+
+    --app-bg: #170d12;
+    --app-bg-elevated: #2a1820;
+    --app-surface: #2a1820;
+    --app-accent: #ff6aa9;
+    --app-accent-hover: #ff8bbd;
+    --app-accent-soft: rgba(255, 106, 169, 0.18);
+    --app-accent-soft-strong: rgba(255, 106, 169, 0.28);
+    --app-accent-text: #ff8bbd;
+    --app-danger: #ff5c84;
+    --app-surface-hover: rgba(255, 106, 169, 0.1);
+    --app-shadow-accent: 0 4px 14px rgba(255, 106, 169, 0.3);
+    --gradient-logo: linear-gradient(135deg, #ff6fb0, #b48cff);
+
+    --ios-bar: rgba(34, 20, 27, 0.8);
+    --ios-glass: rgba(58, 35, 48, 0.72);
+    --ios-menu: rgba(50, 30, 41, 0.94);
+    --ios-sidebar: #22141b;
+    --ios-sidebar-glass: rgba(58, 35, 48, 0.62);
+    --ios-sheet-bg: #2a1820;
+    --ios-sheet-cell: #3a2330;
+    --ios-zebra: rgba(255, 106, 169, 0.05);
+    --ios-fill: rgba(255, 106, 169, 0.22);
+    --ios-fill-3: rgba(255, 106, 169, 0.12);
+    --app-surface-muted: rgba(255, 106, 169, 0.12);
+    --ios-seg-thumb: #6b3a52;
+    --ios-dial: #170d12;
+}
+
 /* ----------------------------------------------------------------------------
  * Default fallback so the app has tokens even before a theme class is added.
  * -------------------------------------------------------------------------- */

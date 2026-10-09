@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { SharedService } from './shared.service';
 
 const MODE_KEY = 'theme-mode';
+const PINK_KEY = 'theme-pink';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,10 @@ export class ThemeService {
 
   /** Read-only signal — useful inside `effect()` / templates. */
   readonly theme = this._theme.asReadonly();
+
+  /** Optional pink accent layer, on top of light / dark. Saved per device. */
+  private readonly _pink = signal(false);
+  readonly pink = this._pink.asReadonly();
 
   private readonly subject = new Subject<string>();
   readonly colorChange: Observable<string> = this.subject.asObservable();
@@ -47,7 +52,14 @@ export class ThemeService {
       mode = legacy === 'dark-theme' ? 'dark' : 'light';
     }
     this._mode.set(mode);
+    this._pink.set(localStorage.getItem(PINK_KEY) === '1');
     this.apply();
+  };
+
+  setPink = (on: boolean): void => {
+    this._pink.set(on);
+    localStorage.setItem(PINK_KEY, on ? '1' : '0');
+    this.applyThemeClass();
   };
 
   setMode = (mode: ThemeMode): void => {
@@ -83,6 +95,8 @@ export class ThemeService {
     const other: Theme = current === 'dark-theme' ? 'light-theme' : 'dark-theme';
     this.renderer.removeClass(body, other);
     this.renderer.addClass(body, current);
+    if (this._pink()) this.renderer.addClass(body, 'pink-theme');
+    else this.renderer.removeClass(body, 'pink-theme');
   }
 }
 

@@ -1,3 +1,4 @@
+import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -40,6 +41,7 @@ export const DEFAULT_INCOME_WALLET_KEY = 'defaultIncomeWalletId';
   providers: [FlagPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PinkToggleComponent,
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,

@@ -1,3 +1,4 @@
+import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, computed, DestroyRef, ElementRef, HostListener, inject, Input, OnChanges, OnDestroy, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,6 +36,7 @@ const FLICK_VELOCITY_PX_PER_MS = 0.4;
   templateUrl: './side-bar.component.html',
   styleUrls: ['./side-bar.component.css'],
   imports: [
+    PinkToggleComponent,
     CommonModule,
     MatButtonModule,
     MatIconModule,
