@@ -1912,11 +1912,6 @@ table-body > div::-webkit-scrollbar-thumb:hover {
         display: none !important;
     }
 
-    .toast-container {
-        left: 50% !important;
-        width: fit-content !important;
-        transform: translateX(-50%) !important;
-    }
 }
 
 @media only screen and (max-height: 600px) {
@@ -2331,19 +2326,34 @@ body {
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-danger) 30%, transparent);
 }
 
-/* Toasts: one pill at the bottom center, inverted colors.
-   The configured position stays `toast-bottom-right`; it's re-centered here. */
+/* Toasts: an iOS-style frosted pill that rises in at the bottom centre
+   (above the floating tab bar on phones) with a round status icon, title
+   and message on one line. The configured position stays
+   `toast-bottom-right`; it's re-placed here. The container spans the full
+   width so the pill can use it (a container at left: 50% only ever had half
+   the screen, which wrapped short messages). */
 .toast-container.toast-bottom-right,
 .toast-container.toast-bottom-left,
 .toast-container.toast-top-right {
     top: auto;
-    right: auto;
-    left: 50%;
-    bottom: 20px;
-    transform: translateX(-50%);
+    right: 0;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    width: auto;
+    transform: none;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 0 12px;
+}
+
+/* Phones: sit just above the floating tab bar. */
+@media (max-width: 767px) {
+    .toast-container.toast-bottom-right,
+    .toast-container.toast-bottom-left,
+    .toast-container.toast-top-right {
+        bottom: calc(var(--app-tab-bar-height) + max(10px, env(safe-area-inset-bottom, 0px)) + 14px);
+    }
 }
 
 .toast-container .ngx-toastr,
@@ -2353,44 +2363,63 @@ body {
 .toast-container .ngx-toastr.toast-warning {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     width: auto;
-    max-width: min(92vw, 520px);
-    margin: 6px 0 0;
-    padding: 9px 16px;
-    border-radius: 99px;
-    background-color: var(--app-text);
+    min-width: 0;
+    max-width: min(100%, 560px);
+    margin: 8px 0 0;
+    padding: 10px 18px 10px 10px;
+    border-radius: 999px;
+    background-color: var(--ios-menu);
     background-image: none;
-    color: var(--app-bg);
-    font-weight: 500;
-    box-shadow: var(--app-shadow-lg);
-    animation: wm-fade-in 0.2s ease;
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    backdrop-filter: saturate(180%) blur(30px);
+    color: var(--app-text);
+    font-family: var(--app-font-sans);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    box-shadow: var(--app-shadow-md);
+    animation: toast-rise 0.42s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
 }
 
 .toast-container .ngx-toastr:hover {
     transform: none;
 }
 
+/* Round status icon. */
 .toast-container .ngx-toastr::before {
-    content: "";
-    width: 7px;
-    height: 7px;
+    content: "i";
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     flex-shrink: 0;
-    background: var(--app-text-subtle);
+    background: var(--app-accent);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
 }
 
-.toast-container .ngx-toastr.toast-success::before { background: var(--app-success); }
-.toast-container .ngx-toastr.toast-error::before { background: var(--app-danger); }
-.toast-container .ngx-toastr.toast-warning::before { background: var(--app-warning); }
-.toast-container .ngx-toastr.toast-info::before { background: var(--app-accent); }
+.toast-container .ngx-toastr.toast-success::before { content: "✓"; background: var(--app-success); }
+.toast-container .ngx-toastr.toast-error::before { content: "!"; background: var(--app-danger); }
+.toast-container .ngx-toastr.toast-warning::before { content: "!"; background: var(--app-warning); }
 
 .toast-container .toast-title {
+    flex-shrink: 0;
     font-weight: 600;
+}
+
+.toast-container .toast-message {
+    min-width: 0;
 }
 
 .toast-container .toast-title + .toast-message::before {
     content: "· ";
+    color: var(--app-text-subtle);
 }
 
 .toast-container .toast-close-button {
@@ -2405,6 +2434,11 @@ body {
 
 .toast-container .toast-progress {
     display: none;
+}
+
+@keyframes toast-rise {
+    from { opacity: 0; transform: translateY(16px) scale(0.96); }
+    to { opacity: 1; transform: none; }
 }
 
 @keyframes wm-fade-in {
@@ -2998,4 +3032,34 @@ html[data-page-transition="back"]::view-transition-old(root) {
 .wizard-amount-currency-trigger__placeholder {
     font-size: 15px;
     font-weight: 400;
+}
+
+/* Long-press feedback: the held row sinks slightly before the menu opens. */
+.ledger-item {
+    transition: transform 0.38s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.ledger-item--pressing {
+    transform: scale(0.97);
+}
+
+/* The bars never move during a page transition: no position morphing (which
+   made the tab bar bob up and down while the new page's height settled) —
+   the new bar simply replaces the old one in place. */
+::view-transition-group(tab-bar),
+::view-transition-group(nav-bar),
+::view-transition-group(sidebar) {
+    animation: none;
+}
+
+::view-transition-old(tab-bar),
+::view-transition-old(nav-bar),
+::view-transition-old(sidebar) {
+    display: none;
+}
+
+::view-transition-new(tab-bar),
+::view-transition-new(nav-bar),
+::view-transition-new(sidebar) {
+    animation: none;
 }

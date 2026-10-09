@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { inject } from '@angular/core';
 import { Router, ViewTransitionInfo } from '@angular/router';
 
@@ -69,4 +70,24 @@ function directionBetween(from: string[], to: string[]): Direction | null {
   const b = rank(to);
   if (a === b) return 'forward';
   return b > a ? 'forward' : 'back';
+}
+
+/**
+ * Leave a routed form page (…/add, …/:id/edit).
+ *
+ *  - Saved: always end on the list. If the list is the page right behind
+ *    this one, step back to it (history stays list → no duplicate);
+ *    otherwise (e.g. opened from the dashboard's +) replace this page with
+ *    the list.
+ *  - Cancelled: just go back if there is somewhere in the app to go back to.
+ */
+export function leaveFormPage(router: Router, location: Location, listPath: string, saved: boolean): void {
+  const navigationId = (location.getState() as { navigationId?: number } | null)?.navigationId ?? 1;
+  const cameFrom = router.lastSuccessfulNavigation()?.previousNavigation?.finalUrl?.toString().split(/[?#]/)[0];
+  if (navigationId > 1 && (!saved || cameFrom === listPath)) {
+    markInAppBack();
+    location.back();
+  } else {
+    router.navigate([listPath], { replaceUrl: true });
+  }
 }

@@ -10,8 +10,9 @@ interface TabItem {
   link: string;
 }
 
-/** Finger travel (px) before a press on the tab bar becomes a slide. */
-const SLIDE_THRESHOLD_PX = 8;
+/** Sideways finger travel (px) before a press on the tab bar becomes a
+ *  slide — generous, so a normal tap's wobble is still a tap. */
+const SLIDE_THRESHOLD_PX = 14;
 
 interface MoreItem {
   label: string;
@@ -44,7 +45,7 @@ export class MobileTabBarComponent implements AfterViewInit {
 
   /** Slot under the finger while sliding across the bar (iOS 26 style). */
   readonly slideIndex = signal<number | null>(null);
-  private slide: { startX: number; sliding: boolean } | null = null;
+  private slide: { startX: number; startY: number; sliding: boolean } | null = null;
   private swallowClick = false;
   private readonly bar = viewChild<ElementRef<HTMLElement>>('bar');
 
@@ -95,13 +96,17 @@ export class MobileTabBarComponent implements AfterViewInit {
 
   onPointerDown(event: PointerEvent): void {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
-    this.slide = { startX: event.clientX, sliding: false };
+    // A fresh touch is never the tail of an earlier slide.
+    this.swallowClick = false;
+    this.slide = { startX: event.clientX, startY: event.clientY, sliding: false };
   }
 
   onPointerMove(event: PointerEvent, bar: HTMLElement): void {
     if (!this.slide) return;
     if (!this.slide.sliding) {
-      if (Math.abs(event.clientX - this.slide.startX) < SLIDE_THRESHOLD_PX) return;
+      const dx = Math.abs(event.clientX - this.slide.startX);
+      const dy = Math.abs(event.clientY - this.slide.startY);
+      if (dx < SLIDE_THRESHOLD_PX || dx < dy) return;
       this.slide.sliding = true;
       bar.setPointerCapture(event.pointerId);
     }
@@ -114,8 +119,10 @@ export class MobileTabBarComponent implements AfterViewInit {
     if (!slide?.sliding) return;
     const index = this.slotAt(event.clientX, bar);
     this.slideIndex.set(null);
-    // The release also fires a click on whatever is under the finger.
+    // The release may also fire a click on whatever is under the finger;
+    // ignore it — but only briefly, so it can never eat a later real tap.
     this.swallowClick = true;
+    setTimeout(() => (this.swallowClick = false), 350);
     navigator.vibrate?.(8);
     if (index === this.moreIndex) {
       this.moreOpen.set(true);

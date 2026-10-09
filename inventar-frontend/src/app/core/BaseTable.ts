@@ -34,7 +34,9 @@ export abstract class BaseTable<E> extends Unsubscribe {
     page: number = 0;
     size: number = PAGE_SIZE;
     loadingMore = signal(false);
-    loading = signal(false);
+    /** True from the start: every list queries on init, so until the first
+     *  response arrives the page must not show its "no data" state. */
+    loading = signal(true);
 
     private dataSubject = new BehaviorSubject<E[]>([]);
     private totalSubject = new BehaviorSubject<number>(0);

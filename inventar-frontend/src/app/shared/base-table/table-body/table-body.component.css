@@ -26,7 +26,8 @@
     display: flex;
     align-items: stretch;
     width: 100%;
-    min-width: min-content;
+    /* Never wider than the table: long text truncates with "…" instead. */
+    min-width: 0;
     min-height: 40px;
     border-radius: 6px;
     background: transparent;

@@ -126,13 +126,16 @@
             </div>
 
             <!-- One full-width primary action, like Apple's own setup flows. -->
-            <footer class="form-page__footer">
-                @if (wizardStep() < lastWizardStep()) {
-                    <button type="button" class="form-page__primary" (click)="wizardNext()">Next</button>
-                } @else {
-                    <button type="button" class="form-page__primary" (click)="add()">Add Expense</button>
-                }
-            </footer>
+            <!-- No footer on the first step: tapping a category moves on by itself. -->
+            @if (wizardStep() > 0) {
+                <footer class="form-page__footer">
+                    @if (wizardStep() < lastWizardStep()) {
+                        <button type="button" class="form-page__primary" (click)="wizardNext()">Next</button>
+                    } @else {
+                        <button type="button" class="form-page__primary" (click)="add()">Add Expense</button>
+                    }
+                </footer>
+            }
         </section>
     }
 </ng-container>

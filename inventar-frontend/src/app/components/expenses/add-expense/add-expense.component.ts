@@ -1,4 +1,4 @@
-import { markInAppBack } from 'src/app/utils/page-transitions';
+import { leaveFormPage } from 'src/app/utils/page-transitions';
 import { CommonModule, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -274,15 +274,8 @@ export class AddExpenseComponent implements OnInit {
       this.dialogRef.close(update);
       return;
     }
-    // Routed page: step back when we came from inside the app (so the list
-    // isn't pushed on top of itself and swipe-back stays correct),
-    // otherwise go to the list.
-    const navigationId = (this.location.getState() as { navigationId?: number } | null)?.navigationId ?? 1;
-    if (navigationId > 1) {
-      markInAppBack();
-      this.location.back();
-    }
-    else this.router.navigate(['/expenses'], { replaceUrl: true });
+    // Routed page: after saving always land on the list; Cancel just goes back.
+    leaveFormPage(this.router, this.location, '/expenses', update);
   }
 
   add(): void {

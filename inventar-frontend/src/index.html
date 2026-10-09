@@ -4,104 +4,16 @@
 <head>
 
   <style>
-    .sk-cube-grid {
-      width: 50px;
-      height: 50px;
-      margin: 100px auto;
-    }
-
-    .sk-cube-grid .sk-cube {
-      width: 33%;
-      height: 33%;
-      background-color: #6366f1;
-      float: left;
-      border-radius: 4px;
-      -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
-      animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
-    }
-
-    .sk-cube-grid .sk-cube1 {
-      -webkit-animation-delay: 0.2s;
-      animation-delay: 0.2s;
-    }
-
-    .sk-cube-grid .sk-cube2 {
-      -webkit-animation-delay: 0.3s;
-      animation-delay: 0.3s;
-    }
-
-    .sk-cube-grid .sk-cube3 {
-      -webkit-animation-delay: 0.4s;
-      animation-delay: 0.4s;
-    }
-
-    .sk-cube-grid .sk-cube4 {
-      -webkit-animation-delay: 0.1s;
-      animation-delay: 0.1s;
-    }
-
-    .sk-cube-grid .sk-cube5 {
-      -webkit-animation-delay: 0.2s;
-      animation-delay: 0.2s;
-    }
-
-    .sk-cube-grid .sk-cube6 {
-      -webkit-animation-delay: 0.3s;
-      animation-delay: 0.3s;
-    }
-
-    .sk-cube-grid .sk-cube7 {
-      -webkit-animation-delay: 0s;
-      animation-delay: 0s;
-    }
-
-    .sk-cube-grid .sk-cube8 {
-      -webkit-animation-delay: 0.1s;
-      animation-delay: 0.1s;
-    }
-
-    .sk-cube-grid .sk-cube9 {
-      -webkit-animation-delay: 0.2s;
-      animation-delay: 0.2s;
-    }
-
-    @-webkit-keyframes sk-cubeGridScaleDelay {
-
-      0%,
-      70%,
-      100% {
-        -webkit-transform: scale3D(1, 1, 1);
-        transform: scale3D(1, 1, 1);
-      }
-
-      35% {
-        -webkit-transform: scale3D(0, 0, 1);
-        transform: scale3D(0, 0, 1);
-      }
-    }
-
-    @keyframes sk-cubeGridScaleDelay {
-
-      0%,
-      70%,
-      100% {
-        -webkit-transform: scale3D(1, 1, 1);
-        transform: scale3D(1, 1, 1);
-      }
-
-      35% {
-        -webkit-transform: scale3D(0, 0, 1);
-        transform: scale3D(0, 0, 1);
-      }
-    }
-
+    /* Start-up loader: the iOS activity indicator (same artwork as the
+       in-app spinner), on the system grouped background. Faded out by
+       AppComponent once the first route is active. */
     #application-loader {
-      transition: opacity 100ms ease-out;
+      transition: opacity 200ms ease-out;
       pointer-events: none;
       opacity: 1;
       width: 100%;
       height: 100%;
-      background: #f8fafc;
+      background: #f2f2f7;
       position: absolute;
       top: 0;
       left: 0;
@@ -111,8 +23,25 @@
       z-index: 2;
     }
 
+    #application-loader .ios-spinner {
+      width: 36px;
+      height: 36px;
+      background: #8e8e93;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2040%2040'%20stroke='black'%20stroke-width='3.8'%20stroke-linecap='round'%3E%3Cline%20x1='20.00'%20y1='11.00'%20x2='20.00'%20y2='3.00'%20stroke-opacity='1'/%3E%3Cline%20x1='26.36'%20y1='13.64'%20x2='32.02'%20y2='7.98'%20stroke-opacity='0.2'/%3E%3Cline%20x1='29.00'%20y1='20.00'%20x2='37.00'%20y2='20.00'%20stroke-opacity='0.28'/%3E%3Cline%20x1='26.36'%20y1='26.36'%20x2='32.02'%20y2='32.02'%20stroke-opacity='0.36'/%3E%3Cline%20x1='20.00'%20y1='29.00'%20x2='20.00'%20y2='37.00'%20stroke-opacity='0.45'/%3E%3Cline%20x1='13.64'%20y1='26.36'%20x2='7.98'%20y2='32.02'%20stroke-opacity='0.55'/%3E%3Cline%20x1='11.00'%20y1='20.00'%20x2='3.00'%20y2='20.00'%20stroke-opacity='0.68'/%3E%3Cline%20x1='13.64'%20y1='13.64'%20x2='7.98'%20y2='7.98'%20stroke-opacity='0.82'/%3E%3C/svg%3E") center / contain no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2040%2040'%20stroke='black'%20stroke-width='3.8'%20stroke-linecap='round'%3E%3Cline%20x1='20.00'%20y1='11.00'%20x2='20.00'%20y2='3.00'%20stroke-opacity='1'/%3E%3Cline%20x1='26.36'%20y1='13.64'%20x2='32.02'%20y2='7.98'%20stroke-opacity='0.2'/%3E%3Cline%20x1='29.00'%20y1='20.00'%20x2='37.00'%20y2='20.00'%20stroke-opacity='0.28'/%3E%3Cline%20x1='26.36'%20y1='26.36'%20x2='32.02'%20y2='32.02'%20stroke-opacity='0.36'/%3E%3Cline%20x1='20.00'%20y1='29.00'%20x2='20.00'%20y2='37.00'%20stroke-opacity='0.45'/%3E%3Cline%20x1='13.64'%20y1='26.36'%20x2='7.98'%20y2='32.02'%20stroke-opacity='0.55'/%3E%3Cline%20x1='11.00'%20y1='20.00'%20x2='3.00'%20y2='20.00'%20stroke-opacity='0.68'/%3E%3Cline%20x1='13.64'%20y1='13.64'%20x2='7.98'%20y2='7.98'%20stroke-opacity='0.82'/%3E%3C/svg%3E") center / contain no-repeat;
+      animation: app-loader-spin 0.8s steps(8) infinite;
+    }
+
+    @keyframes app-loader-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #application-loader { background: #000000; }
+    }
+
     body.dark-theme #application-loader {
-      background: #0b0d12;
+      background: #000000;
     }
   </style>
 
@@ -124,7 +53,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" type="image/x-icon" href="favicon.ico">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-  <meta name="theme-color" content="#e5383b">
+  <meta name="theme-color" content="#ff3b30">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Financa">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -138,18 +67,8 @@
 <body class="mat-typography light-theme">
   <app-root></app-root>
 
-  <div id="application-loader">
-    <div class="sk-cube-grid">
-      <div class="sk-cube sk-cube1"></div>
-      <div class="sk-cube sk-cube2"></div>
-      <div class="sk-cube sk-cube3"></div>
-      <div class="sk-cube sk-cube4"></div>
-      <div class="sk-cube sk-cube5"></div>
-      <div class="sk-cube sk-cube6"></div>
-      <div class="sk-cube sk-cube7"></div>
-      <div class="sk-cube sk-cube8"></div>
-      <div class="sk-cube sk-cube9"></div>
-    </div>
+  <div id="application-loader" role="status" aria-label="Loading">
+    <div class="ios-spinner"></div>
   </div>
 
 

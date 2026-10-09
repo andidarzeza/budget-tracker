@@ -24,12 +24,16 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
   private start = { x: 0, y: 0 };
   private swallowNextClick = false;
   private overlay: HTMLElement | null = null;
+  private pressTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly onPointerDown = (e: PointerEvent) => {
     if (e.button !== 0) return;
     this.swallowNextClick = false;
     this.start = { x: e.clientX, y: e.clientY };
     this.clearTimer();
+    // The row sinks slightly while held (iOS press feedback); a quick tap
+    // is over before this kicks in, so taps don't flicker.
+    this.pressTimer = setTimeout(() => this.host.classList.add('ledger-item--pressing'), 120);
     this.timer = setTimeout(() => this.open(), HOLD_MS);
   };
 
@@ -78,6 +82,7 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
   /** Builds the overlay outside Angular's view so no ancestor clips or stacks it. */
   private open(): void {
     this.timer = null;
+    this.clearTimer();
     this.swallowNextClick = true;
     navigator.vibrate?.(10);
 
@@ -121,8 +126,8 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
       e.stopPropagation();
       if (!pressed) return;
       if ((e.target as Element).closest('.press-menu__delete')) {
-        this.close();
-        this.zone.run(() => this.deleteRequested.emit());
+        this.close(true);
+        this.collapseThenDelete();
       } else {
         this.close();
       }
@@ -131,22 +136,73 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
 
     document.body.appendChild(overlay);
     this.overlay = overlay;
-    // Commit the closed state first so the transition has something to animate from.
-    void overlay.offsetHeight;
     overlay.classList.add('press-menu--open');
+    // The real row hides under its lifted copy while the menu is open.
+    this.host.style.visibility = 'hidden';
+
+    // Web Animations, so the motion runs no matter how styles were batched:
+    // dim in, the row springs up from its pressed size, the pill pops out.
+    const spring = 'cubic-bezier(0.2, 0.9, 0.25, 1.15)';
+    backdrop.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out', fill: 'both' });
+    lifted.animate(
+      [{ transform: 'scale(0.97)' }, { transform: 'scale(1.035)' }],
+      { duration: 380, easing: spring, fill: 'both' },
+    );
+    pill.animate(
+      [{ opacity: 0, transform: 'scale(0.6)' }, { opacity: 1, transform: 'scale(1)' }],
+      { duration: 320, delay: 60, easing: spring, fill: 'both' },
+    );
   }
 
-  private close(): void {
+  /** Closes the menu; the lifted row settles back into the list (unless it's being deleted). */
+  private close(deleting = false): void {
     const overlay = this.overlay;
     if (!overlay) return;
     this.overlay = null;
-    overlay.classList.remove('press-menu--open');
     overlay.style.pointerEvents = 'none';
-    setTimeout(() => overlay.remove(), 200);
+    const options = { duration: 200, easing: 'ease-in', fill: 'forwards' as FillMode };
+    overlay.querySelector('.press-menu__backdrop')?.animate([{ opacity: 1 }, { opacity: 0 }], options);
+    overlay.querySelector('.press-menu__delete')?.animate([{ opacity: 1 }, { opacity: 0, transform: 'scale(0.8)' }], options);
+    const row = overlay.querySelector('.press-menu__row');
+    const settle = row?.animate(
+      deleting
+        ? [{ opacity: 1 }, { opacity: 0, transform: 'scale(0.96)' }]
+        : [{ transform: 'scale(1.035)' }, { transform: 'scale(1)' }],
+      options,
+    );
+    const done = () => {
+      overlay.remove();
+      if (!deleting) this.host.style.visibility = '';
+    };
+    if (settle) settle.finished.then(done, done);
+    else setTimeout(done, 200);
+  }
+
+  /** The row folds away (height and opacity to zero), then the delete runs. */
+  private collapseThenDelete(): void {
+    const host = this.host;
+    host.style.overflow = 'hidden';
+    const collapse = host.animate(
+      [{ height: `${host.offsetHeight}px`, opacity: 1 }, { height: '0px', opacity: 0 }],
+      { duration: 280, easing: 'cubic-bezier(0.2, 0, 0, 1)', fill: 'forwards' },
+    );
+    collapse.finished.then(() => {
+      this.zone.run(() => this.deleteRequested.emit());
+      // If the delete fails the row is still here: bring it back.
+      setTimeout(() => {
+        if (!host.isConnected) return;
+        collapse.cancel();
+        host.style.overflow = '';
+        host.style.visibility = '';
+      }, 2500);
+    });
   }
 
   private clearTimer(): void {
     if (this.timer) clearTimeout(this.timer);
+    if (this.pressTimer) clearTimeout(this.pressTimer);
     this.timer = null;
+    this.pressTimer = null;
+    this.host.classList.remove('ledger-item--pressing');
   }
 }

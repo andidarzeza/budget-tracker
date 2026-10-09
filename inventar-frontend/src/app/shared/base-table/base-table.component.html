@@ -29,7 +29,7 @@
                     [hidePageSize]="breakpointService.screenSize == 'mobile'"
                     [pageIndex]="pageIndex" (page)="handlePageEvent($event)">
                 </mat-paginator>
-                <table-message [total]="data?.length" [pageName]="tableActionInput?.pageName" [icon]="tableActionInput?.icon"></table-message>
+                <table-message *ngIf="!loading" [total]="data?.length" [pageName]="tableActionInput?.pageName" [icon]="tableActionInput?.icon"></table-message>
             </div>
         </div>
     </div>
