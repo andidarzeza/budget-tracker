@@ -1,14 +1,8 @@
 @if (authenticationService.currentUserValue) {
-<aside id="sidebar"
-    [ngClass]="{
-        'sidebar--mobile-drawer': mobileDrawer,
-        'sidebar--mobile-drawer--open': mobileDrawer && (sideBarService.mobileMenuOpen$ | async)
-    }"
-    class="sidebar"
-    [style.z-index]="mobileDrawer ? 13 : 2">
+<aside id="sidebar" class="sidebar" style="z-index: 2">
 
     <div class="brand">
-        <a routerLink="/welcome" class="brand-link" (click)="onBrandClick()" aria-label="Financa — Home">
+        <a routerLink="/welcome" class="brand-link" aria-label="Financa — Home">
             <span class="brand-mark"><mat-icon>account_balance_wallet</mat-icon></span>
             <span class="brand-name">Financa</span>
         </a>

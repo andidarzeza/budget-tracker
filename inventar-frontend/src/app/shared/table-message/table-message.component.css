@@ -1,13 +1,41 @@
+/* iOS ContentUnavailableView: centred in the empty table, over nothing but
+   the card itself (transparent, so the column headers stay visible). */
 .no-data {
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    top: 57px;
     position: absolute;
-    height: calc(100% - 56px);
-    background: var(--secondary);
-    color: var(--card-title);
+    inset: 0;
+    display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 24px;
+    text-align: center;
+    pointer-events: none;
+}
+
+.no-data__icon {
+    width: 52px;
+    height: 52px;
+    font-size: 52px;
+    line-height: 52px;
+    margin-bottom: 6px;
+    color: var(--app-text-subtle);
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'opsz' 48;
+}
+
+.no-data__title {
+    margin: 0;
+    font-family: var(--app-font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--app-text);
+}
+
+.no-data__text {
+    margin: 0;
+    max-width: 320px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--app-text-muted);
 }

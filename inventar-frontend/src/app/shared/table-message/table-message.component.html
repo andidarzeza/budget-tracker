@@ -1,10 +1,6 @@
-
-<div [@inOutAnimation] *ngIf="total == 0" class="no-data">
-    
-    <mat-icon style="width: 30px;height: 30px;font-size: 30px;">
-        info
-    </mat-icon>
-    <span style="margin-top: 5px;">
-        There are no elements to display.
-    </span>
+<!-- iOS "content unavailable" view: big grey symbol, bold title, short hint. -->
+<div [@inOutAnimation] *ngIf="total == 0" class="no-data" role="status">
+    <mat-icon class="no-data__icon" fontSet="material-symbols-rounded" aria-hidden="true">{{ icon || 'inbox' }}</mat-icon>
+    <h3 class="no-data__title">No {{ pageName || 'Results' }}</h3>
+    <p class="no-data__text">Nothing to show here yet, or nothing matches your filters.</p>
 </div>

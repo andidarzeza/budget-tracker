@@ -358,8 +358,36 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   selectTab(tab: 'stats' | 'balances'): void {
+    if (tab === this.activeTab()) return;
+    // Slide the new tab in from the side it sits on (Statistics left, Balances right).
+    this.slideFrom.set(tab === 'balances' ? 'right' : 'left');
     this.activeTab.set(tab);
     localStorage.setItem(DASHBOARD_TAB_KEY, tab);
+  }
+
+  /** Direction the newly selected tab animates in from. */
+  readonly slideFrom = signal<'left' | 'right' | null>(null);
+  private swipeStart: { x: number; y: number; t: number } | null = null;
+
+  /** Horizontal swipe on the page switches Statistics ⇄ Balances. */
+  onSwipeStart(event: TouchEvent): void {
+    const t = event.touches[0];
+    // Leave the segmented range switcher and the pickers to themselves.
+    const fromControl = (event.target as Element).closest('.control-bar, .dash-tabs');
+    this.swipeStart = event.touches.length === 1 && !fromControl ? { x: t.clientX, y: t.clientY, t: Date.now() } : null;
+  }
+
+  onSwipeEnd(event: TouchEvent): void {
+    const start = this.swipeStart;
+    this.swipeStart = null;
+    if (!start) return;
+    const t = event.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    const quick = Date.now() - start.t < 700;
+    if (!quick || Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.6) return;
+    if (dx < 0 && this.activeTab() === 'stats') this.selectTab('balances');
+    else if (dx > 0 && this.activeTab() === 'balances') this.selectTab('stats');
   }
 
   openWalletDetail(wallet: Wallet): void {

@@ -3,8 +3,9 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { ApplicationConfig } from '@angular/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, Routes } from '@angular/router';
+import { provideRouter, Routes, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 import { provideToastr } from 'ngx-toastr';
+import { onPageTransition } from './utils/page-transitions';
 import { AuthGuardService } from './services/auth-guard.service';
 import { CustomHttpInterceptorService } from './services/custom-http-interceptor.service';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
@@ -88,7 +89,14 @@ const routes: Routes = [
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    // New pages open at the top (no jump from the previous page's scroll);
+    // going back restores where you were in the list.
+    provideRouter(
+      routes,
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+      // Pages slide in from their side, like the dashboard tabs (see utils/page-transitions).
+      withViewTransitions({ onViewTransitionCreated: onPageTransition }),
+    ),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     {

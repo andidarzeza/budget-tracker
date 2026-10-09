@@ -9,12 +9,9 @@
 
         <div class="base-table-scroll-area">
             <!-- Covers just the table card, not the page title above it. -->
-            <div class="app-loading-overlay" [@inOutAnimation] *ngIf="loading" role="status" aria-live="polite">
-                <span class="app-spinner" aria-hidden="true">
-                    <span class="app-spinner__track"></span>
-                    <span class="app-spinner__arc"></span>
-                </span>
-                <p class="app-loading-label">Loading data…</p>
+            <!-- Nothing shows for normal loads; after 2s a quiet note appears (CSS delay). -->
+            <div class="app-loading-overlay" *ngIf="loading" role="status" aria-live="polite">
+                <p class="app-loading-label">Taking a little longer than usual…</p>
             </div>
 
             <div class="table-closed">
@@ -32,7 +29,7 @@
                     [hidePageSize]="breakpointService.screenSize == 'mobile'"
                     [pageIndex]="pageIndex" (page)="handlePageEvent($event)">
                 </mat-paginator>
-                <table-message [total]="data?.length"></table-message>
+                <table-message [total]="data?.length" [pageName]="tableActionInput?.pageName" [icon]="tableActionInput?.icon"></table-message>
             </div>
         </div>
     </div>
@@ -57,11 +54,7 @@
                  doesn't blank out under a backdrop on every refresh. -->
             <div *ngIf="loading" class="table-cards-loading mobile-cards-initial-loading"
                 role="status" aria-live="polite">
-                <span class="app-spinner app-spinner--sm" aria-hidden="true">
-                    <span class="app-spinner__track"></span>
-                    <span class="app-spinner__arc"></span>
-                </span>
-                <span>Loading data…</span>
+                <span>Taking a little longer than usual…</span>
             </div>
             <table-body *ngIf="!loading" [displayEditAction]="displayEditAction"
                 [displayDeleteAction]="displayDeleteAction" [data]="data"
@@ -73,7 +66,7 @@
                 (loadMore)="emitLoadMore()"
                 (onDeleteConfirmation)="onDeleteConfirmation.emit($event)"
                 (onAddEditForm)="onAddEditForm.emit($event)" (onViewDetails)="viewDetails($event)"></table-body>
-            <table-message *ngIf="!loading" [total]="data?.length"></table-message>
+            <table-message *ngIf="!loading" [total]="data?.length" [pageName]="tableActionInput?.pageName" [icon]="tableActionInput?.icon"></table-message>
         </div>
     </div>
 </ng-container>

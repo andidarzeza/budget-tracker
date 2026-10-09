@@ -1,80 +1,56 @@
+<!-- Routed-page mode (mobile add / edit): an Apple form page, so swiping
+     back returns to the list. -->
 <ng-container *ngIf="isPageMode; else dialogShell">
-    <section class="form-page">
+    <section class="form-page form-page--edit">
         <header class="form-page__header">
-            <button type="button" cb-icon-button (click)="closeDialog(false)"
-                matTooltip="Back" matTooltipPosition="below" aria-label="Back">
-                <mat-icon>arrow_back</mat-icon>
+            <button type="button" cb-icon-button (click)="closeDialog(false)" aria-label="Back">
+                <mat-icon>arrow_back_ios_new</mat-icon>
             </button>
             <h1 class="form-page__title">{{ isEditMode ? 'Edit category' : 'New category' }}</h1>
+            <button type="button" class="form-page__done" (click)="add()">{{ isEditMode ? 'Done' : 'Add' }}</button>
         </header>
 
         <div class="form-page__body">
-            <form [formGroup]="categoryGroup" class="dialog-form form-page__panel">
-                <cb-labeled-form-input
-                    label="Category"
-                    type="text"
-                    [control]="$any(categoryGroup.get('category'))">
-                </cb-labeled-form-input>
-
-                <cb-select-input
-                    label="Category Type"
-                    [control]="$any(categoryGroup.get('categoryType'))"
-                    [options]="categoryTypes">
-                </cb-select-input>
-
-                <div>
-                    <select-icon formControlName="icon"></select-icon>
-                </div>
-
-                <cb-labeled-textarea
-                    label="Description"
-                    placeholder="Write a note…"
-                    [control]="$any(categoryGroup.get('description'))">
-                </cb-labeled-textarea>
+            <form [formGroup]="categoryGroup" class="dialog-form">
+                <ng-container *ngTemplateOutlet="categoryFields"></ng-container>
             </form>
         </div>
-
-        <footer class="form-page__footer">
-            <button type="button" cb-pill-button icon="close" (click)="closeDialog(false)">
-                Cancel
-            </button>
-            <button type="button" cb-pill-button variant="primary" icon="check" (click)="add()">
-                {{ isEditMode ? 'Save changes' : 'Save category' }}
-            </button>
-        </footer>
     </section>
 </ng-container>
 
 <ng-template #dialogShell>
 <create-form [loadingData]="loadingData" [loadingMessage]="loadingMessage" icon="list_alt" [entity]="entity" [editMode]="isEditMode" (close)="closeDialog($event)" (create)="add()">
-
     <form [formGroup]="categoryGroup" class="dialog-form">
-        <!-- Apple grouped form: label-left rows, notes in their own group. -->
-        <div class="ios-form">
-            <div class="ios-group">
-                <cb-labeled-form-input
-                    label="Category"
-                    type="text"
-                    [control]="$any(categoryGroup.get('category'))">
-                </cb-labeled-form-input>
-
-                <cb-select-input
-                    label="Category Type"
-                    [control]="$any(categoryGroup.get('categoryType'))"
-                    [options]="categoryTypes">
-                </cb-select-input>
-
-                <select-icon formControlName="icon"></select-icon>
-            </div>
-
-            <div class="ios-group">
-                <cb-labeled-textarea
-                    label="Description"
-                    placeholder="Write a note…"
-                    [control]="$any(categoryGroup.get('description'))">
-                </cb-labeled-textarea>
-            </div>
-        </div>
+        <ng-container *ngTemplateOutlet="categoryFields"></ng-container>
     </form>
 </create-form>
+</ng-template>
+
+<!-- Grouped Apple form shared by the dialog (desktop) and the page (mobile). -->
+<ng-template #categoryFields>
+    <div class="ios-form">
+        <div class="ios-group">
+            <cb-labeled-form-input
+                label="Category"
+                type="text"
+                [control]="$any(categoryGroup.get('category'))">
+            </cb-labeled-form-input>
+
+            <cb-select-input
+                label="Category Type"
+                [control]="$any(categoryGroup.get('categoryType'))"
+                [options]="categoryTypes">
+            </cb-select-input>
+
+            <select-icon [formControl]="$any(categoryGroup.get('icon'))"></select-icon>
+        </div>
+
+        <div class="ios-group">
+            <cb-labeled-textarea
+                label="Description"
+                placeholder="Write a note…"
+                [control]="$any(categoryGroup.get('description'))">
+            </cb-labeled-textarea>
+        </div>
+    </div>
 </ng-template>

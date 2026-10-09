@@ -41,7 +41,7 @@ export class BaseTemplateComponent implements OnInit {
   /** Matches table mobile breakpoint (≤767px): no persistent sidebar strip. */
   readonly mobileCardLayout = signal(false);
 
-  /** Full-screen create pages (`/expenses/add`, `/incomes/add`) have their own sticky footer. */
+  /** Full-screen form pages (`…/add`, `…/:id/edit`) have their own bars. */
   readonly onCreatePage = signal(false);
 
   navigation: MenuItem[];
@@ -59,7 +59,10 @@ export class BaseTemplateComponent implements OnInit {
       .pipe(filter((e) => e instanceof NavigationEnd), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.syncHideSidebarKey();
-        this.onCreatePage.set(/\/add$/.test(this.router.url.split(/[?#]/)[0]));
+        // Slightly wider phones scroll the shell's content box, not the
+        // window (which the router resets itself): start new pages at the top.
+        document.querySelector('.content-container')?.scrollTo(0, 0);
+        this.onCreatePage.set(/\/(add|edit)$/.test(this.router.url.split(/[?#]/)[0]));
       });
   }
 

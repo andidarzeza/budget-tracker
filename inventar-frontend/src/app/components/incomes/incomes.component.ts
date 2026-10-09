@@ -69,7 +69,7 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
   createComponent = AddIncomeComponent;
   tableActionInput: TableActionInput = {
     pageName: 'Incomes',
-    icon: 'transit_enterexit',
+    icon: 'trending_up',
   };
 
   /** Same breakpoint as table-card layout (≤767px) — switches the page from
@@ -224,8 +224,9 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
    * desktop) continue to use the dialog.
    */
   override openAddEditForm(entity?: Income): void {
-    if (!entity && this.breakpointService.matchesMobileCreateLayout()) {
-      this.router.navigate(['/incomes/add']);
+    if (this.breakpointService.matchesMobileCreateLayout()) {
+      // Phones: create and edit are pages, not popups.
+      this.router.navigate(entity?.id ? ['/incomes', entity.id, 'edit'] : ['/incomes/add']);
       return;
     }
     super.openAddEditForm(entity);

@@ -1,126 +1,140 @@
-<!-- Routed-page mode (mobile create). Always renders the stepper. Native
-     body scroll inside the parent `.content-container`, with `position:
-     sticky` strips for the header and action footer. No `position: fixed`
-     ancestors → no iOS scroll quirks. -->
+<!-- Routed-page mode (mobile): the edit page, or the create stepper. Native
+     body scroll inside the parent `.content-container`, with fixed strips
+     for the header and action footer. -->
 <ng-container *ngIf="isPageMode; else dialogShell">
-    <section class="form-page">
-        <header class="form-page__header">
-            <button type="button" cb-icon-button (click)="closeDialog(false)"
-                matTooltip="Back" matTooltipPosition="below" aria-label="Back">
-                <mat-icon>arrow_back_ios_new</mat-icon>
-            </button>
-            <h1 class="form-page__title">{{ isEditMode ? 'Edit expense' : 'New expense' }}</h1>
-        </header>
+    @if (isEditMode) {
+        <!-- Mobile edit: a page (not a popup) so swiping back returns to the list. -->
+        <section class="form-page form-page--edit">
+            <header class="form-page__header">
+                <button type="button" cb-icon-button (click)="closeDialog(false)" aria-label="Back">
+                    <mat-icon>arrow_back_ios_new</mat-icon>
+                </button>
+                <h1 class="form-page__title">Edit expense</h1>
+                <button type="button" class="form-page__done" (click)="add()">Done</button>
+            </header>
+            <div class="form-page__body">
+                <form [formGroup]="formGroup" class="dialog-form">
+                    <ng-container *ngTemplateOutlet="editFields"></ng-container>
+                </form>
+            </div>
+        </section>
+    } @else {
+        <section class="form-page">
+            <!-- iOS bar: Cancel on the first step, ‹ to the previous step after that. -->
+            <header class="form-page__header">
+                @if (wizardStep() === 0) {
+                    <button type="button" class="form-page__cancel" (click)="closeDialog(false)">Cancel</button>
+                } @else {
+                    <button type="button" cb-icon-button (click)="wizardBack()" aria-label="Previous step">
+                        <mat-icon>arrow_back_ios_new</mat-icon>
+                    </button>
+                }
+                <h1 class="form-page__title">New expense</h1>
+                <span aria-hidden="true"></span>
+            </header>
 
-        <div class="form-page__body">
-            <form [formGroup]="formGroup" class="dialog-form form-page__wizard">
-                <nav class="create-wizard__rail" aria-label="Steps">
-                    <div *ngFor="let label of wizardStepLabels; let i = index" class="create-wizard__stop"
-                        [class.create-wizard__stop--active]="wizardStep() === i"
-                        [class.create-wizard__stop--complete]="wizardStep() > i">
-                        <span class="create-wizard__bubble" [attr.aria-current]="wizardStep() === i ? 'step' : null">{{ i + 1 }}</span>
-                        <span class="create-wizard__stop-label">{{ label }}</span>
-                    </div>
-                </nav>
-
-                <div class="create-wizard__panel form-page__panel" [ngSwitch]="wizardStep()">
-                    <ng-container *ngSwitchCase="0">
-                        <div class="category-pick-grid" role="listbox" aria-label="Expense categories">
-                            <button type="button" *ngFor="let category of categories()" class="category-tile"
-                                role="option"
-                                [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
-                                [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
-                                (click)="selectWizardCategory(category.id)">
-                                <span class="category-tile__icon-wrap" aria-hidden="true">
-                                    <mat-icon class="category-tile__icon">{{ category?.icon || 'label' }}</mat-icon>
-                                </span>
-                                <span class="category-tile__body">
-                                    <span class="category-tile__label">{{ category?.category }}</span>
-                                    <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
-                                </span>
-                                <span class="category-tile__check" aria-hidden="true">
-                                    <mat-icon>check</mat-icon>
-                                </span>
-                            </button>
+            <div class="form-page__body">
+                <form [formGroup]="formGroup" class="dialog-form form-page__wizard">
+                    <nav class="create-wizard__rail" aria-label="Steps">
+                        <div *ngFor="let label of wizardStepLabels; let i = index" class="create-wizard__stop"
+                            [class.create-wizard__stop--active]="wizardStep() === i"
+                            [class.create-wizard__stop--complete]="wizardStep() > i">
+                            <span class="create-wizard__bubble" [attr.aria-current]="wizardStep() === i ? 'step' : null">{{ i + 1 }}</span>
+                            <span class="create-wizard__stop-label">{{ label }}</span>
                         </div>
-                        <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">
-                            No categories available yet.
-                        </p>
-                    </ng-container>
+                    </nav>
 
-                    <ng-container *ngSwitchCase="1">
-                        <div class="wizard-amount-layout">
-                            <div class="wizard-amount-display-row">
-                                <div class="wizard-amount-currency-panel">
-                                    <span class="wizard-amount-currency-panel__label">Source</span>
-                                    <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="pageWizardSourceMenu"
-                                        aria-haspopup="menu" aria-label="Source, tap to change">
-                                        <ng-container *ngIf="currentSource() as src; else pageExpensePickSource">
-                                            <span class="wizard-amount-currency-trigger__inner">
-                                                <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ src.currency | flag }}</span>
-                                                <span class="wizard-amount-currency-chip__code">{{ src.name }}</span>
-                                            </span>
-                                        </ng-container>
-                                        <ng-template #pageExpensePickSource>
-                                            <span class="wizard-amount-currency-trigger__placeholder">Choose…</span>
-                                        </ng-template>
-                                        <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
-                                    </button>
-                                    <mat-menu #pageWizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
-                                        <button mat-menu-item type="button" *ngFor="let w of sources()"
-                                            class="wizard-amount-currency-menu-item"
-                                            [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
-                                            (click)="selectWizardSource($any(w.id))">
-                                            <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ w.currency | flag }}</span>
-                                            <span>{{ w.name }} · {{ w.currency }}</span>
-                                        </button>
-                                        <button mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
-                                    </mat-menu>
-                                </div>
-                                <div class="amount-keypad-display amount-keypad-display--in-row" aria-live="polite">
-                                    <span class="amount-keypad-display__value">{{ amountDisplay() }}</span>
-                                </div>
+                    <div class="create-wizard__panel form-page__panel" [ngSwitch]="wizardStep()">
+                        <ng-container *ngSwitchCase="0">
+                            <div class="category-pick-grid" role="listbox" aria-label="Expense categories">
+                                <button type="button" *ngFor="let category of categories()" class="category-tile"
+                                    role="option"
+                                    [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
+                                    [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
+                                    (click)="selectWizardCategory(category.id)">
+                                    <span class="category-tile__icon-wrap" aria-hidden="true">
+                                        <mat-icon class="category-tile__icon">{{ category?.icon || 'label' }}</mat-icon>
+                                    </span>
+                                    <span class="category-tile__body">
+                                        <span class="category-tile__label">{{ category?.category }}</span>
+                                        <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
+                                    </span>
+                                    <span class="category-tile__check" aria-hidden="true">
+                                        <mat-icon>check</mat-icon>
+                                    </span>
+                                </button>
                             </div>
-                            <app-amount-keypad [value]="amountEntry()"
-                                (valueChange)="onAmountEntryChange($event)"></app-amount-keypad>
-                            <p *ngIf="formGroup.get('moneySpent')?.invalid && formGroup.get('moneySpent')?.touched"
-                                class="create-wizard__field-error">Enter a valid amount.</p>
-                        </div>
-                    </ng-container>
+                            <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">
+                                No categories available yet.
+                            </p>
+                    
+    </ng-container>
 
-                    <ng-container *ngSwitchCase="2">
-                        <cb-labeled-date-input class="dialog-form__field dialog-form__date"
-                            label="Date"
-                            [control]="$any(formGroup.get('createdTime'))">
-                        </cb-labeled-date-input>
-                        <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
-                            label="Description"
-                            placeholder="Write a note…"
-                            [control]="$any(formGroup.get('description'))">
-                        </cb-labeled-textarea>
-                    </ng-container>
-                </div>
-            </form>
-        </div>
+                        <ng-container *ngSwitchCase="1">
+                            <div class="wizard-amount-layout">
+                                <div class="wizard-amount-display-row">
+                                    <div class="wizard-amount-currency-panel">
+                                        <span class="wizard-amount-currency-panel__label">Source</span>
+                                        <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="pageWizardSourceMenu"
+                                            aria-haspopup="menu" aria-label="Source, tap to change">
+                                            <ng-container *ngIf="currentSource() as src; else pageExpensePickSource">
+                                                <span class="wizard-amount-currency-trigger__inner">
+                                                    <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ src.currency | flag }}</span>
+                                                    <span class="wizard-amount-currency-chip__code">{{ src.name }}</span>
+                                                </span>
+                                            </ng-container>
+                                            <ng-template #pageExpensePickSource>
+                                                <span class="wizard-amount-currency-trigger__placeholder">Choose…</span>
+                                            </ng-template>
+                                            <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
+                                        </button>
+                                        <mat-menu #pageWizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
+                                            <button mat-menu-item type="button" *ngFor="let w of sources()"
+                                                class="wizard-amount-currency-menu-item"
+                                                [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
+                                                (click)="selectWizardSource($any(w.id))">
+                                                <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ w.currency | flag }}</span>
+                                                <span>{{ w.name }} · {{ w.currency }}</span>
+                                            </button>
+                                            <button mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
+                                        </mat-menu>
+                                    </div>
+                                    <div class="amount-keypad-display amount-keypad-display--in-row" aria-live="polite">
+                                        <span class="amount-keypad-display__value">{{ amountDisplay() }}</span>
+                                    </div>
+                                </div>
+                                <app-amount-keypad [value]="amountEntry()"
+                                    (valueChange)="onAmountEntryChange($event)"></app-amount-keypad>
+                                <p *ngIf="formGroup.get('moneySpent')?.invalid && formGroup.get('moneySpent')?.touched"
+                                    class="create-wizard__field-error">Enter a valid amount.</p>
+                            </div>
+                        </ng-container>
 
-        <footer class="form-page__footer">
-            <button type="button" cb-pill-button icon="close" (click)="closeDialog(false)">
-                Cancel
-            </button>
-            <button *ngIf="wizardStep() > 0" type="button" cb-pill-button icon="arrow_back"
-                (click)="wizardBack()">
-                Back
-            </button>
-            <button *ngIf="wizardStep() < lastWizardStep()" type="button" cb-pill-button variant="primary"
-                icon="arrow_forward" (click)="wizardNext()">
-                Next
-            </button>
-            <button *ngIf="wizardStep() === lastWizardStep()" type="button" cb-pill-button variant="primary"
-                icon="check" (click)="add()">
-                Save expense
-            </button>
-        </footer>
-    </section>
+                        <ng-container *ngSwitchCase="2">
+                            <cb-labeled-date-input class="dialog-form__field dialog-form__date"
+                                label="Date"
+                                [control]="$any(formGroup.get('createdTime'))">
+                            </cb-labeled-date-input>
+                            <cb-labeled-textarea class="dialog-form__field dialog-form__textarea"
+                                label="Description"
+                                placeholder="Write a note…"
+                                [control]="$any(formGroup.get('description'))">
+                            </cb-labeled-textarea>
+                        </ng-container>
+                    </div>
+                </form>
+            </div>
+
+            <!-- One full-width primary action, like Apple's own setup flows. -->
+            <footer class="form-page__footer">
+                @if (wizardStep() < lastWizardStep()) {
+                    <button type="button" class="form-page__primary" (click)="wizardNext()">Next</button>
+                } @else {
+                    <button type="button" class="form-page__primary" (click)="add()">Add Expense</button>
+                }
+            </footer>
+        </section>
+    }
 </ng-container>
 
 <ng-template #dialogShell>
@@ -131,47 +145,7 @@
         <!-- Single-screen form: edit (any size) OR desktop create. The wizard
              below handles mobile create only. -->
         <ng-container *ngIf="isEditMode || !isWizardMobile()">
-            <!-- Apple grouped form: label-left rows, notes in their own group. -->
-            <div class="ios-form">
-                <div class="ios-group">
-                    <cb-select-input
-                        label="Category"
-                        emptyText="No categories yet"
-                        [control]="$any(formGroup.get('categoryID'))"
-                        [options]="categories()"
-                        [displayWith]="displayCategory"
-                        [valueWith]="$any(categoryIdValue)">
-                    </cb-select-input>
-
-                    <cb-labeled-form-input
-                        label="Amount"
-                        type="number"
-                        [control]="$any(formGroup.get('moneySpent'))">
-                    </cb-labeled-form-input>
-
-                    <cb-select-input
-                        label="Paid from"
-                        emptyText="No sources yet"
-                        [control]="$any(formGroup.get('walletId'))"
-                        [options]="sources()"
-                        [displayWith]="displaySource"
-                        [valueWith]="$any(sourceIdValue)">
-                    </cb-select-input>
-
-                    <cb-labeled-date-input
-                        label="Date"
-                        [control]="$any(formGroup.get('createdTime'))">
-                    </cb-labeled-date-input>
-                </div>
-
-                <div class="ios-group">
-                    <cb-labeled-textarea
-                        label="Description"
-                        placeholder="Write a note…"
-                        [control]="$any(formGroup.get('description'))">
-                    </cb-labeled-textarea>
-                </div>
-            </div>
+            <ng-container *ngTemplateOutlet="editFields"></ng-container>
         </ng-container>
 
         <!-- Mobile create: stepped flow + custom footer -->
@@ -354,3 +328,47 @@
 </create-form>
 </ng-template>
 
+<!-- Grouped Apple form used by the edit dialog (desktop) and the edit page (mobile). -->
+<ng-template #editFields>
+    <!-- Apple grouped form: label-left rows, notes in their own group. -->
+    <div class="ios-form">
+        <div class="ios-group">
+            <cb-select-input
+                label="Category"
+                emptyText="No categories yet"
+                [control]="$any(formGroup.get('categoryID'))"
+                [options]="categories()"
+                [displayWith]="displayCategory"
+                [valueWith]="$any(categoryIdValue)">
+            </cb-select-input>
+
+            <cb-labeled-form-input
+                label="Amount"
+                type="number"
+                [control]="$any(formGroup.get('moneySpent'))">
+            </cb-labeled-form-input>
+
+            <cb-select-input
+                label="Paid from"
+                emptyText="No sources yet"
+                [control]="$any(formGroup.get('walletId'))"
+                [options]="sources()"
+                [displayWith]="displaySource"
+                [valueWith]="$any(sourceIdValue)">
+            </cb-select-input>
+
+            <cb-labeled-date-input
+                label="Date"
+                [control]="$any(formGroup.get('createdTime'))">
+            </cb-labeled-date-input>
+        </div>
+
+        <div class="ios-group">
+            <cb-labeled-textarea
+                label="Description"
+                placeholder="Write a note…"
+                [control]="$any(formGroup.get('description'))">
+            </cb-labeled-textarea>
+        </div>
+    </div>
+</ng-template>

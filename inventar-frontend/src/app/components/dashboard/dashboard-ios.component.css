@@ -290,7 +290,6 @@
     border-left-color: var(--ios-separator);
 }
 
-.recap__heading,
 .recap-block__title,
 .recap-block--grand .recap-block__title {
     font-size: 13px;
@@ -498,4 +497,45 @@
 :host-context(.pink-theme) .balance-row:not(.balance-row--brand):not(.balance-row--project) {
     --card-bg: linear-gradient(135deg, #f7c6c7 0%, #e8a0a6 45%, #c97b84 100%);
     --card-glow: rgba(201, 123, 132, 0.55);
+}
+
+/* Totals: the heading gets its own line above the groups (they wrap side
+   by side on tablets and stack on phones). */
+@media (max-width: 860px) {
+    .recap__heading {
+        flex: 1 0 100%;
+        margin: 0;
+    }
+
+    .balance-card__recap {
+        row-gap: 14px;
+    }
+}
+
+/* "Totals" is a section title, like "My balance". */
+.recap__heading {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    color: var(--app-text);
+}
+
+/* Tab change by swipe or tap: the new tab slides in from its side. */
+.dash-tab--from-right {
+    animation: dash-in-right 0.32s var(--app-easing-standard) both;
+}
+
+.dash-tab--from-left {
+    animation: dash-in-left 0.32s var(--app-easing-standard) both;
+}
+
+@keyframes dash-in-right {
+    from { opacity: 0; transform: translateX(28px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes dash-in-left {
+    from { opacity: 0; transform: translateX(-28px); }
+    to { opacity: 1; transform: none; }
 }

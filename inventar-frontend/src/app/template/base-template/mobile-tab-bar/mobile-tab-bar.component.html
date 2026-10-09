@@ -23,22 +23,26 @@
 }
 
 <div class="dock">
-    <nav class="tabs" aria-label="Quick navigation">
-        <a class="tab" routerLink="/dashboard" routerLinkActive="tab--active" (click)="closeAll()">
-            <mat-icon fontSet="material-symbols-rounded">space_dashboard</mat-icon>
-            <span>Summary</span>
-        </a>
-        <a class="tab" routerLink="/expenses" routerLinkActive="tab--active"
-            [routerLinkActiveOptions]="{ exact: true }" (click)="closeAll()">
-            <mat-icon fontSet="material-symbols-rounded">trending_down</mat-icon>
-            <span>Expenses</span>
-        </a>
-        <a class="tab" routerLink="/incomes" routerLinkActive="tab--active"
-            [routerLinkActiveOptions]="{ exact: true }" (click)="closeAll()">
-            <mat-icon fontSet="material-symbols-rounded">trending_up</mat-icon>
-            <span>Incomes</span>
-        </a>
-        <button type="button" class="tab" [class.tab--active]="moreOpen() || onMorePage"
+    <!-- Tap a tab, or slide a finger along the bar and release on one. -->
+    <nav class="tabs" aria-label="Quick navigation" #bar
+        [class.tabs--sliding]="slideIndex() !== null"
+        (pointerdown)="onPointerDown($event)"
+        (pointermove)="onPointerMove($event, bar)"
+        (pointerup)="onPointerUp($event, bar)"
+        (pointercancel)="onPointerCancel()">
+        @for (tab of tabs; track tab.link; let i = $index) {
+            <button type="button" class="tab"
+                [class.tab--active]="slideIndex() === null && isActive(tab)"
+                [class.tab--slide]="slideIndex() === i"
+                [attr.aria-current]="isActive(tab) ? 'page' : null"
+                (click)="openTab(tab)">
+                <mat-icon fontSet="material-symbols-rounded">{{ tab.icon }}</mat-icon>
+                <span>{{ tab.label }}</span>
+            </button>
+        }
+        <button type="button" class="tab"
+            [class.tab--active]="slideIndex() === null && (moreOpen() || onMorePage)"
+            [class.tab--slide]="slideIndex() === moreIndex"
             [attr.aria-expanded]="moreOpen()" aria-haspopup="menu"
             aria-label="More pages" (click)="toggleMore()">
             <mat-icon fontSet="material-symbols-rounded">{{ moreOpen() ? 'close' : 'more_horiz' }}</mat-icon>

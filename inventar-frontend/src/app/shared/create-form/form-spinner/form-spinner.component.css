@@ -6,14 +6,19 @@
     align-items: center;
     justify-content: center;
     pointer-events: auto;
+    /* Only shows if loading/saving takes longer than 2 seconds. */
+    animation: loading-appear 0.25s ease 2s both;
+}
+
+@keyframes loading-appear {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .form-loading-backdrop {
     position: absolute;
     inset: 0;
-    background: color-mix(in srgb, var(--app-bg) 64%, transparent);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: color-mix(in srgb, var(--app-bg) 40%, transparent);
 }
 
 .form-loading-center {
@@ -23,70 +28,33 @@
     max-width: calc(100% - 32px);
 }
 
+/* iOS HUD: a frosted rounded square with the activity indicator. The
+   spinner itself is the shared `.app-spinner` (styles.scss). */
 .form-loading-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 18px;
-    padding: 26px 32px 24px;
-    border-radius: var(--app-radius-lg);
-    background: var(--app-bg-elevated);
-    border: 1px solid var(--app-border);
-    box-shadow: var(--app-shadow-lg);
+    gap: 12px;
+    min-width: 120px;
+    padding: 22px 24px 18px;
+    box-sizing: border-box;
+    border-radius: var(--app-radius-xl);
+    background: var(--ios-menu);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    backdrop-filter: saturate(180%) blur(30px);
+    box-shadow: var(--app-shadow-md);
     animation: form-loading-card-enter 360ms var(--app-easing-emphasized, cubic-bezier(0.3, 0, 0, 1)) both;
-}
-
-/* Single-element conic-gradient sweep. See `.app-spinner` in styles.scss
-   for the rationale — same visual language so dialog + table spinners
-   look identical. */
-.form-loading-spinner {
-    position: relative;
-    width: 44px;
-    height: 44px;
-    --spinner-thickness: 3px;
-}
-
-.form-loading-spinner__track {
-    display: none;
-}
-
-.form-loading-spinner__arc {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: conic-gradient(
-        from -90deg,
-        color-mix(in srgb, var(--app-accent) 0%, transparent),
-        var(--app-accent)
-    );
-    -webkit-mask: radial-gradient(
-        circle closest-side,
-        transparent calc(100% - var(--spinner-thickness)),
-        #000 calc(100% - var(--spinner-thickness) + 0.5px)
-    );
-    mask: radial-gradient(
-        circle closest-side,
-        transparent calc(100% - var(--spinner-thickness)),
-        #000 calc(100% - var(--spinner-thickness) + 0.5px)
-    );
-    animation: form-loading-spin 850ms linear infinite;
 }
 
 .form-loading-text {
     margin: 0;
-    font-size: 0.875rem;
-    font-weight: 500;
-    letter-spacing: 0.005em;
-    color: var(--app-text);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--app-text-muted);
     text-align: center;
-    line-height: 1.45;
+    line-height: 1.35;
     max-width: 220px;
-}
-
-@keyframes form-loading-spin {
-    to {
-        transform: rotate(360deg);
-    }
 }
 
 @keyframes form-loading-card-enter {
@@ -103,8 +71,5 @@
 @media (prefers-reduced-motion: reduce) {
     .form-loading-card {
         animation: none;
-    }
-    .form-loading-spinner__arc {
-        animation-duration: 1.8s;
     }
 }

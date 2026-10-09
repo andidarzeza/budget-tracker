@@ -1,4 +1,5 @@
-import { CommonModule } from '@angular/common';
+import { markInAppBack } from 'src/app/utils/page-transitions';
+import { CommonModule, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -16,7 +17,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
 import { filter, mergeMap, observeOn, tap } from 'rxjs/operators';
@@ -45,7 +46,6 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 @Component({
   selector: 'app-add-income',
   templateUrl: './add-income.component.html',
-  styleUrls: ['./add-income.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
   imports: [
@@ -74,6 +74,8 @@ export class AddIncomeComponent implements OnInit {
   readonly sharedService = inject(SharedService);
   private readonly toaster = inject(ToastrService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
   private readonly formBuilder = inject(FormBuilder);
   private readonly incomeService = inject(IncomeService);
   private readonly categoryService = inject(CategoriesService);
@@ -139,6 +141,9 @@ export class AddIncomeComponent implements OnInit {
     @Optional() private dialogRef: MatDialogRef<AddIncomeComponent> | null = null,
   ) {
     this.isPageMode = !this.dialogRef;
+    // Mobile edit page (/incomes/:id/edit): the record is loaded by id.
+    const routeId = this.isPageMode ? this.route.snapshot.paramMap.get('id') : null;
+    if (routeId) this.income = { id: routeId } as Income;
     this.isEditMode = this.income != null;
     this.formGroup = this.formBuilder.group({
       description: [''],
@@ -297,10 +302,15 @@ export class AddIncomeComponent implements OnInit {
       this.dialogRef.close(update);
       return;
     }
-    // Routed-page mode — navigate back to the list. The list component is
-    // re-created on entry, so successful saves naturally show in the
-    // refreshed query.
-    this.router.navigate(['/incomes']);
+    // Routed page: step back when we came from inside the app (so the list
+    // isn't pushed on top of itself and swipe-back stays correct),
+    // otherwise go to the list.
+    const navigationId = (this.location.getState() as { navigationId?: number } | null)?.navigationId ?? 1;
+    if (navigationId > 1) {
+      markInAppBack();
+      this.location.back();
+    }
+    else this.router.navigate(['/incomes'], { replaceUrl: true });
   }
 
   onSaveSuccess(message: string): void {

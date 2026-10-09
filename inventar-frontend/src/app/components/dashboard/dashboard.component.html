@@ -1,4 +1,4 @@
-<div class="dashboard-container">
+<div class="dashboard-container" (touchstart)="onSwipeStart($event)" (touchend)="onSwipeEnd($event)">
 
     <!-- iOS large title -->
     <header class="page-head">
@@ -19,7 +19,8 @@
             (click)="selectTab('balances')">Balances</button>
     </div>
 
-    <div class="dash-tab" role="tabpanel" [class.dash-tab--hidden]="activeTab() !== 'stats'">
+    <div class="dash-tab" role="tabpanel" [class.dash-tab--hidden]="activeTab() !== 'stats'"
+        [class.dash-tab--from-left]="slideFrom() === 'left'">
         <!-- ──── At a glance ──── -->
         <section class="glance" aria-label="At a glance">
             <article class="glance-card">
@@ -331,7 +332,8 @@
         </section>
     </div>
 
-    <div class="dash-tab" role="tabpanel" [class.dash-tab--hidden]="activeTab() !== 'balances'">
+    <div class="dash-tab" role="tabpanel" [class.dash-tab--hidden]="activeTab() !== 'balances'"
+        [class.dash-tab--from-right]="slideFrom() === 'right'">
         <!-- ──── My balance card (always-on, persists across reloads) ──── -->
         <section class="balance-card" aria-label="My balance">
             <header class="balance-card__head">

@@ -1,8 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, inject, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'table-message',
@@ -19,7 +18,9 @@ import { SharedService } from 'src/app/services/shared.service';
   ],
 })
 export class TableMessageComponent {
-  readonly sharedService = inject(SharedService);
-
   @Input() total: number;
+  /** Page name for the title ("No Expenses"). */
+  @Input() pageName?: string;
+  /** Material symbol shown above the title (the page's own icon). */
+  @Input() icon?: string;
 }

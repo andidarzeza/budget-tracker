@@ -11,48 +11,32 @@
             </div>
         }
 
+        <!-- iOS 26 toolbar: secondary actions share one glass capsule, the
+             primary "+" is its own round tinted button. -->
         <div class="ta__actions">
-            <button
-                type="button"
-                cb-icon-button
-                class="ta__icon-btn"
-                [class.ta__icon-btn--active]="filterOpen() || appliedFilterCount() > 0"
-                matTooltip="Filters"
-                matTooltipClass="sidebar-tooltip"
-                matTooltipPosition="above"
-                (click)="toggleFilter()"
-                [attr.aria-expanded]="filterOpen()"
-                aria-label="Toggle filters"
-            >
-                <mat-icon>search</mat-icon>
-                @if (appliedFilterCount() > 0) {
-                    <span class="ta__icon-badge" aria-hidden="true">{{ appliedFilterCount() }}</span>
-                }
-            </button>
+            <div class="ta__group">
+                <button type="button" class="ta__btn"
+                    [class.ta__btn--active]="filterOpen() || appliedFilterCount() > 0"
+                    matTooltip="Filters" matTooltipClass="sidebar-tooltip" matTooltipPosition="below"
+                    (click)="toggleFilter()" [attr.aria-expanded]="filterOpen()" aria-label="Filters">
+                    <mat-icon fontSet="material-symbols-rounded">filter_list</mat-icon>
+                    @if (appliedFilterCount() > 0) {
+                        <span class="ta__icon-badge" aria-hidden="true">{{ appliedFilterCount() }}</span>
+                    }
+                </button>
+                <button type="button" class="ta__btn"
+                    matTooltip="Refresh" matTooltipClass="sidebar-tooltip" matTooltipPosition="below"
+                    (click)="refresh()" aria-label="Refresh">
+                    <mat-icon fontSet="material-symbols-rounded">refresh</mat-icon>
+                </button>
+            </div>
             @if (!tableActionInput?.extra?.hideInsertButton) {
-                <button
-                    type="button"
-                    cb-icon-button
-                    matTooltip="Insert"
-                    matTooltipClass="sidebar-tooltip"
-                    matTooltipPosition="above"
-                    (click)="openDialog()"
-                    aria-label="Insert"
-                >
-                    <mat-icon>add</mat-icon>
+                <button type="button" class="ta__add"
+                    matTooltip="New" matTooltipClass="sidebar-tooltip" matTooltipPosition="below"
+                    (click)="openDialog()" aria-label="New">
+                    <mat-icon fontSet="material-symbols-rounded">add</mat-icon>
                 </button>
             }
-            <button
-                type="button"
-                cb-icon-button
-                matTooltip="Refresh"
-                matTooltipClass="sidebar-tooltip"
-                matTooltipPosition="above"
-                (click)="refresh()"
-                aria-label="Refresh"
-            >
-                <mat-icon>refresh</mat-icon>
-            </button>
         </div>
     </div>
 

@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 
@@ -26,6 +28,13 @@ import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imp
   ],
 })
 export class WeekPickerComponent implements OnInit {
+  private readonly breakpointService = inject(BreakpointService);
+
+  /** Mobile gets the centred fullscreen Material picker (like Custom); desktop the dropdown. */
+  readonly touchUi = toSignal(this.breakpointService.useTableCardLayout$, {
+    initialValue: this.breakpointService.matchesMobileCreateLayout(),
+  });
+
   date = new Date();
   from = this.startOfWeek(this.date);
   to = this.shiftDays(this.from, 7);

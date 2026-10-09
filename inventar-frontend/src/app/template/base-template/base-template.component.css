@@ -94,22 +94,3 @@
         overflow: visible;
     }
 }
-
-.mobile-nav-backdrop {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: var(--app-toolbar-height, 68px);
-    bottom: 0;
-    background: var(--mat-sys-scrim, rgba(15, 23, 42, 0.4));
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--app-motion-slow, 280ms) var(--app-easing-standard, ease);
-    z-index: 11;
-    backdrop-filter: blur(2px);
-}
-
-.mobile-nav-backdrop--open {
-    opacity: 1;
-    pointer-events: auto;
-}

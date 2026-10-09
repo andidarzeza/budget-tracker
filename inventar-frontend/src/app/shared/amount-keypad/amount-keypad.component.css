@@ -110,23 +110,24 @@
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
   align-self: center;
-  min-width: 120px;
-  min-height: 42px;
-  padding: 10px 24px;
+  /* iOS plain text button (like Clear on the system keypads). */
+  min-width: 96px;
+  min-height: 40px;
+  padding: 8px 20px;
   border-radius: 999px;
-  border: 1.5px solid color-mix(in srgb, var(--field-outline) 50%, transparent);
+  border: 0;
   background: transparent;
-  color: var(--card-title);
-  font-family: "Source Sans Pro", Roboto, "Helvetica Neue", sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  color: var(--app-accent);
+  font-family: var(--app-font-sans);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: none;
   cursor: pointer;
   box-sizing: border-box;
   transition: background 0.12s ease;
 }
 
 .amount-keypad__clear:active {
-  background: var(--option-hover);
+  opacity: 0.4;
 }

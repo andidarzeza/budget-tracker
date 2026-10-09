@@ -9,17 +9,15 @@ export class ChartUtils {
   /** Active charts keyed by canvas element id, so we can update / resize / replace them. */
   private charts = new Map<string, Chart>();
 
+  /** Extra series after the first (which uses the app's accent colour):
+   *  iOS system blue, green, orange, purple, teal, indigo. */
   private readonly seriesPalette: string[] = [
-    'rgb(37, 99, 235)',
-    'rgb(220, 38, 38)',
-    'rgb(5, 150, 105)',
-    'rgb(217, 119, 6)',
-    'rgb(124, 58, 237)',
-    'rgb(219, 39, 119)',
-    'rgb(8, 145, 178)',
-    'rgb(101, 163, 13)',
-    'rgb(244, 114, 182)',
-    'rgb(99, 102, 241)',
+    'rgb(0, 122, 255)',
+    'rgb(52, 199, 89)',
+    'rgb(255, 149, 0)',
+    'rgb(175, 82, 222)',
+    'rgb(48, 176, 199)',
+    'rgb(88, 86, 214)',
   ];
 
   private readonly hourLabels: string[] = Array.from(
@@ -32,9 +30,15 @@ export class ChartUtils {
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
 
-  /** Create / replace a line chart bound to the given canvas id. */
+  /**
+   * Create / replace a line chart bound to the given canvas id. Styled like
+   * the Exchange page: a smooth line in the accent colour over a soft
+   * gradient, no dots until hovered, faint horizontal grid, no x grid, and
+   * a legend only when several currencies share the chart.
+   */
   createLineChart(canvasId: string): Chart {
     this.destroy(canvasId);
+    const { grid, text } = this.themeColors();
     const config: ChartConfiguration<'line'> = {
       type: 'line',
       data: { labels: [], datasets: [] },
@@ -46,26 +50,27 @@ export class ChartUtils {
         scales: {
           y: {
             min: 0,
-            grid: { color: 'rgba(148, 163, 184, 0.18)' },
-            ticks: { font: { size: 11 } },
+            grid: { color: grid, drawBorder: false },
+            ticks: { font: { size: 11 }, color: text, maxTicksLimit: 5 },
           },
           x: {
-            grid: { display: false },
-            ticks: { font: { size: 11 } },
+            grid: { display: false, drawBorder: false },
+            ticks: { font: { size: 11 }, color: text, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 },
           },
         },
         plugins: {
           legend: {
-            display: true,
+            display: false,
             position: 'bottom',
             labels: {
               usePointStyle: true,
               boxWidth: 8,
               padding: 12,
               font: { size: 11 },
+              color: text,
             },
           },
-          tooltip: { mode: 'index', intersect: false },
+          tooltip: { mode: 'index', intersect: false, displayColors: false, cornerRadius: 10, padding: 10 },
         },
       },
     };
@@ -158,20 +163,59 @@ export class ChartUtils {
       return {
         label: s.label,
         data: s.data,
-        tension: 0.35,
+        tension: 0.3,
         borderColor: color,
-        backgroundColor: this.alphaFill(color, 0.2),
+        // Vertical fade from the line colour to transparent, like Exchange.
+        backgroundColor: (context: any) => {
+          const { ctx, chartArea } = context.chart;
+          if (!chartArea) return this.alphaFill(color, 0.12);
+          const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          gradient.addColorStop(0, this.alphaFill(color, 0.24));
+          gradient.addColorStop(1, this.alphaFill(color, 0));
+          return gradient;
+        },
         fill: true,
-        borderWidth: 2,
-        pointRadius: 2,
+        borderWidth: 2.5,
+        pointRadius: 0,
         pointHoverRadius: 5,
+        pointBackgroundColor: color,
       };
     });
+    const { grid, text } = this.themeColors();
+    const options = chart.options as any;
+    options.plugins.legend.display = series.length > 1;
+    options.plugins.tooltip.displayColors = series.length > 1;
+    options.plugins.legend.labels.color = text;
+    options.scales.x.ticks.color = text;
+    options.scales.y.ticks.color = text;
+    options.scales.y.grid.color = grid;
     chart.update();
   }
 
+  /** First series: the app's accent (red, or pink in the pink theme). */
   private colorForIndex(index: number): string {
-    return this.seriesPalette[index % this.seriesPalette.length];
+    if (index === 0) return this.toRgb(this.cssVar('--app-accent', '#ff3b30'));
+    return this.seriesPalette[(index - 1) % this.seriesPalette.length];
+  }
+
+  private themeColors(): { grid: string; text: string } {
+    return {
+      grid: this.cssVar('--app-border', 'rgba(60, 60, 67, 0.18)'),
+      text: this.cssVar('--app-text-subtle', '#8e8e93'),
+    };
+  }
+
+  private cssVar(name: string, fallback: string): string {
+    if (typeof document === 'undefined') return fallback;
+    return getComputedStyle(document.body).getPropertyValue(name).trim() || fallback;
+  }
+
+  /** `#rrggbb` → `rgb(r, g, b)` so `alphaFill` can derive translucent fills. */
+  private toRgb(color: string): string {
+    const hex = color.replace('#', '');
+    if (!/^[0-9a-f]{6}$/i.test(hex)) return color;
+    const n = parseInt(hex, 16);
+    return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`;
   }
 
   /** Translucent fill derived from a solid `rgb(...)` palette color. */

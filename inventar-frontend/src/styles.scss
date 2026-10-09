@@ -648,70 +648,76 @@ html.cdk-global-scrollblock {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0.85rem;
+    gap: 10px;
     border-radius: inherit;
-    background: color-mix(in srgb, var(--app-bg-elevated) 72%, transparent);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    /* The table stays visible and sharp. Normal loads show nothing; if one
+       takes longer than 2 seconds, a small frosted note fades in. */
+    background: transparent;
+    animation: loading-appear 0.3s ease 2s both;
 }
 
-/* Single-element conic-gradient sweep. The arc fades from transparent to
-   the accent color across one full revolution, so when it spins it reads
-   as a comet/sweep — no separate static "track" ring layered behind. */
+.app-loading-overlay .app-loading-label {
+    padding: 10px 18px;
+    border-radius: var(--app-radius-full);
+    background: var(--ios-menu);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    backdrop-filter: saturate(180%) blur(30px);
+    box-shadow: var(--app-shadow-md);
+}
+
+/* Loading notes appear only when loading takes longer than 2 seconds:
+   anything quicker shows nothing, so there is no flash. */
+@keyframes loading-appear {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.ledger__loading,
+.table-cards-loading {
+    animation: loading-appear 0.25s ease 2s both;
+}
+
+/* iOS activity indicator (UIActivityIndicatorView): eight rounded spokes
+   with a fading trail, turning in 45° steps. The spokes are an SVG mask, so
+   the colour comes from the theme (system grey, also in dark / pink). The
+   track/arc spans in the markup are kept; the arc carries the indicator. */
 .app-spinner {
     display: inline-block;
     position: relative;
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    --spinner-thickness: 3px;
+    width: 30px;
+    height: 30px;
+    color: var(--app-text-muted);
 }
 
 .app-spinner--sm {
-    width: 28px;
-    height: 28px;
-    --spinner-thickness: 2.5px;
+    width: 20px;
+    height: 20px;
 }
 
 .app-spinner--lg {
-    width: 56px;
-    height: 56px;
-    --spinner-thickness: 4px;
+    width: 40px;
+    height: 40px;
 }
 
 .app-spinner__track {
-    /* Folded into the arc's gradient — kept as a sink so existing markup
-       still mounts. */
     display: none;
 }
 
 .app-spinner__arc {
     position: absolute;
     inset: 0;
-    border-radius: 50%;
-    background: conic-gradient(
-        from -90deg,
-        color-mix(in srgb, var(--app-accent) 0%, transparent),
-        var(--app-accent)
-    );
-    -webkit-mask: radial-gradient(
-        circle closest-side,
-        transparent calc(100% - var(--spinner-thickness)),
-        #000 calc(100% - var(--spinner-thickness) + 0.5px)
-    );
-    mask: radial-gradient(
-        circle closest-side,
-        transparent calc(100% - var(--spinner-thickness)),
-        #000 calc(100% - var(--spinner-thickness) + 0.5px)
-    );
-    animation: app-spin 850ms linear infinite;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2040%2040'%20stroke='black'%20stroke-width='3.8'%20stroke-linecap='round'%3E%3Cline%20x1='20.00'%20y1='11.00'%20x2='20.00'%20y2='3.00'%20stroke-opacity='1'/%3E%3Cline%20x1='26.36'%20y1='13.64'%20x2='32.02'%20y2='7.98'%20stroke-opacity='0.2'/%3E%3Cline%20x1='29.00'%20y1='20.00'%20x2='37.00'%20y2='20.00'%20stroke-opacity='0.28'/%3E%3Cline%20x1='26.36'%20y1='26.36'%20x2='32.02'%20y2='32.02'%20stroke-opacity='0.36'/%3E%3Cline%20x1='20.00'%20y1='29.00'%20x2='20.00'%20y2='37.00'%20stroke-opacity='0.45'/%3E%3Cline%20x1='13.64'%20y1='26.36'%20x2='7.98'%20y2='32.02'%20stroke-opacity='0.55'/%3E%3Cline%20x1='11.00'%20y1='20.00'%20x2='3.00'%20y2='20.00'%20stroke-opacity='0.68'/%3E%3Cline%20x1='13.64'%20y1='13.64'%20x2='7.98'%20y2='7.98'%20stroke-opacity='0.82'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2040%2040'%20stroke='black'%20stroke-width='3.8'%20stroke-linecap='round'%3E%3Cline%20x1='20.00'%20y1='11.00'%20x2='20.00'%20y2='3.00'%20stroke-opacity='1'/%3E%3Cline%20x1='26.36'%20y1='13.64'%20x2='32.02'%20y2='7.98'%20stroke-opacity='0.2'/%3E%3Cline%20x1='29.00'%20y1='20.00'%20x2='37.00'%20y2='20.00'%20stroke-opacity='0.28'/%3E%3Cline%20x1='26.36'%20y1='26.36'%20x2='32.02'%20y2='32.02'%20stroke-opacity='0.36'/%3E%3Cline%20x1='20.00'%20y1='29.00'%20x2='20.00'%20y2='37.00'%20stroke-opacity='0.45'/%3E%3Cline%20x1='13.64'%20y1='26.36'%20x2='7.98'%20y2='32.02'%20stroke-opacity='0.55'/%3E%3Cline%20x1='11.00'%20y1='20.00'%20x2='3.00'%20y2='20.00'%20stroke-opacity='0.68'/%3E%3Cline%20x1='13.64'%20y1='13.64'%20x2='7.98'%20y2='7.98'%20stroke-opacity='0.82'/%3E%3C/svg%3E") center / contain no-repeat;
+    animation: app-spin 0.8s steps(8) infinite;
 }
 
 .app-loading-label {
     margin: 0;
-    font-size: 0.86rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
     color: var(--app-text-muted);
 }
 
@@ -2593,33 +2599,55 @@ body {
     font-weight: 700;
 }
 
-/* Step indicator: small, flat, no glow. */
+/* Step indicator: an iOS segmented progress bar — one thin capsule per
+   step that fills with the tint as you advance, the step names in small
+   type underneath (current one highlighted). The step numbers are hidden. */
+.create-wizard__rail {
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
 .create-wizard__rail::before {
-    height: 1px;
-    top: 13px;
-    background: var(--ios-separator);
+    display: none;
+}
+
+.create-wizard__stop {
+    gap: 6px;
+    align-items: stretch;
+}
+
+.create-wizard__bubble,
+.create-wizard__stop--complete .create-wizard__bubble,
+.create-wizard__stop--active .create-wizard__bubble {
+    width: 100%;
+    height: 4px;
+    border: 0;
+    border-radius: 2px;
+    font-size: 0;
+    color: transparent;
+    box-shadow: none;
+    transition: background 0.3s var(--app-easing-standard);
 }
 
 .create-wizard__bubble {
-    width: 26px;
-    height: 26px;
-    font-size: 13px;
-    font-weight: 600;
-    background: var(--ios-fill-3);
-    border: 0;
-    box-shadow: 0 0 0 4px var(--app-bg);
+    background: var(--ios-fill);
 }
 
 .create-wizard__stop--complete .create-wizard__bubble,
 .create-wizard__stop--active .create-wizard__bubble {
-    box-shadow: 0 0 0 4px var(--app-bg);
+    background: var(--app-accent);
 }
 
 .create-wizard__stop-label {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     text-transform: none;
     letter-spacing: 0;
+    color: var(--app-text-subtle);
+}
+
+.create-wizard__stop--active .create-wizard__stop-label {
+    font-weight: 600;
 }
 
 /* Create-page footer: large iOS buttons, text only. */
@@ -2679,4 +2707,295 @@ body {
     font-size: 13px;
     line-height: 1.35;
     color: var(--app-text-muted);
+}
+
+/* ============================================================================
+ * Routed form pages (mobile create / edit for expenses, incomes, categories):
+ * iOS navigation bar on top (‹ back · title · Done), scrolling body, and a
+ * translucent action footer for the create stepper.
+ * ========================================================================== */
+.form-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: var(--app-bg);
+    color: var(--app-text);
+}
+
+.form-page__header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    /* iOS navigation bar: back chevron left, centred title, translucent. */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: max(6px, env(safe-area-inset-top, 6px)) 8px 6px;
+    background: var(--ios-bar);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 0.5px solid var(--ios-separator);
+    box-sizing: border-box;
+    min-height: var(--app-toolbar-height, 56px);
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+.form-page__back {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--app-text);
+    transition: background var(--app-motion-fast) var(--app-easing-standard);
+}
+
+.form-page__back:hover {
+    background: var(--app-surface-hover);
+}
+
+.form-page__header > :first-child {
+    justify-self: start;
+}
+
+.form-page__title {
+    margin: 0;
+    font-family: var(--app-font-display);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--app-text);
+    text-align: center;
+}
+
+.form-page__body {
+    flex: 1 1 auto;
+    padding: calc(var(--app-toolbar-height, 56px) + env(safe-area-inset-top, 0px) + 20px) 18px calc(100px + env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
+}
+
+/* Wizard inside the body: rail at top, panel underneath. The body itself
+   scrolls (parent `.content-container`), so the panel just lays out in
+   normal flow — no inner scroll container. */
+.form-page__wizard {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-sizing: border-box;
+}
+
+.form-page__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.form-page__footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: var(--ios-bar);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-top: 0.5px solid var(--ios-separator);
+    box-sizing: border-box;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+.form-page__footer .cb-pill-button {
+    flex: 1 1 0;
+    justify-content: center;
+}
+
+/* Bold tinted "Done" / "Add" text button on the right of the bar. */
+.form-page__done {
+    justify-self: end;
+    min-height: 36px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--app-accent);
+    font-family: var(--app-font-sans);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.form-page__done:active {
+    opacity: 0.4;
+}
+
+/* Edit pages have no footer. */
+.form-page--edit .form-page__body {
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+}
+
+
+/* ============================================================================
+ * Page transitions (View Transitions API — see utils/page-transitions.ts).
+ * The page content slides in from its side, exactly like the dashboard's
+ * Statistics ⇄ Balances switch; the bars and sidebar keep their own
+ * transition names so they stay still while the page moves.
+ * ========================================================================== */
+nav-bar .toolbar {
+    view-transition-name: nav-bar;
+}
+
+mobile-tab-bar {
+    view-transition-name: tab-bar;
+}
+
+#sidebar {
+    view-transition-name: sidebar;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.32s;
+    animation-timing-function: var(--app-easing-standard);
+}
+
+/* The outgoing page just fades a little faster, so the two never mush. */
+::view-transition-old(root) {
+    animation-duration: 0.2s;
+}
+
+html[data-page-transition="forward"]::view-transition-new(root) {
+    animation-name: page-in-right;
+}
+
+html[data-page-transition="forward"]::view-transition-old(root) {
+    animation-name: page-out-left;
+}
+
+html[data-page-transition="back"]::view-transition-new(root) {
+    animation-name: page-in-left;
+}
+
+html[data-page-transition="back"]::view-transition-old(root) {
+    animation-name: page-out-right;
+}
+
+@keyframes page-in-right {
+    from { opacity: 0; transform: translateX(28px); }
+}
+
+@keyframes page-in-left {
+    from { opacity: 0; transform: translateX(-28px); }
+}
+
+@keyframes page-out-left {
+    to { opacity: 0; transform: translateX(-28px); }
+}
+
+@keyframes page-out-right {
+    to { opacity: 0; transform: translateX(28px); }
+}
+
+/* Browsers with view transitions animate the whole page already. */
+@supports (view-transition-name: none) {
+    .application > .content-container:not(.content-container--public) > :not(router-outlet):not(app-welcome) {
+        animation: none;
+    }
+}
+
+/* Create pages: plain "Cancel" on the left of the bar, and one full-width
+   capsule as the footer's only action (iOS setup-flow style). */
+.form-page__cancel {
+    justify-self: start;
+    min-height: 36px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--app-accent);
+    font-family: var(--app-font-sans);
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.form-page__cancel:active {
+    opacity: 0.4;
+}
+
+.form-page__footer:has(.form-page__primary) {
+    padding: 10px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
+.form-page__primary {
+    flex: 1 1 auto;
+    height: 52px;
+    border: 0;
+    border-radius: var(--app-radius-full);
+    background: var(--app-accent);
+    color: #ffffff;
+    font-family: var(--app-font-sans);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: var(--app-shadow-accent);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.form-page__primary:active {
+    transform: scale(0.98);
+    opacity: 0.85;
+}
+
+/* Amount step: the source + amount panel as a plain iOS card, the source
+   picker as a grey pill. */
+.wizard-amount-display-row {
+    background: var(--app-bg-elevated);
+    box-shadow: none;
+    border-radius: var(--app-radius-md);
+}
+
+.wizard-amount-currency-panel {
+    border-right: 0.5px solid var(--ios-separator);
+}
+
+.wizard-amount-currency-panel__label {
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--app-text-muted);
+}
+
+.wizard-amount-currency-trigger {
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--ios-fill-3);
+    font-size: 15px;
+}
+
+.wizard-amount-currency-trigger__placeholder {
+    font-size: 15px;
+    font-weight: 400;
 }

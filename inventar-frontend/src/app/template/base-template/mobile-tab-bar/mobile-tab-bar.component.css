@@ -79,6 +79,28 @@
     font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 24;
 }
 
+/* Sliding: the slot under the finger gets the lens — a slightly larger
+   pill — and follows it; releasing opens that slot. */
+.tabs {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.tab--slide {
+    color: var(--app-accent);
+    background: var(--ios-fill);
+    transform: scale(1.08);
+}
+
+.tab--slide mat-icon {
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 24;
+}
+
+.tabs--sliding .tab {
+    transition: background 0.15s ease, color 0.15s ease, transform 0.18s cubic-bezier(0.3, 0.7, 0.4, 1.3);
+}
+
 /* Round add button beside the capsule. */
 .add {
     flex: 0 0 auto;

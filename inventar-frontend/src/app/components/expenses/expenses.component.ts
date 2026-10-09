@@ -77,7 +77,7 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
   filterOptions = this.filterService.select("EXPENSE");
   public tableActionInput: TableActionInput = {
     pageName: "Expenses",
-    icon: 'attach_money'
+    icon: 'trending_down'
   };
 
   /** Same breakpoint as table-card layout (≤767px) — switches the page from
@@ -255,8 +255,9 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
    * desktop) continue to use the dialog.
    */
   override openAddEditForm(entity?: Expense): void {
-    if (!entity && this.breakpointService.matchesMobileCreateLayout()) {
-      this.router.navigate(['/expenses/add']);
+    if (this.breakpointService.matchesMobileCreateLayout()) {
+      // Phones: create and edit are pages, not popups.
+      this.router.navigate(entity?.id ? ['/expenses', entity.id, 'edit'] : ['/expenses/add']);
       return;
     }
     super.openAddEditForm(entity);

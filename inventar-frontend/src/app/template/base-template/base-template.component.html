@@ -1,9 +1,8 @@
 <div [@routeAnimations]="prepareRoute()" class="application-container">
 
-    @if (authenticationService.currentUserValue && sideBarService.displaySidebar && !sideBarService.hiddenByUrl()) {
-        <side-bar [navigation]="navigation"
-            [sideBarMode]="sideBarMode"
-            [mobileDrawer]="(breakpointService.useTableCardLayout$ | async) === true"></side-bar>
+    <!-- Desktop only: phones navigate with the bottom tab bar and its More popup. -->
+    @if (authenticationService.currentUserValue && sideBarService.displaySidebar && !sideBarService.hiddenByUrl() && !mobileCardLayout()) {
+        <side-bar [navigation]="navigation" [sideBarMode]="sideBarMode"></side-bar>
     }
 
     <div class="application" id="application-body"
@@ -17,13 +16,6 @@
 
         @if (navBarService.displayNavBar && !sideBarService.hiddenByUrl()) {
             <nav-bar></nav-bar>
-        }
-
-        @if ((breakpointService.useTableCardLayout$ | async) && authenticationService.currentUserValue && sideBarService.displaySidebar && !sideBarService.hiddenByUrl()) {
-            <div class="mobile-nav-backdrop"
-                [class.mobile-nav-backdrop--open]="(sideBarService.mobileMenuOpen$ | async) === true"
-                (click)="sideBarService.closeMobileMenu()"
-                aria-hidden="true"></div>
         }
 
         <div class="content-container" [class.content-container--public]="!authenticationService.currentUserValue"

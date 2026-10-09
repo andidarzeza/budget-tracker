@@ -1,10 +1,11 @@
-import { CommonModule } from '@angular/common';
+import { markInAppBack } from 'src/app/utils/page-transitions';
+import { CommonModule, Location } from '@angular/common';
 import { AfterViewInit, Component, DestroyRef, Inject, inject, OnInit, Optional } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
 import { filter, map, observeOn } from 'rxjs/operators';
@@ -18,7 +19,6 @@ import { CreateFormComponent } from 'src/app/shared/create-form/create-form.comp
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
-import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectIconComponent } from 'src/app/shared/select-icon/select-icon.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
@@ -27,7 +27,6 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 @Component({
   selector: 'app-add-category',
   templateUrl: './add-category.component.html',
-  styleUrls: ['./add-category.component.css'],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -36,7 +35,6 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     LabeledFormInputComponent,
     IconButtonComponent,
     LabeledTextareaComponent,
-    PillButtonComponent,
     SelectInputComponent,
     SelectIconComponent,
     ...TOOLTIP_IMPORTS,
@@ -51,6 +49,8 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
   private readonly navBarService = inject(NavBarService);
   private readonly sideBarService = inject(SideBarService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
   private readonly destroyRef = inject(DestroyRef);
 
   loadingData = false;
@@ -74,6 +74,9 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
     @Optional() public dialogRef: MatDialogRef<AddCategoryComponent> | null = null,
   ) {
     this.isPageMode = !this.dialogRef;
+    // Mobile edit page (/categories/:id/edit): the record is loaded by id.
+    const routeId = this.isPageMode ? this.route.snapshot.paramMap.get('id') : null;
+    if (routeId) this.data = { id: routeId };
     this.isEditMode = this.data?.id !== undefined;
   }
 
@@ -138,7 +141,15 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
       this.dialogRef.close(update);
       return;
     }
-    this.router.navigate(['/categories']);
+    // Routed page: step back when we came from inside the app (so the list
+    // isn't pushed on top of itself and swipe-back stays correct),
+    // otherwise go to the list.
+    const navigationId = (this.location.getState() as { navigationId?: number } | null)?.navigationId ?? 1;
+    if (navigationId > 1) {
+      markInAppBack();
+      this.location.back();
+    }
+    else this.router.navigate(['/categories'], { replaceUrl: true });
   }
 
   get category() {
@@ -166,7 +177,12 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
       takeUntilDestroyed(this.destroyRef),
       observeOn(asyncScheduler),
       filter(() => this.isEditMode),
-      map((category) => this.categoryGroup.patchValue(category)),
+      map((category) => {
+        // The update sends `data` back, so keep the full record (the edit
+        // page starts with just the id).
+        this.data = { ...this.data, ...category };
+        this.categoryGroup.patchValue(category);
+      }),
       map(() => (this.loadingData = false)),
     );
   }

@@ -72,7 +72,7 @@ export class CategoriesComponent extends BaseTable<Category> implements OnInit {
 
   tableActionInput: TableActionInput = {
     pageName: 'Categories',
-    icon: 'list_alt',
+    icon: 'category',
   };
   resetData: boolean = false;
 
@@ -166,8 +166,9 @@ export class CategoriesComponent extends BaseTable<Category> implements OnInit {
   }
 
   override openAddEditForm(entity?: Category): void {
-    if (!entity && this.breakpointService.matchesMobileCreateLayout()) {
-      this.router.navigate(['/categories/add']);
+    if (this.breakpointService.matchesMobileCreateLayout()) {
+      // Phones: create and edit are pages, not popups.
+      this.router.navigate(entity?.id ? ['/categories', entity.id, 'edit'] : ['/categories/add']);
       return;
     }
     super.openAddEditForm(entity);

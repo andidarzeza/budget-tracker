@@ -69,21 +69,100 @@
     color: var(--app-accent) !important;
 }
 
-/* Filter toggle button — adds an active state and a tiny count badge */
-
-.ta__icon-btn {
-    position: relative;
+/* iOS 26 toolbar: a frosted glass capsule holding the secondary buttons,
+   and a separate round tinted "+" for the primary action. */
+.ta__actions {
+    gap: 10px;
 }
 
-.ta__icon-btn--active {
-    color: var(--app-accent) !important;
-    background: var(--app-accent-soft) !important;
+.ta__group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 44px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    border-radius: 999px;
+    background: var(--ios-glass);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    backdrop-filter: saturate(180%) blur(24px);
+    box-shadow: var(--ios-glass-shadow);
+}
+
+.ta__btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--app-text);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ta__btn:hover {
+    background: var(--app-surface-hover);
+}
+
+.ta__btn:active {
+    opacity: 0.5;
+}
+
+.ta__btn mat-icon,
+.ta__add mat-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+    line-height: 22px;
+    font-variation-settings: 'FILL' 0, 'wght' 450, 'opsz' 24;
+}
+
+.ta__btn--active {
+    color: var(--app-accent);
+    background: var(--app-accent-soft);
+}
+
+.ta__add {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--app-accent);
+    color: #ffffff;
+    box-shadow: var(--ios-glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.ta__add:hover {
+    filter: brightness(1.06);
+}
+
+.ta__add:active {
+    transform: scale(0.94);
+}
+
+.ta__add mat-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 26px;
+    line-height: 26px;
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'opsz' 24;
 }
 
 .ta__icon-badge {
     position: absolute;
-    top: 4px;
-    right: 4px;
+    top: 1px;
+    right: 1px;
     min-width: 16px;
     height: 16px;
     padding: 0 4px;

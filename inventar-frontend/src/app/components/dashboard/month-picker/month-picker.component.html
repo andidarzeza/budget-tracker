@@ -16,6 +16,6 @@
 
     <mat-form-field class="dash-picker__hidden">
         <input matInput [matDatepicker]="picker" [value]="from">
-        <mat-datepicker #picker startView="year" (monthSelected)="onMonthPicked($event, picker)"></mat-datepicker>
+        <mat-datepicker #picker [touchUi]="touchUi()" startView="year" (monthSelected)="onMonthPicked($event, picker)"></mat-datepicker>
     </mat-form-field>
 </div>

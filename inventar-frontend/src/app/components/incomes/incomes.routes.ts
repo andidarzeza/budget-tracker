@@ -7,4 +7,6 @@ export const INCOMES_ROUTES: Routes = [
   // Mobile create flow renders as a routed page (sticky header + native body
   // scroll + sticky footer). Desktop continues to use the dialog.
   { path: 'add', component: AddIncomeComponent },
+  // Mobile edit is a page too, so swiping back lands on the list.
+  { path: ':id/edit', component: AddIncomeComponent },
 ];
