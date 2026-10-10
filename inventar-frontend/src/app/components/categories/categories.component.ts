@@ -1,3 +1,4 @@
+import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
 import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
 import { LongPressDeleteDirective } from 'src/app/shared/long-press-delete/long-press-delete.directive';
@@ -42,6 +43,7 @@ interface CategorySummary {
   styleUrls: ['./categories.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PressHighlightDirective,
     LedgerFiltersComponent,
     LongPressDeleteDirective,
     CommonModule,

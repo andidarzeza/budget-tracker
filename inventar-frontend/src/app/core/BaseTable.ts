@@ -1,5 +1,5 @@
 import { HttpParams } from "@angular/common/http";
-import { Directive, ViewChild, signal } from "@angular/core";
+import { Directive, ViewChild, inject, signal } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -11,12 +11,17 @@ import { takeUntil } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
 import { AccountService } from "../services/account.service";
 import { Unsubscribe } from "../shared/unsubscribe";
+import { ListCacheService, sameResponse } from "./services/list-cache.service";
 
 @Directive({ standalone: false })
 export abstract class BaseTable<E> extends Unsubscribe {
     private readonly minLoadingMs = 500;
     private loadingStartedAt = 0;
     private loadingTimeout: ReturnType<typeof setTimeout> | null = null;
+    protected readonly listCache = inject(ListCacheService);
+    /** Only the page's first load may show the cached copy; refreshes after
+     *  a delete or a filter change always wait for the server. */
+    private firstQuery = true;
 
     public constructor(
         protected dialog: DialogService,
@@ -25,6 +30,16 @@ export abstract class BaseTable<E> extends Unsubscribe {
         protected accountService: AccountService
     ) {
         super();
+        // The background refresh found newer data for the list on screen:
+        // swap it in, but only on the plain first page (no filters, nothing
+        // appended by scrolling) and not mid-load.
+        this.listCache.updated$
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((key) => {
+                if (key !== this.cacheKey(false) || this.loading() || this.loadingMore()) return;
+                const fresh = this.listCache.get(key);
+                if (fresh) this.applyFirstPage(fresh);
+            });
     }
 
     entityViewId: string;
@@ -54,7 +69,15 @@ export abstract class BaseTable<E> extends Unsubscribe {
     abstract getQueryParams(): HttpParams;
 
     query(append: boolean = false): void {
-        if (!append) {
+        const key = this.cacheKey(append);
+        const cached = key && this.firstQuery ? this.listCache.get(key) : null;
+        this.firstQuery = false;
+        if (cached) {
+            // Show the prefetched first page at once; the request below
+            // then quietly replaces it if anything changed.
+            this.applyFirstPage(cached);
+            this.cancelLoading();
+        } else if (!append) {
             this.startLoading();
         }
         this.entityService
@@ -62,6 +85,12 @@ export abstract class BaseTable<E> extends Unsubscribe {
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe({
                 next: (res: ResponseWrapper) => {
+                    if (key) this.listCache.put(key, res);
+                    if (cached) {
+                        // Skip if the user already scrolled more pages in.
+                        if (this.page === 0) this.applyFirstPage(res);
+                        return;
+                    }
                     const rows = res?.data ?? [];
                     const total = res?.count ?? 0;
                     if (append) {
@@ -174,6 +203,30 @@ export abstract class BaseTable<E> extends Unsubscribe {
                 this.refresh();
                 this.toaster.success("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
             })
+    }
+
+    /** Cache key for the request about to be made — only for the plain
+     *  first page (page 0, no filters), the one that is prefetched. */
+    private cacheKey(append: boolean): string | null {
+        if (append || this.page !== 0 || this.previousFilters || !this.entityService?.API_URl) return null;
+        return ListCacheService.key(this.entityService.API_URl, this.getQueryParams());
+    }
+
+    /** Replace the rows with a first-page response, skipping no-op updates. */
+    private applyFirstPage(res: ResponseWrapper): void {
+        const current: ResponseWrapper = { data: this.dataSubject.getValue(), count: this.totalSubject.getValue() };
+        if (sameResponse(current, { data: res?.data ?? [], count: res?.count ?? 0 })) return;
+        this.page = 0;
+        this.dataSubject.next([...(res?.data ?? [])]);
+        this.totalSubject.next(res?.count ?? 0);
+    }
+
+    private cancelLoading(): void {
+        if (this.loadingTimeout) {
+            clearTimeout(this.loadingTimeout);
+            this.loadingTimeout = null;
+        }
+        this.loading.set(false);
     }
 
     private startLoading(): void {

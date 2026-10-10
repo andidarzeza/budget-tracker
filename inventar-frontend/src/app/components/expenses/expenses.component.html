@@ -35,7 +35,7 @@
                     <div class="ledger-summary__main">
                         <span class="ledger-summary__label">This week</span>
                         <span class="ledger-summary__total">
-                            {{ weekSummary().total | number:'1.2-2':'en-US' }}
+                            <span [revealNumber]="weekSummary().total"></span>
                             <span class="ledger-summary__currency">{{ weekSummary().currency }}</span>
                         </span>
                     </div>
@@ -62,7 +62,7 @@
                         @for (item of group.items; track item.id; let last = $last) {
                             <div class="ledger-item" [class.ledger-item--last]="last"
                                 longPressDelete (deleteRequested)="delete(item.id)">
-                                <button type="button" class="ledger-item__main"
+                                <button type="button" class="ledger-item__main" pressHighlight
                                     (click)="openAddEditForm(item)"
                                     [attr.aria-label]="'Edit ' + (item.description || item.category || 'expense')">
                                     <span class="ledger-item__tile"

@@ -30,7 +30,7 @@
                 </span>
                 @for (t of grandTotals(); track t.currency) {
                     <span class="glance-card__value">
-                        {{ balanceHidden() ? '••••••' : (t.total | number : '1.2-2') }}
+                        <span [revealNumber]="t.total" [revealHidden]="balanceHidden()"></span>
                         <span class="glance-card__currency">{{ t.currency }}</span>
                     </span>
                 } @empty {
@@ -48,7 +48,7 @@
                     <span class="glance-card__value"
                         [class.glance-card__value--positive]="b.net > 0"
                         [class.glance-card__value--negative]="b.net < 0">
-                        {{ balanceHidden() ? '••••••' : ((b.net > 0 ? '+' : '') + (b.net | number : '1.2-2')) }}
+                        <span [revealNumber]="b.net" revealSigned [revealHidden]="balanceHidden()"></span>
                         <span class="glance-card__currency">{{ b.currency }}</span>
                     </span>
                 } @empty {
@@ -109,14 +109,14 @@
                         <div class="kpi-card__row">
                             <span class="kpi-card__label">Income</span>
                             <span class="kpi-card__value kpi-card__value--income">
-                                {{ b.income | number : '1.2-2' }}
+                                <span [revealNumber]="b.income"></span>
                             </span>
                         </div>
 
                         <div class="kpi-card__row">
                             <span class="kpi-card__label">Expense</span>
                             <span class="kpi-card__value kpi-card__value--expense">
-                                {{ b.expense | number : '1.2-2' }}
+                                <span [revealNumber]="b.expense"></span>
                             </span>
                         </div>
 
@@ -125,7 +125,7 @@
                             <span class="kpi-card__value"
                                 [class.kpi-card__value--positive]="b.net >= 0"
                                 [class.kpi-card__value--negative]="b.net < 0">
-                                {{ b.net > 0 ? '+' : '' }}{{ b.net | number : '1.2-2' }}
+                                <span [revealNumber]="b.net" revealSigned></span>
                             </span>
                         </div>
                     </article>
@@ -171,7 +171,7 @@
                                     <span class="panel__hint">{{ storyCategory()?.currency }} · where it went</span>
                                 </div>
                                 <span class="story-total story-total--exp">
-                                    −{{ storyCategory()?.total | number : '1.2-2' }}
+                                    <span [revealNumber]="storyCategory()?.total" revealPrefix="−"></span>
                                 </span>
                             </header>
 
@@ -267,7 +267,7 @@
                                     <span class="panel__hint">{{ storyCategory()?.currency }} · where it came from</span>
                                 </div>
                                 <span class="story-total story-total--inc">
-                                    +{{ storyCategory()?.total | number : '1.2-2' }}
+                                    <span [revealNumber]="storyCategory()?.total" revealPrefix="+"></span>
                                 </span>
                             </header>
 
@@ -390,7 +390,7 @@
                                 </span>
                                 <span class="balance-row__label">Balance</span>
                                 <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                                    {{ balanceHidden() ? '••••••' : (w.balance | number : '1.2-2') }}
+                                    <span [revealNumber]="w.balance" [revealHidden]="balanceHidden()"></span>
                                     <span class="balance-row__code">{{ w.currency }}</span>
                                 </span>
                             </button>
@@ -417,7 +417,7 @@
                                 </span>
                                 <span class="balance-row__label">Balance</span>
                                 <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                                    {{ balanceHidden() ? '••••••' : (w.balance | number : '1.2-2') }}
+                                    <span [revealNumber]="w.balance" [revealHidden]="balanceHidden()"></span>
                                     <span class="balance-row__code">{{ w.currency }}</span>
                                 </span>
                             </button>
@@ -449,7 +449,7 @@
                                 </span>
                                 <span class="balance-row__label">Saved</span>
                                 <span class="balance-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                                    {{ balanceHidden() ? '••••••' : (p.saved | number : '1.2-2') }}
+                                    <span [revealNumber]="p.saved" [revealHidden]="balanceHidden()"></span>
                                     <span class="balance-row__code">{{ p.currency }}</span>
                                 </span>
                         </button>
@@ -469,7 +469,7 @@
                                     <span class="recap-row__flag" aria-hidden="true">{{ t.currency | flag }}</span>
                                     <span class="recap-row__currency">{{ t.currency }}</span>
                                     <span class="recap-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                                        {{ balanceHidden() ? '••••••' : (t.total | number : '1.2-2') }}
+                                        <span [revealNumber]="t.total" [revealHidden]="balanceHidden()"></span>
                                     </span>
                                 </div>
                             }
@@ -485,7 +485,7 @@
                                         <span class="recap-row__flag" aria-hidden="true">{{ t.currency | flag }}</span>
                                         <span class="recap-row__currency">{{ t.currency }}</span>
                                         <span class="recap-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                                            {{ balanceHidden() ? '••••••' : (t.total | number : '1.2-2') }}
+                                            <span [revealNumber]="t.total" [revealHidden]="balanceHidden()"></span>
                                         </span>
                                     </div>
                                 }
@@ -504,7 +504,7 @@
                                     <span class="recap-row__flag" aria-hidden="true">{{ t.currency | flag }}</span>
                                     <span class="recap-row__currency">{{ t.currency }}</span>
                                     <span class="recap-row__amount" [class.balance-row__amount--hidden]="balanceHidden()">
-                                        {{ balanceHidden() ? '••••••' : (t.total | number : '1.2-2') }}
+                                        <span [revealNumber]="t.total" [revealHidden]="balanceHidden()"></span>
                                     </span>
                                 </div>
                             }

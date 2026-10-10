@@ -1,3 +1,4 @@
+import { ListCacheService } from './core/services/list-cache.service';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet } from '@angular/router';
@@ -23,9 +24,12 @@ export class AppComponent implements OnInit {
   private readonly accountService = inject(AccountService);
   private readonly themeService = inject(ThemeService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly listCache = inject(ListCacheService);
 
   constructor() {
     this.themeService.initTheme();
+    // Expenses / Incomes first pages, kept ready in the background.
+    this.listCache.start();
     this.sharedService.applyBodyTheme(this.themeService.themeValue);
   }
 

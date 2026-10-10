@@ -1,3 +1,6 @@
+import { takeUntil } from 'rxjs/operators';
+import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
+import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
 import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
 import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
 import { LongPressDeleteDirective } from 'src/app/shared/long-press-delete/long-press-delete.directive';
@@ -40,6 +43,8 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css'],
   imports: [
+    PressHighlightDirective,
+    RevealNumberDirective,
     LedgerFiltersComponent,
     LongPressDeleteDirective,
     CommonModule,
@@ -267,7 +272,8 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     this.routeSpinnerService.stopLoading();
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
-    this.categoryService.findAll(buildParams(0, 9999).append("categoryType", CategoryType.EXPENSE).append("account", this.accountService?.getAccount())).subscribe((res: ResponseWrapper) => {
+    // Cached copy first (instant icons), then the fresh list.
+    this.listCache.categories(CategoryType.EXPENSE).pipe(takeUntil(this.unsubscribe$)).subscribe((res: ResponseWrapper) => {
       const item = this.filterOptions.filter(filterOpt => filterOpt.field == "category")[0];
       const index = this.filterOptions.indexOf(item);
       this.filterOptions[index].matSelectOptions = {

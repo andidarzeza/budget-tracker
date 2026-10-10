@@ -1,3 +1,4 @@
+import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
@@ -131,6 +132,7 @@ const INCOME_LINE = 'income-line';
   animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    RevealNumberDirective,
     CommonModule,
     MatCardModule,
     MatIconModule,
@@ -597,6 +599,9 @@ export class DashboardComponent implements AfterViewInit {
     return Number(item?.moneySpent ?? item?.incoming ?? 0);
   }
 
+  /** Set after the first dashboard response; see `fetchDashboardData`. */
+  private dashboardLoadedOnce = false;
+
   private refresh(): void {
     this.fetchDashboardData();
     this.fetchExpenseTimeline();
@@ -610,9 +615,13 @@ export class DashboardComponent implements AfterViewInit {
       .subscribe((data: DashboardDTO | null) => {
         this.dashboardData.set(data);
         // Source balances and project totals are mutated by expenses / incomes /
-        // contributions; refresh them whenever fresh dashboard data arrives.
-        this.fetchWallets();
-        this.fetchProjects();
+        // contributions; refresh them whenever fresh dashboard data arrives —
+        // except the first time, since the constructor has just loaded them.
+        if (this.dashboardLoadedOnce) {
+          this.fetchWallets();
+          this.fetchProjects();
+        }
+        this.dashboardLoadedOnce = true;
         this.fetchLastMonth();
       });
   }

@@ -47,7 +47,7 @@
                     <div class="create-wizard__panel form-page__panel" [ngSwitch]="wizardStep()">
                         <ng-container *ngSwitchCase="0">
                             <div class="category-pick-grid" role="listbox" aria-label="Income categories">
-                                <button type="button" *ngFor="let category of categories()" class="category-tile"
+                                <button type="button" *ngFor="let category of categories()" class="category-tile" pressHighlight
                                     role="option"
                                     [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
                                     [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
@@ -166,7 +166,7 @@
                     <ng-container *ngIf="isWizardMobile(); else incomeWizardStep0Desktop">
                         <p class="create-wizard__intro">Tap a source. Most-used appear first.</p>
                         <div class="category-pick-grid" role="listbox" aria-label="Income categories">
-                            <button type="button" *ngFor="let category of categories()" class="category-tile"
+                            <button type="button" *ngFor="let category of categories()" class="category-tile" pressHighlight
                                 role="option"
                                 [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
                                 [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"

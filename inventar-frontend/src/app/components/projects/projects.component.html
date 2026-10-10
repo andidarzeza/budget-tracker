@@ -51,7 +51,7 @@
                 <article class="ledger-section__card">
                     @for (view of group.items; track view.project.id; let last = $last) {
                         <div class="ledger-item" [class.ledger-item--last]="last">
-                            <button type="button" class="ledger-item__main"
+                            <button type="button" class="ledger-item__main" pressHighlight
                                 (click)="open(view)"
                                 [attr.aria-label]="'Open ' + view.project.name">
                                 <span class="ledger-item__tile"

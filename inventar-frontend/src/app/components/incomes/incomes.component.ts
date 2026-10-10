@@ -1,3 +1,5 @@
+import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
+import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
 import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
 import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
 import { LongPressDeleteDirective } from 'src/app/shared/long-press-delete/long-press-delete.directive';
@@ -13,7 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 import { BaseTable } from 'src/app/core/BaseTable';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { FilterService } from 'src/app/core/services/filter.service';
-import { Category, ColumnDefinition, Income, ResponseWrapper } from 'src/app/models/models';
+import { CategoryType, Category, ColumnDefinition, Income, ResponseWrapper } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { DialogService } from 'src/app/services/dialog.service';
@@ -37,6 +39,8 @@ import { IncomeDetailsComponent } from './income-details/income-details.componen
   styleUrls: ['./incomes.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PressHighlightDirective,
+    RevealNumberDirective,
     LedgerFiltersComponent,
     LongPressDeleteDirective,
     CommonModule,
@@ -251,8 +255,9 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
   }
 
   private getCategories(): void {
-    this.categoryService
-      .incomeCategories(buildParams(0, 9999).append('account', this.accountService?.getAccount()))
+    // Cached copy first (instant icons), then the fresh list.
+    this.listCache
+      .categories(CategoryType.INCOME)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res: ResponseWrapper) => {
         const item = this.filterOptions.filter((filterOpt) => filterOpt.field == 'category')[0];

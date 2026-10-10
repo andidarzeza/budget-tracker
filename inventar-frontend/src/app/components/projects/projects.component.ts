@@ -1,3 +1,4 @@
+import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
@@ -27,6 +28,7 @@ import { AddProjectComponent } from './add-project/add-project.component';
   styleUrls: ['./projects.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PressHighlightDirective,
     CommonModule,
     MatIconModule,
     MatMenuModule,

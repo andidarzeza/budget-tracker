@@ -1,3 +1,4 @@
+import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { leaveFormPage } from 'src/app/utils/page-transitions';
 import { CommonModule, Location } from '@angular/common';
 import {
@@ -55,6 +56,7 @@ interface AddExpenseDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
   imports: [
+    PressHighlightDirective,
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,

@@ -5,9 +5,10 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Routes, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 import { provideToastr } from 'ngx-toastr';
-import { onPageTransition } from './utils/page-transitions';
+import { onPageTransition, usePageViewTransitions } from './utils/page-transitions';
 import { AuthGuardService } from './services/auth-guard.service';
 import { CustomHttpInterceptorService } from './services/custom-http-interceptor.service';
+import { ListCacheInterceptor } from './core/services/list-cache.interceptor';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
 
 const routes: Routes = [
@@ -94,14 +95,21 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
-      // Pages slide in from their side, like the dashboard tabs (see utils/page-transitions).
-      withViewTransitions({ onViewTransitionCreated: onPageTransition }),
+      // Phones: pages slide in from their side, like the dashboard tabs (see
+      // utils/page-transitions). Desktop uses a plain CSS fade instead.
+      ...(usePageViewTransitions() ? [withViewTransitions({ onViewTransitionCreated: onPageTransition })] : []),
     ),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: CustomHttpInterceptorService,
+      multi: true,
+    },
+    // Keeps the prefetched Expenses / Incomes lists fresh after saves.
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ListCacheInterceptor,
       multi: true,
     },
     provideToastr(),

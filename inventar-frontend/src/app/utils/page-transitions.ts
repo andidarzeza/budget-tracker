@@ -27,6 +27,23 @@ const PAGE_ORDER: Record<string, number> = {
 /** Pages reached from "More" (categories, projects, settings, …). */
 const MORE_RANK = 4;
 
+/**
+ * View transitions are used on phones only. While one runs, the browser
+ * freezes the page behind a snapshot: clicks are dropped and the cursor
+ * falls back to the arrow. That is unnoticeable with a thumb but makes the
+ * desktop sidebar miss quick clicks, so desktop gets a CSS fade instead
+ * (styles.scss, `html.page-vt`).
+ */
+export function usePageViewTransitions(): boolean {
+  const enabled = 'startViewTransition' in document && !isDesktop();
+  document.documentElement.classList.toggle('page-vt', enabled);
+  return enabled;
+}
+
+function isDesktop(): boolean {
+  return window.matchMedia?.('(min-width: 768px)').matches ?? false;
+}
+
 let inAppBack = false;
 
 /** Call right before `location.back()` from an in-app back button. */
@@ -47,7 +64,7 @@ export function onPageTransition({ transition }: ViewTransitionInfo): void {
   const direction = from ? directionBetween(path(from), path(to)) : null;
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-  if (!direction || reduceMotion || (nav?.trigger === 'popstate' && !appBack)) {
+  if (!direction || reduceMotion || isDesktop() || (nav?.trigger === 'popstate' && !appBack)) {
     transition.skipTransition();
     return;
   }

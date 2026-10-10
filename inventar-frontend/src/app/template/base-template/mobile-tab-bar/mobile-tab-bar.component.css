@@ -1,15 +1,23 @@
+/* The host has no box of its own: the dock and the More popup position
+   themselves. (A transform on a fixed host would trap the popup's
+   full-screen backdrop inside the bar.) */
 :host {
+    display: contents;
+}
+
+/* Floats above the content with a margin, clear of the home indicator.
+   `translateZ(0)` gives the fixed bar its own compositing layer: in the
+   iOS home-screen app (PWA) a plain fixed bar wobbles up and down while
+   the page under it changes height (lists loading, scroll reset). Same fix
+   as the create pages' footer (commit 844e150). */
+.dock {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
-    /* Above the mobile-nav backdrop (11), below the drawer itself (19/20). */
     z-index: 15;
-    pointer-events: none;
-}
-
-/* Floats above the content with a margin, clear of the home indicator. */
-.dock {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -138,6 +146,8 @@
 .more-backdrop {
     position: fixed;
     inset: 0;
+    /* Over the dock, so a tap on the bar just closes the popup. */
+    z-index: 16;
     background: rgba(0, 0, 0, 0.12);
     pointer-events: auto;
     animation: more-fade 0.2s ease both;
@@ -145,6 +155,7 @@
 
 .more-menu {
     position: fixed;
+    z-index: 17;
     right: calc(16px + var(--app-tab-bar-height) + 10px);
     bottom: calc(var(--app-tab-bar-height) + max(10px, env(safe-area-inset-bottom, 0px)) + 10px);
     width: min(260px, calc(100vw - 32px));

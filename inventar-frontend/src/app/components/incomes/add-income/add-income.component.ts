@@ -1,3 +1,4 @@
+import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { leaveFormPage } from 'src/app/utils/page-transitions';
 import { CommonModule, Location } from '@angular/common';
 import {
@@ -49,6 +50,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
   imports: [
+    PressHighlightDirective,
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,

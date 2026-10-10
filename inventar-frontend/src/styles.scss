@@ -2121,9 +2121,19 @@ table-body > div::-webkit-scrollbar-thumb:hover {
     transition: background 0.2s ease;
 }
 
-.ledger-item__main:active {
+/* Pressed row. Touch uses `.is-pressed` (PressHighlightDirective), which
+   waits a moment and skips scrolls; `:active` would light up whatever row
+   a scroll starts on. Mouse keeps `:active`. */
+.ledger-item__main.is-pressed {
     background: var(--ios-fill);
     transition: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .ledger-item__main:active {
+        background: var(--ios-fill);
+        transition: none;
+    }
 }
 
 /* Rounded-square icon, like Settings / Wallet rows. */
@@ -2578,10 +2588,22 @@ body {
     }
 }
 
+/* Touch: `.is-pressed` (PressHighlightDirective) instead of `:active`, so
+   scrolling the list doesn't flash the row under the finger. */
 .category-tile:active {
     transform: none;
+}
+
+.category-tile.is-pressed {
     background: var(--ios-fill);
     transition: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .category-tile:active {
+        background: var(--ios-fill);
+        transition: none;
+    }
 }
 
 .category-tile--selected {
@@ -2896,12 +2918,20 @@ nav-bar .toolbar {
     view-transition-name: nav-bar;
 }
 
-mobile-tab-bar {
+mobile-tab-bar .dock {
     view-transition-name: tab-bar;
 }
 
 #sidebar {
     view-transition-name: sidebar;
+}
+
+/* While a page slides in, the browser lays the transition snapshot over the
+   whole window, which swallows clicks and resets the cursor. Let pointer
+   events pass through to the real page underneath, so a quick second click
+   (e.g. on the sidebar) still lands. */
+::view-transition {
+    pointer-events: none;
 }
 
 ::view-transition-old(root),
@@ -2947,11 +2977,9 @@ html[data-page-transition="back"]::view-transition-old(root) {
     to { opacity: 0; transform: translateX(28px); }
 }
 
-/* Browsers with view transitions animate the whole page already. */
-@supports (view-transition-name: none) {
-    .application > .content-container:not(.content-container--public) > :not(router-outlet):not(app-welcome) {
-        animation: none;
-    }
+/* When view transitions are on (phones), they animate the whole page already. */
+html.page-vt .application > .content-container:not(.content-container--public) > :not(router-outlet):not(app-welcome) {
+    animation: none;
 }
 
 /* Create pages: plain "Cancel" on the left of the bar, and one full-width
@@ -3062,4 +3090,11 @@ html[data-page-transition="back"]::view-transition-old(root) {
 ::view-transition-new(nav-bar),
 ::view-transition-new(sidebar) {
     animation: none;
+}
+
+/* Amounts that blur in (RevealNumberDirective). Inline-block so the small
+   rise can use a transform; equal-width digits keep updates steady. */
+.reveal-number {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
 }

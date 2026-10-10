@@ -110,7 +110,7 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
     pill.className = 'press-menu__delete';
     pill.innerHTML = '<span class="material-icons" aria-hidden="true">delete</span><span>Delete</span>';
     // Under the row's right edge, unless that would tuck it behind the bottom tab bar.
-    const tabBar = document.querySelector('mobile-tab-bar')?.getBoundingClientRect().height ?? 0;
+    const tabBar = document.querySelector('mobile-tab-bar .dock')?.getBoundingClientRect().height ?? 0;
     const below = rect.bottom + PILL_SPACE_PX < window.innerHeight - tabBar;
     pill.style.top = below ? `${rect.bottom + 12}px` : `${rect.top - PILL_SPACE_PX + 8}px`;
     pill.style.right = `${window.innerWidth - rect.right}px`;
