@@ -9,6 +9,7 @@ import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.repositories.ContributionRepository;
 import com.adprod.inventar.repositories.ExpenseRepository;
+import com.adprod.inventar.repositories.ProjectRepository;
 import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.ExpenseService;
@@ -39,6 +40,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final CategoryRepository categoryRepository;
     private final ContributionRepository contributionRepository;
+    private final ProjectRepository projectRepository;
     private final AccountService accountService;
     private final WalletService walletService;
     private final HistoryService historyService;
@@ -84,10 +86,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public ResponseEntity save(Expense expense) {
         this.accountService.checkAccount(expense.getAccount());
         expense.setUser(securityContextService.username());
-        Wallet wallet = resolveWallet(expense.getWalletId(), expense.getAccount());
-        // Currency always follows the chosen source so the two can never disagree.
-        expense.setCurrency(wallet.getCurrency());
-        walletService.debit(wallet.getId(), expense.getMoneySpent());
+        charge(expense);
         expenseRepository.save(expense);
         historyService.save(historyService.from(EntityAction.CREATE, EXPENSE, expense.getAccount()));
         return ResponseEntity.ok(expense);
@@ -125,9 +124,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         // Refund the old source, then charge the new one — handles changing amount, source,
         // and (via the source) currency in a single update.
         refund(expense.getWalletId(), expense.getMoneySpent());
-        Wallet wallet = resolveWallet(spending.getWalletId(), spending.getAccount());
-        spending.setCurrency(wallet.getCurrency());
-        walletService.debit(wallet.getId(), spending.getMoneySpent());
+        charge(spending);
         spending.setId(id);
         // The edit form sends the (possibly changed) date; keep the old one only if it's missing.
         if (Objects.isNull(spending.getCreatedTime())) {
@@ -139,6 +136,31 @@ public class ExpenseServiceImpl implements ExpenseService {
         expenseRepository.save(spending);
         historyService.save(historyService.from(EntityAction.UPDATE, EXPENSE, spending.getAccount()));
         return ResponseEntity.ok(spending);
+    }
+
+    /**
+     * Take the expense out of its money source and set its currency from that source. A
+     * project's category means "paid from the project's savings": no wallet is touched; the
+     * expense is tagged with the project, which lowers the project's saved total.
+     */
+    private void charge(Expense expense) {
+        Category category = expense.getCategoryID() == null ? null
+                : categoryRepository.findById(expense.getCategoryID()).orElse(null);
+        if (ProjectCategories.isProjectCategory(category)) {
+            Project project = projectRepository.findById(category.getProjectId())
+                    .filter(p -> Objects.equals(p.getUser(), expense.getUser())
+                            && Objects.equals(p.getAccount(), expense.getAccount()))
+                    .orElseThrow(() -> new NotFoundException("Project " + category.getProjectId() + " not found."));
+            expense.setProjectId(project.getId());
+            expense.setWalletId(null);
+            expense.setCurrency(project.getTargetCurrency());
+            return;
+        }
+        Wallet wallet = resolveWallet(expense.getWalletId(), expense.getAccount());
+        // Currency always follows the chosen source so the two can never disagree.
+        expense.setProjectId(null);
+        expense.setCurrency(wallet.getCurrency());
+        walletService.debit(wallet.getId(), expense.getMoneySpent());
     }
 
     /** Resolve a money source owned by the user and belonging to {@code account}. */

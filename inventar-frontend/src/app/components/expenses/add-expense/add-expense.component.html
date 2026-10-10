@@ -46,24 +46,27 @@
 
                     <div class="create-wizard__panel form-page__panel" [ngSwitch]="wizardStep()">
                         <ng-container *ngSwitchCase="0">
-                            <div class="category-pick-grid" role="listbox" aria-label="Expense categories">
-                                <button type="button" *ngFor="let category of categories()" class="category-tile" pressHighlight
-                                    role="option"
-                                    [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
-                                    [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
-                                    (click)="selectWizardCategory(category.id)">
-                                    <span class="category-tile__icon-wrap" aria-hidden="true">
-                                        <mat-icon class="category-tile__icon">{{ category?.icon || 'label' }}</mat-icon>
-                                    </span>
-                                    <span class="category-tile__body">
-                                        <span class="category-tile__label">{{ category?.category }}</span>
-                                        <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
-                                    </span>
-                                    <span class="category-tile__check" aria-hidden="true">
-                                        <mat-icon>check</mat-icon>
-                                    </span>
-                                </button>
-                            </div>
+                            <ng-container *ngFor="let group of categoryGroups()">
+                                <p class="ios-group-label category-group-label" *ngIf="group.label">{{ group.label }}</p>
+                                <div class="category-pick-grid" role="listbox" aria-label="Expense categories">
+                                    <button type="button" *ngFor="let category of group.items" class="category-tile" pressHighlight
+                                        role="option"
+                                        [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
+                                        [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
+                                        (click)="selectWizardCategory(category.id)">
+                                        <span class="category-tile__icon-wrap" aria-hidden="true">
+                                            <mat-icon class="category-tile__icon">{{ category?.icon || 'label' }}</mat-icon>
+                                        </span>
+                                        <span class="category-tile__body">
+                                            <span class="category-tile__label">{{ category?.category }}</span>
+                                            <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
+                                        </span>
+                                        <span class="category-tile__check" aria-hidden="true">
+                                            <mat-icon>check</mat-icon>
+                                        </span>
+                                    </button>
+                                </div>
+                            </ng-container>
                             <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">
                                 No categories available yet.
                             </p>
@@ -75,7 +78,7 @@
                                 <div class="wizard-amount-display-row">
                                     <div class="wizard-amount-currency-panel">
                                         <span class="wizard-amount-currency-panel__label">Source</span>
-                                        <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="pageWizardSourceMenu"
+                                        <button type="button" class="wizard-amount-currency-trigger" *ngIf="!payingFromProject(); else projectSourceChip" [matMenuTriggerFor]="pageWizardSourceMenu"
                                             aria-haspopup="menu" aria-label="Source, tap to change">
                                             <ng-container *ngIf="currentSource() as src; else pageExpensePickSource">
                                                 <span class="wizard-amount-currency-trigger__inner">
@@ -165,24 +168,27 @@
             <div class="create-wizard__panel" [ngSwitch]="wizardStep()">
                 <ng-container *ngSwitchCase="0">
                     <ng-container *ngIf="isWizardMobile(); else expenseWizardStep0Desktop">
-                        <div class="category-pick-grid" role="listbox" aria-label="Expense categories">
-                            <button type="button" *ngFor="let category of categories()" class="category-tile" pressHighlight
-                                role="option"
-                                [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
-                                [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
-                                (click)="selectWizardCategory(category.id)">
-                                <span class="category-tile__icon-wrap" aria-hidden="true">
-                                    <mat-icon class="category-tile__icon">{{ category?.icon || 'label' }}</mat-icon>
-                                </span>
-                                <span class="category-tile__body">
-                                    <span class="category-tile__label">{{ category?.category }}</span>
-                                    <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
-                                </span>
-                                <span class="category-tile__check" aria-hidden="true">
-                                    <mat-icon>check</mat-icon>
-                                </span>
-                            </button>
-                        </div>
+                        <ng-container *ngFor="let group of categoryGroups()">
+                            <p class="ios-group-label category-group-label" *ngIf="group.label">{{ group.label }}</p>
+                            <div class="category-pick-grid" role="listbox" aria-label="Expense categories">
+                                <button type="button" *ngFor="let category of group.items" class="category-tile" pressHighlight
+                                    role="option"
+                                    [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
+                                    [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
+                                    (click)="selectWizardCategory(category.id)">
+                                    <span class="category-tile__icon-wrap" aria-hidden="true">
+                                        <mat-icon class="category-tile__icon">{{ category?.icon || 'label' }}</mat-icon>
+                                    </span>
+                                    <span class="category-tile__body">
+                                        <span class="category-tile__label">{{ category?.category }}</span>
+                                        <span class="category-tile__desc" *ngIf="category?.description">{{ category.description }}</span>
+                                    </span>
+                                    <span class="category-tile__check" aria-hidden="true">
+                                        <mat-icon>check</mat-icon>
+                                    </span>
+                                </button>
+                            </div>
+                        </ng-container>
                         <p *ngIf="categories().length === 0 && !loadingData()" class="create-wizard__hint">
                             No categories available yet.
                         </p>
@@ -205,7 +211,7 @@
                 <ng-container *ngSwitchCase="1">
                     <ng-container *ngIf="isQrPrefillMode; else expenseAmountStep">
                         <p class="create-wizard__intro">Choose where this was paid from, then add an optional note.</p>
-                        <cb-select-input class="dialog-form__field"
+                        <cb-select-input class="dialog-form__field" *ngIf="!payingFromProject(); else projectSourceNote"
                             label="Paid from"
                             emptyText="No sources yet"
                             [control]="$any(formGroup.get('walletId'))"
@@ -229,7 +235,7 @@
                             <div class="wizard-amount-display-row">
                                 <div class="wizard-amount-currency-panel">
                                     <span class="wizard-amount-currency-panel__label">Source</span>
-                                    <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="wizardSourceMenu"
+                                    <button type="button" class="wizard-amount-currency-trigger" *ngIf="!payingFromProject(); else projectSourceChip" [matMenuTriggerFor]="wizardSourceMenu"
                                         aria-haspopup="menu" aria-label="Source, tap to change">
                                         <ng-container *ngIf="currentSource() as src; else pickSource">
                                             <span class="wizard-amount-currency-trigger__inner">
@@ -271,7 +277,7 @@
                                 type="number"
                                 [control]="$any(formGroup.get('moneySpent'))">
                             </cb-labeled-form-input>
-                            <cb-select-input class="dialog-form__field"
+                            <cb-select-input class="dialog-form__field" *ngIf="!payingFromProject(); else projectSourceNote"
                                 label="Paid from"
                                 emptyText="No sources yet"
                                 [control]="$any(formGroup.get('walletId'))"
@@ -351,7 +357,7 @@
                 [control]="$any(formGroup.get('moneySpent'))">
             </cb-labeled-form-input>
 
-            <cb-select-input
+            <cb-select-input *ngIf="!payingFromProject(); else projectSourceNote"
                 label="Paid from"
                 emptyText="No sources yet"
                 [control]="$any(formGroup.get('walletId'))"
@@ -374,4 +380,22 @@
             </cb-labeled-textarea>
         </div>
     </div>
+</ng-template>
+
+<!-- An expense filed under a project is paid from that project's savings: no
+     money source to pick. -->
+<ng-template #projectSourceChip>
+    <span class="wizard-amount-currency-trigger wizard-amount-currency-trigger--static">
+        <span class="wizard-amount-currency-trigger__inner">
+            <mat-icon class="project-source__icon" aria-hidden="true">savings</mat-icon>
+            <span class="wizard-amount-currency-chip__code">{{ payingFromProject()?.category }}</span>
+        </span>
+    </span>
+</ng-template>
+
+<ng-template #projectSourceNote>
+    <p class="project-source-note">
+        <mat-icon class="project-source__icon" aria-hidden="true">savings</mat-icon>
+        <span>Paid from your <b>{{ payingFromProject()?.category }}</b> savings</span>
+    </p>
 </ng-template>

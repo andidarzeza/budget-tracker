@@ -5,8 +5,9 @@ import { tap } from 'rxjs/operators';
 import { ListCacheService } from './list-cache.service';
 
 /** Writes to these change what the cached Expenses / Incomes pages show
- *  (a wallet balance edit books the difference as an income / expense). */
-const TRACKED = /\/api\/(expense|income|categories|wallets)(\/|\?|$)/;
+ *  (a wallet balance edit books the difference as an income / expense; each
+ *  project has its own expense category). */
+const TRACKED = /\/api\/(expense|income|categories|wallets|projects)(\/|\?|$)/;
 
 /**
  * After a successful add / edit / delete of an expense, income or category

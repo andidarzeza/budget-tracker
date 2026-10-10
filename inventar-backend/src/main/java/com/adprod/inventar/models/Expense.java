@@ -30,9 +30,14 @@ public class Expense {
     /** Money source this expense was paid from. Its currency drives {@link #currency}. */
     private String walletId;
     /**
-     * If non-null, this expense was created automatically as a side-effect of adding the
-     * referenced project {@link Contribution}. Deleting either side of the link cleans
-     * up the other (and refunds the balance) so the two stay consistent.
+     * Set when the expense was paid out of a project's savings (its category is that
+     * project's category). Such an expense has no {@link #walletId}; it lowers the project's
+     * saved total instead of a source balance.
+     */
+    private String projectId;
+    /**
+     * Legacy: contributions used to be mirrored as "Savings" expenses. They are transfers now
+     * (see ProjectFundsMigrationRunner); kept so any remaining link can still be cleaned up.
      */
     private String contributionId;
 }

@@ -1,3 +1,4 @@
+import { groupCategoriesByUsage } from 'src/app/utils/category-groups';
 import { prefillDefaultAmount } from 'src/app/utils/default-amount';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { leaveFormPage } from 'src/app/utils/page-transitions';
@@ -116,6 +117,11 @@ export class AddExpenseComponent implements OnInit {
   readonly savingEntity = signal(false);
   entity: EntityType = EntityType.EXPENSE;
   readonly categories = signal<Category[]>([]);
+  /** Mobile picker sections: "Most used" first, then the rest A–Z. */
+  readonly categoryGroups = computed(() => groupCategoriesByUsage(this.categories()));
+  /** The picked category is a project's: the expense is paid from its savings,
+   *  so no money source is asked for (the server charges the project). */
+  readonly payingFromProject = signal<Category | null>(null);
   readonly loadingData = signal(false);
   readonly loadingMessage = signal('Loading…');
   readonly isEditMode: boolean;
@@ -195,6 +201,10 @@ export class AddExpenseComponent implements OnInit {
       }
       this.formGroup.get('description')?.setValue(this.expense?.description || '');
     }
+    this.formGroup
+      .get('categoryID')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.syncProjectSource());
     if (!this.isEditMode) {
       this.wizardStep.set(0);
       // Categories with a default amount fill it in when picked.
@@ -228,6 +238,27 @@ export class AddExpenseComponent implements OnInit {
         }
         this.cdr.markForCheck();
       });
+  }
+
+  /** A project category needs no source; any other category needs one. */
+  private syncProjectSource(): void {
+    const id = this.formGroup.get('categoryID')?.value;
+    const category = this.categories().find((c) => c.id == id);
+    const project = category?.projectId ? category : null;
+    this.payingFromProject.set(project);
+    const source = this.formGroup.get('walletId');
+    if (!source) return;
+    if (project) {
+      source.clearValidators();
+      source.setValue(null, { emitEvent: false });
+    } else {
+      source.setValidators(Validators.required);
+      if (!source.value) {
+        const def = localStorage.getItem('defaultExpenseWalletId');
+        if (def && this.sources().some((w) => w.id === def)) source.setValue(def);
+      }
+    }
+    source.updateValueAndValidity({ emitEvent: false });
   }
 
   selectWizardSource(walletId: string): void {
@@ -429,6 +460,7 @@ export class AddExpenseComponent implements OnInit {
               (c: Category) => !c?.categoryType || c.categoryType === CategoryType.EXPENSE,
             ),
           );
+          this.syncProjectSource();
         }),
         observeOn(asyncScheduler),
         tap(() => {

@@ -1,3 +1,4 @@
+import { groupCategoriesByUsage } from 'src/app/utils/category-groups';
 import { prefillDefaultAmount } from 'src/app/utils/default-amount';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { leaveFormPage } from 'src/app/utils/page-transitions';
@@ -138,6 +139,8 @@ export class AddIncomeComponent implements OnInit {
   entity: EntityType = EntityType.INCOME;
 
   readonly categories = signal<Category[]>([]);
+  /** Mobile picker sections: "Most used" first, then the rest A–Z. */
+  readonly categoryGroups = computed(() => groupCategoriesByUsage(this.categories()));
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public income: Income | null = null,

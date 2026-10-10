@@ -42,6 +42,10 @@ export interface Category {
     categoryType: string;
     /** Pre-filled as the amount when this category is picked. */
     defaultAmount?: number | null;
+    /** Set on a project's own category: expenses in it are paid from the project's savings. */
+    projectId?: string | null;
+    /** Times used; only sent by the by-usage listing (add expense / income pickers). */
+    usageCount?: number;
     user: string;
 }
 

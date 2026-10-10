@@ -2,7 +2,6 @@ package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
-import com.adprod.inventar.models.enums.CategoryType;
 import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.repositories.ContributionRepository;
 import com.adprod.inventar.repositories.ExpenseRepository;
@@ -29,8 +28,6 @@ import java.util.stream.Collectors;
 public class ProjectServiceImpl implements ProjectService {
 
     /** Auto-managed expense category used to record project contributions in the expenses ledger. */
-    private static final String SAVINGS_CATEGORY_NAME = "Savings";
-    private static final String SAVINGS_CATEGORY_ICON = "savings";
 
     private final ProjectRepository projectRepository;
     private final ContributionRepository contributionRepository;
@@ -40,6 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final WalletService walletService;
     private final SecurityContextService securityContextService;
     private final MongoTemplate mongoTemplate;
+    private final ProjectCategories projectCategories;
 
     @Override
     public ResponseEntity<?> findAll(String account) {
@@ -81,6 +79,8 @@ public class ProjectServiceImpl implements ProjectService {
         project.setCreatedTime(LocalDateTime.now());
         project.setLastModifiedDate(project.getCreatedTime());
         projectRepository.save(project);
+        // The project's own expense category ("paid from this project's savings").
+        projectCategories.sync(project);
         return ResponseEntity.ok(project);
     }
 
@@ -96,6 +96,7 @@ public class ProjectServiceImpl implements ProjectService {
         project.setCreatedTime(existing.getCreatedTime());
         project.setLastModifiedDate(LocalDateTime.now());
         projectRepository.save(project);
+        projectCategories.sync(project);
         return ResponseEntity.ok(project);
     }
 
@@ -104,14 +105,30 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Project " + id + " not found."));
         ensureOwned(project);
-        // Cascade: contributions are meaningless without their project, and each one has a
-        // matching expense that needs to be reversed (refund balance) before removal.
+        // Cascade: what is still saved in the project goes back to the sources it came from
+        // (newest contributions first); money already spent from the project stays spent.
         List<Contribution> contributions = contributionRepository.findAllByProjectIdOrderByCreatedTimeDesc(id);
+        Map<String, Double> remaining = new HashMap<>();
+        for (CurrencyTotalDTO t : totalsByProjectId(Collections.singletonList(id)).getOrDefault(id, Collections.emptyList())) {
+            remaining.put(t.getCurrency(), t.getTotal());
+        }
         for (Contribution c : contributions) {
-            removeLinkedExpense(c.getId());
+            if (expenseRepository.findByContributionId(c.getId()).isPresent()) {
+                // Legacy contribution still mirrored as an expense: reversing it refunds it.
+                removeLinkedExpense(c.getId());
+                continue;
+            }
+            double left = remaining.getOrDefault(c.getCurrency(), 0.0);
+            double refund = Math.min(left, Objects.requireNonNullElse(c.getAmount(), 0.0));
+            if (refund > 0 && c.getWalletId() != null) {
+                walletService.credit(c.getWalletId(), refund);
+                remaining.put(c.getCurrency(), left - refund);
+            }
         }
         contributionRepository.deleteAllByProjectId(id);
         projectRepository.deleteById(id);
+        // Keep the category while expenses still point at it, so they keep their name.
+        projectCategories.removeIfUnused(id, expenseRepository.existsByProjectId(id));
         return ResponseEntity.ok(new ResponseMessage("Project " + id + " was deleted."));
     }
 
@@ -142,9 +159,10 @@ public class ProjectServiceImpl implements ProjectService {
         contribution.setLastModifiedDate(contribution.getCreatedTime());
         contributionRepository.save(contribution);
 
-        // Mirror the contribution as an expense so it shows up in the user's ledger and
-        // reduces the source balance — money set aside for a goal is, in practice, spent.
-        createLinkedExpense(project, contribution);
+        // A contribution moves money from the source into the project — it is not spending,
+        // so no expense is recorded. Spending the saved money later is an expense filed
+        // under the project's category (see ExpenseServiceImpl).
+        walletService.debit(contribution.getWalletId(), contribution.getAmount());
 
         return ResponseEntity.ok(contribution);
     }
@@ -156,34 +174,15 @@ public class ProjectServiceImpl implements ProjectService {
         if (!Objects.equals(contribution.getUser(), securityContextService.username())) {
             throw new NotFoundException("Contribution " + contributionId + " not found.");
         }
-        // Reverse the linked expense first (refund balance); then drop the contribution itself.
-        removeLinkedExpense(contributionId);
+        // Move the money back to its source. Legacy contributions were mirrored as an expense;
+        // reversing that expense refunds the source instead.
+        if (expenseRepository.findByContributionId(contributionId).isPresent()) {
+            removeLinkedExpense(contributionId);
+        } else if (contribution.getWalletId() != null) {
+            walletService.credit(contribution.getWalletId(), contribution.getAmount());
+        }
         contributionRepository.deleteById(contributionId);
         return ResponseEntity.ok(new ResponseMessage("Contribution " + contributionId + " was deleted."));
-    }
-
-    /**
-     * Create the expense that mirrors a contribution. Reuses the auto-managed
-     * "Savings" expense category for the user/account so all contributions land in one
-     * predictable bucket on the expenses list and the dashboard breakdown.
-     */
-    private void createLinkedExpense(Project project, Contribution contribution) {
-        Category savings = findOrCreateSavingsCategory(project.getAccount());
-
-        Expense expense = new Expense();
-        expense.setUser(project.getUser());
-        expense.setAccount(project.getAccount());
-        expense.setWalletId(contribution.getWalletId());
-        expense.setMoneySpent(contribution.getAmount());
-        expense.setCurrency(contribution.getCurrency());
-        expense.setCategoryID(savings.getId());
-        expense.setDescription(buildContributionDescription(project, contribution));
-        expense.setContributionId(contribution.getId());
-        expense.setCreatedTime(contribution.getCreatedTime());
-        expense.setLastModifiedDate(contribution.getLastModifiedDate());
-
-        walletService.debit(contribution.getWalletId(), expense.getMoneySpent());
-        expenseRepository.save(expense);
     }
 
     /**
@@ -201,40 +200,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     /**
-     * Find the user's auto-managed "Savings" expense category for this account, creating it
-     * if needed. Lazily created so users who never use projects don't see it.
-     */
-    private Category findOrCreateSavingsCategory(String account) {
-        String username = securityContextService.username();
-        Optional<Category> existing = categoryRepository.findAll().stream()
-                .filter(c -> Objects.equals(c.getUser(), username)
-                        && Objects.equals(c.getAccount(), account)
-                        && SAVINGS_CATEGORY_NAME.equalsIgnoreCase(c.getCategory())
-                        && CategoryType.EXPENSE.name().equalsIgnoreCase(c.getCategoryType()))
-                .findFirst();
-        if (existing.isPresent()) {
-            return existing.get();
-        }
-        Category category = new Category();
-        category.setCategory(SAVINGS_CATEGORY_NAME);
-        category.setIcon(SAVINGS_CATEGORY_ICON);
-        category.setDescription("Auto-created for project contributions");
-        category.setCategoryType(CategoryType.EXPENSE.name());
-        category.setUser(username);
-        category.setAccount(account);
-        category.setLastModifiedDate(LocalDateTime.now());
-        return categoryRepository.save(category);
-    }
-
-    private String buildContributionDescription(Project project, Contribution contribution) {
-        String prefix = "Saved for: " + Objects.toString(project.getName(), "");
-        String note = contribution.getDescription();
-        return note != null && !note.trim().isEmpty() ? prefix + " — " + note.trim() : prefix;
-    }
-
-    /**
-     * Aggregate `contributions` by `(projectId, currency)` summing `amount`,
-     * for the given set of project ids. Returns an empty result for ids with no contributions.
+     * Saved amount per project and currency: contributions (`amount`) minus expenses paid
+     * from the project (`moneySpent`). Ids with nothing saved are absent from the result.
      */
     private Map<String, List<CurrencyTotalDTO>> totalsByProjectId(List<String> projectIds) {
         if (projectIds.isEmpty()) {
@@ -246,8 +213,31 @@ public class ProjectServiceImpl implements ProjectService {
                         .and("user").is(securityContextService.username())),
                 Aggregation.group("projectId", "currency").sum("amount").as("total"));
 
-        List<Map> rows = mongoTemplate.aggregate(agg, "contributions", Map.class).getMappedResults();
+        // Saved = contributions in, minus expenses paid out of the project.
+        Map<String, Map<String, Double>> net = new HashMap<>();
+        addTotals(net, mongoTemplate.aggregate(agg, "contributions", Map.class).getMappedResults(), 1);
+        TypedAggregation<Expense> spent = Aggregation.newAggregation(
+                Expense.class,
+                Aggregation.match(Criteria.where("projectId").in(projectIds)
+                        .and("user").is(securityContextService.username())),
+                Aggregation.group("projectId", "currency").sum("moneySpent").as("total"));
+        addTotals(net, mongoTemplate.aggregate(spent, "spending", Map.class).getMappedResults(), -1);
+
         Map<String, List<CurrencyTotalDTO>> grouped = new HashMap<>();
+        net.forEach((projectId, byCurrency) -> byCurrency.forEach((currency, total) -> {
+            if (Math.abs(total) < 0.005) return;
+            grouped.computeIfAbsent(projectId, k -> new ArrayList<>())
+                    .add(new CurrencyTotalDTO(currency, Math.round(total * 100) / 100.0));
+        }));
+        // Stable per-project ordering (largest currency first) so the UI doesn't reshuffle on refresh.
+        for (List<CurrencyTotalDTO> list : grouped.values()) {
+            list.sort(Comparator.comparing(CurrencyTotalDTO::getTotal).reversed());
+        }
+        return grouped;
+    }
+
+    /** Add `(projectId, currency) → total` aggregation rows into {@code into}, times {@code sign}. */
+    private static void addTotals(Map<String, Map<String, Double>> into, List<Map> rows, int sign) {
         for (Map row : rows) {
             Object idObj = row.get("_id");
             if (!(idObj instanceof Map)) continue;
@@ -257,15 +247,8 @@ public class ProjectServiceImpl implements ProjectService {
             String currency = curObj == null ? "Other" : String.valueOf(curObj);
             Object totalObj = row.get("total");
             double total = totalObj instanceof Number ? ((Number) totalObj).doubleValue() : 0.0;
-            if (total == 0.0) continue;
-            grouped.computeIfAbsent(projectId, k -> new ArrayList<>())
-                    .add(new CurrencyTotalDTO(currency, total));
+            into.computeIfAbsent(projectId, k -> new HashMap<>()).merge(currency, sign * total, Double::sum);
         }
-        // Stable per-project ordering (largest currency first) so the UI doesn't reshuffle on refresh.
-        for (List<CurrencyTotalDTO> list : grouped.values()) {
-            list.sort(Comparator.comparing(CurrencyTotalDTO::getTotal).reversed());
-        }
-        return grouped;
     }
 
     private void ensureOwned(Project project) {

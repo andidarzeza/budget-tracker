@@ -57,6 +57,10 @@ public class CategoryServiceImpl implements CategoryService {
         // asked for it; the Categories page itself wants every type.
         if (Objects.nonNull(categoryType) && !categoryType.isEmpty()) {
             booleanBuilder.and(QCategory.category1.categoryType.eq(categoryType));
+        } else {
+            // The Categories page (no type filter) lists only the user's own categories; the
+            // per-project ones are managed with their project.
+            booleanBuilder.and(QCategory.category1.projectId.isNull());
         }
 
         Page<Category> page = this.categoryRepository.findAll(booleanBuilder, pageable);
@@ -80,6 +84,8 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<Category> categories = new ArrayList<>();
         categoryRepository.findAll(filter).forEach(categories::add);
+        // Lets the pickers split "most used" from the rest.
+        categories.forEach(c -> c.setUsageCount(usageById.getOrDefault(c.getId(), 0L)));
 
         // Most used first; ties broken alphabetically so ordering is stable for the picker.
         categories.sort((a, b) -> {
@@ -146,6 +152,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ResponseEntity save(Category category) {
         accountService.checkAccount(category.getAccount());
+        category.setProjectId(null); // project categories are created by the app only
         category.setUser(securityContextService.username());
         categoryRepository.save(category);
         historyService.save(historyService.from(EntityAction.CREATE, entityType, category.getAccount()));
@@ -158,6 +165,8 @@ public class CategoryServiceImpl implements CategoryService {
         category.setUser(securityContextService.username());
         category.setLastModifiedDate(LocalDateTime.now());
         category.setId(id);
+        // Keep the link of a project category; never let a client set one.
+        category.setProjectId(categoryRepository.findById(id).map(Category::getProjectId).orElse(null));
         categoryRepository.save(category);
         historyService.save(historyService.from(EntityAction.UPDATE, entityType, category.getAccount()));
         return ResponseEntity.ok(category);

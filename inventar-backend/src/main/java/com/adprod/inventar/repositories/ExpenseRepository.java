@@ -15,4 +15,5 @@ public interface ExpenseRepository extends MongoRepository<Expense, String>, Que
     Page<Expense> findAllByUserAndCategoryID(Pageable pageable, String user, String categoryId);
     /** The expense automatically created for a project contribution, if any. */
     Optional<Expense> findByContributionId(String contributionId);
+    boolean existsByProjectId(String projectId);
 }

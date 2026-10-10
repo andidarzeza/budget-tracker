@@ -710,3 +710,223 @@
         font-size: 13px;
     }
 }
+
+/* ── Breakdown: iOS list (Screen Time / Apple Card spending) ──────────
+   Settings-style colour tile, name with a thin share meter and "34% · ALL",
+   the amount in plain text and a chevron for the drill-down. Hairlines
+   start after the tile, as in an inset grouped list. */
+.cat-list {
+    max-height: none;
+    /* Rows run edge to edge of the card (the hover/press fill too). */
+    margin: 0 calc(-1 * var(--app-space-5));
+}
+
+@media (max-width: 767px) {
+    .cat-list {
+        margin: 0 -16px;
+    }
+}
+
+.cat-row,
+.cat-row--clickable {
+    position: relative;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    gap: 12px;
+    margin: 0;
+    padding: 10px 14px 10px var(--app-space-5);
+    border: 0;
+    border-radius: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cat-row + .cat-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: calc(var(--app-space-5) + 44px);
+    border-top: 0.5px solid var(--ios-separator);
+}
+
+@media (max-width: 767px) {
+    .cat-row,
+    .cat-row--clickable {
+        padding-left: 16px;
+    }
+
+    .cat-row + .cat-row::before {
+        left: 60px;
+    }
+}
+
+.cat-row--clickable:active {
+    background: var(--ios-fill);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .cat-row--clickable:hover {
+        background: var(--app-surface-hover);
+    }
+}
+
+.cat-row--active,
+.cat-row--active:hover {
+    background: var(--ios-fill);
+}
+
+.cat-row__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    color: #ffffff;
+}
+
+.cat-row__icon mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
+    font-variation-settings: 'FILL' 1, 'wght' 500;
+}
+
+.cat-row__title {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.cat-row__meter {
+    display: block;
+    height: 4px;
+    margin: 6px 0 4px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--ios-fill-3);
+}
+
+.cat-row__meter span {
+    display: block;
+    height: 100%;
+    min-width: 4px;
+    border-radius: 999px;
+    transition: width 0.5s var(--app-easing-standard);
+}
+
+.cat-row__meter--exp span { background: var(--app-danger); }
+.cat-row__meter--inc span { background: var(--app-success); }
+
+.cat-row__sub {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0;
+    color: var(--app-text-muted);
+}
+
+.cat-row__amount {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--app-text);
+}
+
+.cat-row__chevron {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 20px;
+    margin-left: -4px;
+    color: var(--app-text-subtle);
+}
+
+/* Drill-down: "‹ Breakdown" back button and plain transaction rows. */
+.story-back-ios {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    margin-left: -6px;
+    padding: 4px 6px 4px 0;
+    border: 0;
+    background: none;
+    color: var(--app-accent);
+    font: inherit;
+    font-size: 16px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.story-back-ios mat-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 26px;
+    line-height: 26px;
+}
+
+.story-back-ios:active {
+    opacity: 0.4;
+}
+
+.story-item {
+    border-top-width: 0.5px;
+    border-top-color: var(--ios-separator);
+}
+
+.story-item__desc {
+    font-weight: 500;
+}
+
+.story-item__amount--exp,
+.story-item__amount--inc {
+    color: var(--app-text);
+    font-weight: 500;
+}
+
+/* Drill-down header: "‹ Breakdown" on its own line, then title + total. */
+.panel__header--story {
+    flex-wrap: wrap;
+    row-gap: 6px;
+}
+
+.panel__header--story .story-back-ios {
+    flex-basis: 100%;
+    justify-content: flex-start;
+}
+
+.panel__header--story .story-title-wrap {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+/* Without the trend charts each section is just its breakdown; the
+   spending and earnings sections share a row on wide screens. */
+.dashboard-section__body {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.dash-breakdowns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+
+@media (min-width: 1100px) {
+    .dash-breakdowns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+}
+
+/* Jet Bank — black with its teal accent (#0abab5), from the bank's own
+   brand palette (jet.bank). The teal glows in from the top-right corner. */
+.balance-row--jet {
+    --brand-primary: #0abab5;
+    --brand-primary-text: #089490;
+    --brand-logo-height: 18px;
+    --brand-stripe: linear-gradient(90deg, #0c0c0c 0 78%, #0abab5 78% 100%);
+    --card-bg:
+        radial-gradient(130% 100% at 100% 0%, rgba(10, 186, 181, 0.55) 0%, rgba(10, 186, 181, 0) 58%),
+        linear-gradient(135deg, #1a2121 0%, #0c0c0c 55%, #030303 100%);
+    --card-glow: rgba(10, 186, 181, 0.45);
+}
+
+:host-context(.dark-theme) .balance-row--jet {
+    --brand-primary-text: #53cecb;
+}

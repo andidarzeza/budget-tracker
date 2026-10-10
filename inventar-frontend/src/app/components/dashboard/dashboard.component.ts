@@ -1,3 +1,4 @@
+import { iosTileColorForName } from 'src/app/shared/ios/ios-colors';
 import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
 import { CommonModule } from '@angular/common';
 import {
@@ -6,7 +7,6 @@ import {
   Component,
   computed,
   DestroyRef,
-  HostListener,
   inject,
   signal,
   WritableSignal,
@@ -15,7 +15,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { Chart, registerables } from 'chart.js';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -30,8 +29,6 @@ import {
   Income,
   ProjectView,
   RangeType,
-  TimelineExpenseDTO,
-  TimelineIncomeDTO,
   Wallet,
 } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
@@ -45,11 +42,9 @@ import { ProjectService } from 'src/app/services/pages/project.service';
 import { WalletService } from 'src/app/services/pages/wallet.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
-import { ChartUtils } from 'src/app/utils/chart';
 import { buildParams } from 'src/app/utils/param-bulder';
 import {
   CREATE_DIALOG_DESKTOP_CONFIGURATION,
@@ -136,8 +131,6 @@ interface CategoryRow {
   total: number;
 }
 
-const EXPENSE_LINE = 'expense-line';
-const INCOME_LINE = 'income-line';
 
 @Component({
   selector: 'app-dashboard',
@@ -156,7 +149,6 @@ const INCOME_LINE = 'income-line';
     YearPickerComponent,
     AllTimeHeaderComponent,
     CustomRangePickerComponent,
-    IconButtonComponent,
     PillButtonComponent,
     FlagPipe,
     ...TOOLTIP_IMPORTS,
@@ -167,7 +159,6 @@ export class DashboardComponent implements AfterViewInit {
   readonly today = new Date();
 
   readonly dashboardService = inject(DashboardService);
-  readonly chartUtil = inject(ChartUtils);
   readonly sideBarService = inject(SideBarService);
   readonly navBarService = inject(NavBarService);
   private readonly toasterService = inject(ToastrService);
@@ -366,15 +357,6 @@ export class DashboardComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.routeSpinnerService.stopLoading();
-    Chart.register(...registerables);
-    this.chartUtil.createLineChart(EXPENSE_LINE);
-    this.chartUtil.createLineChart(INCOME_LINE);
-    this.chartUtil.resizeDashboardCharts();
-  }
-
-  @HostListener('window:resize')
-  onWindowResize(): void {
-    this.chartUtil.resizeDashboardCharts();
   }
 
   toggleBalanceVisibility(): void {
@@ -636,13 +618,20 @@ export class DashboardComponent implements AfterViewInit {
     return Number(item?.moneySpent ?? item?.incoming ?? 0);
   }
 
+  /** Settings-style tile colour for a breakdown row, stable per category name. */
+  readonly tileColor = iosTileColorForName;
+
+  /** A row's share (whole %) of all rows in the same currency. */
+  sharePercent(rows: CategoryRow[], row: CategoryRow): number {
+    const total = rows.filter((r) => r.currency === row.currency).reduce((sum, r) => sum + (r.total || 0), 0);
+    return total > 0 ? Math.round((row.total / total) * 100) : 0;
+  }
+
   /** Set after the first dashboard response; see `fetchDashboardData`. */
   private dashboardLoadedOnce = false;
 
   private refresh(): void {
     this.fetchDashboardData();
-    this.fetchExpenseTimeline();
-    this.fetchIncomeTimeline();
   }
 
   private fetchDashboardData(): void {
@@ -689,19 +678,7 @@ export class DashboardComponent implements AfterViewInit {
       );
   }
 
-  private fetchExpenseTimeline(): void {
-    this.dashboardService
-      .expensesTimeline(this.period, this.selectedRange())
-      .pipe(takeUntilDestroyed(this.destroyRef), catchError(this.catchError))
-      .subscribe((timeline) => this.updateLineSeries(EXPENSE_LINE, timeline as any, 'expense'));
-  }
 
-  private fetchIncomeTimeline(): void {
-    this.dashboardService
-      .incomesTimeline(this.period, this.selectedRange())
-      .pipe(takeUntilDestroyed(this.destroyRef), catchError(this.catchError))
-      .subscribe((timeline) => this.updateLineSeries(INCOME_LINE, timeline as any, 'income'));
-  }
 
   /**
    * Restore the last-selected range from localStorage, falling back to MONTH.
@@ -732,164 +709,6 @@ export class DashboardComponent implements AfterViewInit {
         total: it.total ?? 0,
       }))
       .sort((a, b) => b.total - a.total);
-  }
-
-  /**
-   * Build per-currency line datasets for a timeline. `kind` selects whether to read
-   * `dailyExpense` or `income` from the DTO and what label/series count to expect.
-   */
-  private updateLineSeries(
-    canvasId: string,
-    timeline: TimelineExpenseDTO[] | TimelineIncomeDTO[] | null | undefined,
-    kind: 'expense' | 'income',
-  ): void {
-    this.chartUtil.updateTimelineLabels(canvasId, this.selectedRange(), {
-      year: this.from?.getFullYear() ?? new Date().getFullYear(),
-      month: (this.from?.getMonth() ?? new Date().getMonth()) + 1,
-      from: this.from,
-      to: this.to,
-    });
-
-    const rows = Array.isArray(timeline) ? timeline : [];
-    const valueOf = (r: TimelineExpenseDTO | TimelineIncomeDTO): number =>
-      kind === 'expense'
-        ? ((r as TimelineExpenseDTO).dailyExpense ?? 0)
-        : ((r as TimelineIncomeDTO).income ?? 0);
-
-    const currencyLabel = (c: string | null | undefined): string =>
-      c && String(c).trim() ? String(c).trim() : 'Other';
-
-    const currencies = [...new Set(rows.map((r) => currencyLabel(r.currency)))].sort();
-
-    // MAX: backend buckets are `yyyy-MM`. Roll those up into per-year totals
-    // for each currency and label the X-axis with the actual years that
-    // appear in the data (filling any gaps so the axis is contiguous).
-    if (this.selectedRange() === 'MAX') {
-      if (!rows.length) {
-        this.chartUtil.setLineLabels(canvasId, []);
-        this.chartUtil.updateLineSeries(canvasId, []);
-        return;
-      }
-      const yearOf = (id: string | number | undefined | null): number | null => {
-        const m = String(id ?? '').trim().match(/^(\d{4})/);
-        return m ? Number(m[1]) : null;
-      };
-      const yearSet = new Set<number>();
-      for (const r of rows) {
-        const y = yearOf(r._id);
-        if (y != null) yearSet.add(y);
-      }
-      if (yearSet.size === 0) {
-        this.chartUtil.setLineLabels(canvasId, []);
-        this.chartUtil.updateLineSeries(canvasId, []);
-        return;
-      }
-      // If the user only has data in one or two years the chart looks
-      // lonely — extend the window to a minimum span (anchored on the most
-      // recent year present) so the X-axis reads as a real timeline.
-      // Earlier years just plot at 0.
-      const MIN_YEARS = 5;
-      const dataMaxY = Math.max(...yearSet);
-      const dataMinY = Math.min(...yearSet);
-      const spanMinY =
-        dataMaxY - dataMinY + 1 < MIN_YEARS ? dataMaxY - MIN_YEARS + 1 : dataMinY;
-      const years: number[] = [];
-      for (let y = spanMinY; y <= dataMaxY; y++) years.push(y);
-
-      const totalsByCurrencyYear = new Map<string, Map<number, number>>();
-      for (const r of rows) {
-        const y = yearOf(r._id);
-        if (y == null) continue;
-        const cur = currencyLabel(r.currency);
-        let inner = totalsByCurrencyYear.get(cur);
-        if (!inner) {
-          inner = new Map();
-          totalsByCurrencyYear.set(cur, inner);
-        }
-        inner.set(y, (inner.get(y) ?? 0) + valueOf(r));
-      }
-
-      const maxSeries = currencies.map((cur) => ({
-        label: cur,
-        data: years.map((y) => totalsByCurrencyYear.get(cur)?.get(y) ?? 0),
-      }));
-
-      this.chartUtil.setLineLabels(canvasId, years.map(String));
-      this.chartUtil.updateLineSeries(canvasId, maxSeries);
-      return;
-    }
-
-    const valueByKey = new Map<string, number>();
-    for (const r of rows) {
-      const bucket = this.normalizeBucketId(r._id);
-      valueByKey.set(`${bucket}|${currencyLabel(r.currency)}`, valueOf(r));
-    }
-
-    const series = currencies.map((cur) => {
-      const data: number[] = [];
-      switch (this.selectedRange()) {
-        case 'DAY':
-          for (let h = 0; h < 24; h++) {
-            data.push(valueByKey.get(`${String(h).padStart(2, '0')}|${cur}`) ?? 0);
-          }
-          break;
-        case 'WEEK':
-          for (let d = 1; d <= 7; d++) {
-            data.push(valueByKey.get(`${d}|${cur}`) ?? 0);
-          }
-          break;
-        case 'MONTH': {
-          const dim = this.daysInMonth(this.from.getFullYear(), this.from.getMonth() + 1);
-          for (let day = 1; day <= dim; day++) {
-            data.push(valueByKey.get(`${String(day).padStart(2, '0')}|${cur}`) ?? 0);
-          }
-          break;
-        }
-        case 'YEAR':
-          for (let m = 1; m <= 12; m++) {
-            data.push(valueByKey.get(`${String(m).padStart(2, '0')}|${cur}`) ?? 0);
-          }
-          break;
-        case 'CUSTOM': {
-          // Backend buckets CUSTOM by full `yyyy-MM-dd`, so we walk every day
-          // in the selected window and look up the matching key. `to` is
-          // exclusive (start of the day after the last included day) — same
-          // convention as the other pickers.
-          const cursor = new Date(
-            this.from.getFullYear(),
-            this.from.getMonth(),
-            this.from.getDate(),
-          );
-          const end = new Date(this.to.getFullYear(), this.to.getMonth(), this.to.getDate());
-          while (cursor < end) {
-            const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`;
-            data.push(valueByKey.get(`${key}|${cur}`) ?? 0);
-            cursor.setDate(cursor.getDate() + 1);
-          }
-          break;
-        }
-      }
-      return { label: cur, data };
-    });
-
-    this.chartUtil.updateLineSeries(canvasId, series);
-  }
-
-  /**
-   * Aligns API bucket ids with the keys used to look up chart values.
-   * For numeric ranges (DAY hour, MONTH day-of-month, YEAR month-of-year) we
-   * pad to 2 digits so `'5'` matches the lookup key `'05'`. WEEK and the
-   * date-string ranges (MAX `'yyyy-MM'`, CUSTOM `'yyyy-MM-dd'`) are left
-   * untouched — padding `'2026-05-09'` would corrupt it to `'2026'`.
-   */
-  private normalizeBucketId(raw: string | number | undefined | null): string {
-    if (raw === undefined || raw === null) return '';
-    const s = String(raw).trim();
-    if (!s) return '';
-    if (/^\d+$/.test(s) && this.selectedRange() !== 'WEEK') {
-      return s.padStart(2, '0');
-    }
-    return s;
   }
 
   private daysInMonth(year: number, month: number): number {
@@ -938,5 +757,12 @@ const BANK_BRANDS: BankBrand[] = [
     logo: 'assets/banks/tirana-bank.png',
     logoDark: 'assets/banks/tirana-bank-dark.png',
     match: /\btirana\s*bank\b/i,
+  },
+  {
+    key: 'jet',
+    name: 'Jet Bank',
+    logo: 'assets/banks/jet-bank.svg',
+    logoDark: 'assets/banks/jet-bank-dark.svg',
+    match: /\bjet\s*bank\b/i,
   },
 ];

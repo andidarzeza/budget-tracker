@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,14 @@ public class Category {
     private String categoryType;
     /** Optional amount pre-filled when this category is picked (repeat expenses, salary). */
     private Double defaultAmount;
+    /**
+     * Set on the category that represents a project in the expense picker. Expenses in it are
+     * paid from that project's savings. Managed by the app, hidden from the Categories page.
+     */
+    private String projectId;
+    /** How many expenses / incomes use it. Only filled by the by-usage listing; not stored. */
+    @Transient
+    private Long usageCount;
     private String user;
     private String account;
 }
