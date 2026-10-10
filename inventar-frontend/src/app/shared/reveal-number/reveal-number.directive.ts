@@ -3,8 +3,10 @@ import { Directive, ElementRef, inject, Input, OnChanges, OnDestroy } from '@ang
 const HIDDEN_TEXT = '••••••';
 
 /**
- * Shows a formatted amount and, when it first appears or changes, lets it
- * come in from a soft blur while rising a few pixels (iOS widget refresh).
+ * Shows a formatted amount and, when it first appears or changes, fades it
+ * in while it rises a few pixels (iOS widget refresh). No blur: iOS Safari
+ * animates `filter: blur` on text from a low-resolution snapshot, so the
+ * digits looked smeared before snapping sharp.
  *
  *   <span [revealNumber]="total"></span>
  *   <span [revealNumber]="net" revealSigned [revealHidden]="balanceHidden()"></span>
@@ -78,10 +80,10 @@ export class RevealNumberDirective implements OnChanges, OnDestroy {
     this.el.getAnimations?.().forEach((a) => a.cancel());
     this.el.animate?.(
       [
-        { opacity: 0, filter: 'blur(6px)', transform: 'translateY(6px)' },
-        { opacity: 1, filter: 'blur(0)', transform: 'none' },
+        { opacity: 0, transform: 'translateY(8px)' },
+        { opacity: 1, transform: 'none' },
       ],
-      { duration: 420, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+      { duration: 380, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
     );
   }
 }

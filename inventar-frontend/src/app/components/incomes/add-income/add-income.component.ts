@@ -1,3 +1,4 @@
+import { prefillDefaultAmount } from 'src/app/utils/default-amount';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { leaveFormPage } from 'src/app/utils/page-transitions';
 import { CommonModule, Location } from '@angular/common';
@@ -197,6 +198,8 @@ export class AddIncomeComponent implements OnInit {
       });
     if (!this.isEditMode) {
       this.wizardStep.set(0);
+      // Categories with a default amount fill it in when picked.
+      prefillDefaultAmount(this.formGroup, 'incoming', () => this.categories(), this.destroyRef);
     }
     this.loadSources();
     this.getCategories();

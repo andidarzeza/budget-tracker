@@ -3092,9 +3092,64 @@ html.page-vt .application > .content-container:not(.content-container--public) >
     animation: none;
 }
 
-/* Amounts that blur in (RevealNumberDirective). Inline-block so the small
+/* Amounts that fade in (RevealNumberDirective). Inline-block so the small
    rise can use a transform; equal-width digits keep updates steady. */
 .reveal-number {
     display: inline-block;
     font-variant-numeric: tabular-nums;
+}
+
+/* Dashboard period navigator (day / week / month / year / all / custom
+   pickers, each its own component): iOS style — no grey box, the period
+   as a semibold title, tinted chevrons. Scoped with the host element so it
+   outranks the pickers' own encapsulated styles. */
+app-dashboard .control-bar__picker {
+    overflow: visible;
+}
+
+app-dashboard .control-bar__picker .dash-picker {
+    min-height: 40px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+}
+
+app-dashboard .control-bar__picker .dash-picker__label {
+    padding: 6px 8px;
+    border-radius: 8px;
+}
+
+app-dashboard .control-bar__picker .dash-picker__text {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+app-dashboard .control-bar__picker .dash-picker__cal {
+    font-size: 19px;
+    width: 19px;
+    height: 19px;
+    line-height: 19px;
+    color: var(--app-accent);
+}
+
+app-dashboard .control-bar__picker .dash-picker [cb-icon-button] {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    color: var(--app-accent);
+}
+
+app-dashboard .control-bar__picker .dash-picker [cb-icon-button] mat-icon {
+    color: inherit;
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+}
+
+app-dashboard .control-bar__picker .dash-picker [cb-icon-button]:active {
+    opacity: 0.4;
 }

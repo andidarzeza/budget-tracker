@@ -539,3 +539,174 @@
     from { opacity: 0; transform: translateX(-28px); }
     to { opacity: 1; transform: none; }
 }
+
+/* ── My balance: iOS inline toolbar ────────────────────────────────────
+   Tinted glyphs grouped in one grey capsule, like the buttons in a
+   Wallet / Files header. */
+.balance-card__actions {
+    gap: 0;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--ios-fill-3);
+}
+
+.bc-tool {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--app-accent);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.bc-tool:active {
+    opacity: 0.4;
+    transition: none;
+}
+
+.bc-tool:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-accent) 40%, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .bc-tool:hover {
+        background: var(--app-surface-hover);
+    }
+}
+
+.bc-tool mat-icon {
+    width: 21px;
+    height: 21px;
+    font-size: 21px;
+    line-height: 21px;
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'opsz' 24;
+}
+
+/* ── Saving: headline card + meter ─────────────────────────────────────
+   The meter shows the share of income kept (green), or a full red bar
+   when spending ran past income. */
+.save-meter {
+    height: 6px;
+    margin: 10px 0 8px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--ios-fill-3);
+}
+
+.save-meter__fill {
+    display: block;
+    height: 100%;
+    min-width: 6px;
+    border-radius: 999px;
+    background: var(--app-success);
+    transition: width 0.6s var(--app-easing-standard);
+}
+
+.save-meter__fill--over {
+    background: var(--app-danger);
+}
+
+.save-delta {
+    white-space: nowrap;
+    color: var(--app-success);
+    font-weight: 500;
+}
+
+.save-delta--down {
+    color: var(--app-danger);
+}
+
+/* Total balance + Saved this month side by side on wider screens; phones
+   keep them stacked (the base auto-fit grid). */
+@media (min-width: 768px) {
+    .glance {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ── Range filter: iOS segmented control + plain date navigator ────────
+   No card around it: a single-row UISegmentedControl (equal segments,
+   hairline separators that hide next to the selected thumb), and below or
+   beside it the period title between two tinted chevrons. */
+.control-bar {
+    padding: 0;
+    gap: 10px;
+    background: transparent;
+    border: 0;
+}
+
+.control-bar__ranges {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    box-sizing: border-box;
+    padding: 2px;
+    border-radius: 9px;
+    background: var(--ios-fill-3);
+}
+
+.range-option {
+    position: relative;
+    min-width: 0;
+    height: 28px;
+    padding: 0 6px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-align: center;
+    border-radius: 7px;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.range-option:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    bottom: 7px;
+    width: 1px;
+    transform: scaleX(0.5);
+    background: var(--ios-separator);
+    transition: opacity 0.2s ease;
+}
+
+.range-option--active::before,
+.range-option--active + .range-option::before {
+    opacity: 0;
+}
+
+.range-option--active,
+.range-option--active:hover {
+    font-weight: 600;
+}
+
+@media (min-width: 768px) {
+    .control-bar {
+        grid-template-columns: minmax(380px, 460px) minmax(0, 1fr);
+        gap: 24px;
+    }
+}
+
+@media (max-width: 767px) {
+    .control-bar {
+        grid-template-columns: 1fr;
+        padding: 0;
+    }
+
+    .range-option {
+        flex: none;
+        min-width: 0;
+        padding: 0 2px;
+        font-size: 13px;
+    }
+}

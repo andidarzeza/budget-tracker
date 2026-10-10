@@ -46,6 +46,16 @@
         </div>
 
         <div class="ios-group">
+            <cb-labeled-form-input
+                label="Default amount"
+                type="number"
+                placeholder="None"
+                [control]="$any(categoryGroup.get('defaultAmount'))">
+            </cb-labeled-form-input>
+        </div>
+        <p class="ios-group-footer">Filled in for you when you pick this category, for things that cost the same every time (salary, rent, a daily coffee). You can still change it.</p>
+
+        <div class="ios-group">
             <cb-labeled-textarea
                 label="Description"
                 placeholder="Write a note…"

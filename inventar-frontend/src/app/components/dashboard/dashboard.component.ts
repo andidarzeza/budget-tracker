@@ -9,6 +9,7 @@ import {
   HostListener,
   inject,
   signal,
+  WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -70,6 +71,19 @@ interface CurrencyBalance {
   income: number;
   expense: number;
   net: number;
+}
+
+/** A currency's savings: what was kept, as a share of what came in. */
+interface Savings extends CurrencyBalance {
+  /** Net ÷ income in %, rounded down (so 99.6% reads 99%, and 100% means
+   *  nothing was spent), or null with no income to compare to. */
+  rate: number | null;
+  /** Net minus last month's net, or null when last month has no data. */
+  vsLastMonth?: number | null;
+}
+
+function toSavings(b: CurrencyBalance): Savings {
+  return { ...b, rate: b.income > 0 ? Math.floor((b.net / b.income) * 100) : null };
 }
 
 interface BalanceRow {
@@ -187,8 +201,24 @@ export class DashboardComponent implements AfterViewInit {
   /** Statistics (default) or the balances of each source. */
   activeTab = signal<'stats' | 'balances'>(localStorage.getItem(DASHBOARD_TAB_KEY) === 'balances' ? 'balances' : 'stats');
 
-  /** Income / expense / net for the previous calendar month ("Saved in …"). */
+  /** Income / expense / net for the previous calendar month (the "vs September" comparison). */
   lastMonthBalances = signal<CurrencyBalance[]>([]);
+  /** Same for the current calendar month so far (the "Saved this month" headline). */
+  thisMonthBalances = signal<CurrencyBalance[]>([]);
+
+  /** Headline: saved this month per currency, with rate and change vs last month. */
+  readonly monthSavings = computed<Savings[]>(() =>
+    this.thisMonthBalances().map((b) => {
+      const last = this.lastMonthBalances().find((l) => l.currency === b.currency);
+      return { ...toSavings(b), vsLastMonth: last ? b.net - last.net : null };
+    }),
+  );
+
+  /** Selected-period savings (the period cards). */
+  readonly periodSavings = computed<Savings[]>(() => this.balances().map(toSavings));
+
+  /** The selected period is the current month — the headline already shows it. */
+  readonly periodIsThisMonth = signal(false);
   readonly lastMonthName = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
     .toLocaleDateString('en-US', { month: 'long' });
 
@@ -449,8 +479,10 @@ export class DashboardComponent implements AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((changed) => {
         // Dialog returns true when any source was added / edited / removed.
+        // A balance edit also books the difference as an income / expense,
+        // so the statistics change too: reload everything (wallets included).
         if (changed) {
-          this.fetchWallets();
+          this.refresh();
         }
       });
   }
@@ -470,6 +502,11 @@ export class DashboardComponent implements AfterViewInit {
   onDateSelected(dateRange: { from: Date; to: Date }): void {
     this.from = dateRange.from;
     this.to = dateRange.to;
+    const now = new Date();
+    const from = new Date(dateRange.from);
+    this.periodIsThisMonth.set(
+      this.selectedRange() === 'MONTH' && from.getFullYear() === now.getFullYear() && from.getMonth() === now.getMonth(),
+    );
     this.refresh();
   }
 
@@ -622,20 +659,31 @@ export class DashboardComponent implements AfterViewInit {
           this.fetchProjects();
         }
         this.dashboardLoadedOnce = true;
-        this.fetchLastMonth();
+        this.fetchMonthSavings();
       });
   }
 
-  /** Previous calendar month's totals, for the "Saved in …" glance card. */
-  private fetchLastMonth(): void {
+  /** This month's and last month's totals, for the two savings glance cards. */
+  private fetchMonthSavings(): void {
     const now = new Date();
-    const from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const to = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+    this.fetchMonth(
+      new Date(now.getFullYear(), now.getMonth() - 1, 1),
+      new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999),
+      this.lastMonthBalances,
+    );
+    this.fetchMonth(
+      new Date(now.getFullYear(), now.getMonth(), 1),
+      new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
+      this.thisMonthBalances,
+    );
+  }
+
+  private fetchMonth(from: Date, to: Date, target: WritableSignal<CurrencyBalance[]>): void {
     this.dashboardService
       .getDashboardData(from, to, 'MONTH')
       .pipe(takeUntilDestroyed(this.destroyRef), catchError(this.catchError))
       .subscribe((data: DashboardDTO | null) =>
-        this.lastMonthBalances.set(
+        target.set(
           data ? DashboardComponent.mergeBalances(data.incomeTotalsByCurrency, data.expenseTotalsByCurrency) : [],
         ),
       );

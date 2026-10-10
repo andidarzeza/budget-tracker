@@ -40,6 +40,8 @@ export interface Category {
     lastModifiedDate: Date;
     description: string;
     categoryType: string;
+    /** Pre-filled as the amount when this category is picked. */
+    defaultAmount?: number | null;
     user: string;
 }
 

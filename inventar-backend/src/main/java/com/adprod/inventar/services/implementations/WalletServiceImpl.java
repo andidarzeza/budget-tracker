@@ -1,9 +1,16 @@
 package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
+import com.adprod.inventar.models.Category;
+import com.adprod.inventar.models.Expense;
+import com.adprod.inventar.models.Income;
+import com.adprod.inventar.models.QCategory;
 import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.models.Wallet;
 import com.adprod.inventar.models.enums.WalletType;
+import com.adprod.inventar.repositories.CategoryRepository;
+import com.adprod.inventar.repositories.ExpenseRepository;
+import com.adprod.inventar.repositories.IncomeRepository;
 import com.adprod.inventar.repositories.WalletRepository;
 import com.adprod.inventar.services.AccountService;
 import com.adprod.inventar.services.SecurityContextService;
@@ -16,6 +23,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +31,13 @@ import java.util.Objects;
 @AllArgsConstructor
 public class WalletServiceImpl implements WalletService {
 
+    /** Category the automatic balance-correction entries are filed under. */
+    static final String ADJUSTMENT_CATEGORY = "Balance adjustment";
+
     private final WalletRepository walletRepository;
+    private final ExpenseRepository expenseRepository;
+    private final IncomeRepository incomeRepository;
+    private final CategoryRepository categoryRepository;
     private final AccountService accountService;
     private final SecurityContextService securityContextService;
 
@@ -57,14 +71,25 @@ public class WalletServiceImpl implements WalletService {
         validate(wallet);
         existing.setName(wallet.getName());
         existing.setType(wallet.getType());
-        existing.setCurrency(wallet.getCurrency());
         existing.setIcon(wallet.getIcon());
         existing.setArchived(wallet.isArchived());
         // Editing the balance here is the explicit "set/correct balance" action (replaces the old
         // per-currency edit-balance dialog); transactions adjust it automatically elsewhere.
-        existing.setBalance(round(wallet.getBalance()));
+        // The correction itself is recorded as an income (balance went up) or an expense (went
+        // down), so savings and the statistics still add up. Not when the currency changed too:
+        // the old and new amounts are then in different units.
+        String oldCurrency = existing.getCurrency();
+        double oldBalance = orZero(existing.getBalance());
+        double newBalance = round(wallet.getBalance());
+        existing.setCurrency(wallet.getCurrency());
+        existing.setBalance(newBalance);
         existing.setLastModifiedDate(LocalDateTime.now());
-        return ResponseEntity.ok(walletRepository.save(existing));
+        Wallet saved = walletRepository.save(existing);
+        double difference = round(newBalance - oldBalance);
+        if (difference != 0 && Objects.equals(oldCurrency, saved.getCurrency())) {
+            recordAdjustment(saved, difference);
+        }
+        return ResponseEntity.ok(saved);
     }
 
     @Override
@@ -97,6 +122,57 @@ public class WalletServiceImpl implements WalletService {
         wallet.setBalance(round(orZero(wallet.getBalance()) - orZero(amount)));
         wallet.setLastModifiedDate(LocalDateTime.now());
         walletRepository.save(wallet);
+    }
+
+    /**
+     * Write the balance correction as an income / expense on this wallet. The wallet balance is
+     * already set, so these are saved straight to the repositories (the services would credit /
+     * debit the wallet a second time).
+     */
+    private void recordAdjustment(Wallet wallet, double difference) {
+        String description = ADJUSTMENT_CATEGORY + " · " + wallet.getName();
+        if (difference > 0) {
+            Income income = new Income();
+            income.setIncoming(difference);
+            income.setDescription(description);
+            income.setCategoryID(adjustmentCategory(wallet, "INCOME").getId());
+            income.setCurrency(wallet.getCurrency());
+            income.setAccount(wallet.getAccount());
+            income.setWalletId(wallet.getId());
+            income.setUser(wallet.getUser());
+            income.setCreatedTime(new Date());
+            income.setLastModifiedDate(income.getCreatedTime());
+            incomeRepository.save(income);
+        } else {
+            Expense expense = new Expense();
+            expense.setMoneySpent(-difference);
+            expense.setDescription(description);
+            expense.setCategoryID(adjustmentCategory(wallet, "EXPENSE").getId());
+            expense.setCurrency(wallet.getCurrency());
+            expense.setAccount(wallet.getAccount());
+            expense.setWalletId(wallet.getId());
+            expense.setUser(wallet.getUser());
+            expenseRepository.save(expense);
+        }
+    }
+
+    /** The user's "Balance adjustment" category of this type, created on first use. */
+    private Category adjustmentCategory(Wallet wallet, String type) {
+        QCategory q = QCategory.category1;
+        return categoryRepository.findOne(q.user.eq(wallet.getUser())
+                        .and(q.account.eq(wallet.getAccount()))
+                        .and(q.categoryType.eq(type))
+                        .and(q.category.eq(ADJUSTMENT_CATEGORY)))
+                .orElseGet(() -> {
+                    Category category = new Category();
+                    category.setCategory(ADJUSTMENT_CATEGORY);
+                    category.setCategoryType(type);
+                    category.setIcon("tune");
+                    category.setDescription("Corrections made when editing a balance by hand.");
+                    category.setUser(wallet.getUser());
+                    category.setAccount(wallet.getAccount());
+                    return categoryRepository.save(category);
+                });
     }
 
     private void validate(Wallet wallet) {

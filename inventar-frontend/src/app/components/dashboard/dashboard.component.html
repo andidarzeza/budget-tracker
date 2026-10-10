@@ -39,23 +39,45 @@
                 <span class="glance-card__hint">Bank, cash and projects</span>
             </article>
 
-            <article class="glance-card">
+            <!-- Headline: what has been kept this month so far. -->
+            <article class="glance-card glance-card--hero">
                 <span class="glance-card__label">
                     <mat-icon fontSet="material-symbols-rounded" aria-hidden="true">savings</mat-icon>
-                    Saved in {{ lastMonthName }}
+                    Saved this month
                 </span>
-                @for (b of lastMonthBalances(); track b.currency) {
+                @for (m of monthSavings(); track m.currency) {
                     <span class="glance-card__value"
-                        [class.glance-card__value--positive]="b.net > 0"
-                        [class.glance-card__value--negative]="b.net < 0">
-                        <span [revealNumber]="b.net" revealSigned [revealHidden]="balanceHidden()"></span>
-                        <span class="glance-card__currency">{{ b.currency }}</span>
+                        [class.glance-card__value--positive]="m.net > 0"
+                        [class.glance-card__value--negative]="m.net < 0">
+                        <span [revealNumber]="m.net" revealSigned [revealHidden]="balanceHidden()"></span>
+                        <span class="glance-card__currency">{{ m.currency }}</span>
+                    </span>
+                    @if (m.rate !== null) {
+                        <div class="save-meter" aria-hidden="true">
+                            <span class="save-meter__fill" [class.save-meter__fill--over]="m.net < 0"
+                                [style.width.%]="m.net < 0 ? 100 : (m.rate > 100 ? 100 : m.rate)"></span>
+                        </div>
+                    }
+                    <span class="glance-card__hint">
+                        @if (m.rate === null) {
+                            No income recorded yet this month
+                        } @else if (m.net < 0) {
+                            Spending more than you earned
+                        } @else {
+                            {{ m.rate }}% of your income kept
+                        }
+                        @if (m.vsLastMonth != null && !balanceHidden()) {
+                            <span class="save-delta" [class.save-delta--down]="m.vsLastMonth < 0">
+                                · {{ m.vsLastMonth >= 0 ? '▲' : '▼' }} {{ (m.vsLastMonth < 0 ? -m.vsLastMonth : m.vsLastMonth) | number : '1.0-0' }} vs {{ lastMonthName }}
+                            </span>
+                        }
                     </span>
                 } @empty {
-                    <span class="glance-card__value glance-card__value--empty">Nothing recorded</span>
+                    <span class="glance-card__value glance-card__value--empty">Nothing recorded yet</span>
+                    <span class="glance-card__hint">Income minus expenses, from the 1st</span>
                 }
-                <span class="glance-card__hint">Income minus expenses</span>
             </article>
+
         </section>
 
         <!-- ──── Range tabs + dynamic date picker ──── -->
@@ -96,38 +118,39 @@
             </div>
         </div>
 
-        <!-- ──── KPI cards: per-currency Income / Expense / Net ──── -->
-        @if (balances().length) {
-            <section class="kpi-strip" aria-label="Period totals">
-                @for (b of balances(); track b.currency) {
-                    <article class="kpi-card">
-                        <header class="kpi-card__head">
-                            <span class="kpi-card__flag" aria-hidden="true">{{ b.currency | flag }}</span>
-                            <span class="kpi-card__currency">{{ b.currency }}</span>
-                        </header>
-
-                        <div class="kpi-card__row">
-                            <span class="kpi-card__label">Income</span>
-                            <span class="kpi-card__value kpi-card__value--income">
-                                <span [revealNumber]="b.income"></span>
-                            </span>
-                        </div>
-
-                        <div class="kpi-card__row">
-                            <span class="kpi-card__label">Expense</span>
-                            <span class="kpi-card__value kpi-card__value--expense">
-                                <span [revealNumber]="b.expense"></span>
-                            </span>
-                        </div>
-
-                        <div class="kpi-card__row kpi-card__row--net">
-                            <span class="kpi-card__label">Net</span>
-                            <span class="kpi-card__value"
-                                [class.kpi-card__value--positive]="b.net >= 0"
-                                [class.kpi-card__value--negative]="b.net < 0">
-                                <span [revealNumber]="b.net" revealSigned></span>
-                            </span>
-                        </div>
+        <!-- ──── Period savings (hidden for the current month: the headline
+             above already shows it) ──── -->
+        @if (periodSavings().length && !periodIsThisMonth()) {
+            <section class="glance" aria-label="Saved in this period">
+                @for (b of periodSavings(); track b.currency) {
+                    <!-- Same layout as the glance cards above. -->
+                    <article class="glance-card">
+                        <span class="glance-card__label">
+                            <mat-icon fontSet="material-symbols-rounded" aria-hidden="true">savings</mat-icon>
+                            Saved in this period
+                        </span>
+                        <span class="glance-card__value"
+                            [class.glance-card__value--positive]="b.net > 0"
+                            [class.glance-card__value--negative]="b.net < 0">
+                            <span [revealNumber]="b.net" revealSigned></span>
+                            <span class="glance-card__currency">{{ b.currency }}</span>
+                        </span>
+                        @if (b.rate !== null) {
+                            <div class="save-meter" aria-hidden="true">
+                                <span class="save-meter__fill" [class.save-meter__fill--over]="b.net < 0"
+                                    [style.width.%]="b.net < 0 ? 100 : (b.rate > 100 ? 100 : b.rate)"></span>
+                            </div>
+                        }
+                        <span class="glance-card__hint">
+                            @if (b.rate === null) {
+                                No income in this period
+                            } @else if (b.net < 0) {
+                                Spent more than you earned
+                            } @else {
+                                {{ b.rate }}% of income kept
+                            }
+                            · earned {{ b.income | number : '1.0-0' }}, spent {{ b.expense | number : '1.0-0' }}
+                        </span>
                     </article>
                 }
             </section>
@@ -341,21 +364,22 @@
                     <mat-icon class="balance-card__icon">account_balance_wallet</mat-icon>
                 </span>
                 <h2 class="balance-card__title">My balance</h2>
-                <div class="balance-card__actions">
-                    <button type="button" cb-icon-button
+                <!-- iOS inline toolbar: tinted glyphs in one grey capsule. -->
+                <div class="balance-card__actions" role="toolbar" aria-label="Balance actions">
+                    <button type="button" class="bc-tool"
                         (click)="toggleBalanceVisibility()"
                         [matTooltip]="balanceHidden() ? 'Show balance' : 'Hide balance'"
                         matTooltipPosition="below"
                         [attr.aria-label]="balanceHidden() ? 'Show balance' : 'Hide balance'">
-                        <mat-icon>{{ balanceHidden() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        <mat-icon fontSet="material-symbols-rounded">{{ balanceHidden() ? 'visibility_off' : 'visibility' }}</mat-icon>
                     </button>
-                    <button type="button" cb-icon-button (click)="openTransfer()"
+                    <button type="button" class="bc-tool" (click)="openTransfer()"
                         matTooltip="Move money" matTooltipPosition="below" aria-label="Move money between sources">
-                        <mat-icon>swap_horiz</mat-icon>
+                        <mat-icon fontSet="material-symbols-rounded">swap_horiz</mat-icon>
                     </button>
-                    <button type="button" cb-icon-button (click)="openManageSources()"
+                    <button type="button" class="bc-tool" (click)="openManageSources()"
                         matTooltip="Manage sources" matTooltipPosition="below" aria-label="Manage sources">
-                        <mat-icon>tune</mat-icon>
+                        <mat-icon fontSet="material-symbols-rounded">tune</mat-icon>
                     </button>
                 </div>
             </header>

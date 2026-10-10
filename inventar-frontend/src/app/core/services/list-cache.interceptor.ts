@@ -4,8 +4,9 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ListCacheService } from './list-cache.service';
 
-/** Writes to these change what the cached Expenses / Incomes pages show. */
-const TRACKED = /\/api\/(expense|income|categories)(\/|\?|$)/;
+/** Writes to these change what the cached Expenses / Incomes pages show
+ *  (a wallet balance edit books the difference as an income / expense). */
+const TRACKED = /\/api\/(expense|income|categories|wallets)(\/|\?|$)/;
 
 /**
  * After a successful add / edit / delete of an expense, income or category

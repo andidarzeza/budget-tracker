@@ -67,6 +67,7 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
     description: ['', Validators.required],
     icon: ['', Validators.required],
     categoryType: ['', Validators.required],
+    defaultAmount: [null as number | null, Validators.min(0)],
   });
 
   constructor(
@@ -105,6 +106,7 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
         this.data.description = this.description.value;
         this.data.icon = this.icon.value;
         this.data.categoryType = this.categoryType.value;
+        this.data.defaultAmount = this.defaultAmountValue();
         const payload = this.data;
         payload.account = this.accountService.getAccount();
         this.savingEntity = true;
@@ -115,7 +117,7 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
       } else if (!this.savingEntity) {
         this.loadingMessage = 'Saving…';
         this.loadingData = true;
-        const payload = this.categoryGroup.value;
+        const payload = { ...this.categoryGroup.value, defaultAmount: this.defaultAmountValue() };
         payload.account = this.accountService.getAccount();
         this.savingEntity = true;
         this.categoriesService
@@ -159,6 +161,12 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
 
   get icon() {
     return this.categoryGroup.controls['icon'];
+  }
+
+  /** Blank or 0 means "no default". */
+  private defaultAmountValue(): number | null {
+    const value = Number(this.categoryGroup.controls['defaultAmount'].value);
+    return Number.isFinite(value) && value > 0 ? value : null;
   }
 
   get categoryType() {

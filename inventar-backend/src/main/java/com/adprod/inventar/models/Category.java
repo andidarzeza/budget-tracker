@@ -23,6 +23,8 @@ public class Category {
     private LocalDateTime lastModifiedDate = LocalDateTime.now();
     private String description;
     private String categoryType;
+    /** Optional amount pre-filled when this category is picked (repeat expenses, salary). */
+    private Double defaultAmount;
     private String user;
     private String account;
 }

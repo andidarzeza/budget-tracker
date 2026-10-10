@@ -97,6 +97,9 @@
                     placeholder="0.00"
                     [control]="$any(formGroup.get('balance'))">
                 </cb-labeled-form-input>
+                @if (editing()?.id) {
+                    <p class="ios-group-footer">Changing the balance records the difference as an income (if it went up) or an expense (if it went down), under "Balance adjustment".</p>
+                }
             </form>
         </ng-template>
     </div>
