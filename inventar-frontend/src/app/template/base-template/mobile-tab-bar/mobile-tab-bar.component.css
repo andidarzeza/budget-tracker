@@ -14,7 +14,10 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
+    /* `100% - 100dvh` is 0 normally. In the iOS home-screen app the fixed
+       viewport (`100%`) can come out shorter than the screen (`100dvh`),
+       which lifted the bar off the bottom; this puts it back on the edge. */
+    bottom: calc(100% - 100dvh);
     z-index: 15;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -146,6 +149,7 @@
 .more-backdrop {
     position: fixed;
     inset: 0;
+    bottom: calc(100% - 100lvh); /* down to the screen edge, under Safari's toolbar too */
     /* Over the dock, so a tap on the bar just closes the popup. */
     z-index: 16;
     background: rgba(0, 0, 0, 0.12);
@@ -157,7 +161,7 @@
     position: fixed;
     z-index: 17;
     right: calc(16px + var(--app-tab-bar-height) + 10px);
-    bottom: calc(var(--app-tab-bar-height) + max(10px, env(safe-area-inset-bottom, 0px)) + 10px);
+    bottom: calc(100% - 100dvh + var(--app-tab-bar-height) + max(10px, env(safe-area-inset-bottom, 0px)) + 10px);
     width: min(260px, calc(100vw - 32px));
     display: flex;
     flex-direction: column;

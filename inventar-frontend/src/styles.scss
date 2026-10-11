@@ -58,9 +58,14 @@ body {
 @media only screen and (max-width: 767px) {
     /* Phones scroll inside the shell's content box, never the document
        (see base-template.component.css). */
+    /* `100lvh`, not `100%`: the page box must reach the bottom edge of the
+       screen. In Safari the bottom toolbar floats over the page and content
+       should show through beneath it; in the home-screen app `100%` came out
+       ~one status bar short. `lvh` is the full height in both. */
     html,
     body {
         height: 100%;
+        height: 100lvh;
         overflow: hidden;
     }
 

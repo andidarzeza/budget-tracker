@@ -55,6 +55,10 @@
     min-height: 0;
     height: auto;
     border-radius: 0;
+    /* Vertical only: anything briefly wider than the box (the tab-switch
+       slide, a pull-to-refresh frame) would otherwise flash a horizontal
+       scrollbar. */
+    overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     background: var(--app-bg);
@@ -82,13 +86,8 @@
    delivers a tap on it even while a list is still momentum-scrolling (with
    document scrolling, that tap only stopped the scroll). */
 @media only screen and (max-width: 767px) {
-    /* Pinned to all four edges rather than `height: 100dvh`: in the iOS home-
-       screen app, `dvh` / `100%` stop short of the home-indicator strip and
-       the body showed through below the page. `inset: 0` is exact. */
     .application-container {
-        position: fixed;
-        inset: 0;
-        height: auto;
+        height: 100%;
         overflow: hidden;
     }
 
@@ -106,6 +105,13 @@
        as in iOS, instead of the shell reserving that space. */
     .application:has(nav-bar .toolbar) {
         padding-top: 0;
+    }
+
+    /* The page runs on under Safari's floating toolbar (`lvh - dvh` tall
+       while it shows; 0 in the home-screen app): add that much room so the
+       last rows still scroll clear of both bars. */
+    .content-container--tab-bar {
+        padding-bottom: calc(var(--app-tab-bar-height) + max(10px, env(safe-area-inset-bottom, 0px)) + 24px + 100lvh - 100dvh);
     }
 
     .application:has(nav-bar .toolbar) > .content-container {
