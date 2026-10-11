@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, NgZone, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -20,7 +21,7 @@ import { environment } from 'src/environments/environment';
   selector: 'nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css'],
-  imports: [CommonModule, MatDividerModule, MatIconModule, MatMenuModule],
+  imports: [HapticTapDirective, CommonModule, MatDividerModule, MatIconModule, MatMenuModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavBarComponent implements OnInit {

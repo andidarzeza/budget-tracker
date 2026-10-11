@@ -6,14 +6,19 @@
     <div class="more-menu" role="menu" aria-label="More pages">
         <div class="more-menu__list">
             @for (item of moreItems; track item.link; let i = $index) {
-                <a class="more-menu__item" hapticTap role="menuitem" [routerLink]="item.link"
+                <!-- A button, not a routerLink: RouterLink cancels the click's
+                     default action, which would also cancel the haptic overlay's
+                     hand-off to its switch (iOS haptic). -->
+                <button type="button" class="more-menu__item" hapticTap role="menuitem"
                     [class.more-menu__item--slide]="menuSlideIndex() === i"
-                    routerLinkActive="more-menu__item--active" (click)="moreOpen.set(false)">
+                    [class.more-menu__item--active]="isOnPage(item.link)"
+                    [attr.aria-current]="isOnPage(item.link) ? 'page' : null"
+                    (click)="goToMorePage(item.link)">
                     <span class="more-menu__icon" [style.background]="item.color" aria-hidden="true">
                         <mat-icon fontSet="material-symbols-rounded">{{ item.icon }}</mat-icon>
                     </span>
                     <span class="more-menu__label">{{ item.label }}</span>
-                </a>
+                </button>
             }
         </div>
         <div class="more-menu__theme">

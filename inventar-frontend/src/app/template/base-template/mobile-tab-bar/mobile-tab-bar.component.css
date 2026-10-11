@@ -184,6 +184,12 @@
 .more-menu__item {
     position: relative;
     display: flex;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    cursor: pointer;
     align-items: center;
     gap: 12px;
     min-height: 46px;

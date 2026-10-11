@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, AfterViewInit, Component, DestroyRef, ElementR
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
 
 interface TabItem {
@@ -31,7 +31,7 @@ interface MoreItem {
   selector: 'mobile-tab-bar',
   templateUrl: './mobile-tab-bar.component.html',
   styleUrls: ['./mobile-tab-bar.component.css'],
-  imports: [HapticTapDirective, PinkToggleComponent, MatIconModule, RouterLink, RouterLinkActive, ThemeSwitchComponent],
+  imports: [HapticTapDirective, PinkToggleComponent, MatIconModule, ThemeSwitchComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileTabBarComponent implements AfterViewInit {
@@ -95,6 +95,17 @@ export class MobileTabBarComponent implements AfterViewInit {
     { label: 'History', icon: 'history', link: '/history', color: '#5856d6' },
     { label: 'Settings', icon: 'settings', link: '/settings', color: '#8e8e93' },
   ];
+
+  /** Current page is `link` or one of its sub-pages. */
+  isOnPage(link: string): boolean {
+    const path = this.path();
+    return path === link || path.startsWith(link + '/');
+  }
+
+  goToMorePage(link: string): void {
+    this.closeAll();
+    this.router.navigate([link]);
+  }
 
   /** Highlights "More" while one of its pages is showing. */
   get onMorePage(): boolean {
