@@ -1,8 +1,8 @@
-<div [@routeAnimations]="prepareRoute()" class="application-container">
+<div class="application-container">
 
     <!-- Desktop only: phones navigate with the bottom tab bar and its More popup. -->
     @if (authenticationService.currentUserValue && sideBarService.displaySidebar && !sideBarService.hiddenByUrl() && !mobileCardLayout()) {
-        <side-bar [navigation]="navigation" [sideBarMode]="sideBarMode"></side-bar>
+        <side-bar [navigation]="navigation()" [sideBarMode]="sideBarMode"></side-bar>
     }
 
     <div class="application" id="application-body"

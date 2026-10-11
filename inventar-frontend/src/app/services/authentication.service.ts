@@ -1,3 +1,4 @@
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
@@ -44,8 +45,12 @@ export class AuthenticationService implements OnDestroy {
     this.clearExpiryTimer();
   }
 
+  /** Mirrors `currentUserSubject` as a signal, so templates that read the
+   *  signed-in user re-render on sign-in / sign-out (no zone.js). */
+  private readonly currentUserSignal = toSignal(this.currentUserSubject, { requireSync: true });
+
   get currentUserValue(): User {
-    return this.currentUserSubject.value;
+    return this.currentUserSignal();
   }
 
   /** Returns the stored token if it's still valid; null otherwise. */

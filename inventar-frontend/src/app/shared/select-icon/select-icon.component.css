@@ -410,3 +410,20 @@
         height: 44px;
     }
 }
+
+/* Sheet in / out (animate.enter / animate.leave): rises from the bottom. */
+.icon-select.icon-sheet-in {
+    animation: icon-sheet-in 0.32s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.icon-select.icon-sheet-out {
+    animation: icon-sheet-out 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+@keyframes icon-sheet-in {
+    from { opacity: 0; transform: translateY(40px); }
+}
+
+@keyframes icon-sheet-out {
+    to { opacity: 0; transform: translateY(40px); }
+}

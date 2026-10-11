@@ -1,5 +1,4 @@
-import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -8,14 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './table-message.component.html',
   styleUrls: ['./table-message.component.css'],
   imports: [CommonModule, MatIconModule],
-  animations: [
-    trigger('inOutAnimation', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('250ms ease-out', style({ opacity: 1 })),
-      ]),
-    ]),
-  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableMessageComponent {
   @Input() total: number;

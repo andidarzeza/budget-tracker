@@ -1,3 +1,4 @@
+import { trackById, trackByValue } from 'src/app/utils/track';
 import { groupCategoriesByUsage } from 'src/app/utils/category-groups';
 import { prefillDefaultAmount } from 'src/app/utils/default-amount';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
@@ -76,6 +77,8 @@ interface AddExpenseDialogData {
   ],
 })
 export class AddExpenseComponent implements OnInit {
+  readonly trackById = trackById;
+  readonly trackByValue = trackByValue;
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly breakpointService = inject(BreakpointService);
   private readonly flagPipe = inject(FlagPipe);

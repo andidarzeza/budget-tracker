@@ -1,12 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  inject,
-  OnInit,
-  Output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -28,6 +21,7 @@ const STORAGE_KEY = 'dashboard.customRange';
     MatIconModule,
     MatNativeDateModule,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomRangePickerComponent implements OnInit {
   private readonly breakpointService = inject(BreakpointService);

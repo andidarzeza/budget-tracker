@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { inOutAnimation } from 'src/app/animations';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'form-spinner',
   templateUrl: './form-spinner.component.html',
   styleUrls: ['./form-spinner.component.css'],
   imports: [CommonModule],
-  animations: [inOutAnimation],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormSpinnerComponent {
   @Input() loadingData: boolean;

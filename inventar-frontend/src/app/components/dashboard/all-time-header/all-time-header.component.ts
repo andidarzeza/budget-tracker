@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './all-time-header.component.html',
   styleUrls: ['./all-time-header.component.css'],
   imports: [MatIconModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllTimeHeaderComponent implements OnInit {
   /** "All time" really means "everything". Anchor `from` far enough in the

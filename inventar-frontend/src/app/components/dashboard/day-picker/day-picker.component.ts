@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -26,6 +26,7 @@ import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imp
     IconButtonComponent,
     ...TOOLTIP_IMPORTS,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DayPickerComponent implements OnInit {
   private readonly breakpointService = inject(BreakpointService);

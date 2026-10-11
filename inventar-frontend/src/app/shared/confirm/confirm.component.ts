@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,6 +11,7 @@ import { TOOLTIP_IMPORTS } from '../tooltip-mobile-guard/tooltip-imports';
   templateUrl: './confirm.component.html',
   styleUrls: ['./confirm.component.css'],
   imports: [MatButtonModule, MatIconModule, IconButtonComponent, PillButtonComponent, ...TOOLTIP_IMPORTS],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmComponent {
   readonly dialogRef = inject<MatDialogRef<ConfirmComponent>>(MatDialogRef);

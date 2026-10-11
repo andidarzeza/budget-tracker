@@ -1,9 +1,9 @@
 import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, Routes, withInMemoryScrolling, withViewTransitions } from '@angular/router';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { PreloadAllModules, provideRouter, Routes, withInMemoryScrolling, withPreloading, withViewTransitions } from '@angular/router';
 import { provideToastr } from 'ngx-toastr';
 import { onPageTransition, usePageViewTransitions } from './utils/page-transitions';
 import { AuthGuardService } from './services/auth-guard.service';
@@ -91,16 +91,25 @@ const routes: Routes = [
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // Zoneless: no zone.js patching every timer, promise and event. Angular
+    // re-renders only what signals, template events or markForCheck() flag
+    // (every component is OnPush).
+    provideZonelessChangeDetection(),
     // New pages open at the top (no jump from the previous page's scroll);
     // going back restores where you were in the list.
     provideRouter(
       routes,
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+      // Download every page's code in the background after start-up, so the
+      // first tap on a tab never waits for its chunk.
+      withPreloading(PreloadAllModules),
       // Phones: pages slide in from their side, like the dashboard tabs (see
       // utils/page-transitions). Desktop uses a plain CSS fade instead.
       ...(usePageViewTransitions() ? [withViewTransitions({ onViewTransitionCreated: onPageTransition })] : []),
     ),
-    provideAnimations(),
+    // The animations engine is loaded after the first render instead of in
+    // the start-up bundle.
+    provideAnimationsAsync(),
     provideHttpClient(withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,

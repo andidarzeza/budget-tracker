@@ -1,4 +1,4 @@
-import { animate, style, transition, trigger } from '@angular/animations';
+import { trackById } from 'src/app/utils/track';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -25,15 +25,10 @@ import { SideBarService } from 'src/app/services/side-bar.service';
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('inOutAnimation', [
-      transition(':enter', [style({ opacity: 0 }), animate('400ms ease-out', style({ opacity: 1 }))]),
-      transition(':leave', [style({ opacity: 1 }), animate('400ms ease-in', style({ opacity: 0 }))]),
-    ]),
-  ],
   imports: [CommonModule, MatButtonModule, MatCardModule, MatRippleModule],
 })
 export class AccountComponent implements OnInit {
+  readonly trackById = trackById;
   readonly accountService = inject(AccountService);
   readonly sideBarService = inject(SideBarService);
   readonly navBarService = inject(NavBarService);

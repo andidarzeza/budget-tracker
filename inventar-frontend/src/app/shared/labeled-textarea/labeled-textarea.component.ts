@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ControlRefresher } from 'src/app/utils/control-refresh';
+import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 /**
@@ -22,6 +23,9 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 })
 export class LabeledTextareaComponent {
   readonly control = input.required<FormControl<string | null>>();
+  /** Re-render when the control changes from outside (patched value, submit). */
+  private readonly refresher = new ControlRefresher();
+  private readonly watchControl = effect(() => this.refresher.watch(this.control()));
   readonly label = input<string>('Label');
   readonly placeholder = input<string>('');
   readonly inputId = input<string>('labeled-textarea');

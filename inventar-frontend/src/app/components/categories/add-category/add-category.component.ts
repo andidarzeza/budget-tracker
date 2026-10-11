@@ -1,6 +1,6 @@
 import { leaveFormPage } from 'src/app/utils/page-transitions';
 import { CommonModule, Location } from '@angular/common';
-import { AfterViewInit, Component, DestroyRef, Inject, inject, OnInit, Optional } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, Inject, OnInit, Optional, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -39,6 +39,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     SelectIconComponent,
     ...TOOLTIP_IMPORTS,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddCategoryComponent implements OnInit, AfterViewInit {
   readonly sharedService = inject(SharedService);
@@ -53,9 +54,10 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
   private readonly location = inject(Location);
   private readonly destroyRef = inject(DestroyRef);
 
-  loadingData = false;
-  loadingMessage = 'Please wait…';
-  savingEntity = false;
+  // Signals: they change after requests / timers, and the app is zoneless.
+  readonly loadingData = signal(false);
+  readonly loadingMessage = signal('Please wait…');
+  readonly savingEntity = signal(false);
   entity: EntityType = EntityType.CATEGORY;
   readonly isEditMode: boolean;
   readonly isPageMode: boolean;
@@ -91,17 +93,17 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     if (!this.isEditMode) return;
     setTimeout(() => {
-      this.loadingMessage = 'Loading…';
-      this.loadingData = true;
+      this.loadingMessage.set('Loading…');
+      this.loadingData.set(true);
       this.getCategory().subscribe();
     }, 0);
   }
 
   add(): void {
-    if (this.categoryGroup.valid && !this.savingEntity) {
+    if (this.categoryGroup.valid && !this.savingEntity()) {
       if (this.isEditMode) {
-        this.loadingMessage = 'Saving…';
-        this.loadingData = true;
+        this.loadingMessage.set('Saving…');
+        this.loadingData.set(true);
         this.data.category = this.category.value;
         this.data.description = this.description.value;
         this.data.icon = this.icon.value;
@@ -109,17 +111,17 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
         this.data.defaultAmount = this.defaultAmountValue();
         const payload = this.data;
         payload.account = this.accountService.getAccount();
-        this.savingEntity = true;
+        this.savingEntity.set(true);
         this.categoriesService
           .update(payload.id, payload)
           .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
           .subscribe(() => this.onSaveSuccess('Category Updated with Success'));
-      } else if (!this.savingEntity) {
-        this.loadingMessage = 'Saving…';
-        this.loadingData = true;
+      } else if (!this.savingEntity()) {
+        this.loadingMessage.set('Saving…');
+        this.loadingData.set(true);
         const payload = { ...this.categoryGroup.value, defaultAmount: this.defaultAmountValue() };
         payload.account = this.accountService.getAccount();
-        this.savingEntity = true;
+        this.savingEntity.set(true);
         this.categoriesService
           .save(payload)
           .pipe(takeUntilDestroyed(this.destroyRef), observeOn(asyncScheduler))
@@ -133,8 +135,8 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
 
   onSaveSuccess(message: string): void {
     this.closeDialog(true);
-    this.savingEntity = false;
-    this.loadingData = false;
+    this.savingEntity.set(false);
+    this.loadingData.set(false);
     this.toaster.success(message, 'Success', TOASTER_CONFIGURATION);
   }
 
@@ -184,7 +186,7 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
         this.data = { ...this.data, ...category };
         this.categoryGroup.patchValue(category);
       }),
-      map(() => (this.loadingData = false)),
+      map(() => this.loadingData.set(false)),
     );
   }
 }

@@ -1,3 +1,4 @@
+import { trackById } from 'src/app/utils/track';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -46,6 +47,7 @@ interface ManageWalletsData {
   ],
 })
 export class ManageWalletsComponent {
+  readonly trackById = trackById;
   readonly data = inject<ManageWalletsData>(MAT_DIALOG_DATA);
   private readonly formBuilder = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<ManageWalletsComponent>);

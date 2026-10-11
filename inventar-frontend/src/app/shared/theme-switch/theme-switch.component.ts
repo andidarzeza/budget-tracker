@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ThemeMode, ThemeService } from 'src/app/services/theme.service';
 
@@ -43,6 +43,7 @@ import { ThemeMode, ThemeService } from 'src/app/services/theme.service';
     button.active { background: var(--ios-seg-thumb); font-weight: 600; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04); }
     mat-icon { width: 13px; height: 13px; font-size: 13px; line-height: 13px; }
   `],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeSwitchComponent {
   readonly themeService = inject(ThemeService);

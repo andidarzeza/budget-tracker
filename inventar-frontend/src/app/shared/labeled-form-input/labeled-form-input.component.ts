@@ -1,3 +1,4 @@
+import { ControlRefresher } from 'src/app/utils/control-refresh';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +13,17 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class LabeledFormInputComponent {
   /** Form control to bind; value stays in sync when user types or when parent updates the control. */
-  @Input({ required: true }) control!: FormControl<string | number | null>;
+  /** Re-render when the control changes from outside (patched value, submit). */
+  private readonly refresher = new ControlRefresher();
+  private _control!: FormControl<string | number | null>;
+  @Input({ required: true })
+  set control(control: FormControl<string | number | null>) {
+    this._control = control;
+    this.refresher.watch(control);
+  }
+  get control(): FormControl<string | number | null> {
+    return this._control;
+  }
   /** Optional explicit input id. */
   @Input() inputId = '';
   @Input() label = 'Label';

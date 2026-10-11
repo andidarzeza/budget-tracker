@@ -3210,3 +3210,32 @@ app-dashboard .control-bar__picker .dash-picker [cb-icon-button]:active {
 .animate-height {
     overflow: hidden;
 }
+
+/* Enter / leave fades for `animate.enter` / `animate.leave` (Angular's
+   built-in element animations — no animation engine, work zoneless). */
+.anim-fade-in {
+    animation: anim-fade-in 0.2s ease-out both;
+}
+
+.anim-fade-out {
+    animation: anim-fade-out 0.16s ease-in both;
+}
+
+@keyframes anim-fade-in {
+    from { opacity: 0; }
+}
+
+@keyframes anim-fade-out {
+    to { opacity: 0; }
+}
+
+/* Reduce Motion: keep enter / leave practically instant (the animation still
+   runs, so `animate.leave` still removes the element right away). */
+@media (prefers-reduced-motion: reduce) {
+    .anim-fade-in,
+    .anim-fade-out,
+    .icon-sheet-in,
+    .icon-sheet-out {
+        animation-duration: 1ms !important;
+    }
+}

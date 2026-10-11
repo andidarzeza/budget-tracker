@@ -1,3 +1,4 @@
+import { trackByColumn } from 'src/app/utils/track';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -12,6 +13,7 @@ import { ColumnWidthPipe } from '../column-width/column-width.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableHeaderComponent {
+  readonly trackByColumn = trackByColumn;
   readonly breakpointService = inject(BreakpointService);
 
   @Input() columnDefinitions: ColumnDefinition[];

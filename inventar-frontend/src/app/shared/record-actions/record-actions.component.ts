@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,6 +11,7 @@ import { TOOLTIP_IMPORTS } from '../tooltip-mobile-guard/tooltip-imports';
   templateUrl: './record-actions.component.html',
   styleUrls: ['./record-actions.component.css'],
   imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecordActionsComponent {
   @Output() openEditForm = new EventEmitter<void>();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 /**
@@ -14,5 +14,6 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './auth-visual.component.html',
   styleUrls: ['./auth-visual.component.css'],
   imports: [MatIconModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthVisualComponent {}

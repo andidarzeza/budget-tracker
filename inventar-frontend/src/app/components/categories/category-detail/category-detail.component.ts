@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  DestroyRef,
-  EventEmitter,
-  inject,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -23,8 +15,11 @@ import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imp
   templateUrl: './category-detail.component.html',
   styleUrls: ['./category-detail.component.css'],
   imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryDetailComponent implements OnInit {
+  /** OnPush + zoneless: re-render once the record has loaded. */
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly categoriesService = inject(CategoriesService);
   readonly sharedService = inject(SharedService);
   private readonly destroyRef = inject(DestroyRef);
@@ -38,7 +33,10 @@ export class CategoryDetailComponent implements OnInit {
     this.categoriesService
       .findOne(this.categoryId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((category: Category) => (this.category = category));
+      .subscribe((category: Category) => {
+        this.category = category;
+        this.cdr.markForCheck();
+      });
   }
 
   closeDrawer(): void {

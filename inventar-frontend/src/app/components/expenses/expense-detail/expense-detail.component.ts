@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,8 +17,11 @@ import { Unsubscribe } from 'src/app/shared/unsubscribe';
   templateUrl: './expense-detail.component.html',
   styleUrls: ['./expense-detail.component.css'],
   imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpenseDetailComponent extends Unsubscribe implements OnInit, OnChanges, OnDestroy {
+  /** OnPush + zoneless: re-render once the record has loaded. */
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly expenseService = inject(ExpenseService);
   readonly sharedService = inject(SharedService);
   private readonly categoryService = inject(CategoriesService);
@@ -45,10 +48,14 @@ export class ExpenseDetailComponent extends Unsubscribe implements OnInit, OnCha
         takeUntil(this.unsubscribe$),
         mergeMap((expense: Expense) => {
           this.expense = expense;
+          this.cdr.markForCheck();
           return this.categoryService.findOne(this.expense.categoryID);
         }),
       )
-      .subscribe((category: Category) => (this.expenseCategory = category));
+      .subscribe((category: Category) => {
+        this.expenseCategory = category;
+        this.cdr.markForCheck();
+      });
   }
 
   closeDrawer(): void {

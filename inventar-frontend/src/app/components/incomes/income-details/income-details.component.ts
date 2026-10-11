@@ -1,16 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  DestroyRef,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -28,8 +17,11 @@ import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imp
   templateUrl: './income-details.component.html',
   styleUrls: ['./income-details.component.css'],
   imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
+  /** OnPush + zoneless: re-render once the record has loaded. */
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly incomeService = inject(IncomeService);
   readonly sharedService = inject(SharedService);
   private readonly categoryService = inject(CategoriesService);
@@ -91,9 +83,13 @@ export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {
         takeUntilDestroyed(this.destroyRef),
         mergeMap((incomeResponse: Income) => {
           this.income = incomeResponse;
+          this.cdr.markForCheck();
           return this.categoryService.findOne(this.income.categoryID);
         }),
       )
-      .subscribe((category: Category) => (this.incomeCategory = category));
+      .subscribe((category: Category) => {
+        this.incomeCategory = category;
+        this.cdr.markForCheck();
+      });
   }
 }

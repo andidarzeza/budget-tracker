@@ -1,7 +1,7 @@
 import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
-import { AfterViewInit, Component, DestroyRef, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs/operators';
+import { ChangeDetectionStrategy, AfterViewInit, Component, DestroyRef, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
@@ -30,11 +30,21 @@ interface MoreItem {
   templateUrl: './mobile-tab-bar.component.html',
   styleUrls: ['./mobile-tab-bar.component.css'],
   imports: [PinkToggleComponent, MatIconModule, RouterLink, RouterLinkActive, ThemeSwitchComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileTabBarComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Current path as a signal, so the active tab re-renders after navigation. */
+  private readonly path = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects.split(/[?#]/)[0]),
+    ),
+    { initialValue: this.router.url.split(/[?#]/)[0] },
+  );
 
   /** The "More" popup that floats above its tab. */
   readonly moreOpen = signal(false);
@@ -85,7 +95,7 @@ export class MobileTabBarComponent implements AfterViewInit {
 
   /** Highlights "More" while one of its pages is showing. */
   get onMorePage(): boolean {
-    const path = this.router.url.split(/[?#]/)[0];
+    const path = this.path();
     return this.moreItems.some((i) => path === i.link || path.startsWith(i.link + '/'));
   }
 
@@ -96,7 +106,7 @@ export class MobileTabBarComponent implements AfterViewInit {
   }
 
   isActive(tab: TabItem): boolean {
-    const path = this.router.url.split(/[?#]/)[0];
+    const path = this.path();
     return path === tab.link;
   }
 

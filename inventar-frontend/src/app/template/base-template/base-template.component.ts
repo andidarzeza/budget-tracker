@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { inOutAnimation, slider } from 'src/app/animations';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
@@ -22,7 +21,7 @@ import { MenuItem, SideBarMode } from './base-template.models';
   templateUrl: './base-template.component.html',
   styleUrls: ['./base-template.component.css'],
   imports: [CommonModule, NavBarComponent, SideBarComponent, MobileTabBarComponent],
-  animations: [inOutAnimation, slider],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BaseTemplateComponent implements OnInit {
   readonly authenticationService = inject(AuthenticationService);
@@ -44,7 +43,7 @@ export class BaseTemplateComponent implements OnInit {
   /** Full-screen form pages (`…/add`, `…/:id/edit`) have their own bars. */
   readonly onCreatePage = signal(false);
 
-  navigation: MenuItem[];
+  readonly navigation = signal<MenuItem[]>([]);
   sideBarMode: SideBarMode = 'side';
 
   ngOnInit(): void {
@@ -95,7 +94,7 @@ export class BaseTemplateComponent implements OnInit {
     this.http
       .get<MenuItem[]>('assets/navigation.json')
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => (this.navigation = data));
+      .subscribe((data) => this.navigation.set(data ?? []));
   }
 
   toggleSidebar(): void {

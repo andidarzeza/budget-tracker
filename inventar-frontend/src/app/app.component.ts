@@ -1,6 +1,6 @@
 import { PushNotificationService } from './services/push-notification.service';
 import { ListCacheService } from './core/services/list-cache.service';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet } from '@angular/router';
 import { IConfiguration } from './models/models';
@@ -16,6 +16,7 @@ import { BaseTemplateComponent } from './template/base-template/base-template.co
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   imports: [RouterOutlet, BaseTemplateComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
   readonly authenticationService = inject(AuthenticationService);

@@ -1,3 +1,4 @@
+import { trackByColumn, trackById } from 'src/app/utils/track';
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
@@ -21,7 +22,6 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { inOutAnimation } from 'src/app/animations';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinition } from 'src/app/models/models';
 import { CustomDatePipe } from 'src/app/pipes/custom-date.pipe';
@@ -47,10 +47,11 @@ import { TOOLTIP_IMPORTS } from '../../tooltip-mobile-guard/tooltip-imports';
     RecordActionsComponent,
     ...TOOLTIP_IMPORTS,
   ],
-  animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableBodyComponent implements AfterViewInit, OnChanges, OnDestroy {
+  readonly trackByColumn = trackByColumn;
+  readonly trackById = trackById;
   readonly breakpointService = inject(BreakpointService);
   private readonly cdr = inject(ChangeDetectorRef);
 

@@ -11,7 +11,15 @@ const SIDEBAR_RAIL_WIDTH = 76;
 export class SideBarService {
   public isOpened = false;
   public sidebarWidth = 272;
-  public displaySidebar = false;
+  // Signal-backed so the shell re-renders when a page shows / hides the
+  // sidebar (the app runs without zone.js).
+  private readonly sidebarVisible = signal(false);
+  get displaySidebar(): boolean {
+    return this.sidebarVisible();
+  }
+  set displaySidebar(value: boolean) {
+    this.sidebarVisible.set(value);
+  }
   /** Set from the `?hideSidebar` URL key — hides the sidebar (and the mobile menu bar) on any page. */
   readonly hiddenByUrl = signal(false);
   /** When false, width expand/collapse is handled by mobile drawer CSS only. */

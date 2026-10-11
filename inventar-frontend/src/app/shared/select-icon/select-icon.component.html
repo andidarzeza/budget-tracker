@@ -22,10 +22,10 @@
 </div>
 
 @if (showIconSelect()) {
-    <div class="icon-select-backdrop" [@fadeAnimation] (click)="close()"></div>
+    <div class="icon-select-backdrop" animate.enter="anim-fade-in" animate.leave="anim-fade-out" (click)="close()"></div>
 
     <!-- iOS sheet, like the Reminders / Shortcuts glyph picker. -->
-    <div [@panelAnimation] class="icon-select" role="dialog" aria-modal="true" aria-label="Choose an icon">
+    <div animate.enter="icon-sheet-in" animate.leave="icon-sheet-out" class="icon-select" role="dialog" aria-modal="true" aria-label="Choose an icon">
         <header class="icon-select__bar">
             <button type="button" class="icon-select__cancel" (click)="close()">Cancel</button>
             <h2 class="icon-select__title">{{ label }}</h2>

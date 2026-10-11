@@ -4,7 +4,13 @@ import {
   inject, OnDestroy, OnInit, signal, untracked, viewChild,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Chart, registerables } from 'chart.js';
+import {
+  CategoryScale, Chart, Filler, LinearScale, LineController, LineElement, PointElement, Tooltip,
+} from 'chart.js';
+
+// Only what the rate chart uses (a filled line with tooltips), so the rest of
+// Chart.js — other chart types, scales and plugins — stays out of the bundle.
+Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip);
 import { ToastrService } from 'ngx-toastr';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ExchangeRate, ExchangeRateService } from 'src/app/services/pages/exchange-rate.service';
@@ -96,7 +102,6 @@ export class ExchangeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    Chart.register(...registerables);
     const el = this.canvas()?.nativeElement;
     if (!el) return;
     this.chart = new Chart(el, {

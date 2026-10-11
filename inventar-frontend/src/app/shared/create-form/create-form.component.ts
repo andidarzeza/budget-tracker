@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { inOutAnimation } from 'src/app/animations';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { EntityType } from 'src/app/models/models';
 import { CreateHeaderComponent } from './create-header/create-header.component';
 import { FormSpinnerComponent } from './form-spinner/form-spinner.component';
@@ -10,7 +9,7 @@ import { FormSpinnerComponent } from './form-spinner/form-spinner.component';
   templateUrl: './create-form.component.html',
   styleUrls: ['./create-form.component.css'],
   imports: [CommonModule, CreateHeaderComponent, FormSpinnerComponent],
-  animations: [inOutAnimation],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateFormComponent {
   @Input() icon: string;

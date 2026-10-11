@@ -1,13 +1,5 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  Input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,21 +28,6 @@ import { TOOLTIP_IMPORTS } from '../tooltip-mobile-guard/tooltip-imports';
     ...TOOLTIP_IMPORTS,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('panelAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(40px)' }),
-        animate('320ms cubic-bezier(0.32, 0.72, 0, 1)', style({ opacity: 1, transform: 'none' })),
-      ]),
-      transition(':leave', [
-        animate('220ms cubic-bezier(0.32, 0.72, 0, 1)', style({ opacity: 0, transform: 'translateY(40px)' })),
-      ]),
-    ]),
-    trigger('fadeAnimation', [
-      transition(':enter', [style({ opacity: 0 }), animate('200ms ease-out', style({ opacity: 1 }))]),
-      transition(':leave', [animate('160ms ease-in', style({ opacity: 0 }))]),
-    ]),
-  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -180,8 +157,13 @@ export class SelectIconComponent implements ControlValueAccessor {
   onChange: (value: string) => void = () => {};
   onTouched: () => void = () => {};
 
+  // CVA hooks run outside this view's events (form patched after a request),
+  // so re-render explicitly — this component is OnPush.
+  private readonly cdr = inject(ChangeDetectorRef);
+
   writeValue(obj: any): void {
     this.value = obj;
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: any): void {
@@ -194,6 +176,7 @@ export class SelectIconComponent implements ControlValueAccessor {
 
   setDisabledState?(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   /** Clicking the label or row padding opens the picker (the button itself already does). */

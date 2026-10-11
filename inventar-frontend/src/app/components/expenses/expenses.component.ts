@@ -16,7 +16,6 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { ExpenseDetailComponent } from './expense-detail/expense-detail.component';
-import { QrScannerDialogComponent } from './qr-scanner-dialog/qr-scanner-dialog.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
 import { Category, CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
@@ -297,11 +296,14 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     return buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount());
   }
 
-  openQrScanner(): void {
+  async openQrScanner(): Promise<void> {
     if (!this.breakpointService.matchesMobileCreateLayout()) {
       return;
     }
 
+    // Loaded on demand: the scanner and its QR decoder (jsqr, ~260 KB) would
+    // otherwise ship with every visit to the Expenses page.
+    const { QrScannerDialogComponent } = await import('./qr-scanner-dialog/qr-scanner-dialog.component');
     this.matDialog.open(QrScannerDialogComponent, {
       width: '100vw',
       maxWidth: '100vw',

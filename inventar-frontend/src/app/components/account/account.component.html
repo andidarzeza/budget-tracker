@@ -1,6 +1,6 @@
 <div class="account-page">
   <mat-card class="account-card light-dashboard-card {{sharedService.theme}}-table">
-    <div class="app-loading-overlay" [@inOutAnimation] *ngIf="showSpinner()" role="status" aria-live="polite">
+    <div class="app-loading-overlay" animate.enter="anim-fade-in" animate.leave="anim-fade-out" *ngIf="showSpinner()" role="status" aria-live="polite">
       <span class="app-spinner" aria-hidden="true">
         <span class="app-spinner__track"></span>
         <span class="app-spinner__arc"></span>
@@ -20,7 +20,7 @@
     </header>
 
     <div class="account-list" *ngIf="accounts().length; else noAccounts" role="list">
-      <button type="button" matRipple class="account-option" *ngFor="let account of accounts()" role="listitem"
+      <button type="button" matRipple class="account-option" *ngFor="let account of accounts(); trackBy: trackById" role="listitem"
         [disabled]="showSpinner()" (click)="selectAccount(account)">
         <span class="account-option-avatar" aria-hidden="true">
           {{getAccountInitials(account)}}

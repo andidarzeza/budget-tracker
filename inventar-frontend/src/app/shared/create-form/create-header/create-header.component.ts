@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { EntityType } from 'src/app/models/models';
 
 @Component({
@@ -7,6 +7,7 @@ import { EntityType } from 'src/app/models/models';
   templateUrl: './create-header.component.html',
   styleUrls: ['./create-header.component.css'],
   imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateHeaderComponent {
   @Output() close = new EventEmitter<boolean>();

@@ -20,7 +20,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { inOutAnimation } from 'src/app/animations';
 import { HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
 import {
@@ -142,7 +141,6 @@ interface CategoryRow {
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css', './dashboard-ios.component.css'],
-  animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PressHighlightDirective,

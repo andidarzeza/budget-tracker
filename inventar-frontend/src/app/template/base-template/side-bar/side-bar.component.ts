@@ -1,6 +1,6 @@
 import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, computed, DestroyRef, ElementRef, HostListener, inject, Input, OnChanges, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, AfterViewInit, Component, computed, DestroyRef, ElementRef, HostListener, inject, Input, OnChanges, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -32,6 +32,7 @@ import { MenuItem, SideBarMode } from '../base-template.models';
     ThemeSwitchComponent,
     ...TOOLTIP_IMPORTS,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SideBarComponent implements OnChanges, AfterViewInit {
   readonly sharedService = inject(SharedService);

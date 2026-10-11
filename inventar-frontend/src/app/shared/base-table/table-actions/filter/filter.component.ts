@@ -1,4 +1,3 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import {
@@ -44,15 +43,6 @@ import { FilterOptions } from './filter.models';
     LabeledFormInputComponent,
     SelectInputComponent,
     ...TOOLTIP_IMPORTS,
-  ],
-  animations: [
-    trigger('panelIn', [
-      transition(':enter', [
-        style({ height: 0, opacity: 0 }),
-        animate('180ms ease-out', style({ height: '*', opacity: 1 })),
-      ]),
-      transition(':leave', [animate('140ms ease-in', style({ height: 0, opacity: 0 }))]),
-    ]),
   ],
 })
 export class FilterComponent implements OnInit {

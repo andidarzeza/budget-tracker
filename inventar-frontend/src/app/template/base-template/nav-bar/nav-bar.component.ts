@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, DestroyRef, inject, NgZone, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, NgZone, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, interval, startWith } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
@@ -21,6 +21,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css'],
   imports: [CommonModule, MatDividerModule, MatIconModule, MatMenuModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavBarComponent implements OnInit {
   readonly sharedService = inject(SharedService);
@@ -61,9 +62,13 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit(): void {
     this.clearLegacyAccentOverride();
-    interval(1000)
+    // The menu shows HH:mm — only update (and re-render) when the minute changes.
+    interval(5000)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.now.set(new Date()));
+      .subscribe(() => {
+        const now = new Date();
+        if (now.getMinutes() !== this.now().getMinutes()) this.now.set(now);
+      });
     this.breakpointService.useTableCardLayout$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((mobile) => this.isMobileLayout.set(mobile));

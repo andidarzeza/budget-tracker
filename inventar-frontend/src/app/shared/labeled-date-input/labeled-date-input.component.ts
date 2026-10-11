@@ -1,3 +1,4 @@
+import { ControlRefresher } from 'src/app/utils/control-refresh';
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -37,7 +38,17 @@ export class LabeledDateInputComponent {
 
   private readonly breakpointService = inject(BreakpointService);
 
-  @Input({ required: true }) control!: FormControl<Date | null>;
+  /** Re-render when the control changes from outside (patched value, submit). */
+  private readonly refresher = new ControlRefresher();
+  private _control!: FormControl<Date | null>;
+  @Input({ required: true })
+  set control(control: FormControl<Date | null>) {
+    this._control = control;
+    this.refresher.watch(control);
+  }
+  get control(): FormControl<Date | null> {
+    return this._control;
+  }
   @Input() inputId = '';
   @Input() label = 'Date';
   @Input() placeholder = '';

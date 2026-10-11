@@ -1,10 +1,5 @@
-import {
-  Component,
-  ElementRef,
-  input,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ControlRefresher } from 'src/app/utils/control-refresh';
+import { ChangeDetectionStrategy, Component, ElementRef, effect, input, signal, viewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
 import { MatIconModule } from '@angular/material/icon';
@@ -51,12 +46,16 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [ReactiveFormsModule, MatIconModule, OverlayModule],
   templateUrl: './select-input.component.html',
   styleUrl: './select-input.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectInputComponent<T, OptT = T> {
   readonly trigger = viewChild<ElementRef<HTMLDivElement>>('trigger');
 
   /** Form control to bind. The control's value type is `T | null`. */
   readonly control = input.required<FormControl<T | null>>();
+  /** Re-render when the control changes from outside (patched value, submit). */
+  private readonly refresher = new ControlRefresher();
+  private readonly watchControl = effect(() => this.refresher.watch(this.control()));
   /** Options to render in the dropdown. */
   readonly options = input.required<readonly OptT[]>();
 

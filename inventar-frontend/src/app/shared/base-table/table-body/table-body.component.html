@@ -2,13 +2,13 @@
      right-click shows Edit · Delete, Delete key removes. -->
 <div class="body-container" role="grid" aria-label="Records"
     *ngIf="(breakpointService.useTableCardLayout$ | async) !== true; else cardLayout">
-    <div *ngFor="let element of (data || [])" class="data-row" role="row" tabindex="0"
+    <div *ngFor="let element of (data || []); trackBy: trackById" class="data-row" role="row" tabindex="0"
         [class.data-row--selected]="selectedId === element?.id"
         (click)="select(element, $event)"
         (dblclick)="openPrimary(element)"
         (contextmenu)="openContextMenu($event, element)"
         (keydown)="onRowKeydown($event, element)">
-        <div *ngFor="let columnDef of visibleColumns" class="data-cell row-entry" role="gridcell"
+        <div *ngFor="let columnDef of visibleColumns; trackBy: trackByColumn" class="data-cell row-entry" role="gridcell"
             [attr.data-type]="columnDef.type"
             [style.width.%]="columnDef?.type | columnWidth: visibleColumns.length">
             <ng-container [ngSwitch]="columnDef.type">
@@ -57,10 +57,10 @@
 
 <ng-template #cardLayout>
     <div class="table-cards-scroll">
-        <article *ngFor="let element of (data || [])" class="table-data-card">
+        <article *ngFor="let element of (data || []); trackBy: trackById" class="table-data-card">
             <div class="table-card-body">
                 <div class="table-card-main-fields">
-                    <ng-container *ngFor="let columnDef of cardMainFieldColumns">
+                    <ng-container *ngFor="let columnDef of cardMainFieldColumns; trackBy: trackByColumn">
                         <div *ngIf="!shouldHideField(element, columnDef)" class="table-card-field"
                             [class.table-card-field--money]="columnDef.type === 'currency'"
                             [class.table-card-field--note]="columnDef.column === 'description' || columnDef.column === 'message'">
@@ -81,7 +81,7 @@
                     </ng-container>
                 </div>
                 <div class="table-card-dates" *ngIf="cardDateColumns.length">
-                    <div *ngFor="let columnDef of cardDateColumns" class="table-card-field table-card-field--meta">
+                    <div *ngFor="let columnDef of cardDateColumns; trackBy: trackByColumn" class="table-card-field table-card-field--meta">
                         <span class="table-card-field-label">{{ columnDef.label }}</span>
                         <div class="table-card-field-value">
                             <span>{{ element[columnDef.column] | customDate }}</span>

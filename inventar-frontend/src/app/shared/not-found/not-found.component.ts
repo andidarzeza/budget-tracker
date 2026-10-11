@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { SharedService } from 'src/app/services/shared.service';
@@ -9,6 +9,7 @@ import { PillButtonComponent } from '../pill-button/pill-button.component';
   templateUrl: './not-found.component.html',
   styleUrls: ['./not-found.component.css'],
   imports: [MatButtonModule, PillButtonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotFoundComponent {
   private readonly route = inject(Router);

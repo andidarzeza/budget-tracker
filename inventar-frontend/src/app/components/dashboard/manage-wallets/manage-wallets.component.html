@@ -20,7 +20,7 @@
                     <mat-icon aria-hidden="true">account_balance</mat-icon> Bank accounts
                 </h3>
                 <ul class="manage-wallets__list">
-                    <li *ngFor="let w of bankWallets()" class="wallet-item">
+                    <li *ngFor="let w of bankWallets(); trackBy: trackById" class="wallet-item">
                         <span class="wallet-item__flag" aria-hidden="true">{{ w.currency | flag }}</span>
                         <span class="wallet-item__main">
                             <span class="wallet-item__name">{{ w.name }}</span>
@@ -43,7 +43,7 @@
                     <mat-icon aria-hidden="true">payments</mat-icon> Cash
                 </h3>
                 <ul class="manage-wallets__list">
-                    <li *ngFor="let w of cashWallets()" class="wallet-item">
+                    <li *ngFor="let w of cashWallets(); trackBy: trackById" class="wallet-item">
                         <span class="wallet-item__flag" aria-hidden="true">{{ w.currency | flag }}</span>
                         <span class="wallet-item__main">
                             <span class="wallet-item__name">{{ w.name }}</span>

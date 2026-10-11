@@ -46,10 +46,10 @@
 
                     <div class="create-wizard__panel form-page__panel" [ngSwitch]="wizardStep()">
                         <ng-container *ngSwitchCase="0">
-                            <ng-container *ngFor="let group of categoryGroups()">
+                            <ng-container *ngFor="let group of categoryGroups(); trackBy: trackByValue">
                                 <p class="ios-group-label category-group-label" *ngIf="group.label">{{ group.label }}</p>
                                 <div class="category-pick-grid" role="listbox" aria-label="Income categories">
-                                    <button type="button" *ngFor="let category of group.items" class="category-tile" pressHighlight
+                                    <button type="button" *ngFor="let category of group.items; trackBy: trackById" class="category-tile" pressHighlight
                                         role="option"
                                         [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
                                         [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
@@ -92,7 +92,7 @@
                                             <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
                                         </button>
                                         <mat-menu #pageWizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
-                                            <button mat-menu-item type="button" *ngFor="let w of sources()"
+                                            <button mat-menu-item type="button" *ngFor="let w of sources(); trackBy: trackById"
                                                 class="wizard-amount-currency-menu-item"
                                                 [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
                                                 (click)="selectWizardSource($any(w.id))">
@@ -168,10 +168,10 @@
                 <ng-container *ngSwitchCase="0">
                     <ng-container *ngIf="isWizardMobile(); else incomeWizardStep0Desktop">
                         <p class="create-wizard__intro">Tap a source. Most-used appear first.</p>
-                        <ng-container *ngFor="let group of categoryGroups()">
+                        <ng-container *ngFor="let group of categoryGroups(); trackBy: trackByValue">
                             <p class="ios-group-label category-group-label" *ngIf="group.label">{{ group.label }}</p>
                             <div class="category-pick-grid" role="listbox" aria-label="Income categories">
-                                <button type="button" *ngFor="let category of group.items" class="category-tile" pressHighlight
+                                <button type="button" *ngFor="let category of group.items; trackBy: trackById" class="category-tile" pressHighlight
                                     role="option"
                                     [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
                                     [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
@@ -229,7 +229,7 @@
                                         <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
                                     </button>
                                     <mat-menu #wizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
-                                        <button mat-menu-item type="button" *ngFor="let w of sources()"
+                                        <button mat-menu-item type="button" *ngFor="let w of sources(); trackBy: trackById"
                                             class="wizard-amount-currency-menu-item"
                                             [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
                                             (click)="selectWizardSource($any(w.id))">
