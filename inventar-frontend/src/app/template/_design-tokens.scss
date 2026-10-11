@@ -88,6 +88,12 @@
     --app-toolbar-height: 52px;
     --app-tab-bar-height: 62px;
     --table-width: calc(100% - 40px);
+
+    /* Page frame shared by every page: one maximum width, centred, the same
+       side gutter and the same space above the large title. */
+    --app-page-max-width: calc(1280px + 2 * var(--app-page-gutter)); /* 1280px of content */
+    --app-page-gutter: 24px;
+    --app-page-top: 24px;
     --background-animation-timing: 250ms;
 
     /* Stable accent (kept across themes for code that hard-references it) */
@@ -467,4 +473,12 @@
 :root:not(.dark-theme):not(.light-theme),
 body:not(.dark-theme):not(.light-theme) {
     color-scheme: light;
+}
+
+/* Phones: the iOS 16pt content margin; the nav bar already adds room on top. */
+@media only screen and (max-width: 767px) {
+    :root {
+        --app-page-gutter: 16px;
+        --app-page-top: 8px;
+    }
 }

@@ -14,9 +14,9 @@
     flex-direction: column;
     gap: 26px;
     width: 100%;
-    max-width: 720px;
+    max-width: var(--app-page-max-width);
     margin: 0 auto;
-    padding: 8px 16px 32px;
+    padding: var(--app-page-top) var(--app-page-gutter) 32px;
     box-sizing: border-box;
     color: var(--app-text);
 }

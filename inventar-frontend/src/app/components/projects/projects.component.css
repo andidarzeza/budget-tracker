@@ -8,11 +8,12 @@
    background, a round tinted add button, and borderless widget cards.
    (Phones use the shared ledger list styles.) */
 .projects-page {
-    padding: var(--app-space-5);
+    padding: var(--app-page-top) var(--app-page-gutter) var(--app-space-5);
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-width: 100%;
+    max-width: var(--app-page-max-width);
+    margin: 0 auto;
     box-sizing: border-box;
 }
 

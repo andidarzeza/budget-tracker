@@ -380,7 +380,7 @@
 
 @media (max-width: 767px) {
     .dashboard-container {
-        padding: 8px 16px 24px;
+        padding: var(--app-page-top) var(--app-page-gutter) 24px;
         gap: 22px;
     }
 

@@ -1988,7 +1988,9 @@ table-body > div::-webkit-scrollbar-thumb:hover {
     display: flex;
     flex-direction: column;
     gap: 22px;
-    padding: 8px 16px 32px;
+    padding: var(--app-page-top) var(--app-page-gutter) 32px;
+    max-width: var(--app-page-max-width);
+    margin: 0 auto;
     background: var(--app-bg);
     min-height: 100%;
     box-sizing: border-box;

@@ -61,12 +61,12 @@
 /* Desktop page: large title + toolbar (table-actions) above the table card.
    The container itself is just layout — no surface, border or shadow. */
 .base-table-container {
-    width: min(var(--table-width), 1280px);
-    max-width: 100%;
+    width: calc(100% - 2 * var(--app-page-gutter));
+    max-width: calc(var(--app-page-max-width) - 2 * var(--app-page-gutter));
     height: 100%;
     min-height: 0;
     margin: 0 auto;
-    padding: 8px 0 24px;
+    padding: var(--app-page-top) 0 24px;
     position: relative;
     box-sizing: border-box;
     display: flex;
@@ -173,10 +173,6 @@
 
 @media only screen and (max-width: 767px) {
     .base-table-container {
-        width: calc(100% - 20px);
-        max-width: 100%;
-        margin-left: 10px;
-        margin-right: 10px;
         margin-top: 12px;
         border-radius: var(--app-radius-md);
     }

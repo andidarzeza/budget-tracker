@@ -6,12 +6,13 @@
 }
 
 .dashboard-container {
-    padding: var(--app-space-6);
+    padding: var(--app-page-top) var(--app-page-gutter) var(--app-space-6);
     display: flex;
     flex-direction: column;
     gap: var(--app-space-5);
     width: 100%;
-    max-width: 100%;
+    max-width: var(--app-page-max-width);
+    margin: 0 auto;
     box-sizing: border-box;
     /* clip, not hidden: `hidden` would turn the other axis into a clipping
        scroll box too, cutting off the pull-to-refresh spinner above. */
@@ -958,7 +959,7 @@
 
 @media only screen and (max-width: 767px) {
     .dashboard-container {
-        padding: var(--app-space-3);
+        padding: var(--app-page-top) var(--app-page-gutter) var(--app-space-3);
         gap: var(--app-space-3);
     }
 
