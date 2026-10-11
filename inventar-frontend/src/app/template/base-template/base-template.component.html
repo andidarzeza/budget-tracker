@@ -27,4 +27,8 @@
     @if (showMobileTabBar) {
         <mobile-tab-bar></mobile-tab-bar>
     }
+
+    @if (authenticationService.currentUserValue) {
+        <app-spotlight></app-spotlight>
+    }
 </div>

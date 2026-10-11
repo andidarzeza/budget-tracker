@@ -1,0 +1,76 @@
+@if (spotlight.isOpen()) {
+    <div class="sp-backdrop" animate.enter="sp-fade-in" animate.leave="sp-fade-out" (click)="close()" aria-hidden="true"></div>
+
+    <div class="sp" role="dialog" aria-modal="true" aria-label="Search" animate.enter="sp-in" animate.leave="sp-out">
+        <!-- Search field (UISearchTextField); phones get a Cancel button beside it. -->
+        <div class="sp-bar">
+            <label class="sp-field">
+                <mat-icon aria-hidden="true">search</mat-icon>
+                <input #field type="search" enterkeyhint="go" autocomplete="off" spellcheck="false"
+                    placeholder="Search Financa" aria-label="Search Financa"
+                    role="combobox" aria-controls="sp-results" aria-expanded="true"
+                    [value]="query()" (input)="query.set(field.value)" (keydown)="onKeydown($event)" />
+                @if (searching()) {
+                    <span class="app-spinner sp-field__spinner" aria-hidden="true"><span class="app-spinner__arc"></span></span>
+                } @else if (query()) {
+                    <button type="button" class="sp-field__clear" aria-label="Clear search" (click)="clear()">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                }
+            </label>
+            @if (isPhone()) {
+                <button type="button" class="sp-cancel" (click)="close()">Cancel</button>
+            } @else {
+                <kbd class="sp-esc" aria-hidden="true">esc</kbd>
+            }
+        </div>
+
+        <div class="sp-results" id="sp-results" role="listbox" #list>
+            @for (section of sections(); track section.label) {
+                <section class="sp-section">
+                    <h2 class="sp-section__label">{{ section.label }}</h2>
+                    <div class="sp-group">
+                        @for (item of section.items; track item.key) {
+                            <button type="button" class="sp-row" role="option" hapticTap
+                                [class.sp-row--active]="indexOf(item) === active()"
+                                [attr.aria-selected]="indexOf(item) === active()"
+                                (mouseenter)="active.set(indexOf(item))" (click)="item.run()">
+                                <span class="sp-tile" [style.background]="item.color" aria-hidden="true">
+                                    <mat-icon>{{ item.icon }}</mat-icon>
+                                </span>
+                                <span class="sp-row__text">
+                                    <span class="sp-row__title">{{ item.title }}</span>
+                                    @if (item.subtitle) {
+                                        <span class="sp-row__sub">{{ item.subtitle }}</span>
+                                    }
+                                </span>
+                                @if (item.amount !== undefined && item.amount !== null) {
+                                    <span class="sp-row__amount">
+                                        {{ item.amount | number: '1.2-2' }}<span class="sp-row__currency">{{ item.currency }}</span>
+                                    </span>
+                                }
+                                <mat-icon class="sp-row__enter" aria-hidden="true">keyboard_return</mat-icon>
+                            </button>
+                        }
+                    </div>
+                </section>
+            }
+
+            @if (empty()) {
+                <div class="sp-empty">
+                    <mat-icon class="sp-empty__icon">search</mat-icon>
+                    <p class="sp-empty__title">No Results for “{{ query().trim() }}”</p>
+                    <p class="sp-empty__text">Try a description, a category, an amount like 300, or a page name.</p>
+                </div>
+            }
+        </div>
+
+        @if (!isPhone()) {
+            <footer class="sp-foot" aria-hidden="true">
+                <span><kbd>↑</kbd><kbd>↓</kbd> to move</span>
+                <span><kbd>↩</kbd> to open</span>
+                <span><kbd>⌘</kbd><kbd>K</kbd> to search anywhere</span>
+            </footer>
+        }
+    </div>
+}

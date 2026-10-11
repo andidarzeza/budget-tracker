@@ -14,6 +14,7 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
+import { SpotlightService } from 'src/app/services/spotlight.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { environment } from 'src/environments/environment';
 
@@ -32,6 +33,7 @@ export class NavBarComponent implements OnInit {
   readonly accountService = inject(AccountService);
   readonly router = inject(Router);
   readonly breakpointService = inject(BreakpointService);
+  readonly spotlight = inject(SpotlightService);
   private readonly configurationService = inject(ConfigurationService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly zone = inject(NgZone);

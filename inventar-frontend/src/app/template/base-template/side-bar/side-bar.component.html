@@ -31,25 +31,17 @@
         </a>
     </div>
 
-    <!-- iOS search field (⌘K still focuses it). -->
-    <label class="search">
+    <!-- Opens Spotlight, the app-wide search (also ⌘K). -->
+    <button type="button" class="search" aria-label="Search Financa" (click)="spotlight.open()">
         <mat-icon fontSet="material-symbols-rounded" aria-hidden="true">search</mat-icon>
-        <input #searchInput placeholder="Search" aria-label="Search pages" [value]="query()"
-            (input)="query.set(searchInput.value)"
-            (keydown.escape)="query.set(''); searchInput.value = ''"
-            (keydown.enter)="openFirstMatch()" />
-        @if (query()) {
-            <button type="button" class="search__clear" aria-label="Clear search"
-                (click)="query.set(''); searchInput.value = ''; searchInput.focus()">
-                <mat-icon fontSet="material-symbols-rounded">cancel</mat-icon>
-            </button>
-        }
-    </label>
+        <span class="search__placeholder">Search</span>
+        <kbd class="search__shortcut" aria-hidden="true">⌘K</kbd>
+    </button>
 
     <div class="sidebar-section"><span>Browse</span></div>
 
     <nav class="ws-list">
-        @for (item of filteredNavigation(); track item.link) {
+        @for (item of navigation; track item.link) {
             <a class="ws-item"
                 [routerLink]="[item.link]"
                 routerLinkActive="active"
@@ -64,9 +56,6 @@
                     }
                 </span>
             </a>
-        }
-        @if (filteredNavigation().length === 0) {
-            <p class="ws-empty">No matches</p>
         }
     </nav>
 

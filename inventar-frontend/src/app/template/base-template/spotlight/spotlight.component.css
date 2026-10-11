@@ -1,0 +1,456 @@
+/* Spotlight: desktop gets a floating glass panel near the top of the window
+   (macOS Spotlight); phones get a full-screen search sheet (iOS search). */
+
+.sp-backdrop {
+    position: fixed;
+    inset: 0;
+    bottom: calc(100% - 100lvh);
+    z-index: 1300;
+    background: rgba(0, 0, 0, 0.28);
+}
+
+.sp {
+    position: fixed;
+    top: 12vh;
+    left: 50%;
+    z-index: 1301;
+    display: flex;
+    flex-direction: column;
+    width: min(680px, calc(100vw - 48px));
+    max-height: min(620px, 76vh);
+    margin-left: calc(min(680px, calc(100vw - 48px)) / -2);
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--ios-menu);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    backdrop-filter: saturate(180%) blur(30px);
+    color: var(--app-text);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35), 0 0 0 0.5px var(--ios-separator);
+}
+
+/* ── Field ────────────────────────────────────────────────────────────── */
+.sp-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 0.5px solid var(--ios-separator);
+    flex-shrink: 0;
+}
+
+.sp-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 44px;
+    padding: 0 8px 0 4px;
+    color: var(--app-text-subtle);
+    cursor: text;
+}
+
+.sp-field > mat-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 26px;
+    line-height: 26px;
+    font-variation-settings: 'wght' 500;
+}
+
+.sp-field input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--app-text);
+    font: inherit;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.sp-field input::-webkit-search-cancel-button {
+    display: none;
+}
+
+.sp-field input::placeholder {
+    color: var(--app-text-subtle);
+}
+
+.sp-field__spinner {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.sp-field__clear {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--app-text-subtle);
+    cursor: pointer;
+}
+
+.sp-field__clear mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+    font-variation-settings: 'FILL' 1;
+}
+
+.sp-cancel {
+    flex-shrink: 0;
+    padding: 6px 2px;
+    border: 0;
+    background: none;
+    color: var(--app-accent);
+    font: inherit;
+    font-size: 17px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sp-cancel:active {
+    opacity: 0.4;
+}
+
+kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 5px;
+    background: var(--ios-fill-3);
+    color: var(--app-text-muted);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    box-sizing: border-box;
+}
+
+.sp-esc {
+    flex-shrink: 0;
+}
+
+/* ── Results ──────────────────────────────────────────────────────────── */
+.sp-results {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 6px 8px 10px;
+}
+
+.sp-section + .sp-section {
+    margin-top: 6px;
+}
+
+.sp-section__label {
+    margin: 0;
+    padding: 8px 10px 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--app-text-muted);
+}
+
+.sp-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.sp-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 46px;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 10px;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* The highlighted row: tinted, like Spotlight's selection. */
+.sp-row--active {
+    background: var(--app-accent);
+    color: #ffffff;
+}
+
+.sp-row--active .sp-row__sub,
+.sp-row--active .sp-row__currency {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.sp-tile {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    color: #ffffff;
+}
+
+.sp-tile mat-icon {
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+    line-height: 19px;
+    font-variation-settings: 'FILL' 1, 'wght' 500;
+}
+
+.sp-row--active .sp-tile {
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.55);
+}
+
+.sp-row__text {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    line-height: 1.25;
+}
+
+.sp-row__title,
+.sp-row__sub {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.sp-row__title {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.sp-row__sub {
+    font-size: 13px;
+    color: var(--app-text-muted);
+}
+
+.sp-row__amount {
+    flex-shrink: 0;
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.sp-row__currency {
+    margin-left: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--app-text-subtle);
+}
+
+.sp-row__enter {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+    opacity: 0;
+}
+
+.sp-row--active .sp-row__enter {
+    opacity: 0.85;
+}
+
+/* ── Empty ────────────────────────────────────────────────────────────── */
+.sp-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 40px 24px 44px;
+    text-align: center;
+}
+
+.sp-empty__icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 6px;
+    font-size: 44px;
+    line-height: 44px;
+    color: var(--app-text-subtle);
+}
+
+.sp-empty__title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.sp-empty__text {
+    margin: 0;
+    font-size: 15px;
+    color: var(--app-text-muted);
+}
+
+.sp-foot {
+    display: flex;
+    gap: 18px;
+    padding: 9px 18px;
+    border-top: 0.5px solid var(--ios-separator);
+    font-size: 12px;
+    color: var(--app-text-muted);
+    flex-shrink: 0;
+}
+
+.sp-foot kbd + kbd {
+    margin-left: 3px;
+}
+
+.sp-foot kbd {
+    margin-right: 5px;
+}
+
+/* ── Phones: full-screen search sheet ─────────────────────────────────── */
+@media (max-width: 767px) {
+    .sp {
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100lvh;
+        max-height: none;
+        margin: 0;
+        border-radius: 0;
+        background: var(--app-bg);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        box-shadow: none;
+    }
+
+    .sp-bar {
+        gap: 8px;
+        padding: calc(env(safe-area-inset-top, 0px) + 8px) 16px 10px;
+        border-bottom: 0;
+    }
+
+    .sp-field {
+        height: 36px;
+        padding: 0 6px 0 8px;
+        border-radius: 10px;
+        background: var(--ios-fill-3);
+    }
+
+    .sp-field > mat-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 20px;
+        line-height: 20px;
+    }
+
+    .sp-field input {
+        font-size: 17px;
+    }
+
+    .sp-results {
+        padding: 0 16px calc(env(safe-area-inset-bottom, 0px) + 24px);
+    }
+
+    .sp-section + .sp-section {
+        margin-top: 18px;
+    }
+
+    .sp-section__label {
+        padding: 8px 16px 6px;
+        font-size: 13px;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+
+    /* Inset grouped list with hairlines from the title's inset. */
+    .sp-group {
+        border-radius: var(--app-radius-md);
+        background: var(--app-bg-elevated);
+        overflow: hidden;
+    }
+
+    .sp-row {
+        min-height: 52px;
+        padding: 8px 16px;
+        border-radius: 0;
+    }
+
+    .sp-row + .sp-row::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 58px;
+        right: 0;
+        border-top: 0.5px solid var(--ios-separator);
+    }
+
+    .sp-row__title {
+        font-size: 17px;
+        font-weight: 400;
+    }
+
+    /* No hover highlight on touch: only a press shows. */
+    .sp-row--active {
+        background: none;
+        color: inherit;
+    }
+
+    .sp-row--active .sp-row__sub {
+        color: var(--app-text-muted);
+    }
+
+    .sp-row--active .sp-row__currency {
+        color: var(--app-text-subtle);
+    }
+
+    .sp-row--active .sp-tile {
+        box-shadow: none;
+    }
+
+    .sp-row:active {
+        background: var(--ios-fill-3);
+    }
+
+    .sp-row__enter {
+        display: none;
+    }
+}
+
+/* ── In / out ─────────────────────────────────────────────────────────── */
+.sp-backdrop.sp-fade-in { animation: sp-fade 0.18s ease both; }
+.sp-backdrop.sp-fade-out { animation: sp-fade 0.15s ease reverse both; }
+.sp.sp-in { animation: sp-pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+.sp.sp-out { animation: sp-pop 0.14s ease reverse both; }
+
+@keyframes sp-fade {
+    from { opacity: 0; }
+}
+
+@keyframes sp-pop {
+    from { opacity: 0; transform: scale(0.96); }
+}
+
+@media (max-width: 767px) {
+    .sp.sp-in { animation: sp-sheet 0.28s cubic-bezier(0.32, 0.72, 0, 1) both; }
+    .sp.sp-out { animation: sp-sheet 0.2s ease reverse both; }
+
+    @keyframes sp-sheet {
+        from { opacity: 0; transform: translateY(24px); }
+    }
+}

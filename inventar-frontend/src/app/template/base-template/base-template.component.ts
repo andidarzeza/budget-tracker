@@ -12,6 +12,7 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
 import { MobileTabBarComponent } from './mobile-tab-bar/mobile-tab-bar.component';
+import { SpotlightComponent } from './spotlight/spotlight.component';
 import { MenuItem, SideBarMode } from './base-template.models';
 
 
@@ -19,7 +20,7 @@ import { MenuItem, SideBarMode } from './base-template.models';
   selector: 'base-template',
   templateUrl: './base-template.component.html',
   styleUrls: ['./base-template.component.css'],
-  imports: [CommonModule, NavBarComponent, SideBarComponent, MobileTabBarComponent],
+  imports: [CommonModule, NavBarComponent, SideBarComponent, MobileTabBarComponent, SpotlightComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BaseTemplateComponent implements OnInit {

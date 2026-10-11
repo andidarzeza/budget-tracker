@@ -191,6 +191,7 @@ mat-icon {
 /* ---------- Search: UISearchTextField ----------
    Grey rounded field, magnifying glass and placeholder in the secondary
    label colour, and a round ✕ to clear while there is text. */
+/* Looks like an iOS search field; opens Spotlight (the app-wide search). */
 .search {
     display: flex;
     align-items: center;
@@ -202,11 +203,15 @@ mat-icon {
     border-radius: 10px;
     background: var(--ios-fill-3);
     color: var(--app-text-subtle);
+    font: inherit;
     font-size: 17px;
-    cursor: text;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.search:focus-within {
+.search:focus-visible {
+    outline: none;
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-accent) 35%, transparent);
 }
 
@@ -218,41 +223,20 @@ mat-icon {
     font-variation-settings: 'wght' 500;
 }
 
-.search input {
-    flex: 1;
+.search__placeholder {
+    flex: 1 1 auto;
     min-width: 0;
-    height: 100%;
-    border: none;
-    padding: 0;
-    background: none;
-    color: var(--app-text);
-    font: inherit;
     letter-spacing: -0.01em;
-    outline: none;
 }
 
-.search input::placeholder {
+.search__shortcut {
+    padding: 1px 6px;
+    border-radius: 5px;
+    background: var(--ios-fill-3);
     color: var(--app-text-subtle);
-}
-
-.search__clear {
-    display: grid;
-    place-items: center;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--app-text-subtle);
-    cursor: pointer;
-}
-
-.search__clear mat-icon {
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
-    line-height: 18px;
-    font-variation-settings: 'FILL' 1;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 /* ---------- Section label ---------- */
@@ -361,13 +345,6 @@ mat-icon {
 
 .ws-item.active .ws-sub {
     color: var(--app-text-muted);
-}
-
-.ws-empty {
-    margin: 0;
-    padding: 12px 8px;
-    color: var(--app-text-subtle);
-    font-size: 13px;
 }
 
 /* Hue-tinted rounded tile (Workspace Manual's avatar). */

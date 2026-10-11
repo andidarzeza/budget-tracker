@@ -1,6 +1,7 @@
+import { SpotlightService } from 'src/app/services/spotlight.service';
 import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, AfterViewInit, Component, computed, DestroyRef, ElementRef, HostListener, inject, Input, OnChanges, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, AfterViewInit, Component, computed, DestroyRef, inject, Input, OnChanges, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -59,17 +60,8 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
 
   selIndex = 1;
 
-  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
   readonly menuOpen = signal(false);
-  readonly query = signal('');
-  readonly filteredNavigation = computed(() => {
-    const q = this.query().trim().toLowerCase();
-    const items = this._navigation();
-    return q ? items.filter((i) => {
-      const hay = `${i.text} ${i.description ?? ''}`.toLowerCase();
-      return q.split(/\s+/).every((part) => hay.includes(part));
-    }) : items;
-  });
+  readonly spotlight = inject(SpotlightService);
 
   private static readonly HUES = [235, 262, 290, 330, 12, 30, 152, 175, 200];
 
@@ -86,26 +78,6 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
   });
   readonly initials = computed(() => this.fullName().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase());
   readonly userHue = computed(() => this.hueFor(this.fullName()));
-
-  @HostListener('window:keydown', ['$event'])
-  onKeydown(e: KeyboardEvent): void {
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-      e.preventDefault();
-      this.searchInput?.nativeElement.focus();
-    }
-  }
-
-  openFirstMatch(): void {
-    const first = this.filteredNavigation()[0];
-    if (!first) return;
-    this.router.navigate([first.link]);
-    this.onNavItemClick(this.navigation.indexOf(first));
-    this.query.set('');
-    if (this.searchInput) {
-      this.searchInput.nativeElement.value = '';
-      this.searchInput.nativeElement.blur();
-    }
-  }
 
   go(link: string): void {
     this.menuOpen.set(false);
