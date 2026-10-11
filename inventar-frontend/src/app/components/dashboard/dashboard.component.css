@@ -13,7 +13,9 @@
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
+    /* clip, not hidden: `hidden` would turn the other axis into a clipping
+       scroll box too, cutting off the pull-to-refresh spinner above. */
+    overflow-x: clip;
     overflow-y: visible;
 }
 
