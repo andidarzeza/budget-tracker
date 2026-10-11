@@ -134,7 +134,7 @@ export class TableBodyComponent implements AfterViewInit, OnChanges, OnDestroy {
           }
         }
       },
-      { root: null, rootMargin: '80px', threshold: 0 }
+      { root: document.querySelector('.content-container'), rootMargin: '80px', threshold: 0 }
     );
     this.intersectionObserver.observe(el);
   }

@@ -193,11 +193,6 @@ export class SettingsComponent implements OnInit {
       .subscribe((wallets) => this.sources.set((wallets ?? []).filter((w) => !w.archived)));
   }
 
-  switchAccount(): void {
-    localStorage.removeItem('account');
-    this.router.navigate(['/account']);
-  }
-
   logout(): void {
     this.authenticationService.logout();
   }

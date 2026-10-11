@@ -55,16 +55,22 @@ body {
     text-size-adjust: 100%;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 767px) {
+    /* Phones scroll inside the shell's content box, never the document
+       (see base-template.component.css). */
     html,
     body {
-        height: auto;
+        height: 100%;
+        overflow: hidden;
     }
 
     app-root,
     base-template {
-        height: auto;
+        height: 100%;
     }
+}
+
+@media only screen and (max-width: 600px) {
 
     /* Prevent iOS Safari from auto-zooming when an input is focused.
        Safari zooms whenever the focused input font-size is below 16px. */

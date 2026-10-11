@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { filter } from 'rxjs';
+import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
@@ -54,15 +53,56 @@ export class BaseTemplateComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((mobile) => this.mobileCardLayout.set(mobile));
     this.getNavigationItems();
-    this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
+    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((e) => {
+      if (e instanceof NavigationStart) {
+        // The page scrolls inside `.content-container`, which the router's own
+        // scroll restoration (window only) doesn't see: remember where each
+        // page was left, and go back there on Back / Forward.
+        const box = this.scrollBox();
+        if (box) this.scrollPositions.set(this.navigationId, box.scrollTop);
+        this.navigationId = e.id;
+        this.restoreId = e.navigationTrigger === 'popstate' ? e.restoredState?.navigationId ?? null : null;
+      } else if (e instanceof NavigationEnd) {
         this.syncHideSidebarKey();
-        // Slightly wider phones scroll the shell's content box, not the
-        // window (which the router resets itself): start new pages at the top.
-        document.querySelector('.content-container')?.scrollTo(0, 0);
         this.onCreatePage.set(/\/(add|edit)$/.test(this.router.url.split(/[?#]/)[0]));
-      });
+        const top = this.restoreId !== null ? this.scrollPositions.get(this.restoreId) ?? 0 : 0;
+        this.scrollContentTo(top);
+      }
+    });
+  }
+
+  private navigationId = 0;
+  private restoreId: number | null = null;
+  private readonly scrollPositions = new Map<number, number>();
+
+  private scrollBox(): HTMLElement | null {
+    return document.querySelector<HTMLElement>('.content-container');
+  }
+
+  /** New pages start at the top; restored ones once their list has rendered. */
+  private scrollContentTo(top: number): void {
+    const box = this.scrollBox();
+    if (!box) return;
+    box.scrollTo(0, 0);
+    if (!top) return;
+    // The page may still be filling in (cached lists render at once, others
+    // a moment later): keep trying briefly, unless the user starts scrolling.
+    const started = performance.now();
+    let cancelled = false;
+    const cancel = () => (cancelled = true);
+    const stop = () => {
+      box.removeEventListener('touchstart', cancel);
+      box.removeEventListener('wheel', cancel);
+    };
+    box.addEventListener('touchstart', cancel, { passive: true, once: true });
+    box.addEventListener('wheel', cancel, { passive: true, once: true });
+    const attempt = () => {
+      if (cancelled) return stop();
+      box.scrollTo(0, top);
+      if (Math.abs(box.scrollTop - top) > 1 && performance.now() - started < 2000) requestAnimationFrame(attempt);
+      else stop();
+    };
+    requestAnimationFrame(attempt);
   }
 
   get showMobileTabBar(): boolean {

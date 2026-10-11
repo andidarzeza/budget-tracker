@@ -39,7 +39,6 @@ export class NavBarComponent implements OnInit {
   /** Same breakpoint as mobile table cards (≤767px). */
   readonly isMobileLayout = signal(false);
 
-
   /** Small centred title, shown once the page's large title scrolls away. */
   readonly pageTitle = signal('');
 
@@ -101,14 +100,16 @@ export class NavBarComponent implements OnInit {
   }
 
   /**
-   * Phones scroll the window; slightly wider screens scroll the shell's
-   * `.content-container`. A capturing listener on the document sees both.
-   * Runs outside Angular so scrolling doesn't trigger change detection;
-   * only the (rare) flips of `scrolled` re-enter the zone.
+   * Pages scroll inside the shell's `.content-container` (scroll events
+   * don't bubble, so a capturing listener on the document picks them up).
+   * Other scrollers — sheets, horizontal chip rows — are ignored. Runs
+   * outside Angular so scrolling doesn't trigger change detection; only the
+   * (rare) flips of `scrolled` re-enter the zone.
    */
   private watchScroll(): void {
     const onScroll = (e: Event) => {
       const target = e.target as Element | Document;
+      if (target instanceof Element && !target.classList.contains('content-container')) return;
       const top = target instanceof Element ? target.scrollTop : window.scrollY;
       const next = top > 44;
       if (next !== this.scrolled()) this.zone.run(() => this.scrolled.set(next));
@@ -153,11 +154,6 @@ export class NavBarComponent implements OnInit {
 
   logout(): void {
     this.authenticationService.logout();
-  }
-
-  switchAccount(): void {
-    localStorage.removeItem('account');
-    this.router.navigate(['/account']);
   }
 
   toggleDarkMode(): void {

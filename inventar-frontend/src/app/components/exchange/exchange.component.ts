@@ -1,4 +1,5 @@
 import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef,
@@ -31,7 +32,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
   templateUrl: './exchange.component.html',
   styleUrls: ['./exchange.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, DecimalPipe, DatePipe, PullToRefreshDirective],
+  imports: [MatIconModule, DecimalPipe, DatePipe, PullToRefreshDirective, HapticTapDirective],
 })
 export class ExchangeComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly exchangeRateService = inject(ExchangeRateService);
@@ -64,6 +65,8 @@ export class ExchangeComponent implements OnInit, AfterViewInit, OnDestroy {
     const now = this.latest(), before = this.previous();
     return now && before ? now.sell - before.sell : null;
   });
+
+  readonly quickAmounts = [10, 50, 100, 500, 1000];
 
   /** Converter inputs — typing into one recomputes the other at the current sell rate. */
   readonly lek = signal<number | null>(null);
@@ -120,8 +123,8 @@ export class ExchangeComponent implements OnInit, AfterViewInit, OnDestroy {
           },
         },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { size: 11 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } },
-          y: { ticks: { font: { size: 11 }, callback: v => Number(v).toFixed(1) } },
+          x: { grid: { display: false, drawBorder: false }, ticks: { font: { size: 11 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 6 } },
+          y: { position: 'right', grid: { drawBorder: false }, ticks: { font: { size: 11 }, maxTicksLimit: 5, callback: v => Number(v).toFixed(1) } },
         },
       },
     });
@@ -174,6 +177,10 @@ export class ExchangeComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Quick amounts for the euro side. */
   setEuro(amount: number): void {
     this.onEuroInput(String(amount));
+  }
+
+  abs(n: number): number {
+    return Math.abs(n);
   }
 
   private lekValue(): number { return this.lek() ?? 0; }
@@ -230,14 +237,16 @@ export class ExchangeComponent implements OnInit, AfterViewInit, OnDestroy {
       fill: true,
       tension: 0.3,
       borderWidth: 2,
-      pointRadius: points.length <= 31 ? 3 : 0,
+      pointRadius: points.length === 1 ? 3 : 0,
       pointHoverRadius: 5,
       pointBackgroundColor: accent,
+      pointHoverBorderColor: '#ffffff',
+      pointHoverBorderWidth: 2,
     }];
     const scales = this.chart.options.scales as any;
     scales.x.ticks.color = text;
     scales.y.ticks.color = text;
-    scales.y.grid = { color: grid };
+    scales.y.grid = { color: grid, lineWidth: 0.5, drawBorder: false };
     // Give a single point (or a flat line) some breathing room instead of a 0..max axis.
     const values = points.map(p => p.value);
     const min = Math.min(...values), max = Math.max(...values);

@@ -198,7 +198,7 @@ export class HistoryComponent extends BaseTable<History> implements OnInit {
             }
           }
         },
-        { root: null, rootMargin: '120px', threshold: 0 },
+        { root: document.querySelector('.content-container'), rootMargin: '120px', threshold: 0 },
       );
       observer.observe(el);
       onCleanup(() => observer.disconnect());

@@ -215,7 +215,7 @@
     <section class="app-card settings-section">
         <header class="settings-section__head">
             <h2 class="settings-section__title">Account</h2>
-            <p class="settings-section__hint">Profile, switch user, sign out.</p>
+            <p class="settings-section__hint">Profile and sign out.</p>
         </header>
 
         <div class="settings-profile">
@@ -227,17 +227,6 @@
                 }
             </div>
         </div>
-
-        <button type="button" class="settings-action" (click)="switchAccount()">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">swap_horiz</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Switch account</span>
-                <span class="settings-row__desc">Choose a different profile linked to this user.</span>
-            </div>
-            <mat-icon class="settings-action__chevron" aria-hidden="true">chevron_right</mat-icon>
-        </button>
 
         <button type="button" class="settings-action settings-action--danger" (click)="logout()">
             <span class="settings-row__icon-wrap settings-row__icon-wrap--danger" aria-hidden="true">

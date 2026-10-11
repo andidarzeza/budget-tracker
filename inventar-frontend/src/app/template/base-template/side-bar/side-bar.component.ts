@@ -112,12 +112,6 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
     this.router.navigate([link]);
   }
 
-  switchAccount(): void {
-    this.menuOpen.set(false);
-    localStorage.removeItem('account');
-    this.router.navigate(['/account']);
-  }
-
   logout(): void {
     this.menuOpen.set(false);
     this.authenticationService.logout();

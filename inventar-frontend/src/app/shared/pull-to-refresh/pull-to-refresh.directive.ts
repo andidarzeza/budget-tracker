@@ -9,7 +9,7 @@ const HOLD_PX = 56;
 const MAX_REFRESH_MS = 10000;
 
 /**
- * iOS pull-to-refresh for phone pages that scroll the document: at the top,
+ * iOS pull-to-refresh for phone pages: with the page scrolled to the top,
  * pull down to reveal the activity indicator; past the threshold a tick, and
  * letting go emits `refresh`. The page rests open while `[refreshing]` is
  * true, then settles back. Phones only (≤767px); desktop has the toolbar.
@@ -158,7 +158,7 @@ function isPhone(): boolean {
   return window.matchMedia?.('(max-width: 767px)').matches ?? false;
 }
 
-/** Phones scroll the window; slightly wider ones scroll the shell's content box. */
+/** Pages scroll inside the shell's content box (the window only as a fallback). */
 function scrollTop(): number {
   const box = document.querySelector('.content-container');
   return Math.max(window.scrollY, box?.scrollTop ?? 0);
