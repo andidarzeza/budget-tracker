@@ -1,7 +1,7 @@
 /*
- * Settings page — single-page sectioned layout. Each section is an
- * `.app-card` with a heading + a list of `.settings-row`s. Same surface
- * tokens as the dashboard cards so visual weight stays consistent.
+ * Settings — laid out like the iPhone Settings app: large title, an account
+ * card, inset grouped lists (uppercase label above, footnote below) whose
+ * rows lead with a small coloured glyph tile, and a red Log Out row.
  */
 :host {
     display: block;
@@ -9,361 +9,238 @@
     box-sizing: border-box;
 }
 
-.settings-page {
+.st-page {
     display: flex;
     flex-direction: column;
-    gap: var(--app-space-5);
+    gap: 26px;
     width: 100%;
-    max-width: 920px;
+    max-width: 720px;
     margin: 0 auto;
-    padding: var(--app-space-6) var(--app-space-5);
+    padding: 8px 16px 32px;
+    box-sizing: border-box;
+    color: var(--app-text);
+}
+
+.st-title {
+    margin: 0;
+    padding: 4px 4px 0;
+    font-family: var(--app-font-display);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────── */
+.st-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.st-section__label {
+    margin: 0 16px 7px;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--app-text-muted);
+}
+
+.st-section__footer {
+    margin: 7px 16px 0;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--app-text-muted);
+}
+
+/* `.ios-group` too, so form controls inside (cb-select-input) render in
+   their row style; the surface matches the other pages' cards. */
+.st-group,
+.st-group.ios-group {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--app-radius-md);
+    background: var(--app-bg-elevated);
+    overflow: hidden;
+}
+
+/* ── Rows ─────────────────────────────────────────────────────────────── */
+.st-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 46px;
+    padding: 0 16px;
     box-sizing: border-box;
 }
 
-/* ────── Page header ────── */
-.settings-header {
-    display: flex;
-    align-items: center;
-    gap: var(--app-space-4);
-    margin-bottom: var(--app-space-1);
+/* Hairline from the title's inset, after the tile. */
+.st-group > .st-row + .st-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 57px;
+    right: 0;
+    border-top: 0.5px solid var(--ios-separator);
+    pointer-events: none;
 }
 
-.settings-header__icon-wrap {
-    flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: var(--app-radius-md);
-    background: var(--app-accent-soft);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.st-row__title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 17px;
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.settings-header__icon {
+.st-row__title--accent {
     color: var(--app-accent);
-    font-size: 26px;
-    width: 26px;
-    height: 26px;
 }
 
-.settings-header__title {
-    margin: 0;
-    font-family: var(--app-font-display);
-    font-size: 1.6rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--app-text);
-    line-height: 1.1;
+.st-row__trailing {
+    flex-shrink: 0;
 }
 
-.settings-header__subtitle {
-    margin: 4px 0 0;
-    font-size: 0.9rem;
-    color: var(--app-text-muted);
-}
-
-/* ────── Section card ────── */
-.settings-section {
-    /* `.app-card` provides surface + border + radius + shadow. */
-    padding: var(--app-space-5) var(--app-space-5) var(--app-space-3);
-    display: flex;
-    flex-direction: column;
-}
-
-.settings-section__head {
-    margin-bottom: var(--app-space-3);
-    padding-bottom: var(--app-space-3);
-    border-bottom: 1px solid var(--app-border);
-}
-
-.settings-section__title {
-    margin: 0;
-    font-family: var(--app-font-display);
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--app-text);
-}
-
-.settings-section__hint {
-    margin: 4px 0 0;
-    font-size: 0.85rem;
-    color: var(--app-text-muted);
-}
-
-/* ────── Row ────── */
-.settings-row {
+/* Glyph tile: 29pt rounded square, white symbol. */
+.st-tile {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 14px;
-    padding: 12px 0;
-    border-top: 1px solid var(--app-border);
-}
-
-.settings-row:first-of-type,
-.settings-section__head + .settings-row {
-    border-top: 0;
-}
-
-.settings-row--static {
-    /* About-section style row. */
-}
-
-.settings-row__icon-wrap {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--app-radius-sm);
-    background: var(--app-accent-soft);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    place-items: center;
     flex-shrink: 0;
-}
-
-.settings-row__icon-wrap--danger {
-    background: color-mix(in srgb, var(--app-danger) 14%, transparent);
-}
-
-.settings-row__icon {
-    color: var(--app-accent);
-    font-size: 22px;
-    width: 22px;
-    height: 22px;
-}
-
-.settings-row__icon-wrap--danger .settings-row__icon {
-    color: var(--app-danger);
-}
-
-.settings-row__main {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.settings-row__title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--app-text);
-    line-height: 1.3;
-}
-
-.settings-row__desc {
-    font-size: 0.8125rem;
-    color: var(--app-text-muted);
-    line-height: 1.4;
-    margin-top: 2px;
-}
-
-.settings-row__value {
-    font-size: 0.85rem;
-    font-variant-numeric: tabular-nums;
-    color: var(--app-text-muted);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-.settings-row__trailing {
-    flex-shrink: 0;
-}
-
-.settings-row__trailing--currency {
-    width: 160px;
-}
-
-/* Source labels ("🏦 BKT · 🇪🇺 EUR") are longer than a currency code, so give
-   their picker more room — but let it shrink so the row never overflows. */
-.settings-row__trailing--source {
-    width: 280px;
-    min-width: 0;
-    flex-shrink: 1;
-}
-
-/* Hide the empty label space on the embedded pickers so the row visually
-   balances without an orphan label gap above it. */
-.settings-row__trailing--currency cb-select-input ::ng-deep label {
-    display: none;
-}
-
-/* ────── Profile card (inside Account section) ────── */
-.settings-profile {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: var(--app-space-3) 0 var(--app-space-4);
-    border-bottom: 1px solid var(--app-border);
-    margin-bottom: var(--app-space-2);
-}
-
-.settings-profile__avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    font-weight: 700;
+    width: 29px;
+    height: 29px;
+    border-radius: 7px;
     color: #ffffff;
-    background: linear-gradient(135deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)));
-    box-shadow: var(--app-shadow-accent);
-    flex-shrink: 0;
-    letter-spacing: 0.02em;
 }
 
-.settings-profile__text {
-    display: flex;
+.st-tile mat-icon {
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+    line-height: 19px;
+    font-variation-settings: 'FILL' 1, 'wght' 500;
+}
+
+/* Theme: title on one line, the segmented control under it. */
+.st-row--stacked {
     flex-direction: column;
-    min-width: 0;
+    align-items: stretch;
+    gap: 10px;
+    padding: 9px 16px 12px;
 }
 
-.settings-profile__name {
-    font-family: var(--app-font-display);
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--app-text);
-}
-
-.settings-profile__handle {
-    font-size: 0.85rem;
-    color: var(--app-text-muted);
-    margin-top: 2px;
-}
-
-/* ────── Action button (looks like a row, behaves like a button) ────── */
-.settings-action {
-    appearance: none;
-    -webkit-tap-highlight-color: transparent;
-    width: 100%;
-    cursor: pointer;
-    background: transparent;
-    border: 0;
-    border-top: 1px solid var(--app-border);
-    text-align: left;
-    font-family: inherit;
-    color: inherit;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+.st-row__line {
+    display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 0;
-    transition: background var(--app-motion-fast) var(--app-easing-standard);
+    gap: 12px;
 }
 
-.settings-action:first-of-type {
-    border-top: 0;
+.st-row__segmented {
+    margin-left: 41px;
 }
 
-.settings-action:hover {
-    background: var(--app-surface-hover);
+/* Pop-up rows: the select shows its value in grey with a chevron on the
+   right (its own `.ios-group` row style); drop its leading label space. */
+.st-row--select {
+    padding-right: 6px;
 }
 
-.settings-action:focus {
-    outline: none;
+.st-row--select .st-row__title {
+    flex: 0 0 auto;
 }
 
-.settings-action:focus-visible {
-    background: var(--app-surface-hover);
-    box-shadow: 0 0 0 2px var(--app-accent-soft) inset;
-    border-radius: var(--app-radius-sm);
+.st-row__select {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-left: -16px;
 }
 
-.settings-action__chevron {
-    color: var(--app-text-subtle);
-    font-size: 22px;
-    width: 22px;
-    height: 22px;
-    flex-shrink: 0;
-}
-
-.settings-action--danger .settings-row__title {
-    color: var(--app-danger);
-}
-
-.settings-action--danger:hover {
-    background: color-mix(in srgb, var(--app-danger) 8%, transparent);
-}
-
-/* ────── Slide toggle accent (overrides M3 default) ────── */
-.settings-row__trailing.mat-mdc-slide-toggle {
-    --mdc-switch-selected-track-color: var(--app-accent);
-    --mdc-switch-selected-handle-color: var(--app-on-accent);
-    --mdc-switch-selected-hover-track-color: var(--app-accent-hover);
-    --mdc-switch-selected-focus-track-color: var(--app-accent);
-    --mdc-switch-selected-pressed-track-color: var(--app-accent);
-    --mdc-switch-selected-hover-handle-color: var(--app-on-accent);
-    --mdc-switch-selected-focus-handle-color: var(--app-on-accent);
-    --mdc-switch-selected-pressed-handle-color: var(--app-on-accent);
-    --mdc-switch-selected-icon-color: var(--app-on-accent);
-}
-
-/* ────── Mobile ────── */
-@media only screen and (max-width: 640px) {
-    .settings-page {
-        padding: var(--app-space-4) var(--app-space-3);
-        gap: var(--app-space-3);
-    }
-
-    .settings-section {
-        padding: var(--app-space-4) var(--app-space-4) var(--app-space-2);
-    }
-
-    .settings-row,
-    .settings-action {
-        gap: 12px;
-        padding: 14px 0;
-    }
-
-    .settings-row__icon-wrap {
-        width: 36px;
-        height: 36px;
-    }
-
-    .settings-row__trailing--currency {
-        width: 130px;
-    }
-
-    .settings-row__trailing--source {
-        width: 190px;
-    }
-
-    .settings-row__desc {
-        /* Hint text gets dropped to one line on mobile to avoid card bloat. */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
-
-/* ────── Notifications ────── */
-/* A tappable row (e.g. "Send test notification"), styled like the others. */
-.settings-row--action {
+/* Tappable rows (Send Test Notification, Log Out). */
+.st-row--button {
     width: 100%;
-    margin: 0;
-    border-left: 0;
-    border-right: 0;
-    border-bottom: 0;
+    border: 0;
     background: none;
+    color: inherit;
     font: inherit;
     text-align: left;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease;
 }
 
-.settings-row--action:disabled {
-    opacity: 0.5;
+.st-row--button:active:not(:disabled) {
+    background: var(--ios-fill-3);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .st-row--button:hover:not(:disabled) {
+        background: var(--ios-fill-3);
+    }
+}
+
+.st-row--button:disabled {
     cursor: default;
 }
 
-.settings-row--action:active:not(:disabled) .settings-row__title {
-    opacity: 0.4;
+.st-row--button:disabled .st-row__title {
+    opacity: 0.5;
 }
 
-.settings-row__title--accent {
-    color: var(--app-accent);
-    font-weight: 500;
+.st-row--destructive {
+    justify-content: center;
+    font-size: 17px;
+    color: var(--app-danger);
+    text-align: center;
+}
+
+/* ── Account card ─────────────────────────────────────────────────────── */
+.st-profile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+}
+
+.st-profile__avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #a5a5ad, #85858d);
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.st-profile__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.st-profile__name {
+    font-size: 22px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.st-profile__sub {
+    font-size: 15px;
+    color: var(--app-text-muted);
+}
+
+.st-version {
+    margin: -8px 0 0;
+    font-size: 13px;
+    color: var(--app-text-muted);
+    text-align: center;
 }
 
 /* UISwitch — 51×31 track, 27px knob, green when on. */
@@ -417,4 +294,10 @@
 .ios-switch--disabled {
     opacity: 0.4;
     cursor: default;
+}
+
+@media (max-width: 767px) {
+    .st-page {
+        gap: 22px;
+    }
 }

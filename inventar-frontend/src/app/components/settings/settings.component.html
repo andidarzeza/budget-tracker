@@ -1,119 +1,84 @@
-<section class="settings-page">
-    <header class="settings-header">
-        <span class="settings-header__icon-wrap" aria-hidden="true">
-            <mat-icon class="settings-header__icon">settings</mat-icon>
-        </span>
-        <div class="settings-header__text">
-            <h1 class="settings-header__title">Settings</h1>
-            <p class="settings-header__subtitle">Manage your account and preferences.</p>
+<section class="st-page">
+    <h1 class="st-title">Settings</h1>
+
+    <!-- ──── Account card (like the Apple Account row) ──── -->
+    <div class="st-group">
+        <div class="st-profile">
+            <div class="st-profile__avatar" aria-hidden="true">{{ initials() }}</div>
+            <div class="st-profile__text">
+                <span class="st-profile__name">{{ fullName }}</span>
+                <span class="st-profile__sub">{{ username ? '@' + username : 'Financa account' }}</span>
+            </div>
         </div>
-    </header>
+    </div>
 
     <!-- ──── Appearance ──── -->
-    <section class="app-card settings-section">
-        <header class="settings-section__head">
-            <h2 class="settings-section__title">Appearance</h2>
-            <p class="settings-section__hint">How the app looks and which currency it defaults to.</p>
-        </header>
-
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">dark_mode</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Theme</span>
-                <span class="settings-row__desc">Light, dark, or follow your system setting.</span>
+    <div class="st-section">
+        <h2 class="st-section__label">Appearance</h2>
+        <div class="st-group ios-group">
+            <div class="st-row st-row--stacked">
+                <div class="st-row__line">
+                    <span class="st-tile" style="background: #5856d6" aria-hidden="true"><mat-icon>dark_mode</mat-icon></span>
+                    <span class="st-row__title">Theme</span>
+                </div>
+                <theme-switch class="st-row__segmented"></theme-switch>
             </div>
-            <theme-switch class="settings-row__trailing" style="width: 240px"></theme-switch>
+
+            <div class="st-row">
+                <span class="st-tile" style="background: #ff2d55" aria-hidden="true"><mat-icon>favorite</mat-icon></span>
+                <span class="st-row__title">Pink Theme</span>
+                <pink-toggle bare class="st-row__trailing"></pink-toggle>
+            </div>
         </div>
+        <p class="st-section__footer">Pink theme uses soft pink colours in light and dark mode. Saved on this device.</p>
+    </div>
 
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">favorite</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Pink theme</span>
-                <span class="settings-row__desc">Soft pink colours across the app, in light and dark mode. Saved on this device.</span>
-            </div>
-            <pink-toggle bare class="settings-row__trailing"></pink-toggle>
-        </div>
-
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">payments</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Project currency</span>
-                <span class="settings-row__desc">Default target currency for new savings goals.</span>
-            </div>
-            <div class="settings-row__trailing settings-row__trailing--currency">
-                <cb-select-input
-                    label=""
+    <!-- ──── General ──── -->
+    <div class="st-section">
+        <h2 class="st-section__label">General</h2>
+        <div class="st-group ios-group">
+            <div class="st-row st-row--select">
+                <span class="st-tile" style="background: #34c759" aria-hidden="true"><mat-icon>payments</mat-icon></span>
+                <span class="st-row__title">Project Currency</span>
+                <cb-select-input class="st-row__select" label=""
                     [control]="$any(baseCurrencyControl)"
                     [options]="currencies"
                     [displayWith]="displayCurrency">
                 </cb-select-input>
             </div>
-        </div>
 
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">home</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Default page after login</span>
-                <span class="settings-row__desc">Where you land right after signing in.</span>
-            </div>
-            <div class="settings-row__trailing settings-row__trailing--currency">
-                <cb-select-input
-                    label=""
+            <div class="st-row st-row--select">
+                <span class="st-tile" style="background: #8e8e93" aria-hidden="true"><mat-icon>home</mat-icon></span>
+                <span class="st-row__title">Start Page</span>
+                <cb-select-input class="st-row__select" label=""
                     [control]="$any(landingPageControl)"
                     [options]="landingPages"
                     [displayWith]="displayLandingPage">
                 </cb-select-input>
             </div>
         </div>
-    </section>
+        <p class="st-section__footer">Project currency is the default target currency for new savings goals.</p>
+    </div>
 
     <!-- ──── Default sources ──── -->
-    <section class="app-card settings-section">
-        <header class="settings-section__head">
-            <h2 class="settings-section__title">Default sources</h2>
-            <p class="settings-section__hint">Which bank or cash source new expenses and income use by default.</p>
-        </header>
-
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">south_west</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Default expense source</span>
-                <span class="settings-row__desc">Pre-selected as "Paid from" on a new expense.</span>
-            </div>
-            <div class="settings-row__trailing settings-row__trailing--currency settings-row__trailing--source">
-                <cb-select-input
-                    label=""
-                    emptyText="No sources yet"
+    <div class="st-section">
+        <h2 class="st-section__label">Default Sources</h2>
+        <div class="st-group ios-group">
+            <div class="st-row st-row--select">
+                <span class="st-tile" style="background: #ff3b30" aria-hidden="true"><mat-icon>south_west</mat-icon></span>
+                <span class="st-row__title">Expenses</span>
+                <cb-select-input class="st-row__select" label="" emptyText="No sources yet"
                     [control]="$any(defaultExpenseWalletControl)"
                     [options]="sources()"
                     [displayWith]="displaySource"
                     [valueWith]="$any(sourceIdValue)">
                 </cb-select-input>
             </div>
-        </div>
 
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">north_east</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Default income deposit</span>
-                <span class="settings-row__desc">Pre-selected as "Deposit to" on a new income.</span>
-            </div>
-            <div class="settings-row__trailing settings-row__trailing--currency settings-row__trailing--source">
-                <cb-select-input
-                    label=""
-                    emptyText="No sources yet"
+            <div class="st-row st-row--select">
+                <span class="st-tile" style="background: #30b0c7" aria-hidden="true"><mat-icon>north_east</mat-icon></span>
+                <span class="st-row__title">Income</span>
+                <cb-select-input class="st-row__select" label="" emptyText="No sources yet"
                     [control]="$any(defaultIncomeWalletControl)"
                     [options]="sources()"
                     [displayWith]="displaySource"
@@ -121,140 +86,73 @@
                 </cb-select-input>
             </div>
         </div>
-    </section>
+        <p class="st-section__footer">Pre-selected as "Paid from" on a new expense and "Deposit to" on a new income.</p>
+    </div>
 
-    <!-- ──── Feedback ──── -->
-    <section class="app-card settings-section">
-        <header class="settings-section__head">
-            <h2 class="settings-section__title">Haptics &amp; Sounds</h2>
-            <p class="settings-section__hint">Little taps and sounds, like iPhone apps.</p>
-        </header>
-
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">vibration</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Haptics</span>
-                <span class="settings-row__desc">A light tap when you switch tabs, pick a category, open a menu, save or hit an error.</span>
+    <!-- ──── Haptics & Sounds ──── -->
+    <div class="st-section">
+        <h2 class="st-section__label">Haptics &amp; Sounds</h2>
+        <div class="st-group ios-group">
+            <div class="st-row">
+                <span class="st-tile" style="background: #ff9500" aria-hidden="true"><mat-icon>vibration</mat-icon></span>
+                <span class="st-row__title">Haptics</span>
+                <label class="ios-switch st-row__trailing">
+                    <input type="checkbox" switch role="switch" aria-label="Haptics"
+                        [checked]="feedback.hapticsOn()" (change)="feedback.setHaptics($any($event.target).checked)" />
+                    <span class="ios-switch__track" aria-hidden="true"></span>
+                </label>
             </div>
-            <label class="ios-switch settings-row__trailing">
-                <input type="checkbox" switch role="switch" aria-label="Haptics"
-                    [checked]="feedback.hapticsOn()" (change)="feedback.setHaptics($any($event.target).checked)" />
-                <span class="ios-switch__track" aria-hidden="true"></span>
-            </label>
-        </div>
 
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">volume_up</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Sounds</span>
-                <span class="settings-row__desc">A soft pop when something is saved, a low tone on errors. Silent when your phone is on silent.</span>
+            <div class="st-row">
+                <span class="st-tile" style="background: #ff2d55" aria-hidden="true"><mat-icon>volume_up</mat-icon></span>
+                <span class="st-row__title">Sounds</span>
+                <label class="ios-switch st-row__trailing">
+                    <input type="checkbox" switch role="switch" aria-label="Sounds"
+                        [checked]="feedback.soundsOn()" (change)="feedback.setSounds($any($event.target).checked)" />
+                    <span class="ios-switch__track" aria-hidden="true"></span>
+                </label>
             </div>
-            <label class="ios-switch settings-row__trailing">
-                <input type="checkbox" switch role="switch" aria-label="Sounds"
-                    [checked]="feedback.soundsOn()" (change)="feedback.setSounds($any($event.target).checked)" />
-                <span class="ios-switch__track" aria-hidden="true"></span>
-            </label>
         </div>
-    </section>
+        <p class="st-section__footer">A light tap when you switch tabs, pick a category or save. Sounds play a soft pop on save and stay silent when your phone is on silent.</p>
+    </div>
 
     <!-- ──── Notifications ──── -->
-    <section class="app-card settings-section">
-        <header class="settings-section__head">
-            <h2 class="settings-section__title">Notifications</h2>
-            <p class="settings-section__hint">Alerts on this device, even when Financa is closed.</p>
-        </header>
-
-        <div class="settings-row">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">notifications</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Euro rate alerts</span>
-                <span class="settings-row__desc">
-                    @switch (push.state()) {
-                        @case ('needs-install') { On iPhone, add Financa to your Home Screen (Share → Add to Home Screen) and open it from there to turn this on. }
-                        @case ('unsupported') { This browser can't receive notifications. }
-                        @case ('blocked') { Notifications are blocked for Financa. Allow them in your phone's Settings, then come back. }
-                        @default { Notify me when the EUR sell rate drops to its lowest ever. }
-                    }
-                </span>
+    <div class="st-section">
+        <h2 class="st-section__label">Notifications</h2>
+        <div class="st-group ios-group">
+            <div class="st-row">
+                <span class="st-tile" style="background: #ff3b30" aria-hidden="true"><mat-icon>notifications</mat-icon></span>
+                <span class="st-row__title">Euro Rate Alerts</span>
+                <label class="ios-switch st-row__trailing" [class.ios-switch--disabled]="!canToggle()">
+                    <input type="checkbox" switch role="switch" aria-label="Euro rate alerts"
+                        [checked]="push.state() === 'on'" [disabled]="!canToggle() || push.busy()"
+                        (change)="togglePush($any($event.target).checked)" />
+                    <span class="ios-switch__track" aria-hidden="true"></span>
+                </label>
             </div>
-            <label class="ios-switch settings-row__trailing" [class.ios-switch--disabled]="!canToggle()">
-                <input type="checkbox" switch role="switch" aria-label="Euro rate alerts"
-                    [checked]="push.state() === 'on'" [disabled]="!canToggle() || push.busy()"
-                    (change)="togglePush($any($event.target).checked)" />
-                <span class="ios-switch__track" aria-hidden="true"></span>
-            </label>
+
+            <button type="button" class="st-row st-row--button" (click)="sendTestPush()"
+                [disabled]="testing() || push.busy()">
+                <span class="st-tile" style="background: #007aff" aria-hidden="true"><mat-icon>send</mat-icon></span>
+                <span class="st-row__title st-row__title--accent">{{ testing() ? 'Sending…' : 'Send Test Notification' }}</span>
+            </button>
         </div>
+        <p class="st-section__footer">
+            @switch (push.state()) {
+                @case ('needs-install') { On iPhone, add Financa to your Home Screen (Share → Add to Home Screen) and open it from there to turn alerts on. }
+                @case ('unsupported') { This browser can't receive notifications. }
+                @case ('blocked') { Notifications are blocked for Financa. Allow them in your phone's Settings, then come back. }
+                @default { Get a notification when the EUR sell rate drops to its lowest ever, even when Financa is closed. }
+            }
+        </p>
+    </div>
 
-        <button type="button" class="settings-row settings-row--action" (click)="sendTestPush()"
-            [disabled]="testing() || push.busy()">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">send</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title settings-row__title--accent">
-                    {{ testing() ? 'Sending…' : 'Send test notification' }}
-                </span>
-                <span class="settings-row__desc">
-                    @if (push.state() === 'on') {
-                        Sends a notification to this device now.
-                    } @else {
-                        Turns alerts on for this device first, then sends one.
-                    }
-                </span>
-            </div>
+    <!-- ──── Log out ──── -->
+    <div class="st-group">
+        <button type="button" class="st-row st-row--button st-row--destructive" (click)="logout()">
+            Log Out
         </button>
-    </section>
+    </div>
 
-    <!-- ──── Account ──── -->
-    <section class="app-card settings-section">
-        <header class="settings-section__head">
-            <h2 class="settings-section__title">Account</h2>
-            <p class="settings-section__hint">Profile and sign out.</p>
-        </header>
-
-        <div class="settings-profile">
-            <div class="settings-profile__avatar" aria-hidden="true">{{ initials() }}</div>
-            <div class="settings-profile__text">
-                <span class="settings-profile__name">{{ fullName }}</span>
-                @if (username) {
-                    <span class="settings-profile__handle">{{ '@' + username }}</span>
-                }
-            </div>
-        </div>
-
-        <button type="button" class="settings-action settings-action--danger" (click)="logout()">
-            <span class="settings-row__icon-wrap settings-row__icon-wrap--danger" aria-hidden="true">
-                <mat-icon class="settings-row__icon">logout</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Log out</span>
-                <span class="settings-row__desc">Sign out of this device.</span>
-            </div>
-            <mat-icon class="settings-action__chevron" aria-hidden="true">chevron_right</mat-icon>
-        </button>
-    </section>
-
-    <!-- ──── About ──── -->
-    <section class="app-card settings-section">
-        <header class="settings-section__head">
-            <h2 class="settings-section__title">About</h2>
-        </header>
-
-        <div class="settings-row settings-row--static">
-            <span class="settings-row__icon-wrap" aria-hidden="true">
-                <mat-icon class="settings-row__icon">info</mat-icon>
-            </span>
-            <div class="settings-row__main">
-                <span class="settings-row__title">Financa</span>
-                <span class="settings-row__desc">Personal finance, multi-currency, your account.</span>
-            </div>
-            <span class="settings-row__value">v{{ appVersion }}</span>
-        </div>
-    </section>
+    <p class="st-version">Financa · Version {{ appVersion }}</p>
 </section>

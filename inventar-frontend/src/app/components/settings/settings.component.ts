@@ -109,9 +109,9 @@ export class SettingsComponent implements OnInit {
   readonly displayLandingPage = (p: string): string => {
     switch (p) {
       case '/welcome':
-        return 'Welcome page';
+        return 'Home';
       case '/dashboard':
-        return 'Dashboard';
+        return 'Summary';
       default:
         return p;
     }
