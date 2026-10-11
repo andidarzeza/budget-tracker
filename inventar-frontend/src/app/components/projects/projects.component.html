@@ -1,5 +1,5 @@
 @if (isMobile()) {
-    <section class="ledger">
+    <section class="ledger" pullToRefresh [refreshing]="loading()" (refresh)="refresh()">
         <header class="ledger__head">
             <h1 class="ledger__page-title">Projects</h1>
             <div class="ledger__head-actions">
@@ -7,19 +7,9 @@
                     (click)="openAddDialog()">
                     New
                 </button>
-                <button type="button" cb-icon-button [matMenuTriggerFor]="ledgerMenu"
-                    matTooltip="More" matTooltipPosition="below" aria-label="More options">
-                    <mat-icon>more_horiz</mat-icon>
-                </button>
             </div>
         </header>
 
-        <mat-menu #ledgerMenu="matMenu">
-            <button mat-menu-item (click)="refresh()">
-                <mat-icon>refresh</mat-icon>
-                <span>Refresh</span>
-            </button>
-        </mat-menu>
 
         @if (summary().total > 0) {
             <article class="ledger-summary">

@@ -1,3 +1,4 @@
+import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef,
@@ -30,7 +31,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
   templateUrl: './exchange.component.html',
   styleUrls: ['./exchange.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, DecimalPipe, DatePipe],
+  imports: [MatIconModule, DecimalPipe, DatePipe, PullToRefreshDirective],
 })
 export class ExchangeComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly exchangeRateService = inject(ExchangeRateService);
@@ -129,6 +130,11 @@ export class ExchangeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.chart?.destroy();
+  }
+
+  /** Pull to refresh: fetch the stored rate history again. */
+  reload(): void {
+    this.load();
   }
 
   private load(): void {

@@ -1,5 +1,4 @@
 import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
-import { SwipeDeleteDirective } from 'src/app/shared/swipe-delete/swipe-delete.directive';
 import { takeUntil } from 'rxjs/operators';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
@@ -12,7 +11,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -34,7 +32,6 @@ import { FilterService } from 'src/app/core/services/filter.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
-import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -45,7 +42,6 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   styleUrls: ['./expenses.component.css'],
   imports: [
     PullToRefreshDirective,
-    SwipeDeleteDirective,
     PressHighlightDirective,
     RevealNumberDirective,
     LedgerFiltersComponent,
@@ -53,11 +49,9 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     CommonModule,
     MatButtonModule,
     MatIconModule,
-    MatMenuModule,
     MatSidenavModule,
     BaseTableComponent,
     ExpenseDetailComponent,
-    IconButtonComponent,
     PillButtonComponent,
     ...TOOLTIP_IMPORTS,
   ],

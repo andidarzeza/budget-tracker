@@ -125,31 +125,73 @@ export class MobileTabBarComponent implements AfterViewInit {
 
   // ── Slide across the bar, release to open (iOS 26 tab bar) ─────────────
 
+  /** "More" item under the finger while a press is dragged up into the menu. */
+  readonly menuSlideIndex = signal<number | null>(null);
+  /** The menu was opened by the current press (press on More, or a slide onto it). */
+  private menuFromPress = false;
+
   onPointerDown(event: PointerEvent): void {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
+    const bar = event.currentTarget as HTMLElement;
     // A fresh touch is never the tail of an earlier slide.
     this.swallowClick = false;
+    this.menuFromPress = false;
     this.slide = { startX: event.clientX, startY: event.clientY, sliding: false };
+    // Touching More opens the menu at once (a closed one — tapping More again
+    // still closes it); keep the pointer, so the finger can carry on up into it.
+    if (this.slotAt(event.clientX, bar) === this.moreIndex && !this.moreOpen()) {
+      this.openMenuFromPress(event, bar);
+      this.swallowClick = true; // the click on More would toggle it shut again
+    }
   }
 
   onPointerMove(event: PointerEvent, bar: HTMLElement): void {
     if (!this.slide) return;
+    const barTop = bar.getBoundingClientRect().top;
+    // Above the bar with the menu open: pick the page under the finger.
+    if (this.moreOpen() && this.menuFromPress && event.clientY < barTop - 4) {
+      this.slideIndex.set(null);
+      const index = this.menuItemAt(event.clientX, event.clientY);
+      if (index !== this.menuSlideIndex()) {
+        if (index !== null) this.feedback.haptic('selection');
+        this.menuSlideIndex.set(index);
+      }
+      return;
+    }
+    this.menuSlideIndex.set(null);
     if (!this.slide.sliding) {
       const dx = Math.abs(event.clientX - this.slide.startX);
       const dy = Math.abs(event.clientY - this.slide.startY);
-      if (dx < SLIDE_THRESHOLD_PX || dx < dy) return;
+      if (!this.menuFromPress && (dx < SLIDE_THRESHOLD_PX || dx < dy)) return;
+      if (this.menuFromPress && dx < SLIDE_THRESHOLD_PX) return;
       this.slide.sliding = true;
-      bar.setPointerCapture(event.pointerId);
+      this.capture(bar, event.pointerId);
     }
     const index = this.slotAt(event.clientX, bar);
     // A tick each time the finger crosses into another tab (UISelectionFeedback).
     if (index !== this.slideIndex()) this.feedback.haptic('selection');
     this.slideIndex.set(index);
+    // Sliding onto More opens the menu; sliding off it again closes it.
+    if (index === this.moreIndex && !this.moreOpen()) {
+      this.openMenuFromPress(event, bar);
+    } else if (index !== this.moreIndex && this.moreOpen() && this.menuFromPress) {
+      this.moreOpen.set(false);
+    }
   }
 
   onPointerUp(event: PointerEvent, bar: HTMLElement): void {
     const slide = this.slide;
     this.slide = null;
+    const menuIndex = this.menuSlideIndex();
+    this.menuSlideIndex.set(null);
+    // Released on a page in the menu: open it.
+    if (menuIndex !== null) {
+      this.swallowClick = true;
+      setTimeout(() => (this.swallowClick = false), 350);
+      this.closeAll();
+      this.router.navigate([this.moreItems[menuIndex].link]);
+      return;
+    }
     if (!slide?.sliding) return;
     const index = this.slotAt(event.clientX, bar);
     this.slideIndex.set(null);
@@ -157,6 +199,9 @@ export class MobileTabBarComponent implements AfterViewInit {
     // ignore it — but only briefly, so it can never eat a later real tap.
     this.swallowClick = true;
     setTimeout(() => (this.swallowClick = false), 350);
+    if (event.clientY < bar.getBoundingClientRect().top - 4 && this.moreOpen()) {
+      return; // let go above the bar, not on a page: the menu stays open
+    }
     if (index === this.moreIndex) {
       this.moreOpen.set(true);
     } else {
@@ -167,6 +212,41 @@ export class MobileTabBarComponent implements AfterViewInit {
   onPointerCancel(): void {
     this.slide = null;
     this.slideIndex.set(null);
+    this.menuSlideIndex.set(null);
+  }
+
+  private menuOpenedAt = 0;
+
+  /** Tap outside the menu closes it — but not the click that ends the very press that opened it. */
+  closeFromBackdrop(): void {
+    if (performance.now() - this.menuOpenedAt < 450) return;
+    this.moreOpen.set(false);
+  }
+
+  private openMenuFromPress(event: PointerEvent, bar: HTMLElement): void {
+    this.menuOpenedAt = performance.now();
+    this.moreOpen.set(true);
+    this.menuFromPress = true;
+    this.capture(bar, event.pointerId);
+    this.feedback.haptic('light');
+  }
+
+  /** Keep getting this finger's moves even once it leaves the bar. */
+  private capture(bar: HTMLElement, pointerId: number): void {
+    try {
+      bar.setPointerCapture(pointerId);
+    } catch {
+      /* pointer already released */
+    }
+  }
+
+  /** Index of the More page under a point, or null. */
+  private menuItemAt(x: number, y: number): number | null {
+    const item = document.elementFromPoint(x, y)?.closest('.more-menu__item');
+    if (!item) return null;
+    const items = Array.from(document.querySelectorAll('.more-menu__item'));
+    const index = items.indexOf(item);
+    return index >= 0 ? index : null;
   }
 
   /** Eats the click that follows a slide, so it doesn't open a second tab. */

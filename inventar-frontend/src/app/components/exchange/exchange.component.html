@@ -1,4 +1,4 @@
-<div class="exchange">
+<div class="exchange" pullToRefresh [refreshing]="loading()" (refresh)="reload()">
     <header class="page-head">
         <div>
             <h1 class="page-title">Exchange</h1>

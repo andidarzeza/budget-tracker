@@ -1,4 +1,4 @@
-import { SwipeDeleteDirective } from 'src/app/shared/swipe-delete/swipe-delete.directive';
+import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
 import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
@@ -8,7 +8,6 @@ import { HttpParams } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnInit, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -25,7 +24,6 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
-import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { buildParams } from 'src/app/utils/param-bulder';
@@ -44,17 +42,15 @@ interface CategorySummary {
   styleUrls: ['./categories.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SwipeDeleteDirective,
+    PullToRefreshDirective,
     PressHighlightDirective,
     LedgerFiltersComponent,
     LongPressDeleteDirective,
     CommonModule,
     MatIconModule,
-    MatMenuModule,
     MatSidenavModule,
     BaseTableComponent,
     CategoryDetailComponent,
-    IconButtonComponent,
     PillButtonComponent,
     ...TOOLTIP_IMPORTS,
   ],

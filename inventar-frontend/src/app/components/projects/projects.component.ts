@@ -1,10 +1,10 @@
+import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, of } from 'rxjs';
@@ -16,7 +16,6 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { ProjectService } from 'src/app/services/pages/project.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -28,12 +27,11 @@ import { AddProjectComponent } from './add-project/add-project.component';
   styleUrls: ['./projects.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PullToRefreshDirective,
     PressHighlightDirective,
     CommonModule,
     MatIconModule,
-    MatMenuModule,
     PillButtonComponent,
-    IconButtonComponent,
     ...TOOLTIP_IMPORTS,
   ],
 })
@@ -50,6 +48,8 @@ export class ProjectsComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly projects = signal<ProjectView[] | null>(null);
+  /** A (re)load is in flight — drives the pull-to-refresh indicator. */
+  readonly loading = signal(false);
 
   /** Same breakpoint as table-card layout (≤767px) — switches the page from
    *  the desktop card grid to the mobile ledger view. */
@@ -101,6 +101,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   refresh(): void {
+    this.loading.set(true);
     this.projectService
       .list(this.accountService.getAccount())
       .pipe(
@@ -110,7 +111,10 @@ export class ProjectsComponent implements OnInit {
           return of([] as ProjectView[]);
         }),
       )
-      .subscribe((rows) => this.projects.set(rows));
+      .subscribe((rows) => {
+        this.projects.set(rows);
+        this.loading.set(false);
+      });
   }
 
   open(view: ProjectView): void {

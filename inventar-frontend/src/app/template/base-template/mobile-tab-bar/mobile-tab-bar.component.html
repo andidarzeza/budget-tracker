@@ -1,12 +1,13 @@
 <!-- Floating glass tab bar with a separate add button, like iOS 26 apps
      (Music / Photos) that pair the tab capsule with a round action. -->
 @if (moreOpen()) {
-    <div class="more-backdrop" (click)="moreOpen.set(false)" aria-hidden="true"></div>
+    <div class="more-backdrop" (click)="closeFromBackdrop()" aria-hidden="true"></div>
 
     <div class="more-menu" role="menu" aria-label="More pages">
         <div class="more-menu__list">
-            @for (item of moreItems; track item.link) {
+            @for (item of moreItems; track item.link; let i = $index) {
                 <a class="more-menu__item" role="menuitem" [routerLink]="item.link"
+                    [class.more-menu__item--slide]="menuSlideIndex() === i"
                     routerLinkActive="more-menu__item--active" (click)="moreOpen.set(false)">
                     <span class="more-menu__icon" [style.background]="item.color" aria-hidden="true">
                         <mat-icon fontSet="material-symbols-rounded">{{ item.icon }}</mat-icon>
