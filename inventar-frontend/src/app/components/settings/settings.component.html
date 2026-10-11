@@ -123,6 +123,56 @@
         </div>
     </section>
 
+    <!-- ──── Notifications ──── -->
+    <section class="app-card settings-section">
+        <header class="settings-section__head">
+            <h2 class="settings-section__title">Notifications</h2>
+            <p class="settings-section__hint">Alerts on this device, even when Financa is closed.</p>
+        </header>
+
+        <div class="settings-row">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">notifications</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Euro rate alerts</span>
+                <span class="settings-row__desc">
+                    @switch (push.state()) {
+                        @case ('needs-install') { On iPhone, add Financa to your Home Screen (Share → Add to Home Screen) and open it from there to turn this on. }
+                        @case ('unsupported') { This browser can't receive notifications. }
+                        @case ('blocked') { Notifications are blocked for Financa. Allow them in your phone's Settings, then come back. }
+                        @default { Notify me when the EUR sell rate drops to its lowest ever. }
+                    }
+                </span>
+            </div>
+            <label class="ios-switch settings-row__trailing" [class.ios-switch--disabled]="!canToggle()">
+                <input type="checkbox" role="switch" aria-label="Euro rate alerts"
+                    [checked]="push.state() === 'on'" [disabled]="!canToggle() || push.busy()"
+                    (change)="togglePush($any($event.target).checked)" />
+                <span class="ios-switch__track" aria-hidden="true"></span>
+            </label>
+        </div>
+
+        <button type="button" class="settings-row settings-row--action" (click)="sendTestPush()"
+            [disabled]="testing() || push.busy()">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">send</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title settings-row__title--accent">
+                    {{ testing() ? 'Sending…' : 'Send test notification' }}
+                </span>
+                <span class="settings-row__desc">
+                    @if (push.state() === 'on') {
+                        Sends a notification to this device now.
+                    } @else {
+                        Turns alerts on for this device first, then sends one.
+                    }
+                </span>
+            </div>
+        </button>
+    </section>
+
     <!-- ──── Account ──── -->
     <section class="app-card settings-section">
         <header class="settings-section__head">

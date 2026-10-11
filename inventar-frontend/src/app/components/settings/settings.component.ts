@@ -1,3 +1,6 @@
+import { PushNotificationService } from 'src/app/services/push-notification.service';
+import { ToastrService } from 'ngx-toastr';
+import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
 import { CommonModule } from '@angular/common';
 import {
@@ -61,6 +64,9 @@ export class SettingsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly flagPipe = inject(FlagPipe);
   private readonly destroyRef = inject(DestroyRef);
+  readonly push = inject(PushNotificationService);
+  private readonly toastr = inject(ToastrService);
+  readonly testing = signal(false);
 
   readonly currencies = CURRENCIES;
 
@@ -136,6 +142,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     this.sideBarService.displaySidebar = true;
     this.navBarService.displayNavBar = true;
+    void this.push.refresh();
 
     // Persist base-currency changes immediately. No backend call needed —
     // it's a local default for new expenses / incomes / projects.
@@ -191,5 +198,50 @@ export class SettingsComponent implements OnInit {
 
   logout(): void {
     this.authenticationService.logout();
+  }
+
+  /** The switch is usable unless this device can't do push at all / it's blocked. */
+  canToggle(): boolean {
+    const state = this.push.state();
+    return state === 'on' || state === 'off';
+  }
+
+  async togglePush(on: boolean): Promise<void> {
+    try {
+      if (on) await this.push.enable();
+      else await this.push.disable();
+    } catch {
+      this.toastr.error('Could not change notifications. Please try again.', 'Notifications', TOASTER_CONFIGURATION);
+      await this.push.refresh();
+    }
+  }
+
+  async sendTestPush(): Promise<void> {
+    this.testing.set(true);
+    try {
+      // Not subscribed yet: ask permission and subscribe first (needs this tap).
+      if (this.push.state() === 'off') await this.push.enable();
+      const state = this.push.state();
+      if (state !== 'on') {
+        const why: Record<string, string> = {
+          'needs-install': 'On iPhone, open Financa from your Home Screen to get notifications.',
+          unsupported: "This browser can't receive notifications.",
+          blocked: "Notifications are blocked for Financa — allow them in your phone's Settings.",
+          off: 'Notifications were not allowed.',
+        };
+        this.toastr.warning(why[state] ?? why['off'], 'Notifications', TOASTER_CONFIGURATION);
+        return;
+      }
+      const delivered = await this.push.sendTest();
+      if (delivered > 0) {
+        this.toastr.success('Test notification sent.', 'Notifications', TOASTER_CONFIGURATION);
+      } else {
+        this.toastr.warning('No device accepted it. Try turning alerts off and on again.', 'Notifications', TOASTER_CONFIGURATION);
+      }
+    } catch {
+      this.toastr.error('Could not send a test notification.', 'Notifications', TOASTER_CONFIGURATION);
+    } finally {
+      this.testing.set(false);
+    }
   }
 }

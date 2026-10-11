@@ -23,6 +23,7 @@
               "src/favicon.ico",
               "src/favicon.svg",
               "src/manifest.json",
+              "src/push-sw.js",
               "src/assets"
             ],
             "styles": [

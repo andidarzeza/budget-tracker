@@ -1,3 +1,4 @@
+import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { AnimateHeightDirective } from 'src/app/shared/animate-height/animate-height.directive';
 import { iosTileColorForName } from 'src/app/shared/ios/ios-colors';
 import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
@@ -144,6 +145,7 @@ interface CategoryRow {
   animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PressHighlightDirective,
     AnimateHeightDirective,
     RevealNumberDirective,
     CommonModule,

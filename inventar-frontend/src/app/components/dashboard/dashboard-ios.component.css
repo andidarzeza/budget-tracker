@@ -758,13 +758,27 @@
     }
 }
 
-.cat-row--clickable:active {
+/* Pressed row. Touch uses `.is-pressed` (PressHighlightDirective), which
+   waits a moment and is cancelled by a scroll; plain `:active` lit up
+   whatever row a swipe started on. Mouse keeps hover / `:active`. */
+.cat-row--clickable.is-pressed {
     background: var(--ios-fill);
 }
 
 @media (hover: hover) and (pointer: fine) {
     .cat-row--clickable:hover {
         background: var(--app-surface-hover);
+    }
+
+    .cat-row--clickable:active {
+        background: var(--ios-fill);
+    }
+}
+
+/* The base stylesheet's hover would otherwise stick after a tap on phones. */
+@media (hover: none) {
+    .cat-row--clickable:hover {
+        background: transparent;
     }
 }
 

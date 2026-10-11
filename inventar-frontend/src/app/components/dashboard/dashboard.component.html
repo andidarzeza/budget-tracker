@@ -230,7 +230,7 @@
                                         </li>
                                     }
                                     @for (r of g.rows; track r.name + r.currency) {
-                                    <li class="cat-row cat-row--clickable" (click)="openCategoryStory('expense', r)"
+                                    <li class="cat-row cat-row--clickable" pressHighlight (click)="openCategoryStory('expense', r)"
                                         [class.cat-row--active]="storyOpen() && storyKind() === 'expense' && storyCategory()?.name === r.name && storyCategory()?.currency === r.currency">
                                         @let pct = sharePercent(expenseRows(), r);
                                         <span class="cat-row__icon" [style.background]="tileColor(r.name)">
@@ -330,7 +330,7 @@
                                         </li>
                                     }
                                     @for (r of g.rows; track r.name + r.currency) {
-                                    <li class="cat-row cat-row--clickable" (click)="openCategoryStory('income', r)"
+                                    <li class="cat-row cat-row--clickable" pressHighlight (click)="openCategoryStory('income', r)"
                                         [class.cat-row--active]="storyOpen() && storyKind() === 'income' && storyCategory()?.name === r.name && storyCategory()?.currency === r.currency">
                                         @let pct = sharePercent(incomeRows(), r);
                                         <span class="cat-row__icon" [style.background]="tileColor(r.name)">

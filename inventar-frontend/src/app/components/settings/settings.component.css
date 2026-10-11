@@ -336,3 +336,85 @@
         text-overflow: ellipsis;
     }
 }
+
+/* ────── Notifications ────── */
+/* A tappable row (e.g. "Send test notification"), styled like the others. */
+.settings-row--action {
+    width: 100%;
+    margin: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.settings-row--action:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.settings-row--action:active:not(:disabled) .settings-row__title {
+    opacity: 0.4;
+}
+
+.settings-row__title--accent {
+    color: var(--app-accent);
+    font-weight: 500;
+}
+
+/* UISwitch — 51×31 track, 27px knob, green when on. */
+.ios-switch {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ios-switch input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ios-switch__track {
+    position: relative;
+    width: 51px;
+    height: 31px;
+    border-radius: 16px;
+    background: var(--ios-fill);
+    transition: background 0.25s ease;
+}
+
+.ios-switch__track::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 3px 1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.25s cubic-bezier(0.3, 0.7, 0.4, 1.2);
+}
+
+.ios-switch input:checked + .ios-switch__track {
+    background: var(--app-success);
+}
+
+.ios-switch input:checked + .ios-switch__track::after {
+    transform: translateX(20px);
+}
+
+.ios-switch input:focus-visible + .ios-switch__track {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 35%, transparent);
+}
+
+.ios-switch--disabled {
+    opacity: 0.4;
+    cursor: default;
+}

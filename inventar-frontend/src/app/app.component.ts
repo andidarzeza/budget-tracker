@@ -1,3 +1,4 @@
+import { PushNotificationService } from './services/push-notification.service';
 import { ListCacheService } from './core/services/list-cache.service';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -30,6 +31,8 @@ export class AppComponent implements OnInit {
     this.themeService.initTheme();
     // Expenses / Incomes first pages, kept ready in the background.
     this.listCache.start();
+    // Service worker that shows push notifications (rate alerts).
+    inject(PushNotificationService).register();
     this.sharedService.applyBodyTheme(this.themeService.themeValue);
   }
 

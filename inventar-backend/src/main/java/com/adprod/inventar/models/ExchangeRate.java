@@ -29,5 +29,7 @@ public class ExchangeRate {
     private Double sell;
     private String source;
     private Date fetchedAt;
+    /** Sell rate a "new all-time low" push was sent for today, so it isn't repeated hourly. */
+    private Double lowAlertSell;
 
 }
