@@ -3,48 +3,56 @@
         "icon": "space_dashboard",
         "text": "Dashboard",
         "description": "Balances & overview",
-        "link": "/dashboard"
+        "link": "/dashboard",
+        "color": "#007aff"
     },
     {
         "icon": "trending_down",
         "text": "Expenses",
         "description": "Money going out",
-        "link": "/expenses"
+        "link": "/expenses",
+        "color": "#ff3b30"
     },
     {
         "icon": "trending_up",
         "text": "Incomes",
         "description": "Money coming in",
-        "link": "/incomes"
+        "link": "/incomes",
+        "color": "#34c759"
     },
     {
         "icon": "category",
         "text": "Categories",
         "description": "Group your transactions",
-        "link": "/categories"
+        "link": "/categories",
+        "color": "#ff9500"
     },
     {
-        "icon": "folder_special",
+        "icon": "savings",
         "text": "Projects",
         "description": "Savings goals",
-        "link": "/projects"
+        "link": "/projects",
+        "color": "#af52de"
     },
     {
         "icon": "currency_exchange",
         "text": "Exchange",
         "description": "Euro ↔ Lek rate & converter",
-        "link": "/exchange"
+        "link": "/exchange",
+        "color": "#30b0c7"
     },
     {
         "icon": "history",
         "text": "History",
         "description": "Recent changes",
-        "link": "/history"
+        "link": "/history",
+        "color": "#5856d6"
     },
     {
         "icon": "settings",
         "text": "Settings",
         "description": "Preferences & account",
-        "link": "/settings"
+        "link": "/settings",
+        "color": "#8e8e93"
     }
 ]

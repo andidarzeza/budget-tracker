@@ -46,7 +46,7 @@
                 [routerLink]="[item.link]"
                 routerLinkActive="active"
                 (click)="onNavItemClick(navigation.indexOf(item))">
-                <span class="nav-icon">
+                <span class="nav-icon" [style.background]="item.color">
                     <mat-icon fontSet="material-symbols-rounded">{{ item.icon }}</mat-icon>
                 </span>
                 <span class="ws-item-text">

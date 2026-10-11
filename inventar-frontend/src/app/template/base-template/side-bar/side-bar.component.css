@@ -284,7 +284,7 @@ mat-icon {
     box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--app-accent) 40%, transparent);
 }
 
-/* Selected row: soft grey fill, semibold label, filled icon. */
+/* Selected row: soft grey fill, semibold label. */
 .ws-item.active {
     background: var(--ios-fill);
     box-shadow: none;
@@ -294,26 +294,25 @@ mat-icon {
     font-weight: 600;
 }
 
-.ws-item.active .nav-icon mat-icon {
-    font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 20;
-}
-
-/* Tinted line icon, filled when the row is selected. */
+/* iOS Settings-style icon: white symbol on a rounded square in the page's
+   own colour (the same colours as Spotlight and the phone's More menu). */
 .nav-icon {
     display: grid;
     place-items: center;
     flex-shrink: 0;
-    width: 24px;
-    height: 24px;
-    color: var(--app-accent);
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: var(--app-accent);
+    color: #ffffff;
 }
 
 .nav-icon mat-icon {
-    width: 21px;
-    height: 21px;
-    font-size: 21px;
-    line-height: 21px;
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'opsz' 20;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 20;
 }
 
 .ws-item-text {
