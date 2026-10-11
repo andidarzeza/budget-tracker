@@ -104,6 +104,12 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
     // A visual copy of the row, placed exactly over the original, then lifted.
     const lifted = this.host.cloneNode(true) as HTMLElement;
     lifted.classList.add('press-menu__row');
+    // Copy the row as it looks at rest: not its pressed states (the grey
+    // press fill would show as a square block inside the rounded preview).
+    lifted.classList.remove('ledger-item--pressing', 'is-pressed');
+    lifted.querySelectorAll('.is-pressed').forEach((el) => el.classList.remove('is-pressed'));
+    lifted.querySelectorAll('.haptic-tap').forEach((el) => el.remove());
+    lifted.style.transform = '';
     lifted.removeAttribute('id');
     lifted.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
     Object.assign(lifted.style, {

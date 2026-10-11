@@ -2504,10 +2504,24 @@ body {
     box-sizing: border-box;
     border: 0;
     border-radius: 16px;
+    /* Keep the row's contents inside the rounded corners. */
+    overflow: hidden;
     background: var(--app-bg-elevated);
-    box-shadow: var(--app-shadow-lg, 0 18px 40px -12px rgba(15, 23, 42, 0.35));
+    /* iOS context-menu preview: a soft, wide, faint shadow. */
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.06);
     pointer-events: none;
     transition: transform var(--app-motion-base, 200ms) var(--app-easing-emphasized, ease);
+}
+
+/* Dark mode: the dimmed backdrop already sets it apart; a dark shadow on a
+   dark screen just looks muddy. */
+.dark-theme .press-menu__row.ledger-item {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* The separator hairline belongs to the list, not the lifted preview. */
+.press-menu__row.ledger-item::before {
+    display: none;
 }
 
 .press-menu__delete {
