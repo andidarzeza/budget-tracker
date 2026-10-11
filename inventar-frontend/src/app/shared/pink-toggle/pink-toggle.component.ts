@@ -1,3 +1,4 @@
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { booleanAttribute, ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -18,7 +19,7 @@ import { ThemeService } from 'src/app/services/theme.service';
       }
       <input type="checkbox" role="switch" aria-label="Pink theme"
         [checked]="themeService.pink()"
-        (change)="themeService.setPink($any($event.target).checked)" />
+        (change)="themeService.setPink($any($event.target).checked); feedback.haptic('selection')" />
       <span class="pink-toggle__track" aria-hidden="true"></span>
     </label>
   `,
@@ -103,5 +104,6 @@ import { ThemeService } from 'src/app/services/theme.service';
 })
 export class PinkToggleComponent {
   readonly themeService = inject(ThemeService);
+  readonly feedback = inject(FeedbackService);
   @Input({ transform: booleanAttribute }) bare = false;
 }

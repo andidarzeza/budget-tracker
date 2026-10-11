@@ -1,3 +1,5 @@
+import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
+import { SwipeDeleteDirective } from 'src/app/shared/swipe-delete/swipe-delete.directive';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
 import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
@@ -39,6 +41,8 @@ import { IncomeDetailsComponent } from './income-details/income-details.componen
   styleUrls: ['./incomes.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PullToRefreshDirective,
+    SwipeDeleteDirective,
     PressHighlightDirective,
     RevealNumberDirective,
     LedgerFiltersComponent,

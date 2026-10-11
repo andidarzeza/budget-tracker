@@ -1,6 +1,7 @@
 import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
+import { hookToastFeedback } from './utils/toast-feedback';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { PreloadAllModules, provideRouter, Routes, withInMemoryScrolling, withPreloading, withViewTransitions } from '@angular/router';
@@ -129,6 +130,8 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
     provideToastr(),
+    // Haptic (and optional sound) feedback for every success / warning / error toast.
+    provideAppInitializer(hookToastFeedback),
     // CDK 21 puts dialogs/menus in the browser's top layer (popover API),
     // which sits above any z-index — toasts would end up hidden behind an
     // open dialog. Keep overlays in the normal stacking order instead.

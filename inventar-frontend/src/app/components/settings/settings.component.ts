@@ -1,3 +1,4 @@
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { PushNotificationService } from 'src/app/services/push-notification.service';
 import { ToastrService } from 'ngx-toastr';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -65,6 +66,7 @@ export class SettingsComponent implements OnInit {
   private readonly flagPipe = inject(FlagPipe);
   private readonly destroyRef = inject(DestroyRef);
   readonly push = inject(PushNotificationService);
+  readonly feedback = inject(FeedbackService);
   private readonly toastr = inject(ToastrService);
   readonly testing = signal(false);
 
@@ -207,6 +209,7 @@ export class SettingsComponent implements OnInit {
   }
 
   async togglePush(on: boolean): Promise<void> {
+    this.feedback.haptic('selection');
     try {
       if (on) await this.push.enable();
       else await this.push.disable();

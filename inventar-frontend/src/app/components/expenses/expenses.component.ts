@@ -1,3 +1,5 @@
+import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
+import { SwipeDeleteDirective } from 'src/app/shared/swipe-delete/swipe-delete.directive';
 import { takeUntil } from 'rxjs/operators';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
@@ -42,6 +44,8 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css'],
   imports: [
+    PullToRefreshDirective,
+    SwipeDeleteDirective,
     PressHighlightDirective,
     RevealNumberDirective,
     LedgerFiltersComponent,

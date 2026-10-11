@@ -1,3 +1,4 @@
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { trackById, trackByValue } from 'src/app/utils/track';
 import { groupCategoriesByUsage } from 'src/app/utils/category-groups';
 import { prefillDefaultAmount } from 'src/app/utils/default-amount';
@@ -24,7 +25,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
-import { filter, mergeMap, observeOn, tap } from 'rxjs/operators';
+import { take, filter, mergeMap, observeOn, tap } from 'rxjs/operators';
 import { Category, CategoryType, EntityType, Income, Wallet } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -71,6 +72,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   ],
 })
 export class AddIncomeComponent implements OnInit {
+  private readonly feedback = inject(FeedbackService);
   readonly trackById = trackById;
   readonly trackByValue = trackByValue;
   private readonly cdr = inject(ChangeDetectorRef);
@@ -267,6 +269,7 @@ export class AddIncomeComponent implements OnInit {
   }
 
   selectWizardCategory(categoryId: string | number): void {
+    this.feedback.haptic('selection');
     this.formGroup.get('categoryID')?.setValue(categoryId);
     this.formGroup.get('categoryID')?.markAsTouched();
     // Move on by itself, after a beat so the checkmark is seen (iOS pickers do the same).
@@ -374,8 +377,12 @@ export class AddIncomeComponent implements OnInit {
   }
 
   private getCategories(): void {
-    this.loadingMessage.set('Loading…');
-    this.loadingData.set(true);
+    // Only editing waits for data (the saved values); a new entry can be
+    // typed straight away while the categories arrive.
+    if (this.isEditMode) {
+      this.loadingMessage.set('Loading…');
+      this.loadingData.set(true);
+    }
     // Backend returns categories already sorted by usage count (most used first).
     this.categoryService
       .findByUsage(this.accountService.getAccount(), CategoryType.INCOME)
@@ -394,6 +401,8 @@ export class AddIncomeComponent implements OnInit {
           this.loadingData.set(false);
         }),
         filter(() => this.isEditMode),
+        // The list may arrive twice (cached copy, then fresh): load the record once.
+        take(1),
         mergeMap(() => this.getIncome()),
       )
       .subscribe();

@@ -22,12 +22,15 @@ html {
             primary: mat.$violet-palette,
             tertiary: mat.$violet-palette,
         ),
-        typography: Roboto,
+        // Same system font as the rest of the app (SF on Apple devices), so
+        // Material's own pieces — datepicker, menus, tooltips — match it.
+        typography: (
+            plain-family: (-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif),
+            brand-family: (-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif),
+        ),
         density: 0,
     ));
 }
-
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 @import "./app/template/design-tokens.scss";
 @import "./app/template/light-theme.scss";
@@ -3238,4 +3241,87 @@ app-dashboard .control-bar__picker .dash-picker [cb-icon-button]:active {
     .icon-sheet-out {
         animation-duration: 1ms !important;
     }
+}
+
+/* ── Swipe to delete (SwipeDeleteDirective) ───────────────────────────────
+   Rows let horizontal drags through to the directive and keep vertical
+   ones for scrolling; while swiping, the row content slides left over a red
+   Delete button that widens with it. */
+.swipe-row {
+    touch-action: pan-y;
+}
+
+.swipe-row--active {
+    overflow: hidden;
+}
+
+.swipe-delete-action {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    background: var(--app-danger);
+    color: #ffffff;
+    font-family: var(--app-font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Icon and label are centred in the resting 88px at the right edge … */
+.swipe-delete-action > span {
+    width: 88px;
+    text-align: center;
+}
+
+.swipe-delete-action .material-icons {
+    font-size: 22px;
+    line-height: 22px;
+}
+
+/* … and past the full-swipe point they jump to follow the finger, as in Mail. */
+.swipe-row--full .swipe-delete-action {
+    align-items: flex-start;
+}
+
+.swipe-row .ledger-item__main {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Pull to refresh (PullToRefreshDirective) ─────────────────────────────
+   The iOS activity indicator sits in the gap the pull opens above the page;
+   its spokes only spin once the refresh has started. */
+[pulltorefresh] {
+    position: relative;
+}
+
+.ptr-indicator {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    line-height: 0;
+}
+
+.ptr-indicator .app-spinner__arc {
+    animation-play-state: paused;
+}
+
+.ptr-indicator--spinning .app-spinner__arc {
+    animation-play-state: running;
 }

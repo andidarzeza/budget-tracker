@@ -1,3 +1,5 @@
+import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { AnimateHeightDirective } from 'src/app/shared/animate-height/animate-height.directive';
 import { iosTileColorForName } from 'src/app/shared/ios/ios-colors';
@@ -143,6 +145,7 @@ interface CategoryRow {
   styleUrls: ['./dashboard.component.css', './dashboard-ios.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PullToRefreshDirective,
     PressHighlightDirective,
     AnimateHeightDirective,
     RevealNumberDirective,
@@ -161,6 +164,7 @@ interface CategoryRow {
   ],
 })
 export class DashboardComponent implements AfterViewInit {
+  private readonly feedback = inject(FeedbackService);
   /** Shown above the large title. */
   readonly today = new Date();
 
@@ -389,6 +393,7 @@ export class DashboardComponent implements AfterViewInit {
 
   selectTab(tab: 'stats' | 'balances'): void {
     if (tab === this.activeTab()) return;
+    this.feedback.haptic('selection');
     // Slide the new tab in from the side it sits on (Statistics left, Balances right).
     this.slideFrom.set(tab === 'balances' ? 'right' : 'left');
     this.activeTab.set(tab);
@@ -489,6 +494,7 @@ export class DashboardComponent implements AfterViewInit {
     if (this.selectedRange() === range) {
       return;
     }
+    this.feedback.haptic('selection');
     this.selectedRange.set(range);
     // Persist so the next visit to /dashboard re-opens the same range without
     // forcing the user to re-pick (mirrors the balance-visibility toggle).
@@ -650,12 +656,21 @@ export class DashboardComponent implements AfterViewInit {
     this.fetchDashboardData();
   }
 
+  /** Pull to refresh: reload everything; the indicator stays until the data lands. */
+  readonly refreshing = signal(false);
+
+  pullRefresh(): void {
+    this.refreshing.set(true);
+    this.refresh();
+  }
+
   private fetchDashboardData(): void {
     this.dashboardService
       .getDashboardData(this.from, this.to, this.selectedRange())
       .pipe(takeUntilDestroyed(this.destroyRef), catchError(this.catchError))
       .subscribe((data: DashboardDTO | null) => {
         this.dashboardData.set(data);
+        this.refreshing.set(false);
         // Source balances and project totals are mutated by expenses / incomes /
         // contributions; refresh them whenever fresh dashboard data arrives —
         // except the first time, since the constructor has just loaded them.

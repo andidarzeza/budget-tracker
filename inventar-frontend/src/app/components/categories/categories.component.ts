@@ -1,3 +1,4 @@
+import { SwipeDeleteDirective } from 'src/app/shared/swipe-delete/swipe-delete.directive';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
 import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
@@ -43,6 +44,7 @@ interface CategorySummary {
   styleUrls: ['./categories.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    SwipeDeleteDirective,
     PressHighlightDirective,
     LedgerFiltersComponent,
     LongPressDeleteDirective,

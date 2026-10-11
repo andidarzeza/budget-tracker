@@ -1,3 +1,5 @@
+import { collapseThenRemove } from 'src/app/utils/collapse-row';
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { Directive, ElementRef, EventEmitter, inject, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
 
 const HOLD_MS = 500;
@@ -16,6 +18,7 @@ const PILL_SPACE_PX = 56;
   selector: '[longPressDelete]',
 })
 export class LongPressDeleteDirective implements OnInit, OnDestroy {
+  private readonly feedback = inject(FeedbackService);
   @Output() readonly deleteRequested = new EventEmitter<void>();
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
@@ -27,7 +30,7 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
   private pressTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly onPointerDown = (e: PointerEvent) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || this.host.classList.contains('row-removing')) return;
     this.swallowNextClick = false;
     this.start = { x: e.clientX, y: e.clientY };
     this.clearTimer();
@@ -84,7 +87,8 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
     this.timer = null;
     this.clearTimer();
     this.swallowNextClick = true;
-    navigator.vibrate?.(10);
+    // The bump iOS gives when a context menu pops up.
+    this.feedback.haptic('medium');
 
     const rect = this.host.getBoundingClientRect();
     const overlay = document.createElement('div');
@@ -180,22 +184,7 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
 
   /** The row folds away (height and opacity to zero), then the delete runs. */
   private collapseThenDelete(): void {
-    const host = this.host;
-    host.style.overflow = 'hidden';
-    const collapse = host.animate(
-      [{ height: `${host.offsetHeight}px`, opacity: 1 }, { height: '0px', opacity: 0 }],
-      { duration: 280, easing: 'cubic-bezier(0.2, 0, 0, 1)', fill: 'forwards' },
-    );
-    collapse.finished.then(() => {
-      this.zone.run(() => this.deleteRequested.emit());
-      // If the delete fails the row is still here: bring it back.
-      setTimeout(() => {
-        if (!host.isConnected) return;
-        collapse.cancel();
-        host.style.overflow = '';
-        host.style.visibility = '';
-      }, 2500);
-    });
+    collapseThenRemove(this.host, () => this.zone.run(() => this.deleteRequested.emit()));
   }
 
   private clearTimer(): void {

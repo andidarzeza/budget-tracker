@@ -1,3 +1,4 @@
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
 import { ChangeDetectionStrategy, AfterViewInit, Component, DestroyRef, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -33,6 +34,7 @@ interface MoreItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileTabBarComponent implements AfterViewInit {
+  private readonly feedback = inject(FeedbackService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -139,7 +141,10 @@ export class MobileTabBarComponent implements AfterViewInit {
       this.slide.sliding = true;
       bar.setPointerCapture(event.pointerId);
     }
-    this.slideIndex.set(this.slotAt(event.clientX, bar));
+    const index = this.slotAt(event.clientX, bar);
+    // A tick each time the finger crosses into another tab (UISelectionFeedback).
+    if (index !== this.slideIndex()) this.feedback.haptic('selection');
+    this.slideIndex.set(index);
   }
 
   onPointerUp(event: PointerEvent, bar: HTMLElement): void {
@@ -152,7 +157,6 @@ export class MobileTabBarComponent implements AfterViewInit {
     // ignore it — but only briefly, so it can never eat a later real tap.
     this.swallowClick = true;
     setTimeout(() => (this.swallowClick = false), 350);
-    navigator.vibrate?.(8);
     if (index === this.moreIndex) {
       this.moreOpen.set(true);
     } else {

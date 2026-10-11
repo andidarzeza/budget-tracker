@@ -58,7 +58,8 @@
                     <article class="ledger-section__card">
                         @for (item of group.items; track item.id; let last = $last) {
                             <div class="ledger-item" [class.ledger-item--last]="last"
-                                longPressDelete (deleteRequested)="delete(item.id)">
+                                longPressDelete (deleteRequested)="delete(item.id)"
+                                swipeDelete (swipeDelete)="delete(item.id)">
                                 <button type="button" class="ledger-item__main" pressHighlight
                                     (click)="openAddEditForm(item)"
                                     [attr.aria-label]="'Edit ' + (item.category || 'category')">

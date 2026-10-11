@@ -1,3 +1,4 @@
+import { FeedbackService } from 'src/app/services/feedback.service';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ThemeMode, ThemeService } from 'src/app/services/theme.service';
@@ -12,7 +13,7 @@ import { ThemeMode, ThemeService } from 'src/app/services/theme.service';
         <button type="button" role="radio"
           [attr.aria-checked]="themeService.mode() === o.value"
           [class.active]="themeService.mode() === o.value"
-          (click)="themeService.setMode(o.value)">
+          (click)="themeService.setMode(o.value); feedback.haptic('selection')">
           <mat-icon>{{ o.icon }}</mat-icon> {{ o.label }}
         </button>
       }
@@ -46,6 +47,7 @@ import { ThemeMode, ThemeService } from 'src/app/services/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeSwitchComponent {
+  readonly feedback = inject(FeedbackService);
   readonly themeService = inject(ThemeService);
 
   readonly options: { value: ThemeMode; label: string; icon: string }[] = [

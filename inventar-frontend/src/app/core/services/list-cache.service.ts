@@ -115,7 +115,7 @@ export class ListCacheService {
     // Lists that may have just changed must not flash their old copy (e.g.
     // Manage sources reloading after an edit). Summary totals may stay
     // stale for the moment it takes the refresh below to land.
-    this.warmCache.drop(/\/api\/(wallets|projects)(\?|$)/);
+    this.warmCache.drop(/\/api\/(wallets|projects|categories\/by-usage)(\?|$)/);
     if (this.mutationTimer) clearTimeout(this.mutationTimer);
     this.mutationTimer = setTimeout(() => {
       this.mutationTimer = null;

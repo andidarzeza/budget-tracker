@@ -123,6 +123,44 @@
         </div>
     </section>
 
+    <!-- ──── Feedback ──── -->
+    <section class="app-card settings-section">
+        <header class="settings-section__head">
+            <h2 class="settings-section__title">Haptics &amp; Sounds</h2>
+            <p class="settings-section__hint">Little taps and sounds, like iPhone apps.</p>
+        </header>
+
+        <div class="settings-row">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">vibration</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Haptics</span>
+                <span class="settings-row__desc">A light tap when you switch tabs, pick a category, open a menu, save or hit an error.</span>
+            </div>
+            <label class="ios-switch settings-row__trailing">
+                <input type="checkbox" role="switch" aria-label="Haptics"
+                    [checked]="feedback.hapticsOn()" (change)="feedback.setHaptics($any($event.target).checked)" />
+                <span class="ios-switch__track" aria-hidden="true"></span>
+            </label>
+        </div>
+
+        <div class="settings-row">
+            <span class="settings-row__icon-wrap" aria-hidden="true">
+                <mat-icon class="settings-row__icon">volume_up</mat-icon>
+            </span>
+            <div class="settings-row__main">
+                <span class="settings-row__title">Sounds</span>
+                <span class="settings-row__desc">A soft pop when something is saved, a low tone on errors. Silent when your phone is on silent.</span>
+            </div>
+            <label class="ios-switch settings-row__trailing">
+                <input type="checkbox" role="switch" aria-label="Sounds"
+                    [checked]="feedback.soundsOn()" (change)="feedback.setSounds($any($event.target).checked)" />
+                <span class="ios-switch__track" aria-hidden="true"></span>
+            </label>
+        </div>
+    </section>
+
     <!-- ──── Notifications ──── -->
     <section class="app-card settings-section">
         <header class="settings-section__head">

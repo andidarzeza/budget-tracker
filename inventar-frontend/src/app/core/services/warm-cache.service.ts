@@ -1,8 +1,9 @@
 import { HttpClient, HttpContext, HttpContextToken, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 
-/** Requests whose responses are kept warm: the Summary page's data. */
-export const WARM_URL = /\/api\/(dashboard|wallets|projects)(\?|$)/;
+/** Requests whose responses are kept warm: the Summary page's data, and the
+ *  add expense / income category pickers (so those forms open ready). */
+export const WARM_URL = /\/api\/(dashboard|wallets|projects|categories\/by-usage)(\?|$)/;
 
 /** Set on the cache's own refresh requests: always go to the server. */
 export const WARM_REFRESH = new HttpContextToken<boolean>(() => false);

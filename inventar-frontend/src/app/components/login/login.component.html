@@ -3,7 +3,7 @@
     <theme-switch class="lock-theme"></theme-switch>
 
     <form class="lock-card" [formGroup]="loginGroup" autocomplete="off" (ngSubmit)="login()">
-        <div class="app-loading-overlay" animate.enter="anim-fade-in" animate.leave="anim-fade-out" *ngIf="showSpinner()" role="status" aria-live="polite">
+        <div class="app-loading-overlay" animate.leave="anim-fade-out" *ngIf="showSpinner()" role="status" aria-live="polite">
             <span class="app-spinner" aria-hidden="true">
                 <span class="app-spinner__track"></span>
                 <span class="app-spinner__arc"></span>
