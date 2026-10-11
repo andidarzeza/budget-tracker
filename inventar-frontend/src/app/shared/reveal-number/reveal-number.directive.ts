@@ -1,25 +1,22 @@
-import { Directive, ElementRef, inject, Input, OnChanges, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, inject, Input, OnChanges } from '@angular/core';
 
 const HIDDEN_TEXT = '••••••';
 
 /**
- * Shows a formatted amount and, the first time it appears, fades it in
- * while it rises a few pixels (iOS widget refresh). No blur: iOS Safari
- * animates `filter: blur` on text from a low-resolution snapshot, so the
- * digits looked smeared before snapping sharp.
+ * Shows a formatted amount (like `number:'1.2-2'`, en-US), or •••••• in
+ * privacy mode.
  *
  *   <span [revealNumber]="total"></span>
  *   <span [revealNumber]="net" revealSigned [revealHidden]="balanceHidden()"></span>
  *
- * The first reveal waits until the number is actually on screen, so values
- * on a hidden tab animate when that tab is opened. Formats like
- * `number:'1.2-2'` (en-US).
+ * No entrance animation: the data is prefetched, so numbers are simply there
+ * when a page opens (the fade-in read as a flicker).
  */
 @Directive({
   selector: '[revealNumber]',
   host: { class: 'reveal-number' },
 })
-export class RevealNumberDirective implements OnChanges, OnDestroy {
+export class RevealNumberDirective implements OnChanges {
   @Input({ required: true }) revealNumber: number | null | undefined;
   /** Prefix positive values with "+". */
   @Input({ transform: (v: unknown) => v !== false }) revealSigned = false;
@@ -30,29 +27,10 @@ export class RevealNumberDirective implements OnChanges, OnDestroy {
   @Input() revealDecimals = 2;
 
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-  private seen = false;
-  /** The fade-in has run; later changes update the text without animating. */
-  private revealed = false;
-  private observer: IntersectionObserver | null = null;
 
   ngOnChanges(): void {
     const text = this.format();
-    if (text === this.el.textContent) return;
-    this.el.textContent = text;
-    // Only the first real number fades in. Later updates (data arriving in
-    // pieces, background refreshes, show / hide) just swap the text —
-    // replaying the fade on each of them is what made the totals flicker.
-    if (this.revealed || !text || text === HIDDEN_TEXT) return;
-    if (this.seen) {
-      this.revealed = true;
-      this.play();
-    } else {
-      this.waitUntilVisible();
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.observer?.disconnect();
+    if (text !== this.el.textContent) this.el.textContent = text;
   }
 
   private format(): string {
@@ -64,37 +42,5 @@ export class RevealNumberDirective implements OnChanges, OnDestroy {
       maximumFractionDigits: this.revealDecimals,
     });
     return this.revealPrefix + (this.revealSigned && value > 0 ? '+' : '') + formatted;
-  }
-
-  private waitUntilVisible(): void {
-    if (this.observer) return;
-    if (typeof IntersectionObserver === 'undefined') {
-      this.seen = true;
-      return;
-    }
-    // Keep it invisible until it is revealed, so there is no flash first.
-    this.el.style.opacity = '0';
-    this.observer = new IntersectionObserver((entries) => {
-      if (!entries.some((e) => e.isIntersecting)) return;
-      this.observer?.disconnect();
-      this.observer = null;
-      this.seen = true;
-      this.revealed = true;
-      this.el.style.opacity = '';
-      this.play();
-    });
-    this.observer.observe(this.el);
-  }
-
-  private play(): void {
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    this.el.getAnimations?.().forEach((a) => a.cancel());
-    this.el.animate?.(
-      [
-        { opacity: 0, transform: 'translateY(8px)' },
-        { opacity: 1, transform: 'none' },
-      ],
-      { duration: 380, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
-    );
   }
 }

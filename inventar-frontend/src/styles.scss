@@ -2982,6 +2982,17 @@ html.page-vt .application > .content-container:not(.content-container--public) >
     animation: none;
 }
 
+/* Switching between top-level pages on phones: only the incoming page
+   slides in, as a plain CSS animation (no view transition, so taps on the
+   tab bar are never blocked while it runs). */
+html.page-vt[data-page-enter="forward"] .application > .content-container:not(.content-container--public) > :not(router-outlet) {
+    animation: page-in-right 0.32s var(--app-easing-standard) both;
+}
+
+html.page-vt[data-page-enter="back"] .application > .content-container:not(.content-container--public) > :not(router-outlet) {
+    animation: page-in-left 0.32s var(--app-easing-standard) both;
+}
+
 /* Create pages: plain "Cancel" on the left of the bar, and one full-width
    capsule as the footer's only action (iOS setup-flow style). */
 .form-page__cancel {
@@ -3092,10 +3103,9 @@ html.page-vt .application > .content-container:not(.content-container--public) >
     animation: none;
 }
 
-/* Amounts that fade in (RevealNumberDirective). Inline-block so the small
-   rise can use a transform; equal-width digits keep updates steady. */
+/* Amounts shown by RevealNumberDirective: equal-width digits, so updates
+   don't shift the number sideways. */
 .reveal-number {
-    display: inline-block;
     font-variant-numeric: tabular-nums;
 }
 

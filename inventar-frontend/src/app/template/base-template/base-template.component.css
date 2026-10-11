@@ -92,5 +92,11 @@
     .application-container {
         height: auto;
         overflow: visible;
+        /* Never shorter than the screen. A short page (e.g. Projects) made
+           the document shorter than the viewport, and in the iOS home-screen
+           app the fixed tab bar then sat at the end of the content instead
+           of the bottom of the screen. */
+        min-height: 100vh;
+        min-height: 100dvh;
     }
 }

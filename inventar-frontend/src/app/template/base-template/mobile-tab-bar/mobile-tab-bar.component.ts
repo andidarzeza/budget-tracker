@@ -1,7 +1,9 @@
 import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
-import { AfterViewInit, Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
 
 interface TabItem {
@@ -31,6 +33,8 @@ interface MoreItem {
 })
 export class MobileTabBarComponent implements AfterViewInit {
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef);
 
   /** The "More" popup that floats above its tab. */
   readonly moreOpen = signal(false);
@@ -52,6 +56,21 @@ export class MobileTabBarComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     // Capture phase, so it runs before the button under the finger.
     this.bar()?.nativeElement.addEventListener('click', (e) => this.onClickCapture(e), true);
+
+    // iOS home-screen app: after moving from a long, scrolled page to a short
+    // one, the bar's compositing layer can stay where it was. Re-create it
+    // once the new page has laid out so it snaps back to the screen bottom.
+    this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => requestAnimationFrame(() => requestAnimationFrame(() => this.repinDock())));
+  }
+
+  private repinDock(): void {
+    const dock = this.hostEl.nativeElement.querySelector<HTMLElement>('.dock');
+    if (!dock) return;
+    dock.style.transform = 'none';
+    void dock.offsetHeight; // force the style to apply before restoring it
+    dock.style.transform = '';
   }
 
   /** Pages that don't have their own tab. */

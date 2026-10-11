@@ -15,6 +15,9 @@ import { Router, ViewTransitionInfo } from '@angular/router';
  * The browser's own swipe-back already animates, so plain history (popstate)
  * navigations are not animated — except the app's own ‹ / Done buttons,
  * which call `markInAppBack()` first.
+ *
+ * Only the push / pop into forms uses a real view transition; switching
+ * between top-level pages is a non-blocking CSS slide (see `slideInNextPage`).
  */
 
 /** Tab order used to pick the slide direction between top-level pages. */
@@ -70,8 +73,35 @@ export function onPageTransition({ transition }: ViewTransitionInfo): void {
   }
 
   const root = document.documentElement;
+
+  // Between top-level pages (the tab bar, More) the slide is a plain CSS
+  // animation on the incoming page instead: a view transition freezes the
+  // page behind its snapshot while it runs, and iOS then drops taps — so a
+  // quick second tap on the tab bar did nothing. The CSS slide never blocks
+  // input, so tabs switch on every tap.
+  if (path(from).length === path(to).length) {
+    transition.skipTransition();
+    slideInNextPage(root, direction);
+    return;
+  }
+
+  // Into / out of a create or edit form: keep the view transition (both
+  // pages move, and the form's fixed header / footer stay in place).
   root.dataset['pageTransition'] = direction;
   transition.finished.finally(() => delete root.dataset['pageTransition']);
+}
+
+let pageEnterTimer: ReturnType<typeof setTimeout> | null = null;
+
+/** Mark the page about to be inserted so its CSS slide-in runs (styles.scss, `data-page-enter`). */
+function slideInNextPage(root: HTMLElement, direction: Direction): void {
+  root.dataset['pageEnter'] = direction;
+  if (pageEnterTimer) clearTimeout(pageEnterTimer);
+  // Removed once the animation is over, so nothing re-animates later.
+  pageEnterTimer = setTimeout(() => {
+    delete root.dataset['pageEnter'];
+    pageEnterTimer = null;
+  }, 450);
 }
 
 function path(url: string): string[] {
