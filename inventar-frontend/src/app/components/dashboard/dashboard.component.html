@@ -10,11 +10,11 @@
     <!-- iOS segmented control: statistics first, balances second. Both tabs
          stay rendered (just hidden) so switching back is instant. -->
     <div class="dash-tabs" role="tablist" aria-label="Dashboard view">
-        <button type="button" role="tab" class="dash-tabs__option"
+        <button type="button" role="tab" class="dash-tabs__option" hapticTap
             [class.dash-tabs__option--active]="activeTab() === 'stats'"
             [attr.aria-selected]="activeTab() === 'stats'"
             (click)="selectTab('stats')">Statistics</button>
-        <button type="button" role="tab" class="dash-tabs__option"
+        <button type="button" role="tab" class="dash-tabs__option" hapticTap
             [class.dash-tabs__option--active]="activeTab() === 'balances'"
             [attr.aria-selected]="activeTab() === 'balances'"
             (click)="selectTab('balances')">Balances</button>
@@ -89,7 +89,7 @@
                         [attr.aria-selected]="range == selectedRange()"
                         [class.range-option--active]="range == selectedRange()"
                         (click)="onRangeSelect(range)"
-                        class="range-option">
+                        class="range-option" hapticTap>
                         {{ range == 'MAX' ? 'All' : (range | titlecase) }}
                     </button>
                 }

@@ -17,7 +17,7 @@ import { ThemeService } from 'src/app/services/theme.service';
         <mat-icon class="pink-toggle__heart" fontSet="material-symbols-rounded" aria-hidden="true">favorite</mat-icon>
         <span class="pink-toggle__label">Pink theme</span>
       }
-      <input type="checkbox" role="switch" aria-label="Pink theme"
+      <input type="checkbox" switch role="switch" aria-label="Pink theme"
         [checked]="themeService.pink()"
         (change)="themeService.setPink($any($event.target).checked); feedback.haptic('selection')" />
       <span class="pink-toggle__track" aria-hidden="true"></span>

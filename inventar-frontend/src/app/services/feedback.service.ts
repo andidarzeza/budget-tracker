@@ -33,11 +33,11 @@ const IOS_TICKS: Record<Haptic, { count: number; gap: number }> = {
  * error patterns — never on plain button taps. Sounds are rare signature
  * moments only, off unless switched on in Settings.
  *
- * iPhone has no Vibration API. Safari (iOS 18+) plays the system haptic when
- * an `<input type="checkbox" switch>` is toggled, so a hidden one is toggled
- * from code. It only gives one kind of light tick, and only while handling a
- * real tap — a click, or the finger lifting; ticks from pointerdown / moves /
- * timers are silently dropped (see `hapticOnRelease`).
+ * iPhone has no Vibration API. Safari plays the system haptic when an
+ * `<input type="checkbox" switch>` is toggled by the user. Since iOS 26.5 that
+ * must be a direct tap, so taps get it from `HapticTapDirective` overlays and
+ * real switches; toggling a hidden switch from code (`hapticOnRelease`) only
+ * still works on iOS 18–26.4.
  */
 @Injectable({ providedIn: 'root' })
 export class FeedbackService {
@@ -59,17 +59,14 @@ export class FeedbackService {
     if (on) this.sound('success');
   }
 
+  /**
+   * Haptic for an event in code. Android: the Vibration API pattern. iPhone:
+   * nothing — taps get their haptic from `hapticTap` overlays and native
+   * switches (code-triggered haptics were blocked in iOS 26.5).
+   */
   haptic(kind: Haptic): void {
-    if (!this.hapticsOn()) return;
-    if (typeof navigator.vibrate === 'function' && !isIos()) {
-      navigator.vibrate(VIBRATION[kind]);
-      return;
-    }
-    const { count, gap } = IOS_TICKS[kind];
-    for (let i = 0; i < count; i++) {
-      if (i === 0) this.iosTick();
-      else setTimeout(() => this.iosTick(), gap * i);
-    }
+    if (!this.hapticsOn() || isIos()) return;
+    if (typeof navigator.vibrate === 'function') navigator.vibrate(VIBRATION[kind]);
   }
 
   /**
@@ -81,7 +78,12 @@ export class FeedbackService {
    */
   hapticOnRelease(kind: Haptic): void {
     if (!this.hapticsOn() || !isIos()) return;
-    this.haptic(kind);
+    // Programmatic switch toggle: works up to iOS 26.4; a no-op from 26.5.
+    const { count, gap } = IOS_TICKS[kind];
+    for (let i = 0; i < count; i++) {
+      if (i === 0) this.iosTick();
+      else setTimeout(() => this.iosTick(), gap * i);
+    }
   }
 
   /** A short synthesized cue (no audio files). Quiet in silent mode on iPhone. */
@@ -150,7 +152,7 @@ export class FeedbackService {
   }
 }
 
-function isIos(): boolean {
+export function isIos(): boolean {
   return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 }
 

@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { trackById, trackByValue } from 'src/app/utils/track';
 import { groupCategoriesByUsage } from 'src/app/utils/category-groups';
@@ -53,7 +54,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   templateUrl: './add-income.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
-  imports: [
+  imports: [HapticTapDirective, 
     PressHighlightDirective,
     CommonModule,
     ReactiveFormsModule,

@@ -49,7 +49,7 @@
                             <ng-container *ngFor="let group of categoryGroups(); trackBy: trackByValue">
                                 <p class="ios-group-label category-group-label" *ngIf="group.label">{{ group.label }}</p>
                                 <div class="category-pick-grid" role="listbox" aria-label="Expense categories">
-                                    <button type="button" *ngFor="let category of group.items; trackBy: trackById" class="category-tile" pressHighlight
+                                    <button type="button" *ngFor="let category of group.items; trackBy: trackById" class="category-tile" pressHighlight hapticTap
                                         role="option"
                                         [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
                                         [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"
@@ -171,7 +171,7 @@
                         <ng-container *ngFor="let group of categoryGroups(); trackBy: trackByValue">
                             <p class="ios-group-label category-group-label" *ngIf="group.label">{{ group.label }}</p>
                             <div class="category-pick-grid" role="listbox" aria-label="Expense categories">
-                                <button type="button" *ngFor="let category of group.items; trackBy: trackById" class="category-tile" pressHighlight
+                                <button type="button" *ngFor="let category of group.items; trackBy: trackById" class="category-tile" pressHighlight hapticTap
                                     role="option"
                                     [attr.aria-selected]="formGroup.get('categoryID')?.value == category.id"
                                     [class.category-tile--selected]="formGroup.get('categoryID')?.value == category.id"

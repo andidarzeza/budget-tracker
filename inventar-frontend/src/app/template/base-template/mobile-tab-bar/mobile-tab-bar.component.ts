@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
 import { ChangeDetectionStrategy, AfterViewInit, Component, DestroyRef, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
@@ -30,7 +31,7 @@ interface MoreItem {
   selector: 'mobile-tab-bar',
   templateUrl: './mobile-tab-bar.component.html',
   styleUrls: ['./mobile-tab-bar.component.css'],
-  imports: [PinkToggleComponent, MatIconModule, RouterLink, RouterLinkActive, ThemeSwitchComponent],
+  imports: [HapticTapDirective, PinkToggleComponent, MatIconModule, RouterLink, RouterLinkActive, ThemeSwitchComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileTabBarComponent implements AfterViewInit {

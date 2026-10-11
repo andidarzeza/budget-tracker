@@ -139,7 +139,7 @@
                 <span class="settings-row__desc">A light tap when you switch tabs, pick a category, open a menu, save or hit an error.</span>
             </div>
             <label class="ios-switch settings-row__trailing">
-                <input type="checkbox" role="switch" aria-label="Haptics"
+                <input type="checkbox" switch role="switch" aria-label="Haptics"
                     [checked]="feedback.hapticsOn()" (change)="feedback.setHaptics($any($event.target).checked)" />
                 <span class="ios-switch__track" aria-hidden="true"></span>
             </label>
@@ -154,7 +154,7 @@
                 <span class="settings-row__desc">A soft pop when something is saved, a low tone on errors. Silent when your phone is on silent.</span>
             </div>
             <label class="ios-switch settings-row__trailing">
-                <input type="checkbox" role="switch" aria-label="Sounds"
+                <input type="checkbox" switch role="switch" aria-label="Sounds"
                     [checked]="feedback.soundsOn()" (change)="feedback.setSounds($any($event.target).checked)" />
                 <span class="ios-switch__track" aria-hidden="true"></span>
             </label>
@@ -184,7 +184,7 @@
                 </span>
             </div>
             <label class="ios-switch settings-row__trailing" [class.ios-switch--disabled]="!canToggle()">
-                <input type="checkbox" role="switch" aria-label="Euro rate alerts"
+                <input type="checkbox" switch role="switch" aria-label="Euro rate alerts"
                     [checked]="push.state() === 'on'" [disabled]="!canToggle() || push.busy()"
                     (change)="togglePush($any($event.target).checked)" />
                 <span class="ios-switch__track" aria-hidden="true"></span>

@@ -3267,3 +3267,26 @@ app-dashboard .control-bar__picker .dash-picker [cb-icon-button]:active {
 .ptr-indicator--spinning .app-spinner__arc {
     animation-play-state: running;
 }
+
+/* HapticTapDirective: a transparent label over the tappable element, holding
+   a hidden native switch — the user's own tap toggles it, which is what makes
+   iOS (26.5+) play its haptic. Hit-testing only; nothing visible. */
+.haptic-tap {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    margin: 0;
+    border-radius: inherit;
+    cursor: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.haptic-tap[hidden] {
+    display: none;
+}
+
+.haptic-tap > input {
+    position: absolute;
+    visibility: hidden;
+    margin: 0;
+}

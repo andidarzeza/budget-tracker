@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,14 +7,14 @@ import { ThemeMode, ThemeService } from 'src/app/services/theme.service';
 /** Light / Dark / Auto segmented control. */
 @Component({
   selector: 'theme-switch',
-  imports: [MatIconModule],
+  imports: [HapticTapDirective, MatIconModule],
   template: `
     <div class="theme-switch" role="radiogroup" aria-label="Theme">
       @for (o of options; track o.value) {
         <button type="button" role="radio"
           [attr.aria-checked]="themeService.mode() === o.value"
           [class.active]="themeService.mode() === o.value"
-          (click)="themeService.setMode(o.value); feedback.haptic('selection')">
+          hapticTap (click)="themeService.setMode(o.value); feedback.haptic('selection')">
           <mat-icon>{{ o.icon }}</mat-icon> {{ o.label }}
         </button>
       }

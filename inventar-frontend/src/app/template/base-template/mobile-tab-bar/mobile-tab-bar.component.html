@@ -6,7 +6,7 @@
     <div class="more-menu" role="menu" aria-label="More pages">
         <div class="more-menu__list">
             @for (item of moreItems; track item.link; let i = $index) {
-                <a class="more-menu__item" role="menuitem" [routerLink]="item.link"
+                <a class="more-menu__item" hapticTap role="menuitem" [routerLink]="item.link"
                     [class.more-menu__item--slide]="menuSlideIndex() === i"
                     routerLinkActive="more-menu__item--active" (click)="moreOpen.set(false)">
                     <span class="more-menu__icon" [style.background]="item.color" aria-hidden="true">
@@ -32,7 +32,7 @@
         (pointerup)="onPointerUp($event, bar)"
         (pointercancel)="onPointerCancel()">
         @for (tab of tabs; track tab.link; let i = $index) {
-            <button type="button" class="tab"
+            <button type="button" class="tab" hapticTap
                 [class.tab--active]="slideIndex() === null && isActive(tab)"
                 [class.tab--slide]="slideIndex() === i"
                 [attr.aria-current]="isActive(tab) ? 'page' : null"
@@ -41,7 +41,7 @@
                 <span>{{ tab.label }}</span>
             </button>
         }
-        <button type="button" class="tab"
+        <button type="button" class="tab" hapticTap
             [class.tab--active]="slideIndex() === null && (moreOpen() || onMorePage)"
             [class.tab--slide]="slideIndex() === moreIndex"
             [attr.aria-expanded]="moreOpen()" aria-haspopup="menu"
@@ -51,7 +51,7 @@
         </button>
     </nav>
 
-    <button type="button" class="add" aria-label="Add expense" (click)="addExpense()">
+    <button type="button" class="add" hapticTap aria-label="Add expense" (click)="addExpense()">
         <mat-icon>add</mat-icon>
     </button>
 </div>

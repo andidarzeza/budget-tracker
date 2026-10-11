@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
@@ -144,7 +145,7 @@ interface CategoryRow {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css', './dashboard-ios.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  imports: [HapticTapDirective, 
     PullToRefreshDirective,
     PressHighlightDirective,
     AnimateHeightDirective,
