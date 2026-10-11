@@ -74,6 +74,15 @@ body {
         height: 100%;
     }
 
+    /* Pages grow with their content. At a fixed `height: 100%` (the rule for
+       wider screens) a long page overflowed its own box, so the content box's
+       bottom padding — the room kept clear of the tab bar — ended up inside
+       the page and its last rows stayed hidden behind the bar. */
+    html .application > .content-container:not(.content-container--public) > :not(router-outlet):not(app-welcome) {
+        height: auto;
+        min-height: 100%;
+    }
+
     /* List pages wrap their content in a mat-drawer-container (for the filter
        drawer). At `height: 100%` of the content box it became a second,
        viewport-tall scroller that cut the list off above the tab bar. Let it
