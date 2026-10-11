@@ -68,6 +68,7 @@ export class PullToRefreshDirective implements OnInit, OnChanges, OnDestroy {
     if (!this.pulling) return;
     this.pulling = false;
     if (this.armed) {
+      this.feedback.hapticOnRelease('light');
       this.startRefresh();
     } else if (this.distance > 0) {
       this.render(0, true);

@@ -46,7 +46,11 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
     }
   };
 
-  private readonly onPointerEnd = () => this.clearTimer();
+  private readonly onPointerEnd = () => {
+    // The menu opened during this hold: iPhone's tick, now that the finger lifts.
+    if (this.overlay && this.swallowNextClick) this.feedback.hapticOnRelease('medium');
+    this.clearTimer();
+  };
 
   private readonly onClickCapture = (e: MouseEvent) => {
     if (!this.swallowNextClick) return;

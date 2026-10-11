@@ -35,8 +35,9 @@ const IOS_TICKS: Record<Haptic, { count: number; gap: number }> = {
  *
  * iPhone has no Vibration API. Safari (iOS 18+) plays the system haptic when
  * an `<input type="checkbox" switch>` is toggled, so a hidden one is toggled
- * from code. It only gives one kind of light tick, and only during a user
- * gesture; elsewhere it's a silent no-op.
+ * from code. It only gives one kind of light tick, and only while handling a
+ * real tap — a click, or the finger lifting; ticks from pointerdown / moves /
+ * timers are silently dropped (see `hapticOnRelease`).
  */
 @Injectable({ providedIn: 'root' })
 export class FeedbackService {
@@ -69,6 +70,18 @@ export class FeedbackService {
       if (i === 0) this.iosTick();
       else setTimeout(() => this.iosTick(), gap * i);
     }
+  }
+
+  /**
+   * For gestures: the tick to play when the finger lifts. iPhone only allows
+   * the haptic during a real tap, which per the web platform is the finger
+   * *lifting* (touchend / pointerup) — ticks fired while the finger is down or
+   * sliding are dropped. So iPhone gets this one; Android, which vibrates at
+   * any moment, already had its ticks during the gesture.
+   */
+  hapticOnRelease(kind: Haptic): void {
+    if (!this.hapticsOn() || !isIos()) return;
+    this.haptic(kind);
   }
 
   /** A short synthesized cue (no audio files). Quiet in silent mode on iPhone. */

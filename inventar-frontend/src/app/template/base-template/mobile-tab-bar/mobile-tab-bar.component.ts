@@ -186,15 +186,19 @@ export class MobileTabBarComponent implements AfterViewInit {
     this.menuSlideIndex.set(null);
     // Released on a page in the menu: open it.
     if (menuIndex !== null) {
+      this.feedback.hapticOnRelease('selection');
       this.swallowClick = true;
       setTimeout(() => (this.swallowClick = false), 350);
       this.closeAll();
       this.router.navigate([this.moreItems[menuIndex].link]);
       return;
     }
+    // A press on More that opened the menu: its tick, now that the finger lifts.
+    if (this.menuFromPress && !slide?.sliding) this.feedback.hapticOnRelease('light');
     if (!slide?.sliding) return;
     const index = this.slotAt(event.clientX, bar);
     this.slideIndex.set(null);
+    this.feedback.hapticOnRelease('selection');
     // The release may also fire a click on whatever is under the finger;
     // ignore it — but only briefly, so it can never eat a later real tap.
     this.swallowClick = true;
