@@ -68,6 +68,30 @@ body {
     base-template {
         height: 100%;
     }
+
+    /* List pages wrap their content in a mat-drawer-container (for the filter
+       drawer). At `height: 100%` of the content box it became a second,
+       viewport-tall scroller that cut the list off above the tab bar. Let it
+       grow with its content so the shell's content box does the scrolling. */
+    .content-container .mat-drawer-container,
+    .content-container .mat-drawer-content {
+        height: auto;
+        min-height: 100%;
+        overflow: visible;
+    }
+
+    /* …and keep the filter drawer on screen wherever the list is scrolled. */
+    .content-container .mat-drawer,
+    .content-container .mat-drawer-backdrop {
+        position: fixed;
+        z-index: 1200;
+    }
+
+    .content-container .mat-drawer {
+        top: 0;
+        bottom: 0;
+        height: auto;
+    }
 }
 
 @media only screen and (max-width: 600px) {
