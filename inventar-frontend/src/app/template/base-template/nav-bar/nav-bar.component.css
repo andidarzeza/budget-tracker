@@ -1,7 +1,8 @@
 /* iOS navigation bar (mobile only — the template renders nothing on desktop).
-   At rest it is invisible and the page's own large title is the header; once
-   the content scrolls under it, it turns into frosted glass with a hairline
-   and a small centred title fades in, like UINavigationBar's large-title mode. */
+   At rest it is invisible and the page's own large title is the header. Once
+   the content scrolls under it, the iOS 26 "scroll edge effect" fades in:
+   no bar shape and no hairline — the content just blurs and fades into the
+   page colour toward the top edge, and a small centred title floats over it. */
 
 .toolbar {
     position: fixed;
@@ -18,19 +19,32 @@
     box-sizing: border-box;
     color: var(--app-text);
     background: transparent;
-    border-bottom: 0.5px solid transparent;
-    transition:
-        background 0.25s ease,
-        border-color 0.25s ease,
-        -webkit-backdrop-filter 0.25s ease,
-        backdrop-filter 0.25s ease;
 }
 
-.toolbar--scrolled {
-    background: var(--ios-bar);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    backdrop-filter: saturate(180%) blur(20px);
-    border-bottom-color: var(--ios-separator);
+/* The edge effect: runs a little past the bar so the fade has room. Both
+   the tint and the blur are masked from solid (top) to nothing (bottom). */
+.toolbar::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 -28px;
+    z-index: -1;
+    background: linear-gradient(
+        to bottom,
+        var(--app-bg) 0%,
+        color-mix(in srgb, var(--app-bg) 82%, transparent) 55%,
+        transparent 100%
+    );
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.toolbar--scrolled::before {
+    opacity: 1;
 }
 
 .toolbar__side {
