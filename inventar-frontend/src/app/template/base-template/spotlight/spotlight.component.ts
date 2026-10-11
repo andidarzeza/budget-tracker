@@ -2,19 +2,18 @@ import { DecimalPipe } from '@angular/common';
 import {
   afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, Injector, signal, untracked, viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationStart, Router } from '@angular/router';
 import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { Category, CategoryType, ProjectView, Wallet } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
-import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { ProjectService } from 'src/app/services/pages/project.service';
 import { WalletService } from 'src/app/services/pages/wallet.service';
 import { SearchHit, SpotlightService } from 'src/app/services/spotlight.service';
+import { DialogService } from 'src/app/services/dialog.service';
 import { ThemeService } from 'src/app/services/theme.service';
-import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { iosTileColorForName } from 'src/app/shared/ios/ios-colors';
 
 interface SpotlightItem {
@@ -58,7 +57,7 @@ const PAGES: ReadonlyArray<{ title: string; link: string; icon: string; color: s
 const RECORD_SEARCH_DELAY_MS = 180;
 
 /**
- * App-wide search, like Spotlight: one field that finds actions, pages,
+ * App-wide search on desktop, like macOS Spotlight: one field that finds actions, pages,
  * categories, projects, sources (from data the app already holds) and
  * expenses / incomes (from `/api/search`). ↑ ↓ to move, ↩ to open, esc to close.
  */
@@ -67,7 +66,7 @@ const RECORD_SEARCH_DELAY_MS = 180;
   templateUrl: './spotlight.component.html',
   styleUrls: ['./spotlight.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, DecimalPipe, HapticTapDirective],
+  imports: [MatIconModule, DecimalPipe],
   host: { '(window:keydown)': 'onGlobalKeydown($event)' },
 })
 export class SpotlightComponent {
@@ -78,9 +77,9 @@ export class SpotlightComponent {
   private readonly projectService = inject(ProjectService);
   private readonly walletService = inject(WalletService);
   private readonly themeService = inject(ThemeService);
+  private readonly dialog = inject(DialogService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
-  readonly isPhone = toSignal(inject(BreakpointService).useTableCardLayout$, { initialValue: false });
 
   private readonly input = viewChild<ElementRef<HTMLInputElement>>('field');
   private readonly list = viewChild<ElementRef<HTMLElement>>('list');
@@ -97,10 +96,10 @@ export class SpotlightComponent {
   readonly searching = signal(false);
 
   private readonly actions: Action[] = [
-    { title: 'Add Expense', keywords: 'new expense spend pay add', icon: 'remove', color: '#ff3b30', run: () => this.go('/expenses/add') },
-    { title: 'Add Income', keywords: 'new income salary earn add', icon: 'add', color: '#34c759', run: () => this.go('/incomes/add') },
-    { title: 'New Category', keywords: 'add category create', icon: 'category', color: '#ff9500', run: () => this.go('/categories/add') },
-    { title: 'New Project', keywords: 'add project goal savings create', icon: 'savings', color: '#af52de', run: () => this.go('/projects') },
+    { title: 'Add Expense', keywords: 'new expense spend pay add', icon: 'remove', color: '#ff3b30', run: () => this.openForm('expense') },
+    { title: 'Add Income', keywords: 'new income salary earn add', icon: 'add', color: '#34c759', run: () => this.openForm('income') },
+    { title: 'New Category', keywords: 'add category create', icon: 'category', color: '#ff9500', run: () => this.openForm('category') },
+    { title: 'New Project', keywords: 'add project goal savings create', icon: 'savings', color: '#af52de', run: () => this.openForm('project') },
     {
       title: 'Switch to Dark Mode', keywords: 'dark theme night appearance', icon: 'dark_mode', color: '#5856d6',
       run: () => { this.themeService.setMode('dark'); this.close(); },
@@ -139,7 +138,7 @@ export class SpotlightComponent {
         subtitle: c.categoryType === CategoryType.INCOME ? 'Income category' : 'Expense category',
         icon: c.icon || 'category',
         color: iosTileColorForName(c.category),
-        run: () => this.go(`/categories/${c.id}/edit`),
+        run: () => this.openForm('category', c.id),
       })));
     push('Projects', this.projects()
       .map((v) => v.project)
@@ -194,7 +193,6 @@ export class SpotlightComponent {
         this.loadLists();
         afterNextRender(() => {
           this.input()?.nativeElement.focus({ preventScroll: true });
-          this.spotlight.releaseKeyboard();
         }, { injector: this.injector });
       });
     });
@@ -277,6 +275,22 @@ export class SpotlightComponent {
     this.router.navigateByUrl(link);
   }
 
+  /**
+   * Add / edit forms open as the same dialogs the desktop pages use (the
+   * `/…/add` and `/…/:id/edit` routes are the phone versions). Each form is
+   * loaded on demand. Open lists refresh themselves after a save (the save
+   * invalidates the list cache, which tables watch).
+   */
+  private async openForm(kind: 'expense' | 'income' | 'category' | 'project', id?: string): Promise<void> {
+    this.close();
+    const component =
+      kind === 'expense' ? (await import('src/app/components/expenses/add-expense/add-expense.component')).AddExpenseComponent
+      : kind === 'income' ? (await import('src/app/components/incomes/add-income/add-income.component')).AddIncomeComponent
+      : kind === 'category' ? (await import('src/app/components/categories/add-category/add-category.component')).AddCategoryComponent
+      : (await import('src/app/components/projects/add-project/add-project.component')).AddProjectComponent;
+    this.dialog.openDialog(component, id ? { id } : undefined).onSuccess(() => undefined);
+  }
+
   private actionItem(a: Action): SpotlightItem {
     return { key: `action:${a.title}`, title: a.title, icon: a.icon, color: a.color, run: a.run };
   }
@@ -296,7 +310,7 @@ export class SpotlightComponent {
       currency: h.currency,
       icon: h.icon || (income ? 'trending_up' : 'trending_down'),
       color: iosTileColorForName(h.category),
-      run: () => this.go(`/${income ? 'incomes' : 'expenses'}/${h.id}/edit`),
+      run: () => this.openForm(income ? 'income' : 'expense', h.id),
     };
   }
 

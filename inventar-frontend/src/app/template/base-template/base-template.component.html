@@ -28,7 +28,8 @@
         <mobile-tab-bar></mobile-tab-bar>
     }
 
-    @if (authenticationService.currentUserValue) {
+    <!-- Desktop only: the sidebar's search field and ⌘K open it. -->
+    @if (authenticationService.currentUserValue && !mobileCardLayout()) {
         <app-spotlight></app-spotlight>
     }
 </div>

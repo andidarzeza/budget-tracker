@@ -2,11 +2,7 @@
 <!-- iOS-style navigation bar: transparent over the page's large title, then
      frosted glass with a small centred title once the content scrolls. -->
 <header class="toolbar" [class.toolbar--scrolled]="scrolled()">
-    <div class="toolbar__side">
-        <button type="button" class="nav-search-btn" hapticTap aria-label="Search" (click)="spotlight.open()">
-            <mat-icon>search</mat-icon>
-        </button>
-    </div>
+    <span class="toolbar__side" aria-hidden="true"></span>
 
     <h1 class="toolbar__title" [attr.aria-hidden]="!scrolled()">{{ pageTitle() }}</h1>
 

@@ -76,37 +76,6 @@
     transform: none;
 }
 
-/* Search (opens Spotlight): a round grey button, the avatar's twin. */
-.nav-search-btn {
-    appearance: none;
-    -webkit-tap-highlight-color: transparent;
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: var(--ios-fill-3);
-    color: var(--app-text);
-    cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.15s ease;
-}
-
-.nav-search-btn:active {
-    transform: scale(0.92);
-    opacity: 0.7;
-}
-
-.nav-search-btn mat-icon {
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    line-height: 20px;
-    font-variation-settings: 'wght' 600;
-}
-
 /* Round glass button holding the monogram, like the account button in
    the App Store / Health. */
 .nav-avatar-btn {
