@@ -930,3 +930,60 @@
 :host-context(.dark-theme) .balance-row--jet {
     --brand-primary-text: #53cecb;
 }
+
+/* Breakdown card: the list and a category's transactions swap in place and
+   the card animates to the new height (AnimateHeightDirective). */
+.breakdown-stack {
+    border-radius: var(--app-radius-md);
+}
+
+.breakdown-stack > .breakdown-stack__inner {
+    display: flex;
+    flex-direction: column;
+}
+
+.breakdown-stack .panel--story {
+    position: static;
+    inset: auto;
+}
+
+/* Currency section headers inside the breakdown list (Lek, then Euro):
+   plain iOS section header in small grey caps, with a hairline above every
+   section after the first. */
+.cat-group-label {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px var(--app-space-5) 6px;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--app-text-muted);
+    list-style: none;
+}
+
+.cat-group-label:first-child {
+    padding-top: 4px;
+}
+
+.cat-group-label:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--app-space-5);
+    right: 0;
+    border-top: 0.5px solid var(--ios-separator);
+}
+
+@media (max-width: 767px) {
+    .cat-group-label {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .cat-group-label:not(:first-child)::before {
+        left: 16px;
+    }
+}

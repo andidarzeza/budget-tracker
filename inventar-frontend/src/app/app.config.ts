@@ -9,6 +9,7 @@ import { onPageTransition, usePageViewTransitions } from './utils/page-transitio
 import { AuthGuardService } from './services/auth-guard.service';
 import { CustomHttpInterceptorService } from './services/custom-http-interceptor.service';
 import { ListCacheInterceptor } from './core/services/list-cache.interceptor';
+import { WarmCacheInterceptor } from './core/services/warm-cache.interceptor';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
 
 const routes: Routes = [
@@ -110,6 +111,12 @@ export const appConfig: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ListCacheInterceptor,
+      multi: true,
+    },
+    // Summary page data answered from memory first, then refreshed.
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: WarmCacheInterceptor,
       multi: true,
     },
     provideToastr(),

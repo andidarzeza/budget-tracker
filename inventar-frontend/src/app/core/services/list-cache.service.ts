@@ -11,6 +11,7 @@ import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { PAGE_SIZE } from 'src/environments/environment';
+import { WarmCacheService } from './warm-cache.service';
 
 /** Background refresh while the app is open and visible. */
 const REFRESH_EVERY_MS = 60_000;
@@ -24,7 +25,8 @@ export const LEDGER_SORT = 'createdTime,desc';
 
 /**
  * Keeps the first page of Expenses and Incomes (and their category lists)
- * ready in memory, so opening those pages shows data instantly.
+ * ready in memory, so opening those pages shows data instantly — and drives
+ * the Summary page's warm cache (`WarmCacheService`) on the same schedule.
  *
  *  - Prefetched on sign-in, then every minute while the app is visible,
  *    when the app comes back to the foreground, and right after any
@@ -44,6 +46,7 @@ export class ListCacheService {
   private readonly expenseService = inject(ExpenseService);
   private readonly incomeService = inject(IncomeService);
   private readonly categoriesService = inject(CategoriesService);
+  private readonly warmCache = inject(WarmCacheService);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly store = new Map<string, ResponseWrapper>();
@@ -86,6 +89,7 @@ export class ListCacheService {
       } else {
         this.stopTimer();
         this.clear();
+        this.warmCache.clear();
       }
     });
 
@@ -108,6 +112,10 @@ export class ListCacheService {
   /** Something was added / edited / deleted: drop stale copies and refetch. */
   onMutation(): void {
     this.clear();
+    // Lists that may have just changed must not flash their old copy (e.g.
+    // Manage sources reloading after an edit). Summary totals may stay
+    // stale for the moment it takes the refresh below to land.
+    this.warmCache.drop(/\/api\/(wallets|projects)(\?|$)/);
     if (this.mutationTimer) clearTimeout(this.mutationTimer);
     this.mutationTimer = setTimeout(() => {
       this.mutationTimer = null;
@@ -138,6 +146,8 @@ export class ListCacheService {
       const params = categoryParams(type, account);
       this.load(this.categoriesService.API_URl, params, () => this.categoriesService.findAll(params));
     }
+    // The Summary page's requests (period totals, months, sources, projects).
+    this.warmCache.refresh(account);
   }
 
   private load(url: string, params: HttpParams, request: () => Observable<ResponseWrapper>): void {

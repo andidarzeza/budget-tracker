@@ -1,3 +1,4 @@
+import { AnimateHeightDirective } from 'src/app/shared/animate-height/animate-height.directive';
 import { iosTileColorForName } from 'src/app/shared/ios/ios-colors';
 import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
 import { CommonModule } from '@angular/common';
@@ -123,6 +124,10 @@ const RANGE_VALUES: ReadonlySet<RangeType> = new Set<RangeType>([
  * we render each as its own list entry so the layout mirrors the login preview
  * (icon · title · subtitle · amount) and we never need cross-currency math.
  */
+/** Breakdown currency order: Lek, then Euro; anything else after, A–Z. */
+const CURRENCY_ORDER = ['ALL', 'EUR'];
+const CURRENCY_NAMES: Record<string, string> = { ALL: 'Lek', EUR: 'Euro', USD: 'US Dollar', GBP: 'Pound' };
+
 interface CategoryRow {
   name: string;
   /** Material icon name; expense rows always have one, income rows fall back to a default. */
@@ -139,6 +144,7 @@ interface CategoryRow {
   animations: [inOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AnimateHeightDirective,
     RevealNumberDirective,
     CommonModule,
     MatCardModule,
@@ -322,6 +328,16 @@ export class DashboardComponent implements AfterViewInit {
   incomeRows = computed<CategoryRow[]>(() =>
     DashboardComponent.toRows(this.dashboardData()?.incomesInfo, 'trending_up'),
   );
+
+  /** Breakdown rows split by currency: Lek first, then Euro, then any others;
+   *  each currency keeps its biggest-first order. */
+  readonly expenseGroups = computed(() => DashboardComponent.byCurrency(this.expenseRows()));
+  readonly incomeGroups = computed(() => DashboardComponent.byCurrency(this.incomeRows()));
+
+  /** Section title for a currency group in the breakdown. */
+  currencyName(code: string): string {
+    return CURRENCY_NAMES[code] ?? code;
+  }
 
   /** Loaded-and-empty (not "still loading"). Drives the breakdown empty state. */
   expensesEmpty = computed<boolean>(() => {
@@ -709,6 +725,22 @@ export class DashboardComponent implements AfterViewInit {
         total: it.total ?? 0,
       }))
       .sort((a, b) => b.total - a.total);
+  }
+
+  private static byCurrency(rows: CategoryRow[]): { currency: string; rows: CategoryRow[] }[] {
+    const groups = new Map<string, CategoryRow[]>();
+    for (const row of rows) {
+      const list = groups.get(row.currency) ?? [];
+      list.push(row);
+      groups.set(row.currency, list);
+    }
+    const rank = (c: string) => {
+      const i = CURRENCY_ORDER.indexOf(c);
+      return i < 0 ? CURRENCY_ORDER.length : i;
+    };
+    return [...groups.entries()]
+      .sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b))
+      .map(([currency, list]) => ({ currency, rows: list }));
   }
 
   private daysInMonth(year: number, month: number): number {

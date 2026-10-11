@@ -4,125 +4,119 @@
     box-sizing: border-box;
 }
 
+/* Desktop Projects page in the iOS look: a large title on the grouped
+   background, a round tinted add button, and borderless widget cards.
+   (Phones use the shared ledger list styles.) */
 .projects-page {
     padding: var(--app-space-5);
     display: flex;
     flex-direction: column;
-    gap: var(--app-space-5);
+    gap: 20px;
     max-width: 100%;
     box-sizing: border-box;
 }
 
-/* —— Header —— */
+/* —— Header: large title + round add button —— */
 .projects-header {
-    background: var(--app-surface);
-    color: var(--app-text);
-    border-radius: var(--app-radius-lg);
-    padding: 20px 24px;
-    border: 1px solid var(--app-border);
-    box-shadow: var(--app-shadow-xs);
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    gap: 4px 16px;
-    align-items: center;
-}
-
-.projects-header__title-row {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    grid-column: 1;
-    grid-row: 1;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 4px 0;
 }
 
-.projects-header__icon {
-    color: var(--app-accent);
-    font-size: 26px;
-    width: 26px;
-    height: 26px;
+.projects-header__text {
+    min-width: 0;
 }
 
 .projects-header__title {
     margin: 0;
-    font-size: 1.4rem;
-    font-weight: 700;
     font-family: var(--app-font-display);
-    letter-spacing: -0.02em;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
     color: var(--app-text);
 }
 
 .projects-header__subtitle {
-    grid-column: 1;
-    grid-row: 2;
-    margin: 2px 0 0;
-    font-size: 0.875rem;
-    line-height: 1.45;
+    margin: 4px 0 0;
+    font-size: 15px;
+    line-height: 1.4;
     color: var(--app-text-muted);
 }
 
-.projects-header__cta {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    appearance: none;
+.projects-header__add {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
     border: 0;
-    cursor: pointer;
+    border-radius: 50%;
     background: var(--app-accent);
-    color: var(--app-on-accent);
-    padding: 11px 20px;
-    border-radius: var(--app-radius-md);
-    font: inherit;
-    font-weight: 600;
-    font-size: 0.9rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    box-shadow: var(--app-shadow-accent);
-    transition:
-        background var(--app-motion-base) var(--app-easing-standard),
-        transform var(--app-motion-fast) var(--app-easing-standard),
-        box-shadow var(--app-motion-base) var(--app-easing-standard);
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: var(--ios-glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.projects-header__cta:hover {
-    background: var(--app-accent-hover);
-    transform: translateY(-1px);
+.projects-header__add:hover {
+    filter: brightness(1.06);
 }
 
-.projects-header__cta-icon {
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
+.projects-header__add:active {
+    transform: scale(0.94);
 }
 
-/* —— Grid —— */
+.projects-header__add mat-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 26px;
+    line-height: 26px;
+    font-variation-settings: 'wght' 500;
+}
+
+/* —— Grid of widget cards —— */
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--app-space-4);
+    gap: 16px;
     align-items: stretch;
 }
 
-/* —— Card —— */
 .project-card {
-    background: var(--app-surface);
-    color: var(--app-text);
-    border-radius: var(--app-radius-lg);
-    padding: 18px 20px 20px;
-    box-shadow: var(--app-shadow-xs);
-    border: 1px solid var(--app-border);
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    cursor: pointer;
-    box-sizing: border-box;
+    gap: 16px;
     min-width: 0;
+    box-sizing: border-box;
+    padding: 16px 16px 18px;
+    border: 0;
+    border-radius: 18px;
+    background: var(--app-bg-elevated);
+    color: var(--app-text);
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.2s var(--app-easing-standard), box-shadow 0.2s ease, background 0.15s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .project-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--app-shadow-md);
+    }
+}
+
+.project-card:active {
+    transform: scale(0.98);
 }
 
 .project-card:focus-visible {
-    outline: none;
-    border-color: var(--app-accent);
-    box-shadow: 0 0 0 3px var(--app-accent-soft);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 35%, transparent);
 }
 
 .project-card__head {
@@ -132,35 +126,36 @@
     min-width: 0;
 }
 
+/* Settings-style colour tile with a white glyph. */
 .project-card__icon-wrap {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--app-radius-md);
-    background: var(--app-accent-soft);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-grid;
+    place-items: center;
     flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    color: #ffffff;
 }
 
 .project-card__icon {
-    color: var(--app-accent);
     width: 24px;
     height: 24px;
     font-size: 24px;
+    line-height: 24px;
+    font-variation-settings: 'FILL' 1, 'wght' 500;
 }
 
 .project-card__title-block {
-    min-width: 0;
     flex: 1 1 auto;
+    min-width: 0;
 }
 
 .project-card__title {
     margin: 0;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--app-text);
+    font-size: 17px;
+    font-weight: 600;
     letter-spacing: -0.01em;
+    color: var(--app-text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -168,81 +163,94 @@
 
 .project-card__desc {
     margin: 2px 0 0;
-    font-size: 0.8125rem;
+    font-size: 13px;
+    line-height: 1.35;
     color: var(--app-text-muted);
-    line-height: 1.4;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    white-space: nowrap;
 }
 
-/* Progress */
-.project-card__progress-row {
+.project-card__chevron {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+    line-height: 22px;
+    color: var(--app-text-subtle);
+}
+
+/* —— Progress —— */
+.project-card__progress {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 10px;
+    flex-direction: column;
 }
 
 .project-card__saved {
-    font-size: 1.05rem;
+    font-size: 26px;
     font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    white-space: nowrap;
     font-variant-numeric: tabular-nums;
     color: var(--app-text);
 }
 
-.project-card__target {
-    font-size: 0.8rem;
-    color: var(--app-text-muted);
-    font-variant-numeric: tabular-nums;
+.project-card__currency {
+    margin-left: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--app-text-subtle);
 }
 
 .project-card__bar {
-    margin-top: 8px;
-    height: 8px;
     width: 100%;
-    background: var(--app-surface-muted);
+    height: 6px;
+    margin-top: 10px;
     border-radius: 999px;
     overflow: hidden;
+    background: var(--ios-fill-3);
 }
 
 .project-card__bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--app-accent), color-mix(in srgb, var(--app-accent) 60%, var(--violet-500)));
+    min-width: 6px;
     border-radius: 999px;
-    transition: width 320ms var(--app-easing-emphasized, ease);
+    background: var(--app-accent);
+    transition: width 0.5s var(--app-easing-standard);
+}
+
+.project-card--done .project-card__bar-fill {
+    background: var(--app-success);
 }
 
 .project-card__progress-meta {
-    margin-top: 6px;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    font-size: 0.78rem;
+    gap: 10px;
+    margin-top: 8px;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
     color: var(--app-text-muted);
 }
 
 .project-card__complete {
-    font-weight: 700;
+    font-weight: 600;
     color: var(--app-success);
 }
 
-/* Extras (other-currency totals) */
+/* —— Other-currency totals —— */
 .project-card__extras {
-    border-top: 1px solid var(--app-border);
-    padding-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    padding-top: 12px;
+    border-top: 0.5px solid var(--ios-separator);
 }
 
 .project-card__extras-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 13px;
     color: var(--app-text-subtle);
 }
 
@@ -253,9 +261,9 @@
 }
 
 .project-card__extra {
-    font-size: 0.84rem;
+    font-size: 15px;
     font-variant-numeric: tabular-nums;
-    color: var(--app-text-muted);
+    color: var(--app-text);
 }
 
 .project-card__extra + .project-card__extra::before {
@@ -264,89 +272,53 @@
     color: var(--app-text-subtle);
 }
 
-/* —— Empty state —— */
+/* —— Empty state (iOS "No Projects" content-unavailable view) —— */
 .projects-empty {
-    background: var(--app-surface);
-    border-radius: var(--app-radius-lg);
-    border: 1px dashed var(--app-border);
-    padding: 56px 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 6px;
+    padding: 64px 24px;
     text-align: center;
-    gap: 12px;
     color: var(--app-text);
 }
 
 .projects-empty__icon {
-    width: 48px;
-    height: 48px;
-    font-size: 48px;
-    color: var(--app-accent-soft-strong);
+    width: 56px;
+    height: 56px;
+    font-size: 56px;
+    line-height: 56px;
+    margin-bottom: 6px;
+    color: var(--app-text-subtle);
+    font-variation-settings: 'wght' 300;
 }
 
 .projects-empty__title {
-    margin: 4px 0 0;
-    font-size: 1.1rem;
+    margin: 0;
+    font-size: 22px;
     font-weight: 700;
-    font-family: var(--app-font-display);
     color: var(--app-text);
 }
 
 .projects-empty__hint {
     margin: 0;
-    font-size: 0.9rem;
-    color: var(--app-text-muted);
     max-width: 38ch;
-    line-height: 1.45;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--app-text-muted);
 }
 
 .projects-empty__cta {
-    margin-top: 8px;
-    appearance: none;
+    margin-top: 10px;
+    padding: 0;
     border: 0;
-    cursor: pointer;
-    background: var(--app-accent);
-    color: var(--app-on-accent);
-    padding: 11px 20px;
-    border-radius: var(--app-radius-md);
+    background: none;
+    color: var(--app-accent);
     font: inherit;
-    font-weight: 600;
-    font-size: 0.9rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    box-shadow: var(--app-shadow-accent);
-    transition:
-        background var(--app-motion-base) var(--app-easing-standard),
-        transform var(--app-motion-fast) var(--app-easing-standard);
+    font-size: 17px;
+    cursor: pointer;
 }
 
-.projects-empty__cta:hover {
-    background: var(--app-accent-hover);
-    transform: translateY(-1px);
-}
-
-@media only screen and (max-width: 767px) {
-    .projects-page {
-        padding: var(--app-space-3);
-        gap: var(--app-space-3);
-    }
-
-    .projects-header {
-        grid-template-columns: 1fr;
-        padding: 16px 18px;
-    }
-
-    .projects-header__cta {
-        grid-column: 1;
-        grid-row: 3;
-        justify-self: stretch;
-        justify-content: center;
-    }
-
-    .projects-grid {
-        grid-template-columns: 1fr;
-        gap: var(--app-space-3);
-    }
+.projects-empty__cta:active {
+    opacity: 0.4;
 }

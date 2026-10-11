@@ -173,7 +173,10 @@
 
             <div class="dashboard-section__body">
 
-                <div class="breakdown-stack">
+                <!-- The card animates its height as the list and a category's
+                     transactions swap in and out. -->
+                <div class="breakdown-stack" animateHeight>
+                  <div class="breakdown-stack__inner">
                     @if (storyOpen() && storyKind() === 'expense') {
                         <mat-card class="panel panel--story">
                             <header class="panel__header panel__header--story">
@@ -211,8 +214,7 @@
                                 </div>
                             }
                         </mat-card>
-                    }
-
+                    } @else {
                     <mat-card class="panel panel--breakdown">
                         <header class="panel__header">
                             <h3 class="panel__title">Breakdown</h3>
@@ -221,12 +223,18 @@
 
                         @if (expenseRows().length) {
                             <ul class="cat-list">
-                                @for (r of expenseRows(); track r.name + r.currency) {
+                                @for (g of expenseGroups(); track g.currency) {
+                                    @if (expenseGroups().length > 1) {
+                                        <li class="cat-group-label" aria-hidden="true">
+                                            {{ currencyName(g.currency) }}
+                                        </li>
+                                    }
+                                    @for (r of g.rows; track r.name + r.currency) {
                                     <li class="cat-row cat-row--clickable" (click)="openCategoryStory('expense', r)"
                                         [class.cat-row--active]="storyOpen() && storyKind() === 'expense' && storyCategory()?.name === r.name && storyCategory()?.currency === r.currency">
                                         @let pct = sharePercent(expenseRows(), r);
                                         <span class="cat-row__icon" [style.background]="tileColor(r.name)">
-                                            <mat-icon fontSet="material-symbols-rounded">{{ r.icon }}</mat-icon>
+                                            <mat-icon>{{ r.icon }}</mat-icon>
                                         </span>
                                         <span class="cat-row__main">
                                             <span class="cat-row__title">{{ r.name }}</span>
@@ -238,6 +246,7 @@
                                         <span class="cat-row__amount">{{ r.total | number : '1.2-2' }}</span>
                                         <mat-icon class="cat-row__chevron" fontSet="material-symbols-rounded" aria-hidden="true">chevron_right</mat-icon>
                                     </li>
+                                    }
                                 }
                             </ul>
                         }
@@ -249,6 +258,8 @@
                             </div>
                         }
                     </mat-card>
+                    }
+                  </div>
                 </div>
             </div>
         </section>
@@ -262,7 +273,10 @@
 
             <div class="dashboard-section__body">
 
-                <div class="breakdown-stack">
+                <!-- The card animates its height as the list and a category's
+                     transactions swap in and out. -->
+                <div class="breakdown-stack" animateHeight>
+                  <div class="breakdown-stack__inner">
                     @if (storyOpen() && storyKind() === 'income') {
                         <mat-card class="panel panel--story">
                             <header class="panel__header panel__header--story">
@@ -300,8 +314,7 @@
                                 </div>
                             }
                         </mat-card>
-                    }
-
+                    } @else {
                     <mat-card class="panel panel--breakdown">
                         <header class="panel__header">
                             <h3 class="panel__title">Breakdown</h3>
@@ -310,12 +323,18 @@
 
                         @if (incomeRows().length) {
                             <ul class="cat-list">
-                                @for (r of incomeRows(); track r.name + r.currency) {
+                                @for (g of incomeGroups(); track g.currency) {
+                                    @if (incomeGroups().length > 1) {
+                                        <li class="cat-group-label" aria-hidden="true">
+                                            {{ currencyName(g.currency) }}
+                                        </li>
+                                    }
+                                    @for (r of g.rows; track r.name + r.currency) {
                                     <li class="cat-row cat-row--clickable" (click)="openCategoryStory('income', r)"
                                         [class.cat-row--active]="storyOpen() && storyKind() === 'income' && storyCategory()?.name === r.name && storyCategory()?.currency === r.currency">
                                         @let pct = sharePercent(incomeRows(), r);
                                         <span class="cat-row__icon" [style.background]="tileColor(r.name)">
-                                            <mat-icon fontSet="material-symbols-rounded">{{ r.icon }}</mat-icon>
+                                            <mat-icon>{{ r.icon }}</mat-icon>
                                         </span>
                                         <span class="cat-row__main">
                                             <span class="cat-row__title">{{ r.name }}</span>
@@ -327,6 +346,7 @@
                                         <span class="cat-row__amount">{{ r.total | number : '1.2-2' }}</span>
                                         <mat-icon class="cat-row__chevron" fontSet="material-symbols-rounded" aria-hidden="true">chevron_right</mat-icon>
                                     </li>
+                                    }
                                 }
                             </ul>
                         }
@@ -338,6 +358,8 @@
                             </div>
                         }
                     </mat-card>
+                    }
+                  </div>
                 </div>
             </div>
         </section>

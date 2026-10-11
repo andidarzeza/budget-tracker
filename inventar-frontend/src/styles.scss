@@ -3195,3 +3195,8 @@ app-dashboard .control-bar__picker .dash-picker [cb-icon-button]:active {
 .category-pick-grid + .category-group-label {
     margin-top: 24px;
 }
+
+/* AnimateHeightDirective: the host clips while it resizes to its content. */
+.animate-height {
+    overflow: hidden;
+}

@@ -25,20 +25,24 @@ mat-icon {
     flex-shrink: 0;
 }
 
-/* ---------- Brand ---------- */
+/* ---------- Brand: iPadOS sidebar top ----------
+   A toolbar row with the round ⋯ button on the right, then the sidebar's
+   large title — no app icon, as in Apple's own sidebars. */
 .brand {
     display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 2px 4px 4px 8px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 0 4px 2px 8px;
+}
+
+.brand .menu-wrap {
+    align-self: flex-end;
 }
 
 .brand-link {
-    flex: 1;
+    display: block;
     min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 9px;
     color: var(--app-text);
     text-decoration: none;
     border-radius: var(--app-radius-sm);
@@ -49,50 +53,48 @@ mat-icon {
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 22%, transparent);
 }
 
-/* The app icon (same artwork as the favicon / home-screen icon). */
-.brand-mark {
-    display: block;
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(232, 38, 27, 0.25);
-}
-
 .brand-name {
+    display: block;
     font-family: var(--app-font-display);
-    font-size: 20px;
+    font-size: 30px;
     font-weight: 700;
+    line-height: 1.15;
     letter-spacing: 0.01em;
 }
 
-/* ---------- Icon buttons ---------- */
+/* ---------- Toolbar button (⋯) ----------
+   iOS 26 bar button: a round glassy fill with a label-coloured glyph. */
 .icon-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     padding: 0;
     border: none;
     background: var(--ios-fill-3);
-    color: var(--app-accent);
+    color: var(--app-text);
     border-radius: 50%;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.12s, color 0.12s;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .icon-btn:hover {
-    background: var(--app-surface-hover);
-    color: var(--app-text);
+    background: var(--ios-fill);
+}
+
+.icon-btn:active {
+    transform: scale(0.92);
 }
 
 .icon-btn mat-icon {
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    line-height: 20px;
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+    line-height: 22px;
+    font-variation-settings: 'wght' 600;
 }
 
 /* ---------- "More" menu ---------- */
@@ -186,27 +188,34 @@ mat-icon {
     color: var(--app-text-subtle);
 }
 
-/* ---------- Search ---------- */
-/* iOS search field: grey fill, no outline. */
+/* ---------- Search: UISearchTextField ----------
+   Grey rounded field, magnifying glass and placeholder in the secondary
+   label colour, and a round ✕ to clear while there is text. */
 .search {
     display: flex;
     align-items: center;
     gap: 6px;
     height: 36px;
-    padding: 0 8px;
+    margin: 0 2px;
+    padding: 0 6px 0 8px;
     border: 0;
-    border-radius: var(--app-radius-md);
+    border-radius: 10px;
     background: var(--ios-fill-3);
     color: var(--app-text-subtle);
     font-size: 17px;
     cursor: text;
 }
 
-.search mat-icon {
+.search:focus-within {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-accent) 35%, transparent);
+}
+
+.search > mat-icon {
     width: 20px;
     height: 20px;
     font-size: 20px;
     line-height: 20px;
+    font-variation-settings: 'wght' 500;
 }
 
 .search input {
@@ -218,6 +227,7 @@ mat-icon {
     background: none;
     color: var(--app-text);
     font: inherit;
+    letter-spacing: -0.01em;
     outline: none;
 }
 
@@ -225,14 +235,24 @@ mat-icon {
     color: var(--app-text-subtle);
 }
 
-kbd {
-    font-family: inherit;
-    font-size: 12px;
-    padding: 1px 6px;
+.search__clear {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
     border: 0;
-    border-radius: 5px;
-    background: var(--ios-fill-3);
+    background: none;
     color: var(--app-text-subtle);
+    cursor: pointer;
+}
+
+.search__clear mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+    font-variation-settings: 'FILL' 1;
 }
 
 /* ---------- Section label ---------- */

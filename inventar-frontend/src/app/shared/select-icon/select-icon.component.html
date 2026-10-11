@@ -7,66 +7,76 @@
         [disabled]="disabled"
         [attr.aria-haspopup]="'dialog'"
         [attr.aria-expanded]="showIconSelect()"
+        [attr.aria-label]="label + ': ' + (value ? iconLabel(value) : placeholder)"
         (click)="open()"
     >
         @if (value) {
-            <mat-icon class="input-icon">{{ value }}</mat-icon>
-            <span class="input-value">{{ value }}</span>
+            <span class="input-tile" aria-hidden="true">
+                <mat-icon>{{ value }}</mat-icon>
+            </span>
         } @else {
-            <mat-icon class="input-icon input-icon--muted">add_circle_outline</mat-icon>
             <span class="input-value input-value--placeholder">{{ placeholder }}</span>
         }
-        <mat-icon class="input-chevron" aria-hidden="true">expand_more</mat-icon>
+        <mat-icon class="input-chevron" fontSet="material-symbols-rounded" aria-hidden="true">chevron_right</mat-icon>
     </button>
 </div>
 
 @if (showIconSelect()) {
     <div class="icon-select-backdrop" [@fadeAnimation] (click)="close()"></div>
 
-    <div [@panelAnimation] class="icon-select" role="dialog" aria-label="Select an icon">
-        <header class="icon-select__header">
-            <button type="button" cb-icon-button (click)="close()"
-                matTooltip="Back" matTooltipPosition="below" aria-label="Back">
-                <mat-icon>keyboard_arrow_left</mat-icon>
-            </button>
-            <h2 class="icon-select__title">Select an icon</h2>
+    <!-- iOS sheet, like the Reminders / Shortcuts glyph picker. -->
+    <div [@panelAnimation] class="icon-select" role="dialog" aria-modal="true" aria-label="Choose an icon">
+        <header class="icon-select__bar">
+            <button type="button" class="icon-select__cancel" (click)="close()">Cancel</button>
+            <h2 class="icon-select__title">{{ label }}</h2>
+            <span aria-hidden="true"></span>
         </header>
 
-        <cb-labeled-form-input
-            class="icon-select__search"
-            label=""
-            icon="search"
-            placeholder="Search icons…"
-            [control]="$any(searchControl)"
-        ></cb-labeled-form-input>
+        <div class="icon-select__body">
+            <div class="icon-select__preview" aria-hidden="true">
+                <span class="icon-select__preview-tile" [class.icon-select__preview-tile--empty]="!value">
+                    <mat-icon>{{ value || 'category' }}</mat-icon>
+                </span>
+            </div>
 
-        <mat-divider></mat-divider>
-
-        @if (filteredIcons().length) {
-            <div class="icons">
-                @for (icon of filteredIcons(); track icon) {
-                    <button
-                        type="button"
-                        class="icon"
-                        [class.icon--selected]="value === icon"
-                        (click)="select(icon)"
-                        [attr.aria-label]="icon"
-                    >
-                        <mat-icon>{{ icon }}</mat-icon>
-                        <span>{{ icon }}</span>
+            <label class="icon-search">
+                <mat-icon fontSet="material-symbols-rounded" aria-hidden="true">search</mat-icon>
+                <input #search type="search" placeholder="Search" aria-label="Search icons"
+                    [value]="query() ?? ''" (input)="searchControl.setValue(search.value)" />
+                @if (query()) {
+                    <button type="button" class="icon-search__clear" aria-label="Clear search"
+                        (click)="clearSearch(); search.focus()">
+                        <mat-icon fontSet="material-symbols-rounded">cancel</mat-icon>
                     </button>
                 }
-            </div>
-        } @else {
-            <div class="icons-empty">
-                <mat-icon class="icons-empty__icon">search_off</mat-icon>
-                <p class="icons-empty__text">
-                    No icons match "<strong>{{ query() }}</strong>"
-                </p>
-                <button type="button" class="icons-empty__clear" (click)="clearSearch()">
-                    Clear search
-                </button>
-            </div>
-        }
+            </label>
+
+            @for (group of visibleGroups(); track group.label) {
+                <section class="icon-group">
+                    <h3 class="icon-group__label">{{ group.label }}</h3>
+                    <div class="icons">
+                        @for (icon of group.icons; track icon) {
+                            <button
+                                type="button"
+                                class="icon"
+                                [class.icon--selected]="value === icon"
+                                (click)="select(icon)"
+                                [attr.aria-label]="iconLabel(icon)"
+                                [attr.aria-pressed]="value === icon"
+                                [title]="iconLabel(icon)"
+                            >
+                                <mat-icon>{{ icon }}</mat-icon>
+                            </button>
+                        }
+                    </div>
+                </section>
+            } @empty {
+                <div class="icons-empty">
+                    <mat-icon class="icons-empty__icon" fontSet="material-symbols-rounded">search</mat-icon>
+                    <p class="icons-empty__title">No Results</p>
+                    <p class="icons-empty__text">No icons match “{{ query() }}”.</p>
+                </div>
+            }
+        </div>
     </div>
 }

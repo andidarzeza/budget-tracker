@@ -1,14 +1,11 @@
 @if (authenticationService.currentUserValue) {
 <aside id="sidebar" class="sidebar" style="z-index: 2">
 
+    <!-- iPadOS sidebar: toolbar row (⋯ on the right), then the large title. -->
     <div class="brand">
-        <a routerLink="/welcome" class="brand-link" aria-label="Financa — Home">
-            <img class="brand-mark" src="favicon.svg" alt="" aria-hidden="true" />
-            <span class="brand-name">Financa</span>
-        </a>
         <div class="menu-wrap">
             <button type="button" class="icon-btn" title="More" aria-label="More" (click)="menuOpen.set(!menuOpen())">
-                <mat-icon>more_horiz</mat-icon>
+                <mat-icon fontSet="material-symbols-rounded">more_horiz</mat-icon>
             </button>
             @if (menuOpen()) {
                 <div class="menu-scrim" (click)="menuOpen.set(false)"></div>
@@ -30,15 +27,24 @@
                 </div>
             }
         </div>
+        <a routerLink="/welcome" class="brand-link" aria-label="Financa — Home">
+            <span class="brand-name">Financa</span>
+        </a>
     </div>
 
+    <!-- iOS search field (⌘K still focuses it). -->
     <label class="search">
-        <mat-icon>search</mat-icon>
-        <input #searchInput placeholder="Search" [value]="query()"
+        <mat-icon fontSet="material-symbols-rounded" aria-hidden="true">search</mat-icon>
+        <input #searchInput placeholder="Search" aria-label="Search pages" [value]="query()"
             (input)="query.set(searchInput.value)"
             (keydown.escape)="query.set(''); searchInput.value = ''"
             (keydown.enter)="openFirstMatch()" />
-        <kbd>⌘K</kbd>
+        @if (query()) {
+            <button type="button" class="search__clear" aria-label="Clear search"
+                (click)="query.set(''); searchInput.value = ''; searchInput.focus()">
+                <mat-icon fontSet="material-symbols-rounded">cancel</mat-icon>
+            </button>
+        }
     </label>
 
     <div class="sidebar-section"><span>Browse</span></div>

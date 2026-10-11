@@ -3,8 +3,8 @@ import { Directive, ElementRef, inject, Input, OnChanges, OnDestroy } from '@ang
 const HIDDEN_TEXT = '••••••';
 
 /**
- * Shows a formatted amount and, when it first appears or changes, fades it
- * in while it rises a few pixels (iOS widget refresh). No blur: iOS Safari
+ * Shows a formatted amount and, the first time it appears, fades it in
+ * while it rises a few pixels (iOS widget refresh). No blur: iOS Safari
  * animates `filter: blur` on text from a low-resolution snapshot, so the
  * digits looked smeared before snapping sharp.
  *
@@ -31,14 +31,24 @@ export class RevealNumberDirective implements OnChanges, OnDestroy {
 
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private seen = false;
+  /** The fade-in has run; later changes update the text without animating. */
+  private revealed = false;
   private observer: IntersectionObserver | null = null;
 
   ngOnChanges(): void {
     const text = this.format();
     if (text === this.el.textContent) return;
     this.el.textContent = text;
-    if (this.seen) this.play();
-    else this.waitUntilVisible();
+    // Only the first real number fades in. Later updates (data arriving in
+    // pieces, background refreshes, show / hide) just swap the text —
+    // replaying the fade on each of them is what made the totals flicker.
+    if (this.revealed || !text || text === HIDDEN_TEXT) return;
+    if (this.seen) {
+      this.revealed = true;
+      this.play();
+    } else {
+      this.waitUntilVisible();
+    }
   }
 
   ngOnDestroy(): void {
@@ -69,6 +79,7 @@ export class RevealNumberDirective implements OnChanges, OnDestroy {
       this.observer?.disconnect();
       this.observer = null;
       this.seen = true;
+      this.revealed = true;
       this.el.style.opacity = '';
       this.play();
     });
