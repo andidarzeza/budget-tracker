@@ -3024,6 +3024,27 @@ html[data-page-transition="back"]::view-transition-old(root) {
     animation-name: page-out-right;
 }
 
+/* Steps of a create page (slideToStep): the bar, the step rail and the
+   footer button stay put and just cross-fade their changes (Cancel → ‹,
+   the active step, Next → Add); only the step's content slides. */
+html[data-step-transition] .form-page__header {
+    view-transition-name: form-page-header;
+}
+
+html[data-step-transition] .form-page .create-wizard__rail {
+    view-transition-name: form-page-rail;
+}
+
+html[data-step-transition] .form-page__footer {
+    view-transition-name: form-page-footer;
+}
+
+::view-transition-group(form-page-header),
+::view-transition-group(form-page-rail),
+::view-transition-group(form-page-footer) {
+    animation-duration: 0.2s;
+}
+
 @keyframes page-in-right {
     from { opacity: 0; transform: translateX(28px); }
 }
@@ -3143,6 +3164,40 @@ html.page-vt[data-page-enter="back"] .application > .content-container:not(.cont
 
 .ledger-item--pressing {
     transform: scale(0.97);
+}
+
+/* A row just saved from a form page: the list opens a gap for it and it
+   slides in (like a new message in Mail), then a soft tint fades out so the
+   eye finds it. */
+.ledger-item--inserted {
+    overflow: hidden;
+    animation:
+        ledger-item-open 420ms var(--app-easing-standard) backwards,
+        ledger-item-in 420ms var(--app-easing-standard) 80ms backwards,
+        ledger-item-tint 1600ms ease-out 300ms backwards;
+}
+
+@keyframes ledger-item-open {
+    from { max-height: 0; }
+    to { max-height: 120px; }
+}
+
+@keyframes ledger-item-in {
+    from {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.98);
+    }
+}
+
+@keyframes ledger-item-tint {
+    from { background-color: var(--app-accent-soft); }
+    to { background-color: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ledger-item--inserted {
+        animation: ledger-item-tint 1600ms ease-out backwards;
+    }
 }
 
 /* The bars never move during a page transition: no position morphing (which

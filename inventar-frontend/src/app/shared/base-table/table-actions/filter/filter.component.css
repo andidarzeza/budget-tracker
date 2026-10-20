@@ -1,8 +1,29 @@
 :host {
     display: block;
-    /* The animation animates `height` from 0 → '*' on enter, so the host
-       must be a block-level container that respects auto height. */
+    /* Clips the panel while it slides in / out (`animate.enter` / `.leave`). */
     overflow: hidden;
+}
+
+.filter-panel--in {
+    animation: filter-panel-in 180ms ease-out;
+}
+
+.filter-panel--out {
+    animation: filter-panel-in 140ms ease-in reverse forwards;
+}
+
+@keyframes filter-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .filter-panel--in,
+    .filter-panel--out {
+        animation-duration: 1ms;
+    }
 }
 
 /* Opens between the title and the table as its own rounded card. */

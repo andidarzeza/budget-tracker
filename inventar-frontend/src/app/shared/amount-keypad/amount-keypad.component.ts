@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -17,7 +18,7 @@ const BACKSPACE_REPEAT_INTERVAL_MS = 80;
   templateUrl: './amount-keypad.component.html',
   styleUrls: ['./amount-keypad.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule],
+  imports: [HapticTapDirective, MatIconModule],
 })
 export class AmountKeypadComponent implements OnDestroy {
   /** Raw keypad string (digits + optional single `.`). */

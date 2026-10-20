@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { inject } from '@angular/core';
+import { ApplicationRef, inject } from '@angular/core';
 import { Router, ViewTransitionInfo } from '@angular/router';
 
 /**
@@ -137,4 +137,30 @@ export function leaveFormPage(router: Router, location: Location, listPath: stri
   } else {
     router.navigate([listPath], { replaceUrl: true });
   }
+}
+
+/**
+ * Move between the steps of a create page (Category → Amount → Description)
+ * with the same slide as a page push / pop. The bar, the step rail and the
+ * footer button stay in place (`data-step-transition`, styles.scss); only
+ * the step's content moves. `update` changes the step; `appRef.tick()`
+ * renders it inside the transition so the new snapshot shows it.
+ */
+export function slideToStep(appRef: ApplicationRef, direction: Direction, update: () => void): void {
+  const root = document.documentElement;
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (!usePageViewTransitions() || reduceMotion || document.visibilityState !== 'visible') {
+    update();
+    return;
+  }
+  root.dataset['pageTransition'] = direction;
+  root.dataset['stepTransition'] = '';
+  const transition = document.startViewTransition(() => {
+    update();
+    appRef.tick();
+  });
+  transition.finished.finally(() => {
+    delete root.dataset['pageTransition'];
+    delete root.dataset['stepTransition'];
+  });
 }

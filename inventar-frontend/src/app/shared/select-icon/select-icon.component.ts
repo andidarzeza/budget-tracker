@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -21,6 +22,7 @@ import { TOOLTIP_IMPORTS } from '../tooltip-mobile-guard/tooltip-imports';
   templateUrl: './select-icon.component.html',
   styleUrls: ['./select-icon.component.css'],
   imports: [
+    HapticTapDirective,
     CommonModule,
     MatButtonModule,
     MatDividerModule,

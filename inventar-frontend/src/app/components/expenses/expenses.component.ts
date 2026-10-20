@@ -18,7 +18,7 @@ import { AddExpenseComponent } from './add-expense/add-expense.component';
 import { ExpenseDetailComponent } from './expense-detail/expense-detail.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { DialogService } from 'src/app/services/dialog.service';
-import { Category, CategoryType, ColumnDefinition, Expense, ResponseWrapper } from 'src/app/models/models';
+import { Category, CategoryType, ColumnDefinition, EntityType, Expense, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
@@ -74,6 +74,7 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
   private readonly router = inject(Router);
 
   createComponent = AddExpenseComponent;
+  protected override savedEntity = EntityType.EXPENSE;
   sort: string = "createdTime,desc";
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get("EXPENSE");
   filterOptions = this.filterService.select("EXPENSE");

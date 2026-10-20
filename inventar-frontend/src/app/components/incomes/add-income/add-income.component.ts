@@ -4,9 +4,10 @@ import { trackById, trackByValue } from 'src/app/utils/track';
 import { groupCategoriesByUsage } from 'src/app/utils/category-groups';
 import { prefillDefaultAmount } from 'src/app/utils/default-amount';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
-import { leaveFormPage } from 'src/app/utils/page-transitions';
+import { leaveFormPage, slideToStep } from 'src/app/utils/page-transitions';
 import { CommonModule, Location } from '@angular/common';
 import {
+  ApplicationRef,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -29,6 +30,7 @@ import { asyncScheduler, Observable } from 'rxjs';
 import { take, filter, mergeMap, observeOn, tap } from 'rxjs/operators';
 import { Category, CategoryType, EntityType, Income, Wallet } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
+import { BackgroundSaveService } from 'src/app/services/background-save.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
@@ -77,6 +79,7 @@ export class AddIncomeComponent implements OnInit {
   readonly trackById = trackById;
   readonly trackByValue = trackByValue;
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly appRef = inject(ApplicationRef);
   private readonly breakpointService = inject(BreakpointService);
   private readonly flagPipe = inject(FlagPipe);
   private readonly navBarService = inject(NavBarService);
@@ -88,6 +91,7 @@ export class AddIncomeComponent implements OnInit {
   private readonly location = inject(Location);
   private readonly formBuilder = inject(FormBuilder);
   private readonly incomeService = inject(IncomeService);
+  private readonly backgroundSave = inject(BackgroundSaveService);
   private readonly categoryService = inject(CategoriesService);
   private readonly walletService = inject(WalletService);
   private readonly accountService = inject(AccountService);
@@ -254,7 +258,7 @@ export class AddIncomeComponent implements OnInit {
       if (this.wizardStep() === 0 && this.isWizardMobile()) {
         this.primeWizardAmountEntry();
       }
-      this.wizardStep.update((s) => s + 1);
+      this.goToStep(this.wizardStep() + 1);
     }
   }
 
@@ -265,8 +269,17 @@ export class AddIncomeComponent implements OnInit {
 
   wizardBack(): void {
     if (this.wizardStep() > 0) {
-      this.wizardStep.update((s) => s - 1);
+      this.goToStep(this.wizardStep() - 1);
     }
+  }
+
+  /** On the mobile page, steps slide like pages do (forward in from the right). */
+  private goToStep(step: number): void {
+    if (!this.isPageMode) {
+      this.wizardStep.set(step);
+      return;
+    }
+    slideToStep(this.appRef, step > this.wizardStep() ? 'forward' : 'back', () => this.wizardStep.set(step));
   }
 
   selectWizardCategory(categoryId: string | number): void {
@@ -280,7 +293,9 @@ export class AddIncomeComponent implements OnInit {
   }
 
   add(): void {
-    if (this.formGroup.valid && !this.savingEntity()) {
+    if (this.formGroup.valid && !this.savingEntity() && this.isPageMode) {
+      this.saveInBackground();
+    } else if (this.formGroup.valid && !this.savingEntity()) {
       if (this.isEditMode) {
         this.loadingMessage.set('Saving…');
         this.loadingData.set(true);
@@ -310,6 +325,26 @@ export class AddIncomeComponent implements OnInit {
       this.formGroup.markAllAsTouched();
       this.toaster.error('Please, fill in all required fields.', 'Error', TOASTER_CONFIGURATION);
     }
+  }
+
+  /**
+   * Mobile page: back to the list at once; the save finishes in the
+   * background and the list adds (or updates) the row when it lands.
+   */
+  private saveInBackground(): void {
+    this.savingEntity.set(true);
+    const payload = this.buildPayload();
+    const category = this.categories().find((c) => c.id == payload.categoryID)?.category;
+    this.backgroundSave.run({
+      entity: EntityType.INCOME,
+      request: this.isEditMode ? this.incomeService.update(this.income!.id, payload) : this.incomeService.save(payload),
+      created: !this.isEditMode,
+      // The list shows the category's name, which the saved record doesn't carry.
+      toRow: (saved: any) => ({ ...saved, category }),
+      success: this.isEditMode ? 'Income updated with success' : 'A new Income has been inserted',
+      failure: this.isEditMode ? 'The income could not be updated.' : 'The income could not be saved.',
+    });
+    this.closeDialog(true);
   }
 
   closeDialog(update: boolean): void {

@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { leaveFormPage } from 'src/app/utils/page-transitions';
 import { CommonModule, Location } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, Inject, OnInit, Optional, inject, signal } from '@angular/core';
@@ -11,6 +12,7 @@ import { asyncScheduler, Observable } from 'rxjs';
 import { filter, map, observeOn } from 'rxjs/operators';
 import { EntityType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
+import { BackgroundSaveService } from 'src/app/services/background-save.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
@@ -28,6 +30,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   selector: 'app-add-category',
   templateUrl: './add-category.component.html',
   imports: [
+    HapticTapDirective,
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,
@@ -46,6 +49,7 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
   private readonly toaster = inject(ToastrService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly categoriesService = inject(CategoriesService);
+  private readonly backgroundSave = inject(BackgroundSaveService);
   readonly accountService = inject(AccountService);
   private readonly navBarService = inject(NavBarService);
   private readonly sideBarService = inject(SideBarService);
@@ -111,6 +115,7 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
         this.data.defaultAmount = this.defaultAmountValue();
         const payload = this.data;
         payload.account = this.accountService.getAccount();
+        if (this.isPageMode) return this.saveInBackground(this.categoriesService.update(payload.id, payload));
         this.savingEntity.set(true);
         this.categoriesService
           .update(payload.id, payload)
@@ -121,6 +126,7 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
         this.loadingData.set(true);
         const payload = { ...this.categoryGroup.value, defaultAmount: this.defaultAmountValue() };
         payload.account = this.accountService.getAccount();
+        if (this.isPageMode) return this.saveInBackground(this.categoriesService.save(payload));
         this.savingEntity.set(true);
         this.categoriesService
           .save(payload)
@@ -131,6 +137,24 @@ export class AddCategoryComponent implements OnInit, AfterViewInit {
       this.categoryGroup.markAllAsTouched();
       this.toaster.error('Please, fill in all required fields.', 'Error', TOASTER_CONFIGURATION);
     }
+  }
+
+  /**
+   * Mobile page: back to the list at once; the save finishes in the
+   * background and the list adds (or updates) the row when it lands.
+   */
+  private saveInBackground(request: Observable<any>): void {
+    this.loadingData.set(false);
+    this.savingEntity.set(true);
+    this.backgroundSave.run({
+      entity: EntityType.CATEGORY,
+      request,
+      created: !this.isEditMode,
+      toRow: (saved) => saved,
+      success: this.isEditMode ? 'Category Updated with Success' : 'A new Category has been inserted',
+      failure: this.isEditMode ? 'The category could not be updated.' : 'The category could not be saved.',
+    });
+    this.closeDialog(true);
   }
 
   onSaveSuccess(message: string): void {

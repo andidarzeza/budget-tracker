@@ -14,7 +14,7 @@ import { ToastrService } from 'ngx-toastr';
 import { BaseTable } from 'src/app/core/BaseTable';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { FilterService } from 'src/app/core/services/filter.service';
-import { Category, CategoryType, ColumnDefinition } from 'src/app/models/models';
+import { Category, CategoryType, ColumnDefinition, EntityType } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { DialogService } from 'src/app/services/dialog.service';
@@ -67,6 +67,7 @@ export class CategoriesComponent extends BaseTable<Category> implements OnInit {
   sort: string = 'lastModifiedDate,desc';
 
   createComponent = AddCategoryComponent;
+  protected override savedEntity = EntityType.CATEGORY;
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get('CATEGORY');
   filterOptions = this.filterService.select('CATEGORY');
 

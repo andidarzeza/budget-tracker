@@ -1,6 +1,6 @@
 <div class="form-field" (click)="openFromRow($event)">
     <label>{{ label }}</label>
-    <button
+    <button hapticTap
         type="button"
         class="input-wrapper"
         [class.input-wrapper--placeholder]="!value"
@@ -27,7 +27,7 @@
     <!-- iOS sheet, like the Reminders / Shortcuts glyph picker. -->
     <div animate.enter="icon-sheet-in" animate.leave="icon-sheet-out" class="icon-select" role="dialog" aria-modal="true" aria-label="Choose an icon">
         <header class="icon-select__bar">
-            <button type="button" class="icon-select__cancel" (click)="close()">Cancel</button>
+            <button hapticTap type="button" class="icon-select__cancel" (click)="close()">Cancel</button>
             <h2 class="icon-select__title">{{ label }}</h2>
             <span aria-hidden="true"></span>
         </header>
@@ -56,7 +56,7 @@
                     <h3 class="icon-group__label">{{ group.label }}</h3>
                     <div class="icons">
                         @for (icon of group.icons; track icon) {
-                            <button
+                            <button hapticTap
                                 type="button"
                                 class="icon"
                                 [class.icon--selected]="value === icon"

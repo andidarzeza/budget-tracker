@@ -4,7 +4,7 @@ import { MatSidenav } from "@angular/material/sidenav";
 import { Sort } from "@angular/material/sort";
 import { BehaviorSubject, Observable } from "rxjs";
 import { PAGE_SIZE, TOASTER_CONFIGURATION } from "src/environments/environment";
-import { ColumnDefinition, ResponseWrapper } from "../models/models";
+import { ColumnDefinition, EntityType, ResponseWrapper } from "../models/models";
 import { DialogService } from "../services/dialog.service";
 import { TableActionInput } from "../shared/base-table/table-actions/TableActionInput";
 import { takeUntil } from "rxjs/operators";
@@ -12,6 +12,11 @@ import { ToastrService } from "ngx-toastr";
 import { AccountService } from "../services/account.service";
 import { Unsubscribe } from "../shared/unsubscribe";
 import { ListCacheService, sameResponse } from "./services/list-cache.service";
+import { BackgroundSaveService } from "../services/background-save.service";
+
+/** How long a row saved in the background is kept over server pages that
+ *  may have been fetched before the save landed. */
+const RECENT_SAVE_MS = 10_000;
 
 @Directive({ standalone: false })
 export abstract class BaseTable<E> extends Unsubscribe {
@@ -22,6 +27,18 @@ export abstract class BaseTable<E> extends Unsubscribe {
     /** Only the page's first load may show the cached copy; refreshes after
      *  a delete or a filter change always wait for the server. */
     private firstQuery = true;
+    /** Rows saved from a form page that went back before the save finished
+     *  (id → row, time saved). Re-applied over server pages for a moment, in
+     *  case a page was fetched before the save reached the server. */
+    private readonly recentSaves = new Map<string, { row: E; created: boolean; at: number }>();
+    /** Rows deleted from this list; kept out of every page shown after. */
+    private readonly deletedIds = new Set<string>();
+    /** The kind of record this list shows; rows saved in the background for it are added here. */
+    protected savedEntity: EntityType | null = null;
+    private readonly backgroundSave = inject(BackgroundSaveService);
+    /** Id of the row just added by a save, so it animates in (`ledger-item--inserted`). */
+    readonly insertedId = signal<string | null>(null);
+    private insertedTimer: ReturnType<typeof setTimeout> | null = null;
 
     public constructor(
         protected dialog: DialogService,
@@ -39,6 +56,11 @@ export abstract class BaseTable<E> extends Unsubscribe {
                 if (key !== this.cacheKey(false) || this.loading() || this.loadingMore()) return;
                 const fresh = this.listCache.get(key);
                 if (fresh) this.applyFirstPage(fresh);
+            });
+        this.backgroundSave.saved$
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((entity) => {
+                if (entity === this.savedEntity) this.takeSaved(false);
             });
     }
 
@@ -69,6 +91,8 @@ export abstract class BaseTable<E> extends Unsubscribe {
     abstract getQueryParams(): HttpParams;
 
     query(append: boolean = false): void {
+        // Saves that landed before this list opened: the page below includes them.
+        if (this.firstQuery) this.takeSaved(true);
         const key = this.cacheKey(append);
         const cached = key && this.firstQuery ? this.listCache.get(key) : null;
         this.firstQuery = false;
@@ -99,11 +123,12 @@ export abstract class BaseTable<E> extends Unsubscribe {
                             this.loadingMore.set(false);
                             return;
                         }
-                        this.dataSubject.next([...this.dataSubject.getValue(), ...rows]);
+                        const kept = this.withoutDeleted(rows);
+                        this.dataSubject.next([...this.dataSubject.getValue(), ...kept]);
+                        this.totalSubject.next(total - (rows.length - kept.length));
                     } else {
-                        this.dataSubject.next([...rows]);
+                        this.setFirstPage(rows, total);
                     }
-                    this.totalSubject.next(total);
                     if (!append) {
                         this.stopLoading();
                     }
@@ -194,15 +219,42 @@ export abstract class BaseTable<E> extends Unsubscribe {
         this.drawer.toggle();
     }
 
+    /**
+     * The row leaves the list at once (it has already folded away); the
+     * server is told in the background. Pages fetched before the delete
+     * reached it still hold the row, so `deletedIds` keeps it out of them.
+     * If the delete fails, the row comes back where it was.
+     */
     delete(id: string): void {
+        this.recentSaves.delete(id);
+        this.deletedIds.add(id);
+        const rows = this.dataSubject.getValue();
+        const index = rows.findIndex((r: any) => r?.id === id);
+        const removed = index >= 0 ? rows[index] : null;
+        if (removed) {
+            this.dataSubject.next(rows.filter((_, i) => i !== index));
+            this.totalSubject.next(Math.max(0, this.totalSubject.getValue() - 1));
+        }
+        // Not cancelled when the page closes: leaving mustn't abort the delete.
         this.entityService
             .delete(id)
-            .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(() => {
-                this.accountService.findOne(this.accountService.getAccount()).subscribe();
-                this.refresh();
-                this.toaster.success("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
-            })
+            .subscribe({
+                next: () => {
+                    this.accountService.findOne(this.accountService.getAccount()).subscribe();
+                    this.refresh();
+                    this.toaster.success("Element deleted successfully", "Success", TOASTER_CONFIGURATION);
+                },
+                error: () => {
+                    this.deletedIds.delete(id);
+                    if (removed) {
+                        const current = [...this.dataSubject.getValue()];
+                        current.splice(Math.min(index, current.length), 0, removed);
+                        this.dataSubject.next(current);
+                        this.totalSubject.next(this.totalSubject.getValue() + 1);
+                    }
+                    this.toaster.error("The element could not be deleted.", "Error", TOASTER_CONFIGURATION);
+                },
+            });
     }
 
     /** Cache key for the request about to be made — only for the plain
@@ -217,8 +269,66 @@ export abstract class BaseTable<E> extends Unsubscribe {
         const current: ResponseWrapper = { data: this.dataSubject.getValue(), count: this.totalSubject.getValue() };
         if (sameResponse(current, { data: res?.data ?? [], count: res?.count ?? 0 })) return;
         this.page = 0;
-        this.dataSubject.next([...(res?.data ?? [])]);
-        this.totalSubject.next(res?.count ?? 0);
+        this.setFirstPage(res?.data ?? [], res?.count ?? 0);
+    }
+
+    /**
+     * A form page saved rows after going back to this list: show them, and
+     * animate a new one in. `beforeLoad`: the list hasn't loaded yet, so the
+     * rows are only remembered and merged into the page when it arrives.
+     */
+    private takeSaved(beforeLoad: boolean): void {
+        const saves = this.savedEntity ? this.backgroundSave.takeUnseen(this.savedEntity) : [];
+        if (saves.length === 0) return;
+        if (this.previousFilters) {
+            // They may not match the filters: let the server decide.
+            this.refresh();
+            return;
+        }
+        const shown = new Set(this.dataSubject.getValue().map((r: any) => r?.id));
+        for (const { record, created } of saves) {
+            this.recentSaves.set(record.id, { row: record as E, created, at: Date.now() });
+            if (created && (beforeLoad || !shown.has(record.id))) this.markInserted(record.id);
+        }
+        if (!beforeLoad) this.setFirstPage(this.dataSubject.getValue(), this.totalSubject.getValue());
+    }
+
+    private withoutDeleted(rows: E[]): E[] {
+        return this.deletedIds.size ? rows.filter((r: any) => !this.deletedIds.has(r?.id)) : [...rows];
+    }
+
+    private markInserted(id: string): void {
+        this.insertedId.set(id);
+        if (this.insertedTimer) clearTimeout(this.insertedTimer);
+        // The row only animates when it is first drawn with the class; by
+        // now it has been, unless the list took unusually long to load.
+        this.insertedTimer = setTimeout(() => {
+            this.insertedId.set(null);
+            this.insertedTimer = null;
+        }, 3000);
+    }
+
+    /** Show a server page, with any row saved in the last moments that it
+     *  doesn't include yet (new rows on top, edited rows in place). */
+    private setFirstPage(rows: E[], total: number): void {
+        const result = this.withoutDeleted(rows);
+        total -= rows.length - result.length;
+        const now = Date.now();
+        for (const [id, save] of this.recentSaves) {
+            if (now - save.at > RECENT_SAVE_MS) {
+                this.recentSaves.delete(id);
+                continue;
+            }
+            const index = result.findIndex((r: any) => r?.id === id);
+            if (index >= 0) {
+                result[index] = save.row;
+            } else if (save.created) {
+                result.unshift(save.row);
+                total++;
+            }
+        }
+        this.dataSubject.next(result);
+        this.totalSubject.next(total);
     }
 
     private cancelLoading(): void {

@@ -15,7 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 import { BaseTable } from 'src/app/core/BaseTable';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
 import { FilterService } from 'src/app/core/services/filter.service';
-import { CategoryType, Category, ColumnDefinition, Income, ResponseWrapper } from 'src/app/models/models';
+import { CategoryType, Category, ColumnDefinition, EntityType, Income, ResponseWrapper } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { DialogService } from 'src/app/services/dialog.service';
@@ -69,6 +69,7 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
   filterOptions = this.filterService.select('INCOME');
 
   createComponent = AddIncomeComponent;
+  protected override savedEntity = EntityType.INCOME;
   tableActionInput: TableActionInput = {
     pageName: 'Incomes',
     icon: 'trending_up',

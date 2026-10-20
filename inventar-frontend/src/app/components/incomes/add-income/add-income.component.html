@@ -6,11 +6,11 @@
         <!-- Mobile edit: a page (not a popup) so swiping back returns to the list. -->
         <section class="form-page form-page--edit">
             <header class="form-page__header">
-                <button type="button" cb-icon-button (click)="closeDialog(false)" aria-label="Back">
+                <button hapticTap type="button" cb-icon-button (click)="closeDialog(false)" aria-label="Back">
                     <mat-icon>arrow_back_ios_new</mat-icon>
                 </button>
                 <h1 class="form-page__title">Edit income</h1>
-                <button type="button" class="form-page__done" (click)="add()">Done</button>
+                <button hapticTap type="button" class="form-page__done" (click)="add()">Done</button>
             </header>
             <div class="form-page__body">
                 <form [formGroup]="formGroup" class="dialog-form">
@@ -23,9 +23,9 @@
             <!-- iOS bar: Cancel on the first step, ‹ to the previous step after that. -->
             <header class="form-page__header">
                 @if (wizardStep() === 0) {
-                    <button type="button" class="form-page__cancel" (click)="closeDialog(false)">Cancel</button>
+                    <button hapticTap type="button" class="form-page__cancel" (click)="closeDialog(false)">Cancel</button>
                 } @else {
-                    <button type="button" cb-icon-button (click)="wizardBack()" aria-label="Previous step">
+                    <button hapticTap type="button" cb-icon-button (click)="wizardBack()" aria-label="Previous step">
                         <mat-icon>arrow_back_ios_new</mat-icon>
                     </button>
                 }
@@ -78,7 +78,7 @@
                                 <div class="wizard-amount-display-row">
                                     <div class="wizard-amount-currency-panel">
                                         <span class="wizard-amount-currency-panel__label">Source</span>
-                                        <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="pageWizardSourceMenu"
+                                        <button hapticTap type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="pageWizardSourceMenu"
                                             aria-haspopup="menu" aria-label="Source, tap to change">
                                             <ng-container *ngIf="currentSource() as src; else pageIncomePickSource">
                                                 <span class="wizard-amount-currency-trigger__inner">
@@ -92,14 +92,14 @@
                                             <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
                                         </button>
                                         <mat-menu #pageWizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
-                                            <button mat-menu-item type="button" *ngFor="let w of sources(); trackBy: trackById"
+                                            <button hapticTap mat-menu-item type="button" *ngFor="let w of sources(); trackBy: trackById"
                                                 class="wizard-amount-currency-menu-item"
                                                 [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
                                                 (click)="selectWizardSource($any(w.id))">
                                                 <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ w.currency | flag }}</span>
                                                 <span>{{ w.name }} · {{ w.currency }}</span>
                                             </button>
-                                            <button mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
+                                            <button hapticTap mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
                                         </mat-menu>
                                     </div>
                                     <div class="amount-keypad-display amount-keypad-display--in-row" aria-live="polite">
@@ -133,9 +133,9 @@
             @if (wizardStep() > 0) {
                 <footer class="form-page__footer">
                     @if (wizardStep() < 2) {
-                        <button type="button" class="form-page__primary" (click)="wizardNext()">Next</button>
+                        <button hapticTap type="button" class="form-page__primary" (click)="wizardNext()">Next</button>
                     } @else {
-                        <button type="button" class="form-page__primary" (click)="add()">Add Income</button>
+                        <button hapticTap type="button" class="form-page__primary" (click)="add()">Add Income</button>
                     }
                 </footer>
             }
@@ -215,7 +215,7 @@
                             <div class="wizard-amount-display-row">
                                 <div class="wizard-amount-currency-panel">
                                     <span class="wizard-amount-currency-panel__label">Source</span>
-                                    <button type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="wizardSourceMenu"
+                                    <button hapticTap type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="wizardSourceMenu"
                                         aria-haspopup="menu" aria-label="Source, tap to change">
                                         <ng-container *ngIf="currentSource() as src; else pickSourceInc">
                                             <span class="wizard-amount-currency-trigger__inner">
@@ -229,14 +229,14 @@
                                         <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
                                     </button>
                                     <mat-menu #wizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
-                                        <button mat-menu-item type="button" *ngFor="let w of sources(); trackBy: trackById"
+                                        <button hapticTap mat-menu-item type="button" *ngFor="let w of sources(); trackBy: trackById"
                                             class="wizard-amount-currency-menu-item"
                                             [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
                                             (click)="selectWizardSource($any(w.id))">
                                             <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ w.currency | flag }}</span>
                                             <span>{{ w.name }} · {{ w.currency }}</span>
                                         </button>
-                                        <button mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
+                                        <button hapticTap mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
                                     </mat-menu>
                                 </div>
                                 <div class="amount-keypad-display amount-keypad-display--in-row" aria-live="polite">
@@ -292,19 +292,19 @@
     <footer *ngIf="!isEditMode && isWizardMobile()"
         class="dialog-footer dialog-footer-slot create-wizard__footer">
         <div class="create-wizard__footer-row">
-            <button type="button" cb-pill-button icon="close" (click)="closeDialog(false)">
+            <button hapticTap type="button" cb-pill-button icon="close" (click)="closeDialog(false)">
                 Cancel
             </button>
             <div class="create-wizard__footer-actions">
-                <button *ngIf="wizardStep() > 0" type="button" cb-pill-button icon="arrow_back"
+                <button hapticTap *ngIf="wizardStep() > 0" type="button" cb-pill-button icon="arrow_back"
                     (click)="wizardBack()">
                     Back
                 </button>
-                <button *ngIf="wizardStep() < 2" type="button" cb-pill-button variant="primary"
+                <button hapticTap *ngIf="wizardStep() < 2" type="button" cb-pill-button variant="primary"
                     icon="arrow_forward" (click)="wizardNext()">
                     Next
                 </button>
-                <button *ngIf="wizardStep() === 2" type="button" cb-pill-button variant="primary"
+                <button hapticTap *ngIf="wizardStep() === 2" type="button" cb-pill-button variant="primary"
                     icon="check" (click)="add()">
                     Save income
                 </button>

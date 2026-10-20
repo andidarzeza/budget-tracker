@@ -3,11 +3,11 @@
 <ng-container *ngIf="isPageMode; else dialogShell">
     <section class="form-page form-page--edit">
         <header class="form-page__header">
-            <button type="button" cb-icon-button (click)="closeDialog(false)" aria-label="Back">
+            <button hapticTap type="button" cb-icon-button (click)="closeDialog(false)" aria-label="Back">
                 <mat-icon>arrow_back_ios_new</mat-icon>
             </button>
             <h1 class="form-page__title">{{ isEditMode ? 'Edit category' : 'New category' }}</h1>
-            <button type="button" class="form-page__done" (click)="add()">{{ isEditMode ? 'Done' : 'Add' }}</button>
+            <button hapticTap type="button" class="form-page__done" (click)="add()">{{ isEditMode ? 'Done' : 'Add' }}</button>
         </header>
 
         <div class="form-page__body">
