@@ -3164,6 +3164,12 @@ html.page-vt[data-page-enter="back"] .application > .content-container:not(.cont
     display: none;
 }
 
+/* A missing source is told with a toast on Next; the select's floating
+   "This field is required." would sit over the picker and block taps. */
+.wizard-source-select .select-input .error-message {
+    display: none;
+}
+
 /* No focus / open outline on it (a missing source still shows its red
    border). `html` lifts this over the component's own `!important` rules. */
 html .wizard-source-select .select-input .select-trigger:not(.required-field):focus,
