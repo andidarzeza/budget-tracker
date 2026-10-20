@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { takeUntil } from 'rxjs/operators';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
@@ -41,6 +42,7 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css'],
   imports: [
+    HapticTapDirective,
     PullToRefreshDirective,
     PressHighlightDirective,
     RevealNumberDirective,

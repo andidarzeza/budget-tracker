@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
@@ -27,6 +28,7 @@ import { AddProjectComponent } from './add-project/add-project.component';
   styleUrls: ['./projects.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    HapticTapDirective,
     PullToRefreshDirective,
     PressHighlightDirective,
     CommonModule,

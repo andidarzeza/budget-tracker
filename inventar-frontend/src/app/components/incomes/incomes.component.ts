@@ -1,3 +1,4 @@
+import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { RevealNumberDirective } from 'src/app/shared/reveal-number/reveal-number.directive';
@@ -38,6 +39,7 @@ import { IncomeDetailsComponent } from './income-details/income-details.componen
   styleUrls: ['./incomes.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    HapticTapDirective,
     PullToRefreshDirective,
     PressHighlightDirective,
     RevealNumberDirective,
