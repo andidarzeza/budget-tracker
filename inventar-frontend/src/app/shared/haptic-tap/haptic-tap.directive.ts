@@ -47,7 +47,6 @@ export class HapticTapDirective implements OnInit, OnDestroy {
     // The label's click already reaches the host; don't let the forwarded one too.
     input.addEventListener('click', (e) => e.stopPropagation());
     label.appendChild(input);
-    if (getComputedStyle(this.host).position === 'static') this.host.style.position = 'relative';
     this.host.appendChild(label);
     this.label = label;
   }

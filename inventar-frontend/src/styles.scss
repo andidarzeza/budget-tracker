@@ -3471,6 +3471,15 @@ app-dashboard .control-bar__picker .dash-picker [cb-icon-button]:active {
 /* HapticTapDirective: a transparent label over the tappable element, holding
    a hidden native switch — the user's own tap toggles it, which is what makes
    iOS (26.5+) play its haptic. Hit-testing only; nothing visible. */
+/* The overlay is placed over its host, so the host must be positioned.
+   Zero specificity: a host that sets its own position (fixed, absolute,
+   sticky) keeps it. Done in CSS, not by reading the computed style when the
+   directive starts: the host isn't in the page yet then, reads as "" rather
+   than "static", and the overlay ended up covering a whole page section. */
+:where([haptictap]) {
+    position: relative;
+}
+
 .haptic-tap {
     position: absolute;
     inset: 0;
