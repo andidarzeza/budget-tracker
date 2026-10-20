@@ -1,5 +1,5 @@
 import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnDestroy, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 const MAX_DECIMALS = 2;
@@ -27,6 +27,11 @@ export class AmountKeypadComponent implements OnDestroy {
 
   private backspaceHoldTimer: ReturnType<typeof setTimeout> | null = null;
   private backspaceRepeatTimer: ReturnType<typeof setInterval> | null = null;
+
+  /** iOS Safari only applies `:active` (the pressed-key circle) when a
+   *  touch listener is present; this one does nothing else. */
+  @HostListener('touchstart')
+  onTouchStart(): void {}
 
   ngOnDestroy(): void {
     this.stopBackspaceRepeat();

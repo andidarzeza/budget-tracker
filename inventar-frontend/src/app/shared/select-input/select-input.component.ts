@@ -75,6 +75,15 @@ export class SelectInputComponent<T, OptT = T> {
   );
 
   /**
+   * Text for the chosen option on the closed trigger, when it should be
+   * shorter than in the list (e.g. a narrow trigger). Defaults to `displayWith`.
+   */
+  readonly selectedDisplayWith = input<((opt: OptT) => string) | null>(null);
+
+  /** Minimum dropdown width in px, for a trigger narrower than its options. */
+  readonly panelMinWidth = input<number | null>(null);
+
+  /**
    * Maps an option to the value stored on the form control. Default is an
    * identity cast, which is correct when `OptT === T`. Override when the
    * control stores a derived value (e.g. an `id`).
@@ -140,8 +149,9 @@ export class SelectInputComponent<T, OptT = T> {
 
   /** True iff the control currently holds any value (excluding null/undefined). */
   get hasValue(): boolean {
-    const v = this.control().value;
-    return v !== null && v !== undefined;
+    const v = this.control().value as unknown;
+    // Forms often start a required select as '' (nothing chosen yet).
+    return v !== null && v !== undefined && v !== '';
   }
 
   /** Display text for the currently-selected value (looks up the option). */
@@ -151,7 +161,7 @@ export class SelectInputComponent<T, OptT = T> {
     const match = this.options().find((opt) =>
       this.compareWith()(v, this.valueWith()(opt)),
     );
-    return match !== undefined ? this.displayWith()(match) : String(v);
+    return match !== undefined ? (this.selectedDisplayWith() ?? this.displayWith())(match) : String(v);
   }
 
   /** Match the overlay panel width to the trigger box (set on open). */

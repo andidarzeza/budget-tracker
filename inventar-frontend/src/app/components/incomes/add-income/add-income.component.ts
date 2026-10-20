@@ -1,3 +1,4 @@
+import { formatAmountEntry } from 'src/app/utils/format-amount-entry';
 import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { FeedbackService } from 'src/app/services/feedback.service';
 import { trackById, trackByValue } from 'src/app/utils/track';
@@ -23,7 +24,6 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { asyncScheduler, Observable } from 'rxjs';
@@ -61,7 +61,6 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,
-    MatMenuModule,
     CreateFormComponent,
     LabeledDateInputComponent,
     LabeledFormInputComponent,
@@ -70,7 +69,6 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     PillButtonComponent,
     SelectInputComponent,
     AmountKeypadComponent,
-    FlagPipe,
     ...TOOLTIP_IMPORTS,
   ],
 })
@@ -106,13 +104,10 @@ export class AddIncomeComponent implements OnInit {
   /** Source option label: "🏦 BKT · 🇪🇺 EUR". */
   readonly displaySource = (w: Wallet) =>
     `${w?.type === 'BANK' ? '🏦' : '💵'} ${w?.name} · ${this.flagPipe.transform(w?.currency)} ${w?.currency}`;
+  /** The chosen source on the narrow Amount-step trigger: "🇪🇺 BKT". */
+  readonly displaySourceShort = (w: Wallet) => `${this.flagPipe.transform(w?.currency)} ${w?.name}`;
   /** Sources store the id on the form control. */
   readonly sourceIdValue = (w: Wallet) => w?.id ?? null;
-  /** The currently selected source object, for trigger display in the wizard. */
-  currentSource(): Wallet | null {
-    const id = this.formGroup.get('walletId')?.value;
-    return this.sources().find((w) => w.id === id) ?? null;
-  }
 
   readonly isWizardMobile = toSignal(this.breakpointService.useTableCardLayout$, {
     initialValue: this.breakpointService.matchesMobileCreateLayout(),
@@ -127,13 +122,9 @@ export class AddIncomeComponent implements OnInit {
   readonly wizardStepLabels: readonly string[] = ['Category', 'Amount', 'Description'];
 
   readonly amountEntry = signal('');
-  readonly amountDisplay = computed(() => {
-    const s = this.amountEntry();
-    if (s === '' || s === '.') {
-      return '0';
-    }
-    return s;
-  });
+  /** Currency of the chosen source, shown next to the amount. */
+  readonly amountCurrency = signal('');
+  readonly amountDisplay = computed(() => formatAmountEntry(this.amountEntry()));
 
   formGroup: FormGroup;
 
@@ -207,6 +198,7 @@ export class AddIncomeComponent implements OnInit {
         const wallet = this.sources().find((w) => w.id === id);
         if (wallet) {
           this.formGroup.get('currency')?.setValue(wallet.currency, { emitEvent: false });
+          this.amountCurrency.set(wallet.currency);
         }
       });
     if (!this.isEditMode) {
@@ -237,14 +229,10 @@ export class AddIncomeComponent implements OnInit {
         const wallet = this.sources().find((w) => w.id === id);
         if (wallet) {
           this.formGroup.get('currency')?.setValue(wallet.currency, { emitEvent: false });
+          this.amountCurrency.set(wallet.currency);
         }
         this.cdr.markForCheck();
       });
-  }
-
-  selectWizardSource(walletId: string): void {
-    this.formGroup.get('walletId')?.setValue(walletId);
-    this.formGroup.get('walletId')?.markAsTouched();
   }
 
   wizardNext(): void {
@@ -289,7 +277,7 @@ export class AddIncomeComponent implements OnInit {
     // Move on by itself, after a beat so the checkmark is seen (iOS pickers do the same).
     setTimeout(() => {
       if (this.wizardStep() === 0) this.wizardNext();
-    }, 180);
+    }, 80);
   }
 
   add(): void {
@@ -401,6 +389,12 @@ export class AddIncomeComponent implements OnInit {
     return !!c?.valid;
   }
 
+  /** A wizard step's error toast; tapping Next again doesn't stack another. */
+  private stepError(message: string): void {
+    if (this.toaster.findDuplicate('Error', message, false, false)) return;
+    this.toaster.error(message, 'Error', TOASTER_CONFIGURATION);
+  }
+
   private validateWizardAmountStep(): boolean {
     if (this.isWizardMobile()) {
       this.syncIncomingFromEntry(this.amountEntry());
@@ -409,7 +403,16 @@ export class AddIncomeComponent implements OnInit {
     const src = this.formGroup.get('walletId');
     m?.markAsTouched();
     src?.markAsTouched();
-    return !!(m?.valid && src?.valid);
+    // Told with a toast, like the app's other notifications.
+    if (!m?.valid || !(Number(m.value) > 0)) {
+      this.stepError('Enter a valid amount.');
+      return false;
+    }
+    if (!src?.valid) {
+      this.stepError('Choose a source.');
+      return false;
+    }
+    return true;
   }
 
   private getCategories(): void {

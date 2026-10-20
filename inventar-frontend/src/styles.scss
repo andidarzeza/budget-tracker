@@ -348,6 +348,7 @@ app-date-picker {
     background: transparent;
 }
 
+
 /* Icon-button hover state + centering fix.
    Default M3 uses `--mat-sys-on-surface` (slate-900 in light theme) for the
    ripple/state-layer, which lands as a heavy dark wash on hover. Re-tint it
@@ -3157,24 +3158,34 @@ html.page-vt[data-page-enter="back"] .application > .content-container:not(.cont
     font-weight: 400;
 }
 
-/* Long-press feedback: the held row sinks slightly before the menu opens. */
-.ledger-item {
-    transition: transform 0.38s cubic-bezier(0.2, 0, 0, 1);
+/* The source picker is a `cb-select-input`, like the edit form's "Paid
+   from"; the panel already says "Source", so its own label is hidden. */
+.wizard-source-select .select-input > label {
+    display: none;
 }
 
-.ledger-item--pressing {
-    transform: scale(0.97);
+/* No focus / open outline on it (a missing source still shows its red
+   border). `html` lifts this over the component's own `!important` rules. */
+html .wizard-source-select .select-input .select-trigger:not(.required-field):focus,
+html .wizard-source-select .select-input .select-trigger:not(.required-field):focus-visible,
+html .wizard-source-select .select-input .select-trigger:not(.required-field).is-open {
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none;
+}
+
+html .wizard-source-select .select-input .select-trigger.required-field {
+    box-shadow: none !important;
+    outline: none;
 }
 
 /* A row just saved from a form page: the list opens a gap for it and it
-   slides in (like a new message in Mail), then a soft tint fades out so the
-   eye finds it. */
+   slides in (like a new message in Mail). */
 .ledger-item--inserted {
     overflow: hidden;
     animation:
         ledger-item-open 420ms var(--app-easing-standard) backwards,
-        ledger-item-in 420ms var(--app-easing-standard) 80ms backwards,
-        ledger-item-tint 1600ms ease-out 300ms backwards;
+        ledger-item-in 420ms var(--app-easing-standard) 80ms backwards;
 }
 
 @keyframes ledger-item-open {
@@ -3189,14 +3200,9 @@ html.page-vt[data-page-enter="back"] .application > .content-container:not(.cont
     }
 }
 
-@keyframes ledger-item-tint {
-    from { background-color: var(--app-accent-soft); }
-    to { background-color: transparent; }
-}
-
 @media (prefers-reduced-motion: reduce) {
     .ledger-item--inserted {
-        animation: ledger-item-tint 1600ms ease-out backwards;
+        animation: none;
     }
 }
 
@@ -3312,6 +3318,79 @@ app-dashboard .control-bar__picker .dash-picker [cb-icon-button]:active {
 
 .wizard-amount-currency-trigger--static {
     cursor: default;
+}
+
+/* Amount step on the phone page, like Apple Cash: a large centered amount
+   with its currency, the source picker under it, and the flat iOS keypad
+   (AmountKeypadComponent) below. */
+.form-page .wizard-amount-layout {
+    gap: 0;
+}
+
+.form-page .wizard-amount-display-row {
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 16px;
+    padding: 28px 0 24px;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.form-page .wizard-amount-currency-panel {
+    flex: 0 0 auto;
+    max-width: 260px;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    border: 0;
+}
+
+.form-page .wizard-amount-currency-panel__label {
+    font-size: 13px;
+}
+
+.form-page .amount-keypad-display--in-row {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.form-page .amount-keypad-display__value {
+    flex: 0 1 auto;
+    text-align: center;
+    font-family: ui-rounded, -apple-system, "SF Pro Rounded", var(--app-font-sans);
+    font-size: 64px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.form-page .amount-keypad-display__value--long {
+    font-size: 48px;
+}
+
+.form-page .amount-keypad-display__value--longer {
+    font-size: 38px;
+}
+
+.amount-keypad-display__value--empty {
+    color: var(--app-text-subtle);
+}
+
+.amount-keypad-display__currency {
+    flex-shrink: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--app-text-muted);
+}
+
+.form-page .amount-keypad-display__currency {
+    font-family: ui-rounded, -apple-system, "SF Pro Rounded", var(--app-font-sans);
+    font-size: 22px;
 }
 
 /* Add expense / income picker sections ("Most used", "Other categories"):

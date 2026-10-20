@@ -78,38 +78,27 @@
                                 <div class="wizard-amount-display-row">
                                     <div class="wizard-amount-currency-panel">
                                         <span class="wizard-amount-currency-panel__label">Source</span>
-                                        <button hapticTap type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="pageWizardSourceMenu"
-                                            aria-haspopup="menu" aria-label="Source, tap to change">
-                                            <ng-container *ngIf="currentSource() as src; else pageIncomePickSource">
-                                                <span class="wizard-amount-currency-trigger__inner">
-                                                    <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ src.currency | flag }}</span>
-                                                    <span class="wizard-amount-currency-chip__code">{{ src.name }}</span>
-                                                </span>
-                                            </ng-container>
-                                            <ng-template #pageIncomePickSource>
-                                                <span class="wizard-amount-currency-trigger__placeholder">Choose…</span>
-                                            </ng-template>
-                                            <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
-                                        </button>
-                                        <mat-menu #pageWizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
-                                            <button hapticTap mat-menu-item type="button" *ngFor="let w of sources(); trackBy: trackById"
-                                                class="wizard-amount-currency-menu-item"
-                                                [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
-                                                (click)="selectWizardSource($any(w.id))">
-                                                <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ w.currency | flag }}</span>
-                                                <span>{{ w.name }} · {{ w.currency }}</span>
-                                            </button>
-                                            <button hapticTap mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
-                                        </mat-menu>
+                                        <cb-select-input class="wizard-source-select"
+                                            label="Source" placeholder="Choose…" emptyText="No sources yet"
+                                            [control]="$any(formGroup.get('walletId'))"
+                                            [options]="sources()"
+                                            [displayWith]="displaySource"
+                                            [selectedDisplayWith]="displaySourceShort"
+                                            [valueWith]="$any(sourceIdValue)"
+                                            [panelMinWidth]="240">
+                                        </cb-select-input>
                                     </div>
                                     <div class="amount-keypad-display amount-keypad-display--in-row" aria-live="polite">
-                                        <span class="amount-keypad-display__value">{{ amountDisplay() }}</span>
+                                        <span class="amount-keypad-display__value" [class.amount-keypad-display__value--empty]="!amountEntry()"
+                                            [class.amount-keypad-display__value--long]="amountDisplay().length > 7"
+                                            [class.amount-keypad-display__value--longer]="amountDisplay().length > 10">{{ amountDisplay() }}</span>
+                                        @if (amountCurrency()) {
+                                            <span class="amount-keypad-display__currency">{{ amountCurrency() }}</span>
+                                        }
                                     </div>
                                 </div>
                                 <app-amount-keypad [value]="amountEntry()"
                                     (valueChange)="onAmountEntryChange($event)"></app-amount-keypad>
-                                <p *ngIf="formGroup.get('incoming')?.invalid && formGroup.get('incoming')?.touched"
-                                    class="create-wizard__field-error">Enter a valid amount.</p>
                             </div>
                         </ng-container>
 
@@ -215,38 +204,27 @@
                             <div class="wizard-amount-display-row">
                                 <div class="wizard-amount-currency-panel">
                                     <span class="wizard-amount-currency-panel__label">Source</span>
-                                    <button hapticTap type="button" class="wizard-amount-currency-trigger" [matMenuTriggerFor]="wizardSourceMenu"
-                                        aria-haspopup="menu" aria-label="Source, tap to change">
-                                        <ng-container *ngIf="currentSource() as src; else pickSourceInc">
-                                            <span class="wizard-amount-currency-trigger__inner">
-                                                <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ src.currency | flag }}</span>
-                                                <span class="wizard-amount-currency-chip__code">{{ src.name }}</span>
-                                            </span>
-                                        </ng-container>
-                                        <ng-template #pickSourceInc>
-                                            <span class="wizard-amount-currency-trigger__placeholder">Choose…</span>
-                                        </ng-template>
-                                        <span class="wizard-amount-currency-trigger__chev" aria-hidden="true">▾</span>
-                                    </button>
-                                    <mat-menu #wizardSourceMenu="matMenu" class="wizard-amount-currency-menu">
-                                        <button hapticTap mat-menu-item type="button" *ngFor="let w of sources(); trackBy: trackById"
-                                            class="wizard-amount-currency-menu-item"
-                                            [class.wizard-amount-currency-menu-item--active]="formGroup.get('walletId')?.value === w.id"
-                                            (click)="selectWizardSource($any(w.id))">
-                                            <span class="wizard-amount-currency-chip__flag" aria-hidden="true">{{ w.currency | flag }}</span>
-                                            <span>{{ w.name }} · {{ w.currency }}</span>
-                                        </button>
-                                        <button hapticTap mat-menu-item type="button" disabled *ngIf="!sources().length">No sources yet</button>
-                                    </mat-menu>
+                                    <cb-select-input class="wizard-source-select"
+                                        label="Source" placeholder="Choose…" emptyText="No sources yet"
+                                        [control]="$any(formGroup.get('walletId'))"
+                                        [options]="sources()"
+                                        [displayWith]="displaySource"
+                                        [selectedDisplayWith]="displaySourceShort"
+                                        [valueWith]="$any(sourceIdValue)"
+                                        [panelMinWidth]="240">
+                                    </cb-select-input>
                                 </div>
                                 <div class="amount-keypad-display amount-keypad-display--in-row" aria-live="polite">
-                                    <span class="amount-keypad-display__value">{{ amountDisplay() }}</span>
+                                    <span class="amount-keypad-display__value" [class.amount-keypad-display__value--empty]="!amountEntry()"
+                                        [class.amount-keypad-display__value--long]="amountDisplay().length > 7"
+                                        [class.amount-keypad-display__value--longer]="amountDisplay().length > 10">{{ amountDisplay() }}</span>
+                                    @if (amountCurrency()) {
+                                        <span class="amount-keypad-display__currency">{{ amountCurrency() }}</span>
+                                    }
                                 </div>
                             </div>
                             <app-amount-keypad [value]="amountEntry()"
                                 (valueChange)="onAmountEntryChange($event)"></app-amount-keypad>
-                            <p *ngIf="formGroup.get('incoming')?.invalid && formGroup.get('incoming')?.touched"
-                                class="create-wizard__field-error">Enter a valid amount.</p>
                         </div>
                     </ng-container>
                     <ng-template #incomeWizardStep1Desktop>
@@ -266,8 +244,6 @@
                                 [valueWith]="$any(sourceIdValue)">
                             </cb-select-input>
                         </div>
-                        <p *ngIf="formGroup.get('incoming')?.invalid && formGroup.get('incoming')?.touched"
-                            class="create-wizard__field-error">Enter a valid amount.</p>
                     </ng-template>
                 </ng-container>
 

@@ -27,16 +27,12 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
   private start = { x: 0, y: 0 };
   private swallowNextClick = false;
   private overlay: HTMLElement | null = null;
-  private pressTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly onPointerDown = (e: PointerEvent) => {
     if (e.button !== 0 || this.host.classList.contains('row-removing')) return;
     this.swallowNextClick = false;
     this.start = { x: e.clientX, y: e.clientY };
     this.clearTimer();
-    // The row sinks slightly while held (iOS press feedback); a quick tap
-    // is over before this kicks in, so taps don't flicker.
-    this.pressTimer = setTimeout(() => this.host.classList.add('ledger-item--pressing'), 120);
     this.timer = setTimeout(() => this.open(), HOLD_MS);
   };
 
@@ -106,7 +102,7 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
     lifted.classList.add('press-menu__row');
     // Copy the row as it looks at rest: not its pressed states (the grey
     // press fill would show as a square block inside the rounded preview).
-    lifted.classList.remove('ledger-item--pressing', 'is-pressed');
+    lifted.classList.remove('is-pressed');
     lifted.querySelectorAll('.is-pressed').forEach((el) => el.classList.remove('is-pressed'));
     lifted.querySelectorAll('.haptic-tap').forEach((el) => el.remove());
     lifted.style.transform = '';
@@ -155,11 +151,11 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
     this.host.style.visibility = 'hidden';
 
     // Web Animations, so the motion runs no matter how styles were batched:
-    // dim in, the row springs up from its pressed size, the pill pops out.
+    // dim in, the row springs up from its place, the pill pops out.
     const spring = 'cubic-bezier(0.2, 0.9, 0.25, 1.15)';
     backdrop.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-out', fill: 'both' });
     lifted.animate(
-      [{ transform: 'scale(0.97)' }, { transform: 'scale(1.035)' }],
+      [{ transform: 'scale(1)' }, { transform: 'scale(1.035)' }],
       { duration: 380, easing: spring, fill: 'both' },
     );
     pill.animate(
@@ -199,9 +195,6 @@ export class LongPressDeleteDirective implements OnInit, OnDestroy {
 
   private clearTimer(): void {
     if (this.timer) clearTimeout(this.timer);
-    if (this.pressTimer) clearTimeout(this.pressTimer);
     this.timer = null;
-    this.pressTimer = null;
-    this.host.classList.remove('ledger-item--pressing');
   }
 }
