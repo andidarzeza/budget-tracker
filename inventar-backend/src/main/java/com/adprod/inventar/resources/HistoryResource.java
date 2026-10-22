@@ -18,10 +18,4 @@ public class HistoryResource {
     public ResponseEntity findAll(Pageable pageable, @RequestParam Map<String, String> params){
         return historyService.findAll(pageable, params);
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity findOne(@PathVariable String id){
-        return historyService.findOne(id);
-    }
-
 }

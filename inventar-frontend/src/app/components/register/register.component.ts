@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { SharedService } from 'src/app/services/shared.service';
 import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
@@ -23,7 +22,6 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 })
 export class RegisterComponent {
   private readonly toasterService = inject(ToastrService);
-  readonly sharedService = inject(SharedService);
   private readonly formBuilder = inject(FormBuilder);
   readonly authenticationService = inject(AuthenticationService);
   private readonly router = inject(Router);
@@ -35,8 +33,9 @@ export class RegisterComponent {
   showSpinner = signal(false);
 
   registerGroup: FormGroup = this.formBuilder.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
+    // Same rules as the server (UserServiceImpl).
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(/^\S+$/)]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
   });
@@ -71,6 +70,8 @@ export class RegisterComponent {
         this.stopSpinner(() => {
           if (error?.status === 409) {
             this.toasterService.error('Username already taken', 'Failed', TOASTER_CONFIGURATION);
+          } else if (error?.status === 400 || error?.status === 429) {
+            this.toasterService.error(error?.error?.message ?? 'Please check the form.', 'Failed', TOASTER_CONFIGURATION);
           }
         });
       },

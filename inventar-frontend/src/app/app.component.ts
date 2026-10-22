@@ -3,9 +3,7 @@ import { ListCacheService } from './core/services/list-cache.service';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet } from '@angular/router';
-import { IConfiguration } from './models/models';
 import { AccountService } from './services/account.service';
-import { AuthenticationService } from './services/authentication.service';
 import { ConfigurationService } from './services/configuration.service';
 import { SharedService } from './services/shared.service';
 import { ThemeService } from './services/theme.service';
@@ -19,7 +17,6 @@ import { BaseTemplateComponent } from './template/base-template/base-template.co
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  readonly authenticationService = inject(AuthenticationService);
   readonly sharedService = inject(SharedService);
   readonly router = inject(Router);
   private readonly configurationService = inject(ConfigurationService);
@@ -41,8 +38,7 @@ export class AppComponent implements OnInit {
     this.configurationService
       .getConfiguration()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((configuration: IConfiguration) => {
-        localStorage.setItem('baseCurrency', configuration.baseCurrency);
+      .subscribe(() => {
         this.sharedService.applyBodyTheme(this.themeService.themeValue);
       });
     this.sharedService.listenForThemeChange();

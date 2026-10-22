@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { EntityType } from 'src/app/models/models';
 import { CreateHeaderComponent } from './create-header/create-header.component';
@@ -8,7 +7,7 @@ import { FormSpinnerComponent } from './form-spinner/form-spinner.component';
   selector: 'create-form',
   templateUrl: './create-form.component.html',
   styleUrls: ['./create-form.component.css'],
-  imports: [CommonModule, CreateHeaderComponent, FormSpinnerComponent],
+  imports: [ CreateHeaderComponent, FormSpinnerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateFormComponent {

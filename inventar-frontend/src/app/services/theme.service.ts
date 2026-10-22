@@ -1,6 +1,5 @@
 import { DOCUMENT } from '@angular/common';
 import { inject, Injectable, RendererFactory2, signal } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
 import { SharedService } from './shared.service';
 
 const MODE_KEY = 'theme-mode';
@@ -29,21 +28,15 @@ export class ThemeService {
   private readonly _pink = signal(false);
   readonly pink = this._pink.asReadonly();
 
-  private readonly subject = new Subject<string>();
-  readonly colorChange: Observable<string> = this.subject.asObservable();
-
   constructor() {
     this.systemDark?.addEventListener?.('change', () => {
       if (this._mode() === 'system') this.apply();
     });
   }
 
-  next(color: string): void {
-    this.subject.next(color);
-  }
-
   initTheme = (): void => {
     const storedMode = localStorage.getItem(MODE_KEY);
+    // 'theme' is the old key; read once so those devices keep their choice.
     const legacy = localStorage.getItem('theme');
     let mode: ThemeMode = 'system';
     if (storedMode === 'light' || storedMode === 'dark' || storedMode === 'system') {
@@ -83,7 +76,6 @@ export class ThemeService {
     const dark = mode === 'dark' || (mode === 'system' && !!this.systemDark?.matches);
     const next: Theme = dark ? 'dark-theme' : 'light-theme';
     this._theme.set(next);
-    localStorage.setItem('theme', next);
     this.applyThemeClass();
     this.sharedService.applyBodyTheme(next);
   }

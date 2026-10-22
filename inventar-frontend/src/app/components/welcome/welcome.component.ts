@@ -10,7 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { forkJoin, interval, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -76,7 +76,7 @@ const FALLBACK_NEWS: readonly NewsItem[] = [
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, MatIconModule],
+  imports: [CommonModule,  MatIconModule],
 })
 export class WelcomeComponent implements OnInit {
   private readonly auth = inject(AuthenticationService);
@@ -137,10 +137,6 @@ export class WelcomeComponent implements OnInit {
 
   get lastName(): string {
     return this.auth.currentUserValue?.lastName || '';
-  }
-
-  get fullName(): string {
-    return [this.firstName, this.lastName].filter(Boolean).join(' ');
   }
 
   get greeting(): string {

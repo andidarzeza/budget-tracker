@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { DashboardDTO, Period, RangeType, TimelineExpenseDTO, TimelineIncomeDTO } from '../models/models';
+import { DashboardDTO, RangeType } from '../models/models';
 import { toLocalAsUtcIso } from '../utils/local-iso';
 import { AccountService } from './account.service';
 
@@ -30,24 +30,6 @@ export class DashboardService {
       .append("range", range)
       .append("account", this.accountService.getAccount());
     return this.http.get<DashboardDTO>(this.API_URL, {params});
-  }
-
-  expensesTimeline(period: Period, type: RangeType): Observable<TimelineExpenseDTO[]> {
-    const params = new HttpParams()
-      .append("from", toLocalAsUtcIso(period.from))
-      .append("to", toLocalAsUtcIso(period.to))
-      .append("range", type)
-      .append("account", this.accountService.getAccount());
-    return this.http.get<TimelineExpenseDTO[]>(`${this.API_URL}/expenses-timeline`, { params });
-  }
-
-  incomesTimeline(period: Period, type: RangeType): Observable<TimelineIncomeDTO[]> {
-    const params = new HttpParams()
-      .append("from", toLocalAsUtcIso(period.from))
-      .append("to", toLocalAsUtcIso(period.to))
-      .append("range", type)
-      .append("account", this.accountService.getAccount());
-    return this.http.get<TimelineIncomeDTO[]>(`${this.API_URL}/incomes-timeline`, { params });
   }
 
 }

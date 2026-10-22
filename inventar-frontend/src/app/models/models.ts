@@ -65,19 +65,6 @@ export interface DashboardDTO {
     incomesInfo?: IncomeInfoDTO[];
 }
 
-export interface TimelineIncomeDTO {
-    _id: string;
-    income: number;
-    currency: string;
-}
-
-
-export interface TimelineExpenseDTO {
-    _id: string;
-    dailyExpense: number;
-    currency: string;
-}
-
 export interface ExpenseInfoDTO {
 	_id: string;
 	icon: string;
@@ -110,10 +97,19 @@ export interface History {
     id: string;
     date: Date;
     action: EntityAction;
-    lastModifiedDate: Date;
     entity: EntityType;
-    user: string;
-    message: string;
+    /** What the record was at the time, e.g. "Groceries · 23.50 EUR from BKT". */
+    summary?: string;
+    /** Set when the app did this on its own, e.g. "Balance of BKT edited". */
+    cause?: string;
+    /** Updates: the fields that changed. */
+    changes?: HistoryChange[];
+}
+
+export interface HistoryChange {
+    field: string;
+    from: string | null;
+    to: string | null;
 }
 
 export enum EntityAction {
@@ -125,28 +121,32 @@ export enum EntityAction {
     EXPORT = "export"
 }
 
-export const ENTITY_ACTIONS = [
-    EntityAction.CREATE, EntityAction.DELETE, EntityAction.UPDATE,EntityAction.AUTHENTICATION,
-    EntityAction.REGISTRATION, EntityAction.EXPORT
-];
+/** Actions the history filter offers; the others only appear in old entries. */
+export const ENTITY_ACTIONS = [EntityAction.CREATE, EntityAction.DELETE, EntityAction.UPDATE];
 
 export enum EntityType {
     INCOME = "income",
     EXPENSE = "expense",
     CATEGORY = "category",
     DASHBOARD = "dashboard",
-    BALANCE = "balance"
+    SOURCE = "source",
+    TRANSFER = "transfer",
+    PROJECT = "project",
+    CONTRIBUTION = "contribution"
 }
 
 export const ENTITIES = [
     EntityType.INCOME, EntityType.EXPENSE,
-    EntityType.CATEGORY, EntityType.DASHBOARD
+    EntityType.CATEGORY,
+    EntityType.SOURCE, EntityType.TRANSFER,
+    EntityType.PROJECT, EntityType.CONTRIBUTION
 ]
 
 export interface IConfiguration {
     darkMode: boolean,
-    animationMode: boolean
     baseCurrency: string;
+    defaultExpenseWalletId?: string | null;
+    defaultIncomeWalletId?: string | null;
 }
 
 export interface Income {
@@ -167,12 +167,6 @@ export interface User {
     lastName: string;
     /** JWT bearer token returned by the backend's `LoginResponse#token`. */
     token: string;
-}
-
-export interface Theme {
-    name: string;
-    color: string;
-    shadowedColor: string;
 }
 
 export enum CategoryType {

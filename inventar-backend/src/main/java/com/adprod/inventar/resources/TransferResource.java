@@ -13,18 +13,8 @@ public class TransferResource {
 
     private final TransferService transferService;
 
-    @GetMapping
-    public ResponseEntity<?> findAll(@RequestParam String account) {
-        return transferService.findAll(account);
-    }
-
     @PostMapping
     public ResponseEntity<?> save(@RequestBody Transfer transfer) {
         return transferService.save(transfer);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable String id) {
-        return transferService.delete(id);
     }
 }

@@ -1,34 +1,15 @@
 package com.adprod.inventar.models.enums;
 
+/** DASHBOARD and USER are no longer recorded but may be in old history entries. */
 public enum EntityType {
-    INCOME {
-        @Override
-        public String toString() {
-            return "Income";
-        }
-    },
-    EXPENSE {
-        @Override
-        public String toString() {
-            return "Expense";
-        }
-    },
-    CATEGORY {
-        @Override
-        public String toString() {
-            return "Category";
-        }
-    },
-    DASHBOARD {
-        @Override
-        public String toString() {
-            return "Dashboard";
-        }
-    },
-    USER {
-        @Override
-        public String toString() {
-            return "User";
-        }
-    }
+    INCOME,
+    EXPENSE,
+    CATEGORY,
+    DASHBOARD,
+    USER,
+    /** A money source (bank/cash) — `Wallet` in the code. */
+    SOURCE,
+    TRANSFER,
+    PROJECT,
+    CONTRIBUTION
 }

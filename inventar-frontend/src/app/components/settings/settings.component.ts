@@ -3,7 +3,6 @@ import { PushNotificationService } from 'src/app/services/push-notification.serv
 import { ToastrService } from 'ngx-toastr';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,29 +13,28 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
-import { Router } from '@angular/router';
 import { Wallet } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { ConfigurationService } from 'src/app/services/configuration.service';
+import {
+  BASE_CURRENCY_KEY,
+  ConfigurationService,
+  DEFAULT_EXPENSE_WALLET_KEY,
+  DEFAULT_INCOME_WALLET_KEY,
+  SyncedSetting,
+} from 'src/app/services/configuration.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
-import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { ThemeService } from 'src/app/services/theme.service';
 import { WalletService } from 'src/app/services/pages/wallet.service';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { CURRENCIES } from 'src/environments/environment';
 
-const BASE_CURRENCY_KEY = 'baseCurrency';
 const LANDING_PAGE_KEY = 'defaultLandingPage';
 const DEFAULT_LANDING_PAGE = '/welcome';
-/** localStorage keys for the preferred source on new expenses / incomes. */
-export const DEFAULT_EXPENSE_WALLET_KEY = 'defaultExpenseWalletId';
-export const DEFAULT_INCOME_WALLET_KEY = 'defaultIncomeWalletId';
 
 @Component({
   selector: 'app-settings',
@@ -46,23 +44,18 @@ export const DEFAULT_INCOME_WALLET_KEY = 'defaultIncomeWalletId';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PinkToggleComponent,
-    CommonModule,
-    ReactiveFormsModule,
     MatIconModule,
     ThemeSwitchComponent,
     SelectInputComponent,
   ],
 })
 export class SettingsComponent implements OnInit {
-  private readonly themeService = inject(ThemeService);
   private readonly authenticationService = inject(AuthenticationService);
   private readonly configurationService = inject(ConfigurationService);
-  private readonly sharedService = inject(SharedService);
   private readonly sideBarService = inject(SideBarService);
   private readonly navBarService = inject(NavBarService);
   private readonly walletService = inject(WalletService);
   private readonly accountService = inject(AccountService);
-  private readonly router = inject(Router);
   private readonly flagPipe = inject(FlagPipe);
   private readonly destroyRef = inject(DestroyRef);
   readonly push = inject(PushNotificationService);
@@ -146,18 +139,9 @@ export class SettingsComponent implements OnInit {
     this.navBarService.displayNavBar = true;
     void this.push.refresh();
 
-    // Persist base-currency changes immediately. No backend call needed —
-    // it's a local default for new expenses / incomes / projects.
-    this.baseCurrencyControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => {
-        if (value) {
-          localStorage.setItem(BASE_CURRENCY_KEY, value);
-        } else {
-          localStorage.removeItem(BASE_CURRENCY_KEY);
-        }
-      });
-
+    // Base currency and default sources are saved on the server too, so
+    // they come back after logging out and in again.
+    this.saveOnChange(this.baseCurrencyControl, BASE_CURRENCY_KEY);
     this.landingPageControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
@@ -168,20 +152,16 @@ export class SettingsComponent implements OnInit {
         }
       });
 
-    this.persistOnChange(this.defaultExpenseWalletControl, DEFAULT_EXPENSE_WALLET_KEY);
-    this.persistOnChange(this.defaultIncomeWalletControl, DEFAULT_INCOME_WALLET_KEY);
+    this.saveOnChange(this.defaultExpenseWalletControl, DEFAULT_EXPENSE_WALLET_KEY);
+    this.saveOnChange(this.defaultIncomeWalletControl, DEFAULT_INCOME_WALLET_KEY);
     this.loadSources();
   }
 
-  /** Persist a control's value to localStorage on every change (clearing when empty). */
-  private persistOnChange(control: FormControl<string | null>, key: string): void {
-    control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
-      if (value) {
-        localStorage.setItem(key, value);
-      } else {
-        localStorage.removeItem(key);
-      }
-    });
+  /** Save a control's value (locally and on the server) on every change. */
+  private saveOnChange(control: FormControl<string | null>, key: SyncedSetting): void {
+    control.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.configurationService.saveSetting(key, value));
   }
 
   private loadSources(): void {

@@ -16,14 +16,12 @@ import { BackgroundSaveService } from 'src/app/services/background-save.service'
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { SharedService } from 'src/app/services/shared.service';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
 import { LabeledFormInputComponent } from 'src/app/shared/labeled-form-input/labeled-form-input.component';
 import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { SelectIconComponent } from 'src/app/shared/select-icon/select-icon.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
@@ -40,12 +38,10 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     LabeledTextareaComponent,
     SelectInputComponent,
     SelectIconComponent,
-    ...TOOLTIP_IMPORTS,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddCategoryComponent implements OnInit, AfterViewInit {
-  readonly sharedService = inject(SharedService);
   private readonly toaster = inject(ToastrService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly categoriesService = inject(CategoriesService);

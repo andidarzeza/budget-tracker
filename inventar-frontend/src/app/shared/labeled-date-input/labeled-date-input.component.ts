@@ -2,7 +2,6 @@ import { ControlRefresher } from 'src/app/utils/control-refresh';
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -23,7 +22,6 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
   imports: [
     ReactiveFormsModule,
     MatDatepickerModule,
-    MatNativeDateModule,
     MatIconModule,
   ],
   templateUrl: './labeled-date-input.component.html',

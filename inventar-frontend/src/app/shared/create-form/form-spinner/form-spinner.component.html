@@ -1,4 +1,4 @@
-<div *ngIf="loadingData" class="form-loading-root" animate.leave="anim-fade-out">
+<div *ngIf="visible()" class="form-loading-root" animate.leave="form-loading-leave">
     <div class="form-loading-backdrop" aria-hidden="true"></div>
     <div class="form-loading-center" role="status" aria-live="polite" aria-busy="true">
         <div class="form-loading-card">

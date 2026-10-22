@@ -375,8 +375,7 @@ app-date-picker {
    overlay to read as "brighter on hover" instead of doubling the tint. */
 .mat-mdc-icon-button.user-name-button,
 .mat-mdc-fab,
-.mat-mdc-mini-fab,
-.mobile-qr-action__button {
+.mat-mdc-mini-fab {
     --mat-icon-button-state-layer-color: #ffffff;
     --mdc-icon-button-state-layer-color: #ffffff;
     --mat-fab-state-layer-color: #ffffff;

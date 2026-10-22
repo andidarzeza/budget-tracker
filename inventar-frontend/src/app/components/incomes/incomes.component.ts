@@ -1,3 +1,4 @@
+import { dayLabel, startOfWeek } from 'src/app/utils/dates';
 import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
@@ -21,14 +22,12 @@ import { AccountService } from 'src/app/services/account.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
-import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { AddIncomeComponent } from './add-income/add-income.component';
 import { IncomeDetailsComponent } from './income-details/income-details.component';
@@ -51,7 +50,6 @@ import { IncomeDetailsComponent } from './income-details/income-details.componen
     BaseTableComponent,
     IncomeDetailsComponent,
     PillButtonComponent,
-    ...TOOLTIP_IMPORTS,
   ],
 })
 export class IncomesComponent extends BaseTable<Income> implements OnInit, AfterViewInit {
@@ -60,7 +58,6 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
   readonly breakpointService = inject(BreakpointService);
   readonly sideBarService = inject(SideBarService);
   readonly navBarService = inject(NavBarService);
-  readonly categoryService = inject(CategoriesService);
   private readonly routeSpinnerService = inject(RouteSpinnerService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -117,7 +114,7 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
     }
     return Array.from(buckets.values()).map((b) => ({
       key: b.key,
-      label: this.dayLabel(b.date),
+      label: dayLabel(b.date),
       items: b.items,
     }));
   });
@@ -126,7 +123,7 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
    *  page uses: sum the dominant-currency rows within the current ISO week. */
   readonly weekSummary = computed(() => {
     const items = this.rows() as (Income & { currency?: string })[];
-    const monday = this.startOfWeek(new Date());
+    const monday = startOfWeek(new Date());
     const inWeek = items.filter((e) => new Date(e.createdTime) >= monday);
     if (inWeek.length === 0) {
       return { count: 0, total: 0, currency: '' };
@@ -167,27 +164,6 @@ export class IncomesComponent extends BaseTable<Income> implements OnInit, After
 
   iconFg(name: string | null | undefined): string {
     return IOS_TILE_GLYPH;
-  }
-
-  private dayLabel(date: Date): string {
-    const today = this.startOfDay(new Date());
-    const target = this.startOfDay(date);
-    const diffDays = Math.round((today.getTime() - target.getTime()) / 86_400_000);
-    if (diffDays === 0) return 'TODAY';
-    if (diffDays === 1) return 'YESTERDAY';
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
-  }
-
-  private startOfDay(d: Date): Date {
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  }
-
-  private startOfWeek(d: Date): Date {
-    const start = this.startOfDay(d);
-    const day = start.getDay();
-    const offset = (day + 6) % 7;
-    start.setDate(start.getDate() - offset);
-    return start;
   }
 
   private hueFor(name: string): number {

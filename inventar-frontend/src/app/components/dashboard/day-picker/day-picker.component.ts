@@ -1,8 +1,7 @@
+import { startOfDay, shiftDays } from 'src/app/utils/dates';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,12 +16,10 @@ import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imp
   styleUrls: ['./day-picker.component.css'],
   imports: [
     CommonModule,
-    MatButtonModule,
     MatDatepickerModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatNativeDateModule,
     IconButtonComponent,
     ...TOOLTIP_IMPORTS,
   ],
@@ -37,8 +34,8 @@ export class DayPickerComponent implements OnInit {
   });
 
   date = new Date();
-  from = this.startOfDay(this.date);
-  to = this.shiftDays(this.from, 1);
+  from = startOfDay(this.date);
+  to = shiftDays(this.from, 1);
 
   @Output() onChange = new EventEmitter<{ from: Date; to: Date }>();
 
@@ -47,32 +44,22 @@ export class DayPickerComponent implements OnInit {
   }
 
   nextDay(): void {
-    this.setFrom(this.shiftDays(this.from, 1));
+    this.setFrom(shiftDays(this.from, 1));
   }
 
   previousDay(): void {
-    this.setFrom(this.shiftDays(this.from, -1));
+    this.setFrom(shiftDays(this.from, -1));
   }
 
   onDatePicked(date: Date | null): void {
     if (!date) return;
-    this.setFrom(this.startOfDay(date));
+    this.setFrom(startOfDay(date));
   }
 
   private setFrom(date: Date): void {
     this.from = date;
-    this.to = this.shiftDays(date, 1);
+    this.to = shiftDays(date, 1);
     this.emitDateRange();
-  }
-
-  private startOfDay(input: Date): Date {
-    return new Date(input.getFullYear(), input.getMonth(), input.getDate());
-  }
-
-  private shiftDays(input: Date, delta: number): Date {
-    const next = new Date(input);
-    next.setDate(next.getDate() + delta);
-    return next;
   }
 
   private emitDateRange(): void {

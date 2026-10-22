@@ -1,6 +1,6 @@
 import { ControlRefresher } from 'src/app/utils/control-refresh';
 import { ChangeDetectionStrategy, Component, ElementRef, effect, input, signal, viewChild } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -43,7 +43,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'cb-select-input',
   standalone: true,
-  imports: [ReactiveFormsModule, MatIconModule, OverlayModule],
+  imports: [ MatIconModule, OverlayModule],
   templateUrl: './select-input.component.html',
   styleUrl: './select-input.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,14 +1,13 @@
+import { dayLabel } from 'src/app/utils/dates';
 import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { PressHighlightDirective } from 'src/app/shared/press-highlight/press-highlight.directive';
 import { LedgerFiltersComponent } from 'src/app/shared/ledger-filters/ledger-filters.component';
 import { IOS_TILE_GLYPH, iosTileColor } from 'src/app/shared/ios/ios-colors';
-import { LongPressDeleteDirective } from 'src/app/shared/long-press-delete/long-press-delete.directive';
 import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnInit, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { ToastrService } from 'ngx-toastr';
 import { BaseTable } from 'src/app/core/BaseTable';
 import { ColumnDefinitionService } from 'src/app/core/services/column-definition.service';
@@ -23,10 +22,7 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
-import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { buildParams } from 'src/app/utils/param-bulder';
-import { HistoryDetailsComponent } from './history-details/history-details.component';
 
 @Component({
   selector: 'app-history',
@@ -37,14 +33,9 @@ import { HistoryDetailsComponent } from './history-details/history-details.compo
     PullToRefreshDirective,
     PressHighlightDirective,
     LedgerFiltersComponent,
-    LongPressDeleteDirective,
     CommonModule,
     MatIconModule,
-    MatSidenavModule,
     BaseTableComponent,
-    HistoryDetailsComponent,
-    PillButtonComponent,
-    ...TOOLTIP_IMPORTS,
   ],
 })
 export class HistoryComponent extends BaseTable<History> implements OnInit {
@@ -53,11 +44,11 @@ export class HistoryComponent extends BaseTable<History> implements OnInit {
   readonly sideBarService = inject(SideBarService);
   readonly navBarService = inject(NavBarService);
   readonly breakpointService = inject(BreakpointService);
-  private readonly historyService = inject(HistoryService);
   private readonly routeSpinnerService = inject(RouteSpinnerService);
 
   sort: string = 'date,desc';
-  createComponent: any;
+  /** History is read-only: nothing to create. */
+  createComponent = null;
 
   columnDefinition: ColumnDefinition[] = this.columnDefinitionService.get('HISTORY');
 
@@ -107,14 +98,32 @@ export class HistoryComponent extends BaseTable<History> implements OnInit {
     }
     return Array.from(buckets.values()).map((b) => ({
       key: b.key,
-      label: this.dayLabel(b.date),
+      label: dayLabel(b.date),
       items: b.items,
     }));
   });
 
+  /** Mobile: an automatic entry opened in place to show why it happened. */
+  readonly expandedId = signal<string | null>(null);
+
+  /** Only automatic entries have more to show (their reason). */
+  hasDetails(row: History): boolean {
+    return !!row.cause;
+  }
+
+  toggle(row: History): void {
+    if (!this.hasDetails(row)) return;
+    this.expandedId.update((id) => (id === row.id ? null : row.id));
+  }
+
+  /** The API sends enum names ("CREATE"); the app's enums are lower-case. */
+  private actionOf(row: History): EntityAction {
+    return (row?.action ?? '').toLowerCase() as EntityAction;
+  }
+
   /** Material icon name keyed off the action — gives the row a quick visual cue. */
   iconFor(row: History): string {
-    switch (row?.action) {
+    switch (this.actionOf(row)) {
       case EntityAction.CREATE: return 'add_circle';
       case EntityAction.UPDATE: return 'edit';
       case EntityAction.DELETE: return 'delete_outline';
@@ -139,7 +148,7 @@ export class HistoryComponent extends BaseTable<History> implements OnInit {
   /** Human-readable row title: "Created Expense", "Logged in", etc. */
   titleFor(row: History): string {
     const entity = this.titleCase(row?.entity ?? '');
-    switch (row?.action) {
+    switch (this.actionOf(row)) {
       case EntityAction.CREATE: return `Created ${entity}`;
       case EntityAction.UPDATE: return `Updated ${entity}`;
       case EntityAction.DELETE: return `Deleted ${entity}`;
@@ -158,7 +167,7 @@ export class HistoryComponent extends BaseTable<History> implements OnInit {
   private hueFor(row: History): number {
     // Stable semantic hues per action — matches the visual vocabulary used
     // elsewhere (red for destructive, green for create, etc.).
-    switch (row?.action) {
+    switch (this.actionOf(row)) {
       case EntityAction.CREATE: return 145;         // green
       case EntityAction.UPDATE: return 215;         // blue
       case EntityAction.DELETE: return 8;           // red
@@ -167,19 +176,6 @@ export class HistoryComponent extends BaseTable<History> implements OnInit {
       case EntityAction.EXPORT: return 32;          // amber
       default: return 215;
     }
-  }
-
-  private dayLabel(date: Date): string {
-    const today = this.startOfDay(new Date());
-    const target = this.startOfDay(date);
-    const diffDays = Math.round((today.getTime() - target.getTime()) / 86_400_000);
-    if (diffDays === 0) return 'TODAY';
-    if (diffDays === 1) return 'YESTERDAY';
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
-  }
-
-  private startOfDay(d: Date): Date {
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }
 
   constructor() {

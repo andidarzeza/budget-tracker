@@ -12,11 +12,6 @@ public class ExchangeRateResource {
 
     private final ExchangeRateService exchangeRateService;
 
-    @GetMapping("/latest")
-    public ResponseEntity latest(@RequestParam(defaultValue = "EUR") String currency) {
-        return exchangeRateService.latest(currency);
-    }
-
     /** Daily values, optionally limited to [from, to] (yyyy-MM-dd, inclusive). */
     @GetMapping
     public ResponseEntity history(@RequestParam(defaultValue = "EUR") String currency,

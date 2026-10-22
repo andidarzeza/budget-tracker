@@ -1,19 +1,13 @@
 import { SpotlightService } from 'src/app/services/spotlight.service';
 import { PinkToggleComponent } from 'src/app/shared/pink-toggle/pink-toggle.component';
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, AfterViewInit, Component, computed, DestroyRef, inject, Input, OnChanges, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
-import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
-import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.component';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
 import { MenuItem, SideBarMode } from '../base-template.models';
 
@@ -23,20 +17,14 @@ import { MenuItem, SideBarMode } from '../base-template.models';
   styleUrls: ['./side-bar.component.css'],
   imports: [
     PinkToggleComponent,
-    CommonModule,
-    MatButtonModule,
     MatIconModule,
-    MatTooltipModule,
     RouterLink,
     RouterLinkActive,
-    IconButtonComponent,
     ThemeSwitchComponent,
-    ...TOOLTIP_IMPORTS,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SideBarComponent implements OnChanges, AfterViewInit {
-  readonly sharedService = inject(SharedService);
   readonly authenticationService = inject(AuthenticationService);
   readonly sideBarService = inject(SideBarService);
   readonly router = inject(Router);
@@ -57,8 +45,6 @@ export class SideBarComponent implements OnChanges, AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((mobile) => this.isMobile.set(mobile));
   }
-
-  selIndex = 1;
 
   readonly menuOpen = signal(false);
   readonly spotlight = inject(SpotlightService);

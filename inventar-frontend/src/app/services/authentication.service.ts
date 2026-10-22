@@ -1,3 +1,4 @@
+import { SYNCED_SETTINGS } from './configuration.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, OnDestroy } from '@angular/core';
@@ -131,10 +132,9 @@ export class AuthenticationService implements OnDestroy {
   private clearSession(): void {
     this.clearExpiryTimer();
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('baseCurrency');
     localStorage.removeItem('account');
-    localStorage.removeItem('defaultExpenseWalletId');
-    localStorage.removeItem('defaultIncomeWalletId');
+    // Restored from the server at the next login (ConfigurationService).
+    SYNCED_SETTINGS.forEach((key) => localStorage.removeItem(key));
     this.currentUserSubject.next(null);
   }
 

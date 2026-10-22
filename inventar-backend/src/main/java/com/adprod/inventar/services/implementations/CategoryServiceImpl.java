@@ -5,6 +5,7 @@ import com.adprod.inventar.models.*;
 import com.adprod.inventar.models.enums.EntityAction;
 import static com.adprod.inventar.models.enums.EntityType.*;
 import com.adprod.inventar.models.enums.EntityType;
+import com.adprod.inventar.models.utils.Changes;
 import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.services.AccountService;
@@ -29,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -128,34 +128,34 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseEntity findOne(String id) {
-        Category category = categoryRepository
+        return ResponseEntity.ok(getOwned(id));
+    }
+
+    /** The current user's category; someone else's is "not found". */
+    private Category getOwned(String id) {
+        return categoryRepository
                 .findById(id)
-                .orElseThrow(
-                        () -> new NotFoundException("Expense Category with id: " + id + " was not found!")
-                );
-        return ResponseEntity.ok(category);
+                .filter(category -> Objects.equals(category.getUser(), securityContextService.username()))
+                .orElseThrow(() -> new NotFoundException("Category with id: " + id + " was not found!"));
     }
 
     @Override
     public ResponseEntity delete(String id) {
-        return categoryRepository
-                .findById(id)
-                .map(category -> {
-                    categoryRepository.deleteById(id);
-                    historyService.save(historyService.from(EntityAction.DELETE, entityType, category.getAccount()));
-                    return ResponseEntity.ok(new ResponseMessage("Category with id: " + id + " was deleted successfully."));
-                })
-                .orElseThrow(() -> new NotFoundException("No category found with id: " + id));
-
+        Category category = getOwned(id);
+        categoryRepository.deleteById(id);
+        historyService.record(History.of(EntityAction.DELETE, entityType, category.getAccount(), id, summary(category))
+                .withSnapshot(category));
+        return ResponseEntity.ok(new ResponseMessage("Category with id: " + id + " was deleted successfully."));
     }
 
     @Override
     public ResponseEntity save(Category category) {
         accountService.checkAccount(category.getAccount());
+        category.setId(null);
         category.setProjectId(null); // project categories are created by the app only
         category.setUser(securityContextService.username());
         categoryRepository.save(category);
-        historyService.save(historyService.from(EntityAction.CREATE, entityType, category.getAccount()));
+        historyService.record(History.of(EntityAction.CREATE, entityType, category.getAccount(), category.getId(), summary(category)));
         return ResponseEntity.ok(category);
     }
 
@@ -165,10 +165,23 @@ public class CategoryServiceImpl implements CategoryService {
         category.setUser(securityContextService.username());
         category.setLastModifiedDate(LocalDateTime.now());
         category.setId(id);
+        Category existing = getOwned(id);
         // Keep the link of a project category; never let a client set one.
-        category.setProjectId(categoryRepository.findById(id).map(Category::getProjectId).orElse(null));
+        category.setProjectId(existing.getProjectId());
         categoryRepository.save(category);
-        historyService.save(historyService.from(EntityAction.UPDATE, entityType, category.getAccount()));
+        historyService.record(History.of(EntityAction.UPDATE, entityType, category.getAccount(), id, summary(category))
+                .withChanges(new Changes()
+                        .add("Name", existing.getCategory(), category.getCategory())
+                        .add("Type", Changes.label(existing.getCategoryType()), Changes.label(category.getCategoryType()))
+                        .add("Default amount", existing.getDefaultAmount(), category.getDefaultAmount())
+                        .add("Icon", existing.getIcon(), category.getIcon())
+                        .add("Description", existing.getDescription(), category.getDescription())
+                        .list()));
         return ResponseEntity.ok(category);
+    }
+
+    /** "Groceries · Expense" */
+    private static String summary(Category category) {
+        return Changes.summary(category.getCategory(), Changes.label(category.getCategoryType()));
     }
 }

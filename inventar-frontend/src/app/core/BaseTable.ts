@@ -1,7 +1,6 @@
 import { HttpParams } from "@angular/common/http";
 import { Directive, ViewChild, inject, signal } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
-import { Sort } from "@angular/material/sort";
 import { BehaviorSubject, Observable } from "rxjs";
 import { PAGE_SIZE, TOASTER_CONFIGURATION } from "src/environments/environment";
 import { ColumnDefinition, EntityType, ResponseWrapper } from "../models/models";
@@ -174,11 +173,6 @@ export abstract class BaseTable<E> extends Unsubscribe {
 
     onSidenavClose(): void {
         this.isSidenavOpened = false;
-    }
-
-    announceSortChange(sort: Sort): void {
-        this.page = 0;
-        this.query(false);
     }
 
     openDeleteConfirmDialog(id: string): void {

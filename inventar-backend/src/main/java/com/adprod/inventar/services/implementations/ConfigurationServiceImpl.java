@@ -2,17 +2,12 @@ package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.Configuration;
-import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.repositories.ConfigurationRepository;
 import com.adprod.inventar.services.ConfigurationService;
 import com.adprod.inventar.services.SecurityContextService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -46,7 +41,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 configurationRepository
                     .findByUser(securityContextService.username())
                     .orElseGet(
-                        () -> new Configuration(null, false, true, null, "ALL")
+                        () -> new Configuration(null, false, null, "ALL", null, null)
                     )
         );
     }

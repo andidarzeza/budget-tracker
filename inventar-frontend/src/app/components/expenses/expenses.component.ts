@@ -1,3 +1,4 @@
+import { dayLabel, startOfWeek } from 'src/app/utils/dates';
 import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { PullToRefreshDirective } from 'src/app/shared/pull-to-refresh/pull-to-refresh.directive';
 import { takeUntil } from 'rxjs/operators';
@@ -9,8 +10,6 @@ import { LongPressDeleteDirective } from 'src/app/shared/long-press-delete/long-
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
@@ -22,7 +21,6 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { Category, CategoryType, ColumnDefinition, EntityType, Expense, ResponseWrapper } from 'src/app/models/models';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { ExpenseService } from 'src/app/services/pages/expense.service';
-import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { AccountService } from 'src/app/services/account.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
@@ -34,8 +32,6 @@ import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
-import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 @Component({
   selector: 'app-expenses',
@@ -49,13 +45,11 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     LedgerFiltersComponent,
     LongPressDeleteDirective,
     CommonModule,
-    MatButtonModule,
     MatIconModule,
     MatSidenavModule,
     BaseTableComponent,
     ExpenseDetailComponent,
     PillButtonComponent,
-    ...TOOLTIP_IMPORTS,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -69,10 +63,7 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
   readonly breakpointService = inject(BreakpointService);
   readonly sideBarService = inject(SideBarService);
   readonly navBarService = inject(NavBarService);
-  private readonly categoryService = inject(CategoriesService);
   private readonly routeSpinnerService = inject(RouteSpinnerService);
-  private readonly expenseService = inject(ExpenseService);
-  private readonly matDialog = inject(MatDialog);
   private readonly router = inject(Router);
 
   createComponent = AddExpenseComponent;
@@ -130,7 +121,7 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     }
     return Array.from(buckets.values()).map((b) => ({
       key: b.key,
-      label: this.dayLabel(b.date),
+      label: dayLabel(b.date),
       items: b.items,
     }));
   });
@@ -140,7 +131,7 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
    *  and total just that subset — a simple, defensible single-number summary. */
   readonly weekSummary = computed(() => {
     const items = this.rows();
-    const monday = this.startOfWeek(new Date());
+    const monday = startOfWeek(new Date());
     const inWeek = items.filter((e) => new Date(e.createdTime) >= monday);
     if (inWeek.length === 0) {
       return { count: 0, total: 0, currency: '' };
@@ -187,29 +178,6 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     return IOS_TILE_GLYPH;
   }
 
-  /** Day-section header ("TODAY" / "YESTERDAY" / "MON, MAR 3" — all caps). */
-  private dayLabel(date: Date): string {
-    const today = this.startOfDay(new Date());
-    const target = this.startOfDay(date);
-    const diffDays = Math.round((today.getTime() - target.getTime()) / 86_400_000);
-    if (diffDays === 0) return 'TODAY';
-    if (diffDays === 1) return 'YESTERDAY';
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
-  }
-
-  private startOfDay(d: Date): Date {
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  }
-
-  /** Monday 00:00 of the current week (ISO week — Monday is day 1). */
-  private startOfWeek(d: Date): Date {
-    const start = this.startOfDay(d);
-    const day = start.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
-    const offset = (day + 6) % 7; // days since Monday
-    start.setDate(start.getDate() - offset);
-    return start;
-  }
-
   /** Stable hue (0..360) derived from category name → consistent tile colors. */
   private hueFor(name: string): number {
     if (!name) return 215;
@@ -227,9 +195,6 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
     protected toaster: ToastrService,
     protected accountService: AccountService,
   ) {
-    // BaseTable's constructor wires `entityService` into the `query()` /
-    // `delete()` chain — pass via `inject()` so the field below stays
-    // available for the QR-prefill flow.
     super(dialog, inject(ExpenseService), toaster, accountService);
 
     // Mobile ledger infinite scroll: observe a sentinel at the list bottom,
@@ -296,56 +261,4 @@ export class ExpensesComponent extends BaseTable<Expense> implements OnInit{
   getQueryParams(): HttpParams {
     return buildParams(this.page, this.size, this.sort, this.previousFilters).append("account", this.accountService?.getAccount());
   }
-
-  async openQrScanner(): Promise<void> {
-    if (!this.breakpointService.matchesMobileCreateLayout()) {
-      return;
-    }
-
-    // Loaded on demand: the scanner and its QR decoder (jsqr, ~260 KB) would
-    // otherwise ship with every visit to the Expenses page.
-    const { QrScannerDialogComponent } = await import('./qr-scanner-dialog/qr-scanner-dialog.component');
-    this.matDialog.open(QrScannerDialogComponent, {
-      width: '100vw',
-      maxWidth: '100vw',
-      height: '100dvh',
-      maxHeight: '100dvh',
-      panelClass: ['qr-scanner-dialog-panel']
-    }).afterClosed().subscribe((scannedValue: string | null) => {
-      if (!scannedValue) {
-        return;
-      }
-      this.handleScannedUrl(scannedValue);
-    });
-  }
-
-  private handleScannedUrl(rawValue: string): void {
-    this.expenseService.verifyInvoiceFromScannedUrl(rawValue).subscribe({
-      next: (response: any) => {
-        const totalPrice = Number(response?.totalPrice);
-        const sellerName = String(response?.seller?.name || '').trim();
-        if (!Number.isFinite(totalPrice) || totalPrice <= 0) {
-          this.toaster.error(
-            'Scanned invoice does not contain a valid total price.',
-            'Invalid invoice',
-            TOASTER_CONFIGURATION
-          );
-          return;
-        }
-        this.dialog.openDialog(AddExpenseComponent, {
-          moneySpent: totalPrice,
-          currency: 'ALL',
-          description: sellerName
-        }).onSuccess(() => this.refresh());
-      },
-      error: () => {
-        this.toaster.error(
-          'Could not verify scanned invoice. Please try again.',
-          'Verification failed',
-          TOASTER_CONFIGURATION
-        );
-      }
-    });
-  }
-
 }

@@ -1,8 +1,7 @@
+import { startOfDay, shiftDays } from 'src/app/utils/dates';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -16,10 +15,8 @@ const STORAGE_KEY = 'dashboard.customRange';
   styleUrls: ['./custom-range-picker.component.css'],
   imports: [
     CommonModule,
-    MatButtonModule,
     MatDatepickerModule,
     MatIconModule,
-    MatNativeDateModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -27,9 +24,9 @@ export class CustomRangePickerComponent implements OnInit {
   private readonly breakpointService = inject(BreakpointService);
 
   /** Inclusive start of the user's selected window (local midnight). */
-  readonly start = signal<Date>(this.shiftDays(new Date(), -6));
+  readonly start = signal<Date>(shiftDays(new Date(), -6));
   /** Inclusive end of the user's selected window (local midnight). */
-  readonly end = signal<Date>(this.startOfDay(new Date()));
+  readonly end = signal<Date>(startOfDay(new Date()));
 
   constructor() {
     this.restorePersistedWindow();
@@ -54,13 +51,13 @@ export class CustomRangePickerComponent implements OnInit {
    */
   onStartPicked(date: Date | null): void {
     if (!date) return;
-    const next = this.startOfDay(date);
+    const next = startOfDay(date);
     let end = this.end();
     if (next > end) {
       end = next;
     }
     if (this.diffInDays(next, end) > MAX_GAP_DAYS) {
-      end = this.shiftDays(next, MAX_GAP_DAYS);
+      end = shiftDays(next, MAX_GAP_DAYS);
     }
     this.start.set(next);
     this.end.set(end);
@@ -69,13 +66,13 @@ export class CustomRangePickerComponent implements OnInit {
 
   onEndPicked(date: Date | null): void {
     if (!date) return;
-    const next = this.startOfDay(date);
+    const next = startOfDay(date);
     let start = this.start();
     if (next < start) {
       start = next;
     }
     if (this.diffInDays(start, next) > MAX_GAP_DAYS) {
-      start = this.shiftDays(next, -MAX_GAP_DAYS);
+      start = shiftDays(next, -MAX_GAP_DAYS);
     }
     this.start.set(start);
     this.end.set(next);
@@ -89,7 +86,7 @@ export class CustomRangePickerComponent implements OnInit {
 
   /** Latest date the *end* picker can show: `start + MAX_GAP_DAYS`. */
   get endMax(): Date {
-    return this.shiftDays(this.start(), MAX_GAP_DAYS);
+    return shiftDays(this.start(), MAX_GAP_DAYS);
   }
 
   /** Latest date the *start* picker can show: `end`. */
@@ -99,7 +96,7 @@ export class CustomRangePickerComponent implements OnInit {
 
   /** Earliest date the *start* picker can show: `end − MAX_GAP_DAYS`. */
   get startMin(): Date {
-    return this.shiftDays(this.end(), -MAX_GAP_DAYS);
+    return shiftDays(this.end(), -MAX_GAP_DAYS);
   }
 
   private emitDateRange(): void {
@@ -108,7 +105,7 @@ export class CustomRangePickerComponent implements OnInit {
     // queries cover the full last day inclusively.
     this.onChange.emit({
       from: this.start(),
-      to: this.shiftDays(this.end(), 1),
+      to: shiftDays(this.end(), 1),
     });
     this.persistWindow();
   }
@@ -163,16 +160,6 @@ export class CustomRangePickerComponent implements OnInit {
     const [y, m, d] = value.split('-').map((p) => parseInt(p, 10));
     const result = new Date(y, m - 1, d);
     return Number.isNaN(result.getTime()) ? null : result;
-  }
-
-  private startOfDay(input: Date): Date {
-    return new Date(input.getFullYear(), input.getMonth(), input.getDate());
-  }
-
-  private shiftDays(input: Date, delta: number): Date {
-    const next = new Date(input);
-    next.setDate(next.getDate() + delta);
-    return next;
   }
 
   private diffInDays(from: Date, to: Date): number {

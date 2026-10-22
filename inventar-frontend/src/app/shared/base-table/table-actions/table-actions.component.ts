@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,7 +7,6 @@ import {
   Output,
   signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TOOLTIP_IMPORTS } from '../../tooltip-mobile-guard/tooltip-imports';
@@ -20,7 +18,7 @@ import { TableActionInput } from './TableActionInput';
   selector: 'table-actions',
   templateUrl: './table-actions.component.html',
   styleUrls: ['./table-actions.component.css'],
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, FilterComponent, ...TOOLTIP_IMPORTS],
+  imports: [  MatIconModule, MatTooltipModule, FilterComponent, ...TOOLTIP_IMPORTS],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableActionsComponent {

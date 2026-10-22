@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { BASE_CURRENCY_KEY } from 'src/app/services/configuration.service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -30,7 +30,6 @@ import { CURRENCIES, TOASTER_CONFIGURATION } from 'src/environments/environment'
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     CreateFormComponent,
     LabeledFormInputComponent,
@@ -57,7 +56,7 @@ export class AddProjectComponent implements OnInit {
   readonly isEditMode: boolean;
 
   readonly currencies = CURRENCIES;
-  readonly defaultCurrency = localStorage.getItem('baseCurrency') || CURRENCIES[0];
+  readonly defaultCurrency = localStorage.getItem(BASE_CURRENCY_KEY) || CURRENCIES[0];
 
   /** Currency option label: "🇺🇸 USD". Shared with `cb-select-input.displayWith`. */
   readonly displayCurrency = (c: string) => `${this.flagPipe.transform(c)} ${c}`;

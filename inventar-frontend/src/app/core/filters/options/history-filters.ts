@@ -15,8 +15,8 @@ export const historyFilters: FilterOptions[] = [
     matSelectOptions: getEntities()
   },
   {
-    field: "message",
-    label: "Message",
+    field: "summary",
+    label: "Details",
     type: "text"
   }
 ];

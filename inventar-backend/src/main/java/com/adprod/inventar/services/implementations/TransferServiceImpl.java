@@ -1,11 +1,15 @@
 package com.adprod.inventar.services.implementations;
 
-import com.adprod.inventar.exceptions.NotFoundException;
-import com.adprod.inventar.models.ResponseMessage;
+import com.adprod.inventar.models.History;
 import com.adprod.inventar.models.Transfer;
 import com.adprod.inventar.models.Wallet;
+import com.adprod.inventar.models.enums.EntityAction;
+import com.adprod.inventar.models.enums.EntityType;
+import com.adprod.inventar.models.utils.Changes;
+import static com.adprod.inventar.models.utils.Amounts.orZero;
 import com.adprod.inventar.repositories.TransferRepository;
 import com.adprod.inventar.services.AccountService;
+import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.SecurityContextService;
 import com.adprod.inventar.services.TransferService;
 import com.adprod.inventar.services.WalletService;
@@ -24,6 +28,7 @@ public class TransferServiceImpl implements TransferService {
     private final WalletService walletService;
     private final AccountService accountService;
     private final SecurityContextService securityContextService;
+    private final HistoryService historyService;
 
     @Override
     public ResponseEntity<?> save(Transfer transfer) {
@@ -31,8 +36,8 @@ public class TransferServiceImpl implements TransferService {
         if (Objects.equals(transfer.getFromWalletId(), transfer.getToWalletId())) {
             throw new IllegalArgumentException("Source and destination must be different.");
         }
-        Wallet from = resolveWallet(transfer.getFromWalletId(), transfer.getAccount());
-        Wallet to = resolveWallet(transfer.getToWalletId(), transfer.getAccount());
+        Wallet from = walletService.getOwned(transfer.getFromWalletId(), transfer.getAccount());
+        Wallet to = walletService.getOwned(transfer.getToWalletId(), transfer.getAccount());
 
         double amountFrom = orZero(transfer.getAmountFrom());
         if (amountFrom <= 0) {
@@ -47,6 +52,7 @@ public class TransferServiceImpl implements TransferService {
             throw new IllegalArgumentException("Amount received must be greater than zero.");
         }
 
+        transfer.setId(null);
         transfer.setUser(securityContextService.username());
         transfer.setFromCurrency(from.getCurrency());
         transfer.setToCurrency(to.getCurrency());
@@ -57,37 +63,17 @@ public class TransferServiceImpl implements TransferService {
         walletService.debit(from.getId(), amountFrom);
         walletService.credit(to.getId(), amountTo);
         transferRepository.save(transfer);
+        historyService.record(History.of(EntityAction.CREATE, EntityType.TRANSFER, transfer.getAccount(), transfer.getId(), summary(transfer)));
         return ResponseEntity.ok(transfer);
     }
 
-    @Override
-    public ResponseEntity<?> findAll(String account) {
-        accountService.checkAccount(account);
-        return ResponseEntity.ok(
-                transferRepository.findAllByUserAndAccountOrderByCreatedTimeDesc(
-                        securityContextService.username(), account));
-    }
-
-    @Override
-    public ResponseEntity<?> delete(String id) {
-        Transfer transfer = transferRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Transfer " + id + " not found."));
-        if (!Objects.equals(transfer.getUser(), securityContextService.username())) {
-            throw new NotFoundException("Transfer " + id + " not found.");
-        }
-        // Undo the movement: put the money back where it came from.
-        walletService.credit(transfer.getFromWalletId(), transfer.getAmountFrom());
-        walletService.debit(transfer.getToWalletId(), transfer.getAmountTo());
-        transferRepository.deleteById(id);
-        return ResponseEntity.ok(new ResponseMessage("Transfer " + id + " was reversed."));
-    }
-
-    private Wallet resolveWallet(String walletId, String account) {
-        Wallet wallet = walletService.getOwned(walletId);
-        if (!Objects.equals(wallet.getAccount(), account)) {
-            throw new NotFoundException("Wallet " + walletId + " not found.");
-        }
-        return wallet;
+    /** "100.00 EUR BKT → Cash" (with the received amount when the currencies differ). */
+    private String summary(Transfer transfer) {
+        String sent = Changes.money(transfer.getAmountFrom(), transfer.getFromCurrency());
+        String received = Changes.money(transfer.getAmountTo(), transfer.getToCurrency());
+        String route = Objects.toString(historyService.sourceName(transfer.getFromWalletId()), "?")
+                + " → " + Objects.toString(historyService.sourceName(transfer.getToWalletId()), "?");
+        return Changes.summary(sent.equals(received) ? sent : sent + " → " + received, route, transfer.getDescription());
     }
 
     private static boolean sameCurrency(Wallet a, Wallet b) {
@@ -96,7 +82,4 @@ public class TransferServiceImpl implements TransferService {
                 Objects.toString(b.getCurrency(), "").toUpperCase());
     }
 
-    private static double orZero(Double value) {
-        return value == null ? 0.0 : value;
-    }
 }

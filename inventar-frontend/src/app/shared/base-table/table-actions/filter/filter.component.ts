@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -36,7 +35,6 @@ import { FilterOptions } from './filter.models';
   styleUrls: ['./filter.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     IconButtonComponent,

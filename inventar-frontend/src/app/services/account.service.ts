@@ -12,7 +12,6 @@ export class AccountService {
   private readonly http = inject(HttpClient);
 
   readonly API_URl: string = `${serverAPIURL}/api/account`;
-  account: Account = null;
 
   findAllAccountsSimplified(): Observable<SimplifiedAccount[]> {
     return this.http.get<SimplifiedAccount[]>(`${this.API_URl}/simplified`);
@@ -20,7 +19,6 @@ export class AccountService {
 
   findOne(id: string): Observable<Account> {
     return this.http.get<Account>(`${this.API_URl}/${id}`).pipe(map(account => {
-      this.account = account;
       if (account?.id) {
         localStorage.setItem("account", account.id);
       }

@@ -14,7 +14,6 @@ public interface ExchangeRateRepository extends MongoRepository<ExchangeRate, St
 
     Optional<ExchangeRate> findByCurrencyAndDate(String currency, String date);
 
-    Optional<ExchangeRate> findFirstByCurrencyOrderByDateDesc(String currency);
 
     /** Inclusive on both ends (dates are yyyy-MM-dd strings, so they sort chronologically). */
     @Query("{ 'currency': ?0, 'date': { $gte: ?1, $lte: ?2 } }")

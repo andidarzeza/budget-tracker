@@ -1,40 +1,11 @@
 package com.adprod.inventar.models.enums;
 
+/** AUTHENTICATION, REGISTRATION and EXPORT are no longer recorded but may be in old history entries. */
 public enum EntityAction {
-    CREATE {
-        @Override
-        public String toString() {
-            return "created";
-        }
-    },
-    DELETE {
-        @Override
-        public String toString() {
-            return "deleted";
-        }
-    },
-    UPDATE {
-        @Override
-        public String toString() {
-            return "updated";
-        }
-    },
-    AUTHENTICATION {
-        @Override
-        public String toString() {
-            return "logged in";
-        }
-    },
-    REGISTRATION {
-        @Override
-        public String toString() {
-            return "registred";
-        }
-    },
-    EXPORT {
-        @Override
-        public String toString() {
-            return "exported";
-        }
-    }
+    CREATE,
+    DELETE,
+    UPDATE,
+    AUTHENTICATION,
+    REGISTRATION,
+    EXPORT
 }

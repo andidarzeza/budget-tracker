@@ -1,72 +1,67 @@
 package com.adprod.inventar.security;
 
 import com.adprod.inventar.models.User;
-import com.adprod.inventar.services.implementations.MyUserDetailsService;
-import io.jsonwebtoken.*;
-import static com.adprod.inventar.models.utils.Time.*;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.util.Date;
-import java.util.function.Function;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.util.Date;
+import java.util.Optional;
+
+/** Signs and checks the login tokens (HS256). */
+@Slf4j
 @Component
 public class JwtManager {
 
-    private final MyUserDetailsService userDetailsService;
+    private static final Duration TOKEN_LIFETIME = Duration.ofDays(7);
 
-    public JwtManager(MyUserDetailsService myUserDetailsService) {
-        this.userDetailsService = myUserDetailsService;
+    private final SecretKey key;
+
+    /**
+     * The key comes from the JWT_SECRET environment variable (at least 32 characters).
+     * Without one — local development — a random key is made at startup, so restarting
+     * the server signs everyone out.
+     */
+    public JwtManager(@Value("${jwt.secret:}") String secret) {
+        if (secret.isBlank()) {
+            log.warn("JWT_SECRET is not set: using a random key; logins end when the server restarts.");
+            byte[] random = new byte[32];
+            new SecureRandom().nextBytes(random);
+            this.key = Keys.hmacShaKeyFor(random);
+        } else {
+            byte[] bytes = secret.getBytes(StandardCharsets.UTF_8);
+            if (bytes.length < 32) {
+                throw new IllegalStateException("JWT_SECRET must be at least 32 characters long.");
+            }
+            this.key = Keys.hmacShaKeyFor(bytes);
+        }
     }
-    public static String username = "";
-    private final String SECRET_KEY = "secret";
-    private final Integer jwtRenewTime = WEEK;
 
     public String createToken(User user) {
-        Claims claims = Jwts.claims().setSubject(user.getUsername());
-        claims.put("Role", user.getRole());
+        Date now = new Date();
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtRenewTime))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+                .subject(user.getUsername())
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + TOKEN_LIFETIME.toMillis()))
+                .signWith(key, Jwts.SIG.HS256)
+                .compact();
     }
 
-    public Boolean validateToken(String token) {
+    /** The username of a valid, unexpired token; empty for anything else. */
+    public Optional<String> username(String token) {
         try {
-            if(!this.isTokenExpired(token)){
-                Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-                return true;
-            }
-        }catch (JwtException e) {
-            e.printStackTrace();
-            return false;
+            Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+            return Optional.ofNullable(claims.getSubject());
+        } catch (JwtException | IllegalArgumentException e) {
+            return Optional.empty();
         }
-        return false;
-    }
-
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-    }
-    public Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(extractAllClaims(token).getSubject());
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 }

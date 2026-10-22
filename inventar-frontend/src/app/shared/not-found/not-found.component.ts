@@ -1,19 +1,16 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { SharedService } from 'src/app/services/shared.service';
 import { PillButtonComponent } from '../pill-button/pill-button.component';
 
 @Component({
   selector: 'app-not-found',
   templateUrl: './not-found.component.html',
   styleUrls: ['./not-found.component.css'],
-  imports: [MatButtonModule, PillButtonComponent],
+  imports: [ PillButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotFoundComponent {
   private readonly route = inject(Router);
-  readonly sharedService = inject(SharedService);
 
   navigate(page: string) {
     this.route.navigate([`/${page}`]);

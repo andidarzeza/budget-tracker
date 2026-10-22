@@ -8,8 +8,4 @@ import { BaseService } from '../../core/services/base.service';
 })
 export class ExpenseService extends BaseService<Expense> {
   readonly API_URl: string = `${serverAPIURL}/api/expense`;
-
-  verifyInvoiceFromScannedUrl(url: string) {
-    return this.http.post(`${this.API_URl}/verify-invoice-from-url`, { url });
-  }
 }

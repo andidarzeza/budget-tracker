@@ -28,14 +28,4 @@ public class Income {
     private String account;
     /** Money source this income was deposited into. Its currency drives {@link #currency}. */
     private String walletId;
-
-    public Income(String id, String name, Double incoming, String description, String categoryID, String user, String currency) {
-        this.id = id;
-        this.name = name;
-        this.incoming = incoming;
-        this.description = description;
-        this.categoryID = categoryID;
-        this.user = user;
-        this.currency = currency;
-    }
 }

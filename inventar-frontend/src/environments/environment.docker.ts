@@ -5,8 +5,7 @@
 export const serverAPIURL = '';
 
 export const environment = {
-  production: true,
-  experimentalMode: false
+  production: true
 };
 
 export const TOASTER_CONFIGURATION = {
@@ -31,7 +30,4 @@ export const CREATE_DIALOG_MOBILE_CONFIGURATION = {
 
 export const CURRENCIES = ['ALL', 'EUR', 'USD', 'CAD', 'GBP'];
 
-export const SIDEBAR_WIDTH = 250;
-
-export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 export const PAGE_SIZE = 50;

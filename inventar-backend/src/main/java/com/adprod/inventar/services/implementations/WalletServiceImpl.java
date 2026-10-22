@@ -3,24 +3,29 @@ package com.adprod.inventar.services.implementations;
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.Category;
 import com.adprod.inventar.models.Expense;
+import com.adprod.inventar.models.History;
 import com.adprod.inventar.models.Income;
 import com.adprod.inventar.models.QCategory;
 import com.adprod.inventar.models.ResponseMessage;
 import com.adprod.inventar.models.Wallet;
+import com.adprod.inventar.models.enums.EntityAction;
+import com.adprod.inventar.models.enums.EntityType;
 import com.adprod.inventar.models.enums.WalletType;
+import com.adprod.inventar.models.utils.Changes;
+import static com.adprod.inventar.models.utils.Amounts.orZero;
+import static com.adprod.inventar.models.utils.Amounts.round;
 import com.adprod.inventar.repositories.CategoryRepository;
 import com.adprod.inventar.repositories.ExpenseRepository;
 import com.adprod.inventar.repositories.IncomeRepository;
 import com.adprod.inventar.repositories.WalletRepository;
 import com.adprod.inventar.services.AccountService;
+import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.SecurityContextService;
 import com.adprod.inventar.services.WalletService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Date;
@@ -40,6 +45,7 @@ public class WalletServiceImpl implements WalletService {
     private final CategoryRepository categoryRepository;
     private final AccountService accountService;
     private final SecurityContextService securityContextService;
+    private final HistoryService historyService;
 
     @Override
     public ResponseEntity<?> findAll(String account) {
@@ -62,13 +68,22 @@ public class WalletServiceImpl implements WalletService {
         wallet.setBalance(round(wallet.getBalance()));
         wallet.setCreatedTime(LocalDateTime.now());
         wallet.setLastModifiedDate(wallet.getCreatedTime());
-        return ResponseEntity.ok(walletRepository.save(wallet));
+        Wallet saved = walletRepository.save(wallet);
+        historyService.record(History.of(EntityAction.CREATE, EntityType.SOURCE, saved.getAccount(), saved.getId(), summary(saved)));
+        return ResponseEntity.ok(saved);
     }
 
     @Override
     public ResponseEntity<?> update(String id, Wallet wallet) {
         Wallet existing = getOwned(id);
         validate(wallet);
+        Changes changes = new Changes()
+                .add("Name", existing.getName(), wallet.getName())
+                .add("Type", existing.getType(), wallet.getType())
+                .add("Currency", existing.getCurrency(), wallet.getCurrency())
+                .add("Balance", existing.getBalance(), round(wallet.getBalance()))
+                .add("Icon", existing.getIcon(), wallet.getIcon())
+                .add("Archived", existing.isArchived(), wallet.isArchived());
         existing.setName(wallet.getName());
         existing.setType(wallet.getType());
         existing.setIcon(wallet.getIcon());
@@ -85,6 +100,8 @@ public class WalletServiceImpl implements WalletService {
         existing.setBalance(newBalance);
         existing.setLastModifiedDate(LocalDateTime.now());
         Wallet saved = walletRepository.save(existing);
+        historyService.record(History.of(EntityAction.UPDATE, EntityType.SOURCE, saved.getAccount(), id, summary(saved))
+                .withChanges(changes.list()));
         double difference = round(newBalance - oldBalance);
         if (difference != 0 && Objects.equals(oldCurrency, saved.getCurrency())) {
             recordAdjustment(saved, difference);
@@ -96,6 +113,8 @@ public class WalletServiceImpl implements WalletService {
     public ResponseEntity<?> delete(String id) {
         Wallet wallet = getOwned(id);
         walletRepository.delete(wallet);
+        historyService.record(History.of(EntityAction.DELETE, EntityType.SOURCE, wallet.getAccount(), id, summary(wallet))
+                .withSnapshot(wallet));
         return ResponseEntity.ok(new ResponseMessage("Wallet " + id + " was deleted."));
     }
 
@@ -106,6 +125,15 @@ public class WalletServiceImpl implements WalletService {
         }
         return walletRepository.findByIdAndUser(walletId, securityContextService.username())
                 .orElseThrow(() -> new NotFoundException("Wallet " + walletId + " not found."));
+    }
+
+    @Override
+    public Wallet getOwned(String walletId, String account) {
+        Wallet wallet = getOwned(walletId);
+        if (!Objects.equals(wallet.getAccount(), account)) {
+            throw new NotFoundException("Wallet " + walletId + " not found.");
+        }
+        return wallet;
     }
 
     @Override
@@ -143,6 +171,9 @@ public class WalletServiceImpl implements WalletService {
             income.setCreatedTime(new Date());
             income.setLastModifiedDate(income.getCreatedTime());
             incomeRepository.save(income);
+            historyService.record(History.of(EntityAction.CREATE, EntityType.INCOME, wallet.getAccount(), income.getId(),
+                            Changes.summary(ADJUSTMENT_CATEGORY, Changes.money(difference, wallet.getCurrency()) + " into " + wallet.getName()))
+                    .causedBy("Balance of " + wallet.getName() + " edited"));
         } else {
             Expense expense = new Expense();
             expense.setMoneySpent(-difference);
@@ -153,7 +184,16 @@ public class WalletServiceImpl implements WalletService {
             expense.setWalletId(wallet.getId());
             expense.setUser(wallet.getUser());
             expenseRepository.save(expense);
+            historyService.record(History.of(EntityAction.CREATE, EntityType.EXPENSE, wallet.getAccount(), expense.getId(),
+                            Changes.summary(ADJUSTMENT_CATEGORY, Changes.money(-difference, wallet.getCurrency()) + " from " + wallet.getName()))
+                    .causedBy("Balance of " + wallet.getName() + " edited"));
         }
+    }
+
+    /** "BKT · Bank · 120.00 EUR" */
+    private static String summary(Wallet wallet) {
+        return Changes.summary(wallet.getName(), Changes.label(wallet.getType()), Changes.money(wallet.getBalance(), wallet.getCurrency()),
+                wallet.isArchived() ? "archived" : null);
     }
 
     /** The user's "Balance adjustment" category of this type, created on first use. */
@@ -191,11 +231,4 @@ public class WalletServiceImpl implements WalletService {
         wallet.setType(wallet.getType().toUpperCase());
     }
 
-    private static double orZero(Double value) {
-        return value == null ? 0.0 : value;
-    }
-
-    private static double round(Double value) {
-        return BigDecimal.valueOf(orZero(value)).setScale(2, RoundingMode.HALF_UP).doubleValue();
-    }
 }

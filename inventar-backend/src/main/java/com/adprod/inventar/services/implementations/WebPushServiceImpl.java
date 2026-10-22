@@ -6,7 +6,8 @@ import com.adprod.inventar.repositories.PushConfigRepository;
 import com.adprod.inventar.repositories.PushSubscriptionRepository;
 import com.adprod.inventar.services.SecurityContextService;
 import com.adprod.inventar.services.WebPushService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import nl.martijndwars.webpush.Encoding;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
@@ -20,12 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Security;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Web Push (VAPID) sender. The key pair is generated once and kept in the database, so there is
@@ -37,13 +40,16 @@ public class WebPushServiceImpl implements WebPushService {
 
     private static final Logger log = LoggerFactory.getLogger(WebPushServiceImpl.class);
     private static final String CONFIG_ID = "vapid";
+    /** Browsers' push services (Chrome, Firefox, Safari, Edge); nothing else is ever called. */
+    private static final List<String> PUSH_SERVICE_HOSTS = List.of(
+            "fcm.googleapis.com", "updates.push.services.mozilla.com", "web.push.apple.com", "notify.windows.com");
     /** Contact for the push services, required by VAPID. */
     private static final String SUBJECT = "mailto:notifications@financa.cloud";
 
     private final PushSubscriptionRepository subscriptionRepository;
     private final PushConfigRepository configRepository;
     private final SecurityContextService securityContextService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builder().build();
     private volatile PushService pushService;
     private volatile String publicKey;
 
@@ -69,8 +75,17 @@ public class WebPushServiceImpl implements WebPushService {
         if (subscription.getEndpoint() == null || subscription.getP256dh() == null || subscription.getAuth() == null) {
             throw new IllegalArgumentException("Incomplete push subscription.");
         }
+        if (!isPushService(subscription.getEndpoint())) {
+            throw new IllegalArgumentException("Not a browser push service endpoint.");
+        }
         String user = securityContextService.username();
         PushSubscription row = subscriptionRepository.findByEndpoint(subscription.getEndpoint()).orElseGet(PushSubscription::new);
+        // Another user's device subscription moves over only to whoever has its keys — the same
+        // browser, signed in as someone else — never to someone who merely knows the endpoint.
+        if (row.getUser() != null && !row.getUser().equals(user)
+                && !(Objects.equals(row.getP256dh(), subscription.getP256dh()) && Objects.equals(row.getAuth(), subscription.getAuth()))) {
+            throw new IllegalArgumentException("Push subscription keys do not match.");
+        }
         row.setUser(user);
         row.setEndpoint(subscription.getEndpoint());
         row.setP256dh(subscription.getP256dh());
@@ -162,9 +177,20 @@ public class WebPushServiceImpl implements WebPushService {
 
     private static String host(String endpoint) {
         try {
-            return java.net.URI.create(endpoint).getHost();
+            return URI.create(endpoint).getHost();
         } catch (Exception e) {
             return "push service";
+        }
+    }
+
+    static boolean isPushService(String endpoint) {
+        try {
+            URI uri = URI.create(endpoint);
+            String host = uri.getHost();
+            return "https".equalsIgnoreCase(uri.getScheme()) && host != null && uri.getPort() == -1
+                    && PUSH_SERVICE_HOSTS.stream().anyMatch(h -> host.equalsIgnoreCase(h) || host.toLowerCase().endsWith("." + h));
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
 }

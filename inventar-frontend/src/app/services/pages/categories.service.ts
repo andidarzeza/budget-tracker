@@ -2,7 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { serverAPIURL } from 'src/environments/environment';
-import { Category, CategoryType, ResponseWrapper } from '../../models/models';
+import { Category, CategoryType } from '../../models/models';
 import { BaseService } from '../../core/services/base.service';
 
 @Injectable({
@@ -10,16 +10,6 @@ import { BaseService } from '../../core/services/base.service';
 })
 export class CategoriesService extends BaseService<Category> {
   readonly API_URl: string = `${serverAPIURL}/api/categories`;
-
-  incomeCategories(params: HttpParams): Observable<ResponseWrapper> {
-    params = params.append('categoryType', CategoryType.INCOME);
-    return this.findAll(params);
-  }
-
-  expenseCategories(params: HttpParams): Observable<ResponseWrapper> {
-    params = params.append('categoryType', CategoryType.EXPENSE);
-    return this.findAll(params);
-  }
 
   /**
    * Returns categories for the given account, ordered by how often they've been used

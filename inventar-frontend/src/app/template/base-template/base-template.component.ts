@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NavBarService } from 'src/app/services/nav-bar.service';
-import { RouteSpinnerService } from 'src/app/services/route-spinner.service';
-import { SharedService } from 'src/app/services/shared.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
@@ -25,17 +23,13 @@ import { MenuItem, SideBarMode } from './base-template.models';
 })
 export class BaseTemplateComponent implements OnInit {
   readonly authenticationService = inject(AuthenticationService);
-  readonly sharedService = inject(SharedService);
   readonly sideBarService = inject(SideBarService);
   readonly breakpointService = inject(BreakpointService);
   readonly navBarService = inject(NavBarService);
-  readonly routeSpinnerService = inject(RouteSpinnerService);
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** Wired by `<base-template [outlet]="outlet">` in app.component.html. */
-  @Input() outlet: RouterOutlet;
 
   /** Matches table mobile breakpoint (≤767px): no persistent sidebar strip. */
   readonly mobileCardLayout = signal(false);
@@ -125,10 +119,6 @@ export class BaseTemplateComponent implements OnInit {
       return '0';
     }
     return this.sideBarMode === 'over' ? '76px' : '0';
-  }
-
-  prepareRoute() {
-    return this.outlet?.activatedRouteData?.['animation'];
   }
 
   private getNavigationItems(): void {

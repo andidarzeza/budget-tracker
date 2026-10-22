@@ -9,7 +9,6 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
 import { Router } from '@angular/router';
@@ -25,7 +24,7 @@ import { SideBarService } from 'src/app/services/side-bar.service';
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatRippleModule],
+  imports: [CommonModule,  MatCardModule, MatRippleModule],
 })
 export class AccountComponent implements OnInit {
   readonly trackById = trackById;

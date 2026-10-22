@@ -1,3 +1,4 @@
+import { DEFAULT_INCOME_WALLET_KEY } from 'src/app/services/configuration.service';
 import { formatAmountEntry } from 'src/app/utils/format-amount-entry';
 import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -36,7 +37,6 @@ import { NavBarService } from 'src/app/services/nav-bar.service';
 import { CategoriesService } from 'src/app/services/pages/categories.service';
 import { IncomeService } from 'src/app/services/pages/income.service';
 import { WalletService } from 'src/app/services/pages/wallet.service';
-import { SharedService } from 'src/app/services/shared.service';
 import { SideBarService } from 'src/app/services/side-bar.service';
 import { AmountKeypadComponent } from 'src/app/shared/amount-keypad/amount-keypad.component';
 import { CreateFormComponent } from 'src/app/shared/create-form/create-form.component';
@@ -46,7 +46,6 @@ import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.comp
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { pickEntryTimestamp } from 'src/app/utils/local-iso';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
@@ -69,7 +68,6 @@ import { TOASTER_CONFIGURATION } from 'src/environments/environment';
     PillButtonComponent,
     SelectInputComponent,
     AmountKeypadComponent,
-    ...TOOLTIP_IMPORTS,
   ],
 })
 export class AddIncomeComponent implements OnInit {
@@ -82,7 +80,6 @@ export class AddIncomeComponent implements OnInit {
   private readonly flagPipe = inject(FlagPipe);
   private readonly navBarService = inject(NavBarService);
   private readonly sideBarService = inject(SideBarService);
-  readonly sharedService = inject(SharedService);
   private readonly toaster = inject(ToastrService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -176,10 +173,6 @@ export class AddIncomeComponent implements OnInit {
     return this.formGroup.controls['categoryID'];
   }
 
-  get incomeValue() {
-    return this.formGroup.controls['incoming'];
-  }
-
   get id() {
     return this.income?.id;
   }
@@ -220,7 +213,7 @@ export class AddIncomeComponent implements OnInit {
         this.sources.set((wallets ?? []).filter((w) => !w.archived));
         // On a new income, pre-select the user's default deposit source (Settings).
         if (!this.isEditMode && !this.formGroup.get('walletId')?.value) {
-          const def = localStorage.getItem('defaultIncomeWalletId');
+          const def = localStorage.getItem(DEFAULT_INCOME_WALLET_KEY);
           if (def && this.sources().some((w) => w.id === def)) {
             this.formGroup.get('walletId')?.setValue(def);
           }

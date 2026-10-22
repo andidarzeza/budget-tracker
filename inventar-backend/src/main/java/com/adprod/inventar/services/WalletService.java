@@ -12,6 +12,8 @@ public interface WalletService {
 
     /** Resolve a wallet owned by the current user, or fail. Used by expense/income/project flows. */
     Wallet getOwned(String walletId);
+    /** Same, and it must belong to the workspace {@code account}. */
+    Wallet getOwned(String walletId, String account);
     /** Add {@code amount} to the wallet's balance (income, refunds). */
     void credit(String walletId, Double amount);
     /** Subtract {@code amount} from the wallet's balance (expense, contributions). */

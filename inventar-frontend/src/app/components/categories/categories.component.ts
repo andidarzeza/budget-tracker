@@ -26,7 +26,6 @@ import { SideBarService } from 'src/app/services/side-bar.service';
 import { BaseTableComponent } from 'src/app/shared/base-table/base-table.component';
 import { TableActionInput } from 'src/app/shared/base-table/table-actions/TableActionInput';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { buildParams } from 'src/app/utils/param-bulder';
 import { AddCategoryComponent } from './add-category/add-category.component';
 import { CategoryDetailComponent } from './category-detail/category-detail.component';
@@ -54,7 +53,6 @@ interface CategorySummary {
     BaseTableComponent,
     CategoryDetailComponent,
     PillButtonComponent,
-    ...TOOLTIP_IMPORTS,
   ],
 })
 export class CategoriesComponent extends BaseTable<Category> implements OnInit {
@@ -77,8 +75,6 @@ export class CategoriesComponent extends BaseTable<Category> implements OnInit {
     pageName: 'Categories',
     icon: 'category',
   };
-  resetData: boolean = false;
-
   /** Same breakpoint as table-card layout (≤767px) — switches the page from
    *  the dense desktop table to the mobile ledger view. */
   readonly isMobile = toSignal(this.breakpointService.useTableCardLayout$, { initialValue: false });

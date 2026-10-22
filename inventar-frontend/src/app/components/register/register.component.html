@@ -28,7 +28,7 @@
             <input id="register-username" class="lock-input" type="text" placeholder="Username"
                 formControlName="username" autocomplete="username"
                 [class.lock-input--invalid]="registerGroup.get('username')?.touched && registerGroup.get('username')?.invalid" />
-            <input id="register-password" class="lock-input" type="password" placeholder="Password"
+            <input id="register-password" class="lock-input" type="password" placeholder="Password (8+ characters)"
                 formControlName="password" autocomplete="new-password"
                 [class.lock-input--invalid]="registerGroup.get('password')?.touched && registerGroup.get('password')?.invalid" />
         </div>

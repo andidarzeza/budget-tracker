@@ -2,15 +2,18 @@ package com.adprod.inventar.services.implementations;
 
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
-import com.adprod.inventar.repositories.CategoryRepository;
+import com.adprod.inventar.models.enums.EntityAction;
+import com.adprod.inventar.models.enums.EntityType;
+import com.adprod.inventar.models.utils.Amounts;
+import com.adprod.inventar.models.utils.Changes;
 import com.adprod.inventar.repositories.ContributionRepository;
 import com.adprod.inventar.repositories.ExpenseRepository;
 import com.adprod.inventar.repositories.ProjectRepository;
 import com.adprod.inventar.services.AccountService;
+import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.ProjectService;
 import com.adprod.inventar.services.SecurityContextService;
 import com.adprod.inventar.services.WalletService;
-import com.adprod.inventar.models.Wallet;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -27,17 +30,15 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
-    /** Auto-managed expense category used to record project contributions in the expenses ledger. */
-
     private final ProjectRepository projectRepository;
     private final ContributionRepository contributionRepository;
     private final ExpenseRepository expenseRepository;
-    private final CategoryRepository categoryRepository;
     private final AccountService accountService;
     private final WalletService walletService;
     private final SecurityContextService securityContextService;
     private final MongoTemplate mongoTemplate;
     private final ProjectCategories projectCategories;
+    private final HistoryService historyService;
 
     @Override
     public ResponseEntity<?> findAll(String account) {
@@ -75,12 +76,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ResponseEntity<?> save(Project project) {
         accountService.checkAccount(project.getAccount());
+        project.setId(null);
         project.setUser(securityContextService.username());
         project.setCreatedTime(LocalDateTime.now());
         project.setLastModifiedDate(project.getCreatedTime());
         projectRepository.save(project);
         // The project's own expense category ("paid from this project's savings").
         projectCategories.sync(project);
+        historyService.record(History.of(EntityAction.CREATE, EntityType.PROJECT, project.getAccount(), project.getId(), summary(project)));
         return ResponseEntity.ok(project);
     }
 
@@ -97,6 +100,14 @@ public class ProjectServiceImpl implements ProjectService {
         project.setLastModifiedDate(LocalDateTime.now());
         projectRepository.save(project);
         projectCategories.sync(project);
+        historyService.record(History.of(EntityAction.UPDATE, EntityType.PROJECT, project.getAccount(), id, summary(project))
+                .withChanges(new Changes()
+                        .add("Name", existing.getName(), project.getName())
+                        .add("Target", target(existing), target(project))
+                        .add("Icon", existing.getIcon(), project.getIcon())
+                        .add("Archived", existing.isArchived(), project.isArchived())
+                        .add("Description", existing.getDescription(), project.getDescription())
+                        .list()));
         return ResponseEntity.ok(project);
     }
 
@@ -115,7 +126,7 @@ public class ProjectServiceImpl implements ProjectService {
         for (Contribution c : contributions) {
             if (expenseRepository.findByContributionId(c.getId()).isPresent()) {
                 // Legacy contribution still mirrored as an expense: reversing it refunds it.
-                removeLinkedExpense(c.getId());
+                removeLinkedExpense(c.getId(), "Project deleted: " + project.getName());
                 continue;
             }
             double left = remaining.getOrDefault(c.getCurrency(), 0.0);
@@ -129,6 +140,10 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.deleteById(id);
         // Keep the category while expenses still point at it, so they keep their name.
         projectCategories.removeIfUnused(id, expenseRepository.existsByProjectId(id));
+        historyService.record(History.of(EntityAction.DELETE, EntityType.PROJECT, project.getAccount(), id,
+                        Changes.summary(summary(project), contributions.isEmpty() ? null
+                                : contributions.size() + " contribution(s) returned to their sources"))
+                .withSnapshot(project));
         return ResponseEntity.ok(new ResponseMessage("Project " + id + " was deleted."));
     }
 
@@ -147,10 +162,8 @@ public class ProjectServiceImpl implements ProjectService {
         ensureOwned(project);
 
         // The contribution is funded from a money source; its currency follows that source.
-        Wallet wallet = walletService.getOwned(contribution.getWalletId());
-        if (!Objects.equals(wallet.getAccount(), project.getAccount())) {
-            throw new NotFoundException("Wallet " + contribution.getWalletId() + " not found.");
-        }
+        Wallet wallet = walletService.getOwned(contribution.getWalletId(), project.getAccount());
+        contribution.setId(null);
         contribution.setProjectId(projectId);
         contribution.setUser(project.getUser());
         contribution.setAccount(project.getAccount());
@@ -163,6 +176,9 @@ public class ProjectServiceImpl implements ProjectService {
         // so no expense is recorded. Spending the saved money later is an expense filed
         // under the project's category (see ExpenseServiceImpl).
         walletService.debit(contribution.getWalletId(), contribution.getAmount());
+        historyService.record(History.of(EntityAction.CREATE, EntityType.CONTRIBUTION, contribution.getAccount(),
+                        contribution.getId(), summary(contribution, project.getName()))
+                .withParent(projectId));
 
         return ResponseEntity.ok(contribution);
     }
@@ -174,14 +190,19 @@ public class ProjectServiceImpl implements ProjectService {
         if (!Objects.equals(contribution.getUser(), securityContextService.username())) {
             throw new NotFoundException("Contribution " + contributionId + " not found.");
         }
+        String summary = summary(contribution, historyService.projectName(contribution.getProjectId()));
         // Move the money back to its source. Legacy contributions were mirrored as an expense;
         // reversing that expense refunds the source instead.
         if (expenseRepository.findByContributionId(contributionId).isPresent()) {
-            removeLinkedExpense(contributionId);
+            removeLinkedExpense(contributionId, "Contribution deleted: " + summary);
         } else if (contribution.getWalletId() != null) {
             walletService.credit(contribution.getWalletId(), contribution.getAmount());
         }
         contributionRepository.deleteById(contributionId);
+        historyService.record(History.of(EntityAction.DELETE, EntityType.CONTRIBUTION, contribution.getAccount(),
+                        contributionId, summary)
+                .withParent(contribution.getProjectId())
+                .withSnapshot(contribution));
         return ResponseEntity.ok(new ResponseMessage("Contribution " + contributionId + " was deleted."));
     }
 
@@ -189,14 +210,37 @@ public class ProjectServiceImpl implements ProjectService {
      * Reverse the expense linked to {@code contributionId}, if any. Refunds the balance and
      * removes the expense record. Idempotent — safe to call when no link exists.
      */
-    private void removeLinkedExpense(String contributionId) {
+    private void removeLinkedExpense(String contributionId, String cause) {
         if (contributionId == null) return;
         expenseRepository.findByContributionId(contributionId).ifPresent(expense -> {
             if (Objects.nonNull(expense.getWalletId())) {
                 walletService.credit(expense.getWalletId(), expense.getMoneySpent());
             }
             expenseRepository.delete(expense);
+            historyService.record(History.of(EntityAction.DELETE, EntityType.EXPENSE, expense.getAccount(), expense.getId(),
+                            Changes.summary(historyService.categoryName(expense.getCategoryID()),
+                                    Changes.money(expense.getMoneySpent(), expense.getCurrency()), expense.getDescription()))
+                    .withSnapshot(expense)
+                    .causedBy(cause));
         });
+    }
+
+    /** "Holiday · target 2000.00 EUR" */
+    private static String summary(Project project) {
+        return Changes.summary(project.getName(), target(project) == null ? null : "target " + target(project));
+    }
+
+    private static String target(Project project) {
+        return project.getTargetAmount() == null ? null
+                : Changes.money(project.getTargetAmount(), project.getTargetCurrency());
+    }
+
+    /** "50.00 EUR from BKT into Holiday" */
+    private String summary(Contribution contribution, String projectName) {
+        String from = historyService.sourceName(contribution.getWalletId());
+        return Changes.money(contribution.getAmount(), contribution.getCurrency())
+                + (from == null ? "" : " from " + from)
+                + (projectName == null ? "" : " into " + projectName);
     }
 
     /**
@@ -227,7 +271,7 @@ public class ProjectServiceImpl implements ProjectService {
         net.forEach((projectId, byCurrency) -> byCurrency.forEach((currency, total) -> {
             if (Math.abs(total) < 0.005) return;
             grouped.computeIfAbsent(projectId, k -> new ArrayList<>())
-                    .add(new CurrencyTotalDTO(currency, Math.round(total * 100) / 100.0));
+                    .add(new CurrencyTotalDTO(currency, Amounts.round(total)));
         }));
         // Stable per-project ordering (largest currency first) so the UI doesn't reshuffle on refresh.
         for (List<CurrencyTotalDTO> list : grouped.values()) {

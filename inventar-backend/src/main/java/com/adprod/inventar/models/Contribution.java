@@ -1,6 +1,5 @@
 package com.adprod.inventar.models;
 
-import com.querydsl.core.annotations.QueryEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@QueryEntity
 public class Contribution {
 
     @Id

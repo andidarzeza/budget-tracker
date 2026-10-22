@@ -1,8 +1,7 @@
+import { startOfWeek, shiftDays } from 'src/app/utils/dates';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,12 +16,10 @@ import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imp
   styleUrls: ['./week-picker.component.css'],
   imports: [
     CommonModule,
-    MatButtonModule,
     MatDatepickerModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatNativeDateModule,
     IconButtonComponent,
     ...TOOLTIP_IMPORTS,
   ],
@@ -37,8 +34,8 @@ export class WeekPickerComponent implements OnInit {
   });
 
   date = new Date();
-  from = this.startOfWeek(this.date);
-  to = this.shiftDays(this.from, 7);
+  from = startOfWeek(this.date);
+  to = shiftDays(this.from, 7);
 
   @Output() onChange = new EventEmitter<{ from: Date; to: Date }>();
 
@@ -47,42 +44,27 @@ export class WeekPickerComponent implements OnInit {
   }
 
   nextWeek(): void {
-    this.setFrom(this.shiftDays(this.from, 7));
+    this.setFrom(shiftDays(this.from, 7));
   }
 
   previousWeek(): void {
-    this.setFrom(this.shiftDays(this.from, -7));
+    this.setFrom(shiftDays(this.from, -7));
   }
 
   onDatePicked(date: Date | null): void {
     if (!date) return;
-    this.setFrom(this.startOfWeek(date));
+    this.setFrom(startOfWeek(date));
   }
 
   /** End-of-week label is from + 6 days (the inclusive Sunday). */
   get displayEnd(): Date {
-    return this.shiftDays(this.from, 6);
-  }
-
-  /** Monday-based week start, normalized to local midnight. */
-  private startOfWeek(input: Date): Date {
-    const d = new Date(input.getFullYear(), input.getMonth(), input.getDate());
-    const day = d.getDay();
-    const offset = (day + 6) % 7;
-    d.setDate(d.getDate() - offset);
-    return d;
+    return shiftDays(this.from, 6);
   }
 
   private setFrom(date: Date): void {
     this.from = date;
-    this.to = this.shiftDays(date, 7);
+    this.to = shiftDays(date, 7);
     this.emitDateRange();
-  }
-
-  private shiftDays(input: Date, delta: number): Date {
-    const next = new Date(input);
-    next.setDate(next.getDate() + delta);
-    return next;
   }
 
   private emitDateRange(): void {

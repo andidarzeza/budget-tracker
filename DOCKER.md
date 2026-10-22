@@ -1,25 +1,28 @@
 # Docker deployment (e.g. Hostinger VPS)
 
-This stack runs **MongoDB**, the **Spring Boot** API, and the **Angular** app behind **nginx** on one machine. The Docker build uses `environment.docker.ts`: the browser calls the API at **same-origin** paths **`/api/...`** (no port in the URL). The **web** container’s nginx **proxies** `/api` to the **backend** service on port **9000** inside the compose network. The API still has **permissive CORS** in `SpringConfiguration`; same-origin requests do not rely on it.
+This stack runs **MongoDB**, the **Spring Boot** API and the **Angular** app (served by nginx in the `web` container). The Docker build uses `environment.docker.ts`: the browser calls the API at **same-origin** paths **`/api/...`**, which the `web` container's nginx proxies to the **backend** service on port **9000** inside the compose network.
 
-**Default published ports**
+HTTPS is done **outside Docker** by the server's own nginx with a Let's Encrypt certificate (certbot), which proxies to the `web` container on `127.0.0.1:4001`.
 
-| Service   | Host port | Use |
-|-----------|-----------|-----|
-| **web** (nginx + Angular) | **4001** | Open the app at `http://YOUR_SERVER:4001` — API is `http://YOUR_SERVER:4001/api/...` |
-| **backend** (Spring Boot) | **9000** | Optional direct access (e.g. debugging); the SPA uses `/api` via nginx |
+**Published ports**
 
-Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different **host** ports. The backend still listens on **9000 inside the container**; nginx proxies to `backend:9000`. Only if you change Spring’s **`server.port`** inside the image should you update **`proxy_pass`** in `inventar-frontend/nginx.conf` and rebuild **web**.
+| Service | Host port | Use |
+|---------|-----------|-----|
+| **web** (nginx + Angular) | **127.0.0.1:4001** | What the server's nginx proxies to |
+| **backend** (Spring Boot) | **127.0.0.1:9000** | From the server itself only, for debugging |
+
+Both are bound to `127.0.0.1`, so they can't be reached from the internet directly (Docker's published ports bypass `ufw`, so the firewall alone would not stop that). Set `WEB_PORT` / `BACKEND_PORT` in `.env` to change them.
 
 ## Requirements
 
 - A **VPS** (or similar) where you can install Docker—not shared hosting without root.
-- On **Hostinger**, use a plan that includes **KVM VPS** (or another product that supports Docker). Install Docker Engine and the Compose plugin using Hostinger’s docs or [Docker’s install guide](https://docs.docker.com/engine/install/).
+- On **Hostinger**, use a plan that includes **KVM VPS** (or another product that supports Docker). Install Docker Engine and the Compose plugin using Hostinger's docs or [Docker's install guide](https://docs.docker.com/engine/install/).
+- nginx and certbot on the server, with a certificate for the domain (`sudo certbot --nginx -d financa.cloud -d www.financa.cloud`).
 
 ## Quick start
 
 1. On the server, clone this repository and `cd` into it.
-2. Optionally `cp .env.example .env` to set **`HTTP_PORT`** / **`BACKEND_PORT`**. The **backend** container does **not** load `.env` (so stray `SPRING_DATA_MONGODB_URI=` or `CORS_*` lines cannot override Mongo). Mongo uses **`SPRING_PROFILES_ACTIVE=docker`** and `docker-compose.yml` / `application-docker.properties`.
+2. `cp .env.example .env` and set **`JWT_SECRET`** to 32+ random characters (`openssl rand -base64 48`). It signs login tokens; keep it secret and out of git (`.env` is git-ignored). Changing it signs everyone out.
 3. Build and run:
 
    ```bash
@@ -27,13 +30,29 @@ Set `HTTP_PORT` and `BACKEND_PORT` in `.env` if you need different **host** port
    docker compose up -d
    ```
 
-4. Open `http://YOUR_SERVER_IP:4001` (or `http://YOUR_DOMAIN:4001`). Open firewall rules for **4001** (and **9000** only if you need direct API access from outside Docker).
+4. Point the server's nginx at the app (below) and open `https://financa.cloud`.
 
-Data is stored in the **`mongo_data`** Docker volume. Back it up with your provider’s snapshot tools or `docker run` backup procedures.
+Data is stored in the **`mongo_data`** Docker volume. Back it up with your provider's snapshot tools or `mongodump` (`docker compose exec -T mongo mongodump --archive --gzip --db inventar > backup.gz`).
 
-## HTTPS
+## The server's nginx
 
-Compose publishes **HTTP on port 4001** (web) and **9000** (backend). For HTTPS (e.g. `https://www.example.com` with paths like `/api/...` on the same host), terminate TLS in front of the stack and proxy to **`127.0.0.1:4001`** only — `/api` is already handled by the **web** container’s nginx. Alternatively install **Caddy** / **Traefik** / **Certbot** on the VPS, or publish **443** from a custom nginx image with certificates.
+The site's `server { listen 443 ssl; ... }` block (e.g. `/etc/nginx/sites-enabled/financa.cloud`, certbot adds the `ssl_*` lines) needs:
+
+```nginx
+add_header Strict-Transport-Security "max-age=31536000" always;
+
+location / {
+    proxy_pass http://127.0.0.1:4001;   # 127.0.0.1, not localhost (Docker binds IPv4 only)
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    # Required: the API's login rate limit counts per visitor using this header.
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+Then `sudo nginx -t && sudo systemctl reload nginx`.
 
 ## Useful commands
 

@@ -5,6 +5,7 @@ import com.adprod.inventar.models.*;
 
 import static com.adprod.inventar.models.enums.EntityAction.*;
 import static com.adprod.inventar.models.enums.EntityType.INCOME;
+import com.adprod.inventar.models.utils.Changes;
 import com.adprod.inventar.models.wrappers.IncomeDTO;
 import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
@@ -14,7 +15,6 @@ import com.adprod.inventar.services.HistoryService;
 import com.adprod.inventar.services.IncomeService;
 import com.adprod.inventar.services.SecurityContextService;
 import com.adprod.inventar.services.WalletService;
-import com.adprod.inventar.models.Wallet;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -75,29 +75,34 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public ResponseEntity save(Income income) {
         this.accountService.checkAccount(income.getAccount());
+        income.setId(null);
         income.setUser(securityContextService.username());
-        Wallet wallet = resolveWallet(income.getWalletId(), income.getAccount());
+        checkCategory(income);
+        Wallet wallet = walletService.getOwned(income.getWalletId(), income.getAccount());
         income.setCurrency(wallet.getCurrency());
         walletService.credit(wallet.getId(), income.getIncoming());
         incomeRepository.save(income);
-        historyService.save(historyService.from(CREATE, INCOME, income.getAccount()));
+        historyService.record(History.of(CREATE, INCOME, income.getAccount(), income.getId(), summary(income)));
         return ResponseEntity.ok(income);
     }
 
     @Override
     public Income findOne(String id) {
+        // Someone else's income is "not found".
         return incomeRepository
                 .findById(id)
+                .filter(income -> Objects.equals(income.getUser(), securityContextService.username()))
                 .orElseThrow(() -> new NotFoundException("No Income Found with id: " + id));
     }
 
     @Override
     public ResponseEntity delete(String id) {
         Income income = findOne(id);
+        String summary = summary(income);
         // Reverse the deposit: pull the amount back out of the source it landed in.
         reverse(income.getWalletId(), income.getIncoming());
         incomeRepository.delete(income);
-        historyService.save(historyService.from(DELETE, INCOME, income.getAccount()));
+        historyService.record(History.of(DELETE, INCOME, income.getAccount(), id, summary).withSnapshot(income));
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }
 
@@ -106,9 +111,10 @@ public class IncomeServiceImpl implements IncomeService {
         accountService.checkAccount(income.getAccount());
         income.setUser(securityContextService.username());
         Income incomeDB = findOne(id);
+        checkCategory(income);
         // Reverse the old deposit, then re-deposit into the (possibly new) source.
         reverse(incomeDB.getWalletId(), incomeDB.getIncoming());
-        Wallet wallet = resolveWallet(income.getWalletId(), income.getAccount());
+        Wallet wallet = walletService.getOwned(income.getWalletId(), income.getAccount());
         income.setCurrency(wallet.getCurrency());
         walletService.credit(wallet.getId(), income.getIncoming());
         income.setId(id);
@@ -118,18 +124,41 @@ public class IncomeServiceImpl implements IncomeService {
         }
         income.setLastModifiedDate(new Date());
         incomeRepository.save(income);
-        historyService.save(historyService.from(UPDATE, INCOME, income.getAccount()));
+        historyService.record(History.of(UPDATE, INCOME, income.getAccount(), id, summary(income))
+                .withChanges(new Changes()
+                        .add("Amount", money(incomeDB), money(income))
+                        .add("Category", historyService.categoryName(incomeDB.getCategoryID()),
+                                historyService.categoryName(income.getCategoryID()))
+                        .add("Received into", historyService.sourceName(incomeDB.getWalletId()),
+                                historyService.sourceName(income.getWalletId()))
+                        .add("Date", incomeDB.getCreatedTime(), income.getCreatedTime())
+                        .add("Name", incomeDB.getName(), income.getName())
+                        .add("Description", incomeDB.getDescription(), income.getDescription())
+                        .list()));
         return ResponseEntity.ok(income);
 
     }
 
-    /** Resolve a money source owned by the user and belonging to {@code account}. */
-    private Wallet resolveWallet(String walletId, String account) {
-        Wallet wallet = walletService.getOwned(walletId);
-        if (!Objects.equals(wallet.getAccount(), account)) {
-            throw new NotFoundException("Wallet " + walletId + " not found.");
-        }
-        return wallet;
+    /** "Salary · 1200.00 EUR into BKT · October" */
+    private String summary(Income income) {
+        String into = historyService.sourceName(income.getWalletId());
+        return Changes.summary(
+                historyService.categoryName(income.getCategoryID()),
+                money(income) + (into == null ? "" : " into " + into),
+                income.getDescription());
+    }
+
+    private static String money(Income income) {
+        return Changes.money(income.getIncoming(), income.getCurrency());
+    }
+
+    /** The income's category must be one of the user's, in the same account. */
+    private void checkCategory(Income income) {
+        if (income.getCategoryID() == null) return;
+        categoryRepository.findById(income.getCategoryID())
+                .filter(c -> Objects.equals(c.getUser(), income.getUser())
+                        && Objects.equals(c.getAccount(), income.getAccount()))
+                .orElseThrow(() -> new NotFoundException("Category " + income.getCategoryID() + " not found."));
     }
 
     /** Remove an amount from a source. No-op for legacy records without a source. */

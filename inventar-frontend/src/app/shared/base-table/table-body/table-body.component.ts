@@ -16,19 +16,14 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { MatButtonModule } from '@angular/material/button';
-import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ColumnDefinition } from 'src/app/models/models';
 import { CustomDatePipe } from 'src/app/pipes/custom-date.pipe';
 import { ColumnWidthPipe } from '../column-width/column-width.pipe';
 import { iosTileColorForName } from '../../ios/ios-colors';
 import { RecordActionsComponent } from '../../record-actions/record-actions.component';
-import { TOOLTIP_IMPORTS } from '../../tooltip-mobile-guard/tooltip-imports';
 
 @Component({
   selector: 'table-body',
@@ -36,16 +31,11 @@ import { TOOLTIP_IMPORTS } from '../../tooltip-mobile-guard/tooltip-imports';
   styleUrls: ['./table-body.component.css'],
   imports: [
     CommonModule,
-    ScrollingModule,
-    MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatRippleModule,
-    MatTooltipModule,
     ColumnWidthPipe,
     CustomDatePipe,
     RecordActionsComponent,
-    ...TOOLTIP_IMPORTS,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

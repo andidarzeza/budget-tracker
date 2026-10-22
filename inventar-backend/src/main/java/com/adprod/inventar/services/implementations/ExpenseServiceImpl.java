@@ -3,7 +3,9 @@ package com.adprod.inventar.services.implementations;
 import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.*;
 import com.adprod.inventar.models.enums.EntityAction;
+import static com.adprod.inventar.models.enums.EntityType.CONTRIBUTION;
 import static com.adprod.inventar.models.enums.EntityType.EXPENSE;
+import com.adprod.inventar.models.utils.Changes;
 import com.adprod.inventar.models.wrappers.ExpenseDTO;
 import com.adprod.inventar.models.wrappers.ResponseWrapper;
 import com.adprod.inventar.repositories.CategoryRepository;
@@ -19,24 +21,15 @@ import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class ExpenseServiceImpl implements ExpenseService {
-    private static final String VERIFY_INVOICE_API_URL = "https://efiskalizimi-app.tatime.gov.al/invoice-check/api/verifyInvoice";
     private final ExpenseRepository expenseRepository;
     private final CategoryRepository categoryRepository;
     private final ContributionRepository contributionRepository;
@@ -85,34 +78,55 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ResponseEntity save(Expense expense) {
         this.accountService.checkAccount(expense.getAccount());
+        expense.setId(null);
         expense.setUser(securityContextService.username());
+        // Only the app links an expense to a contribution (legacy records).
+        expense.setContributionId(null);
         charge(expense);
         expenseRepository.save(expense);
-        historyService.save(historyService.from(EntityAction.CREATE, EXPENSE, expense.getAccount()));
+        historyService.record(History.of(EntityAction.CREATE, EXPENSE, expense.getAccount(), expense.getId(), summary(expense)));
         return ResponseEntity.ok(expense);
     }
 
     @Override
     public ResponseEntity findOne(String id) {
-        Expense expense = expenseRepository
+        return ResponseEntity.ok(getOwned(id));
+    }
+
+    /** The current user's expense; someone else's is "not found". */
+    private Expense getOwned(String id) {
+        return expenseRepository
                 .findById(id)
+                .filter(expense -> Objects.equals(expense.getUser(), securityContextService.username()))
                 .orElseThrow(
                         () -> new NotFoundException("Expense with id: " + id + " was not found.")
                 );
-        return ResponseEntity.ok(expense);
     }
 
     @Override
     public ResponseEntity delete(String id) {
-        Expense expense = (Expense) findOne(id).getBody();
+        Expense expense = getOwned(id);
+        String summary = summary(expense);
         refund(expense.getWalletId(), expense.getMoneySpent());
         expenseRepository.delete(expense);
+        historyService.record(History.of(EntityAction.DELETE, EXPENSE, expense.getAccount(), id, summary)
+                .withSnapshot(expense));
         // Cascade: an expense auto-created from a project contribution and the contribution itself
         // are two views of the same event; deleting one always drops the other so they don't drift.
         if (Objects.nonNull(expense.getContributionId())) {
-            contributionRepository.deleteById(expense.getContributionId());
+            contributionRepository.findById(expense.getContributionId())
+                    .filter(contribution -> Objects.equals(contribution.getUser(), expense.getUser()))
+                    .ifPresent(contribution -> {
+                        contributionRepository.delete(contribution);
+                        historyService.record(History.of(EntityAction.DELETE, CONTRIBUTION, contribution.getAccount(),
+                                        contribution.getId(),
+                                        Changes.summary(Changes.money(contribution.getAmount(), contribution.getCurrency()),
+                                                historyService.projectName(contribution.getProjectId())))
+                                .withParent(contribution.getProjectId())
+                                .withSnapshot(contribution)
+                                .causedBy("Its expense was deleted: " + summary));
+                    });
         }
-        historyService.save(historyService.from(EntityAction.DELETE, EXPENSE, expense.getAccount()));
         return ResponseEntity.ok(new ResponseMessage("Deleted"));
     }
 
@@ -120,7 +134,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public ResponseEntity update(String id, Expense spending) {
         this.accountService.checkAccount(spending.getAccount());
         spending.setUser(securityContextService.username());
-        Expense expense = (Expense) findOne(id).getBody();
+        Expense expense = getOwned(id);
         // Refund the old source, then charge the new one — handles changing amount, source,
         // and (via the source) currency in a single update.
         refund(expense.getWalletId(), expense.getMoneySpent());
@@ -134,8 +148,38 @@ public class ExpenseServiceImpl implements ExpenseService {
         // Contributions own their linked expense; keep the link intact across edits.
         spending.setContributionId(expense.getContributionId());
         expenseRepository.save(spending);
-        historyService.save(historyService.from(EntityAction.UPDATE, EXPENSE, spending.getAccount()));
+        historyService.record(History.of(EntityAction.UPDATE, EXPENSE, spending.getAccount(), id, summary(spending))
+                .withChanges(new Changes()
+                        .add("Amount", money(expense), money(spending))
+                        .add("Category", historyService.categoryName(expense.getCategoryID()),
+                                historyService.categoryName(spending.getCategoryID()))
+                        .add("Paid from", paidFrom(expense), paidFrom(spending))
+                        .add("Date", expense.getCreatedTime(), spending.getCreatedTime())
+                        .add("Description", expense.getDescription(), spending.getDescription())
+                        .list()));
         return ResponseEntity.ok(spending);
+    }
+
+    /** "Groceries · 23.50 EUR from BKT · Lidl" */
+    private String summary(Expense expense) {
+        String from = paidFrom(expense);
+        return Changes.summary(
+                historyService.categoryName(expense.getCategoryID()),
+                money(expense) + (from == null ? "" : " from " + from),
+                expense.getDescription());
+    }
+
+    private static String money(Expense expense) {
+        return Changes.money(expense.getMoneySpent(), expense.getCurrency());
+    }
+
+    /** The source's name, or "project X" when paid from a project's savings. */
+    private String paidFrom(Expense expense) {
+        if (expense.getProjectId() != null) {
+            String project = historyService.projectName(expense.getProjectId());
+            return project == null ? null : "project " + project;
+        }
+        return historyService.sourceName(expense.getWalletId());
     }
 
     /**
@@ -145,7 +189,10 @@ public class ExpenseServiceImpl implements ExpenseService {
      */
     private void charge(Expense expense) {
         Category category = expense.getCategoryID() == null ? null
-                : categoryRepository.findById(expense.getCategoryID()).orElse(null);
+                : categoryRepository.findById(expense.getCategoryID())
+                        .filter(c -> Objects.equals(c.getUser(), expense.getUser())
+                                && Objects.equals(c.getAccount(), expense.getAccount()))
+                        .orElseThrow(() -> new NotFoundException("Category " + expense.getCategoryID() + " not found."));
         if (ProjectCategories.isProjectCategory(category)) {
             Project project = projectRepository.findById(category.getProjectId())
                     .filter(p -> Objects.equals(p.getUser(), expense.getUser())
@@ -156,20 +203,11 @@ public class ExpenseServiceImpl implements ExpenseService {
             expense.setCurrency(project.getTargetCurrency());
             return;
         }
-        Wallet wallet = resolveWallet(expense.getWalletId(), expense.getAccount());
+        Wallet wallet = walletService.getOwned(expense.getWalletId(), expense.getAccount());
         // Currency always follows the chosen source so the two can never disagree.
         expense.setProjectId(null);
         expense.setCurrency(wallet.getCurrency());
         walletService.debit(wallet.getId(), expense.getMoneySpent());
-    }
-
-    /** Resolve a money source owned by the user and belonging to {@code account}. */
-    private Wallet resolveWallet(String walletId, String account) {
-        Wallet wallet = walletService.getOwned(walletId);
-        if (!Objects.equals(wallet.getAccount(), account)) {
-            throw new NotFoundException("Wallet " + walletId + " not found.");
-        }
-        return wallet;
     }
 
     /** Add an amount back to a source. No-op for legacy records without a source. */
@@ -177,79 +215,5 @@ public class ExpenseServiceImpl implements ExpenseService {
         if (Objects.nonNull(walletId)) {
             walletService.credit(walletId, amount);
         }
-    }
-
-    @Override
-    public ResponseEntity verifyInvoiceFromUrl(InvoiceVerificationFromUrlRequest request) {
-        if (Objects.isNull(request) || Objects.isNull(request.getUrl()) || request.getUrl().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(new ResponseMessage("URL is required."));
-        }
-
-        Map<String, String> qrParams = extractQrParams(request.getUrl().trim());
-        String iic = qrParams.get("iic");
-        String dateTimeCreated = qrParams.get("crtd");
-        String tin = qrParams.get("tin");
-
-        if (Objects.isNull(iic) || Objects.isNull(dateTimeCreated) || Objects.isNull(tin)) {
-            return ResponseEntity.badRequest()
-                    .body(new ResponseMessage("The scanned URL does not contain iic, crtd, and tin parameters."));
-        }
-
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("iic", iic);
-        formData.add("dateTimeCreated", dateTimeCreated);
-        formData.add("tin", tin);
-
-        try {
-            Map<String, Object> verificationResponse = WebClient.builder()
-                    .baseUrl(VERIFY_INVOICE_API_URL)
-                    .build()
-                    .post()
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .bodyValue(formData)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                    .block();
-            Object totalPrice = Objects.nonNull(verificationResponse) ? verificationResponse.get("totalPrice") : null;
-            Object seller = Objects.nonNull(verificationResponse) ? verificationResponse.get("seller") : null;
-            if (Objects.isNull(totalPrice)) {
-                return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                        .body(new ResponseMessage("External service response does not include totalPrice."));
-            }
-            Map<String, Object> response = new HashMap<>();
-            response.put("totalPrice", totalPrice);
-            response.put("seller", seller);
-            return ResponseEntity.ok(response);
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                    .body(new ResponseMessage("Failed to verify invoice with external service."));
-        }
-    }
-
-    private Map<String, String> extractQrParams(String scannedUrl) {
-        URI uri = URI.create(scannedUrl);
-        String query = uri.getQuery();
-        String fragment = uri.getFragment();
-        String fragmentQuery = null;
-        if (Objects.nonNull(fragment) && fragment.contains("?")) {
-            fragmentQuery = fragment.substring(fragment.indexOf("?") + 1);
-        }
-
-        Map<String, String> params = new HashMap<>();
-        mergeQueryParams(params, query);
-        mergeQueryParams(params, fragmentQuery);
-        return params;
-    }
-
-    private void mergeQueryParams(Map<String, String> target, String query) {
-        if (Objects.isNull(query) || query.isEmpty()) {
-            return;
-        }
-        Map<String, String> extracted = UriComponentsBuilder.newInstance()
-                .query(query)
-                .build()
-                .getQueryParams()
-                .toSingleValueMap();
-        target.putAll(extracted);
     }
 }

@@ -6,8 +6,18 @@
     align-items: center;
     justify-content: center;
     pointer-events: auto;
-    /* Only shows if loading/saving takes longer than 2 seconds. */
-    animation: loading-appear 0.25s ease 2s both;
+    /* Rendered only after 2s of loading (see the component). */
+    animation: loading-appear 0.25s ease both;
+}
+
+/* Scoped here so it beats the enter animation above. */
+.form-loading-root.form-loading-leave {
+    pointer-events: none;
+    animation: loading-disappear 0.16s ease-in both;
+}
+
+@keyframes loading-disappear {
+    to { opacity: 0; }
 }
 
 @keyframes loading-appear {

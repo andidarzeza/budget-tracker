@@ -105,13 +105,8 @@ export class ColumnDefinitionService {
       type: 'string'
     },
     {
-      column: 'message',
-      label: 'Message',
-      type: 'string'
-    },
-    {
-      column: 'user',
-      label: 'User',
+      column: 'summary',
+      label: 'Details',
       type: 'string'
     }
   ];

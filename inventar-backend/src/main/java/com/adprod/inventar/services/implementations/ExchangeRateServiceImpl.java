@@ -1,6 +1,5 @@
 package com.adprod.inventar.services.implementations;
 
-import com.adprod.inventar.exceptions.NotFoundException;
 import com.adprod.inventar.models.ExchangeRate;
 import com.adprod.inventar.repositories.ExchangeRateRepository;
 import com.adprod.inventar.services.WebPushService;
@@ -50,13 +49,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             .connectTimeout(Duration.ofSeconds(15))
             .followRedirects(HttpClient.Redirect.NORMAL)
             .build();
-
-    @Override
-    public ResponseEntity latest(String currency) {
-        return exchangeRateRepository.findFirstByCurrencyOrderByDateDesc(currency)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new NotFoundException("No exchange rate stored for " + currency));
-    }
 
     @Override
     public ResponseEntity history(String currency, String from, String to) {

@@ -7,15 +7,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { NavigationEnd, Router } from '@angular/router';
-import { IConfiguration } from 'src/app/models/models';
-import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
-import { ConfigurationService } from 'src/app/services/configuration.service';
-import { SharedService } from 'src/app/services/shared.service';
-import { SideBarService } from 'src/app/services/side-bar.service';
-import { ThemeService } from 'src/app/services/theme.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'nav-bar',
@@ -25,14 +18,9 @@ import { environment } from 'src/environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavBarComponent implements OnInit {
-  readonly sharedService = inject(SharedService);
   readonly authenticationService = inject(AuthenticationService);
-  readonly sidebarService = inject(SideBarService);
-  readonly themeService = inject(ThemeService);
-  readonly accountService = inject(AccountService);
   readonly router = inject(Router);
   readonly breakpointService = inject(BreakpointService);
-  private readonly configurationService = inject(ConfigurationService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly zone = inject(NgZone);
 
@@ -57,11 +45,7 @@ export class NavBarComponent implements OnInit {
     }
   });
 
-  configuration: IConfiguration;
-  readonly EXPERIMENTAL_MODE = environment.experimentalMode;
-
   ngOnInit(): void {
-    this.clearLegacyAccentOverride();
     // The menu shows HH:mm — only update (and re-render) when the minute changes.
     interval(5000)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -83,13 +67,6 @@ export class NavBarComponent implements OnInit {
         this.scrolled.set(false);
       });
     this.watchScroll();
-    this.configurationService
-      .getConfiguration()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((configuration: IConfiguration) => {
-        this.configuration = configuration;
-        this.sharedService.applyBodyTheme(this.themeService.themeValue);
-      });
   }
 
   /** Title of the deepest known route segment ("/expenses/add" → "Add"). */
@@ -137,28 +114,8 @@ export class NavBarComponent implements OnInit {
     return segment.charAt(0).toUpperCase() + segment.slice(1);
   }
 
-  /**
-   * The legacy theme picker wrote `--light` / `--lightShadowed` overrides
-   * onto :root and persisted them in `themeColor` localStorage. The new
-   * indigo design system owns those tokens through .light-theme/.dark-theme,
-   * so any leftover override would shadow the accent. Drop both once.
-   */
-  private clearLegacyAccentOverride(): void {
-    if (localStorage.getItem('themeColor')) {
-      localStorage.removeItem('themeColor');
-    }
-    const root = document.documentElement;
-    root.style.removeProperty('--light');
-    root.style.removeProperty('--lightShadowed');
-  }
-
   logout(): void {
     this.authenticationService.logout();
-  }
-
-  toggleDarkMode(): void {
-    this.themeService.changeTheme();
-    this.sharedService.applyBodyTheme(this.themeService.themeValue);
   }
 
   get firstName() {

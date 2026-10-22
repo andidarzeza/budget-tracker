@@ -9,7 +9,6 @@ import { catchError, map, mergeMap } from 'rxjs/operators';
 import { SimplifiedAccount } from 'src/app/models/models';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ConfigurationService } from 'src/app/services/configuration.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { ThemeSwitchComponent } from 'src/app/shared/theme-switch/theme-switch.component';
@@ -35,7 +34,6 @@ export class LoginComponent {
   readonly authenticationService = inject(AuthenticationService);
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
-  readonly breakpointService = inject(BreakpointService);
 
   private readonly minSpinnerMs = 500;
   private spinnerStartedAt = 0;
@@ -103,6 +101,8 @@ export class LoginComponent {
           this.stopSpinner(() => {
             if (error?.status === 403) {
               this.toasterService.error('Authentication Failed', 'Failed', TOASTER_CONFIGURATION);
+            } else if (error?.status === 429) {
+              this.toasterService.error('Too many attempts. Try again in 15 minutes.', 'Failed', TOASTER_CONFIGURATION);
             }
           });
         },

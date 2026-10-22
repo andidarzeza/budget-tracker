@@ -1,23 +1,23 @@
 package com.adprod.inventar.services;
 
 import com.adprod.inventar.models.History;
-import com.adprod.inventar.models.enums.EntityAction;
-import com.adprod.inventar.models.enums.EntityType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
 public interface HistoryService {
-    
+
     ResponseEntity findAll(Pageable pageable, Map<String, String> params);
 
-    ResponseEntity findOne(String id);
+    /** Save an entry (see {@link History#of}) for the current user. */
+    void record(History history);
 
-    History from(EntityAction action, EntityType entity, String account);
+    /** Names for ids in summaries and changes; null when the record is gone. */
+    String categoryName(String categoryId);
 
-    void save(History history);
+    String sourceName(String walletId);
+
+    String projectName(String projectId);
 
 }

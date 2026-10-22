@@ -16,7 +16,9 @@ public class Configuration {
     @Id
     private String id;
     private boolean darkMode;
-    private boolean animationMode;
     private String user;
     private String baseCurrency;
+    /** Settings → default source for new expenses / incomes (wallet ids). */
+    private String defaultExpenseWalletId;
+    private String defaultIncomeWalletId;
 }

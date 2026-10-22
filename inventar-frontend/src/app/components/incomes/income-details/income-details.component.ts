@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { mergeMap } from 'rxjs/operators';
@@ -16,7 +15,7 @@ import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imp
   selector: 'app-income-details',
   templateUrl: './income-details.component.html',
   styleUrls: ['./income-details.component.css'],
-  imports: [CommonModule, MatButtonModule, MatDividerModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
+  imports: [CommonModule,  MatDividerModule, MatIconModule, IconButtonComponent, ...TOOLTIP_IMPORTS],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IncomeDetailsComponent implements OnInit, OnChanges, OnDestroy {

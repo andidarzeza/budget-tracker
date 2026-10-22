@@ -1,7 +1,6 @@
 package com.adprod.inventar.resources;
 
 import com.adprod.inventar.models.Expense;
-import com.adprod.inventar.models.InvoiceVerificationFromUrlRequest;
 import com.adprod.inventar.services.ExpenseService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -40,10 +39,5 @@ public class ExpenseResource {
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable String id, @RequestBody Expense expense) {
         return expenseService.update(id, expense);
-    }
-
-    @PostMapping("/verify-invoice-from-url")
-    public ResponseEntity verifyInvoiceFromUrl(@RequestBody InvoiceVerificationFromUrlRequest request) {
-        return expenseService.verifyInvoiceFromUrl(request);
     }
 }

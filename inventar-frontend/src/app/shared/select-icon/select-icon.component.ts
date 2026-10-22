@@ -1,12 +1,8 @@
 import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { TOOLTIP_IMPORTS } from '../tooltip-mobile-guard/tooltip-imports';
 
 /**
  * Icon field in the iOS style. In a grouped form it is a row ("Icon" · the
@@ -23,11 +19,7 @@ import { TOOLTIP_IMPORTS } from '../tooltip-mobile-guard/tooltip-imports';
   styleUrls: ['./select-icon.component.css'],
   imports: [
     HapticTapDirective,
-    CommonModule,
-    MatButtonModule,
-    MatDividerModule,
     MatIconModule,
-    ...TOOLTIP_IMPORTS,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [

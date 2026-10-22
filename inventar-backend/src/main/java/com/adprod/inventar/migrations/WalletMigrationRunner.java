@@ -2,6 +2,7 @@ package com.adprod.inventar.migrations;
 
 import com.adprod.inventar.models.Wallet;
 import com.adprod.inventar.models.enums.WalletType;
+import com.adprod.inventar.models.utils.Amounts;
 import com.adprod.inventar.repositories.WalletRepository;
 import lombok.AllArgsConstructor;
 import org.bson.Document;
@@ -15,8 +16,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -66,7 +65,7 @@ public class WalletMigrationRunner implements ApplicationRunner {
                 wallet.setName("Cash");
                 wallet.setType(WalletType.CASH.name());
                 wallet.setCurrency(currency);
-                wallet.setBalance(round(balances.getOrDefault(currency, 0.0)));
+                wallet.setBalance(Amounts.round(balances.getOrDefault(currency, 0.0)));
                 wallet.setIcon("payments");
                 wallet.setUser(username);
                 wallet.setAccount(accountId);
@@ -116,9 +115,5 @@ public class WalletMigrationRunner implements ApplicationRunner {
                 mongoTemplate.updateMulti(query, update, collection);
             }
         });
-    }
-
-    private static double round(double value) {
-        return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 }

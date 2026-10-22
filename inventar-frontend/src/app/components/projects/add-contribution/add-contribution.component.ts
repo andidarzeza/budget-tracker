@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -33,7 +32,6 @@ interface AddContributionData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FlagPipe],
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     CreateFormComponent,
     LabeledFormInputComponent,

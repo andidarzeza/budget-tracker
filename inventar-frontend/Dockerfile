@@ -15,7 +15,8 @@ RUN STATIC_DIR="$(dirname "$(find dist -name index.html | head -1)")" \
     && mkdir -p /static \
     && cp -a "${STATIC_DIR}/." /static/
 
-FROM nginx:1.27-alpine
+FROM nginx:1.29-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /static/ /usr/share/nginx/html/
 EXPOSE 80

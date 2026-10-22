@@ -1,3 +1,4 @@
+import { DEFAULT_EXPENSE_WALLET_KEY } from 'src/app/services/configuration.service';
 import { formatAmountEntry } from 'src/app/utils/format-amount-entry';
 import { HapticTapDirective } from 'src/app/shared/haptic-tap/haptic-tap.directive';
 import { FeedbackService } from 'src/app/services/feedback.service';
@@ -45,16 +46,12 @@ import { IconButtonComponent } from 'src/app/shared/icon-button/icon-button.comp
 import { LabeledTextareaComponent } from 'src/app/shared/labeled-textarea/labeled-textarea.component';
 import { PillButtonComponent } from 'src/app/shared/pill-button/pill-button.component';
 import { SelectInputComponent } from 'src/app/shared/select-input/select-input.component';
-import { TOOLTIP_IMPORTS } from 'src/app/shared/tooltip-mobile-guard/tooltip-imports';
 import { FlagPipe } from 'src/app/template/pipes/flag-pipe/flag.pipe';
 import { toBareLocalIso } from 'src/app/utils/local-iso';
 import { TOASTER_CONFIGURATION } from 'src/environments/environment';
 
 interface AddExpenseDialogData {
   id?: string;
-  moneySpent?: number;
-  currency?: string;
-  description?: string;
 }
 
 @Component({
@@ -75,7 +72,6 @@ interface AddExpenseDialogData {
     PillButtonComponent,
     SelectInputComponent,
     AmountKeypadComponent,
-    ...TOOLTIP_IMPORTS,
   ],
 })
 export class AddExpenseComponent implements OnInit {
@@ -130,10 +126,9 @@ export class AddExpenseComponent implements OnInit {
   readonly loadingData = signal(false);
   readonly loadingMessage = signal('Loading…');
   readonly isEditMode: boolean;
-  readonly isQrPrefillMode: boolean;
 
   readonly wizardStep = signal(0);
-  readonly wizardStepLabels: readonly string[];
+  readonly wizardStepLabels: readonly string[] = ['Category', 'Amount', 'Description'];
 
   /** Wizard step 1: raw keypad string (digits + optional `.`), synced to `moneySpent`. */
   readonly amountEntry = signal('');
@@ -170,10 +165,6 @@ export class AddExpenseComponent implements OnInit {
     const routeId = this.isPageMode ? this.route.snapshot.paramMap.get('id') : null;
     if (routeId) this.expense = { id: routeId } as AddExpenseDialogData;
     this.isEditMode = !!this.expense?.id;
-    this.isQrPrefillMode = !this.isEditMode && this.expense?.moneySpent != null;
-    this.wizardStepLabels = this.isQrPrefillMode
-      ? ['Category', 'Description']
-      : ['Category', 'Amount', 'Description'];
   }
 
   ngOnInit(): void {
@@ -193,16 +184,6 @@ export class AddExpenseComponent implements OnInit {
           this.amountCurrency.set(wallet.currency);
         }
       });
-    if (this.isQrPrefillMode) {
-      const scannedAmount = Number(this.expense?.moneySpent);
-      if (Number.isFinite(scannedAmount)) {
-        this.formGroup.get('moneySpent')?.setValue(scannedAmount);
-        this.amountEntry.set(
-          scannedAmount.toLocaleString('en-US', { maximumFractionDigits: 2, useGrouping: false }),
-        );
-      }
-      this.formGroup.get('description')?.setValue(this.expense?.description || '');
-    }
     this.formGroup
       .get('categoryID')
       ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
@@ -227,7 +208,7 @@ export class AddExpenseComponent implements OnInit {
         this.sources.set((wallets ?? []).filter((w) => !w.archived));
         // On a new expense, pre-select the user's default source (Settings).
         if (!this.isEditMode && !this.formGroup.get('walletId')?.value) {
-          const def = localStorage.getItem('defaultExpenseWalletId');
+          const def = localStorage.getItem(DEFAULT_EXPENSE_WALLET_KEY);
           if (def && this.sources().some((w) => w.id === def)) {
             this.formGroup.get('walletId')?.setValue(def);
           }
@@ -258,7 +239,7 @@ export class AddExpenseComponent implements OnInit {
     } else {
       source.setValidators(Validators.required);
       if (!source.value) {
-        const def = localStorage.getItem('defaultExpenseWalletId');
+        const def = localStorage.getItem(DEFAULT_EXPENSE_WALLET_KEY);
         if (def && this.sources().some((w) => w.id === def)) source.setValue(def);
       }
     }
@@ -269,11 +250,11 @@ export class AddExpenseComponent implements OnInit {
     if (this.wizardStep() === 0 && !this.validateWizardCategoryStep()) {
       return;
     }
-    if (!this.isQrPrefillMode && this.wizardStep() === 1 && !this.validateWizardAmountStep()) {
+    if (this.wizardStep() === 1 && !this.validateWizardAmountStep()) {
       return;
     }
     if (this.wizardStep() < this.lastWizardStep()) {
-      if (!this.isQrPrefillMode && this.wizardStep() === 0 && this.isWizardMobile()) {
+      if (this.wizardStep() === 0 && this.isWizardMobile()) {
         this.primeWizardAmountEntry();
       }
       this.goToStep(this.wizardStep() + 1);
@@ -301,7 +282,7 @@ export class AddExpenseComponent implements OnInit {
   }
 
   lastWizardStep(): number {
-    return this.isQrPrefillMode ? 1 : 2;
+    return 2;
   }
 
   selectWizardCategory(categoryId: string | number): void {

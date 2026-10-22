@@ -308,19 +308,6 @@ export class DashboardComponent implements AfterViewInit {
     );
   });
 
-  /** True when the loaded dashboard period has no income, expense, or category rows. */
-  hasNoData = computed<boolean>(() => {
-    const d = this.dashboardData();
-    if (!d) return false;
-    const empty = (a?: { length?: number }) => !a || (a.length ?? 0) === 0;
-    return (
-      empty(d.incomeTotalsByCurrency) &&
-      empty(d.expenseTotalsByCurrency) &&
-      empty(d.expensesInfo) &&
-      empty(d.incomesInfo)
-    );
-  });
-
   /**
    * Flat breakdowns: one row per (category, currency), sorted by total desc.
    * Mirrors the login preview list — no cross-currency aggregation, since
@@ -757,10 +744,6 @@ export class DashboardComponent implements AfterViewInit {
     return [...groups.entries()]
       .sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b))
       .map(([currency, list]) => ({ currency, rows: list }));
-  }
-
-  private daysInMonth(year: number, month: number): number {
-    return new Date(year, month, 0).getDate();
   }
 
   /** Combine income and expense currency totals into one row per currency for the KPI strip. */
